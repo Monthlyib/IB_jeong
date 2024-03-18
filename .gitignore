@@ -1,0 +1,11 @@
+.DS_Store
+
+# for front
+node_modules/
+.next/
+.swc/
+.*.env
+
+
+
+# for back

@@ -1,0 +1,235 @@
+.ibwrite_wrapper {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  width: 100%;
+  padding: 6rem 0;
+}
+
+.ibwrite_wrapper button {
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 12rem;
+  height: 5.2rem;
+  background: var(--primary01);
+  font-size: 1.6rem;
+  color: #fff;
+  border-radius: 1rem;
+  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
+}
+
+.ib_archive_wrap {
+  width: 100%;
+}
+
+.ib_archive_cont {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.ib_item {
+  width: calc(33.3% - 1.33rem);
+  margin-right: 2rem;
+  margin-bottom: 4.8rem;
+  position: relative;
+}
+.ib_item button {
+  font-size: 3rem;
+  color: var(--primary01);
+  display: none;
+  position: absolute;
+  right: 0;
+}
+.ib_item:hover button {
+  display: block;
+}
+
+.ib_item:nth-child(3n) {
+  margin-right: 0;
+}
+
+.ib_item a {
+  display: block;
+  width: 100%;
+}
+
+.ib_item a figure {
+  display: block;
+  width: 100%;
+  height: 40rem;
+  margin-bottom: 1.4rem;
+}
+
+.ib_item a figure img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ib_item a .ib_txt {
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.ib_item a:hover .ib_txt {
+  text-decoration: underline;
+}
+
+.right_btn {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 0 0.8rem;
+}
+
+.btn_write {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 9.4rem;
+  height: 3.6rem;
+  border: 1px solid #d5d5d5;
+  border-radius: 0.5rem;
+  padding: 0 1.4rem;
+}
+
+.btn_write svg {
+  font-size: 1.4rem;
+}
+
+.btn_write span {
+  display: block;
+  font-size: 1.4rem;
+}
+
+.course_no {
+  border-top: 1px solid #000;
+  border-bottom: 1px solid #d5d5d5;
+  min-height: 36rem;
+  width: 81vw;
+}
+
+.course_no p {
+  font-size: 1.4rem;
+  font-weight: 800;
+  line-height: 36rem;
+  text-align: center;
+}
+
+.write_wrap {
+  padding-top: 4.8rem;
+}
+
+.write_wrap .write_tit {
+  display: block;
+  width: 100%;
+  height: 5.2rem;
+  border: none;
+  color: #000;
+  font-size: 3.4rem;
+  font-weight: 700;
+}
+
+.write_wrap .write_tit::placeholder {
+  color: #aaa;
+}
+
+.write_wrap .write_content {
+  display: block;
+  width: 100%;
+  min-height: 54rem;
+  margin-top: 2.8rem;
+  border: 1px solid #d5d5d5;
+  border-radius: 1rem;
+  padding: 2.4rem;
+  color: #000;
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 1.4;
+  resize: none;
+}
+
+.write_block {
+  margin-top: 4.8rem;
+}
+
+.write_wrap .write_block {
+  margin-top: 2.8rem;
+}
+
+.write_block label {
+  display: block;
+  font-size: 1.6rem;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+
+.write_wrap .write_block .write_img {
+  display: block;
+  width: 100%;
+  font-size: 1.3rem;
+}
+
+.write_wrap .write_block .write_file {
+  display: block;
+  width: 100%;
+  font-size: 1.3rem;
+}
+
+.write_btn_area {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 2.4rem;
+}
+
+.write_btn_area a,
+.write_btn_area button {
+  display: block;
+  width: 7.2rem;
+  height: 4.4rem;
+  text-align: center;
+  line-height: 4.4rem;
+  border-radius: 1rem;
+  font-size: 1.4rem;
+}
+
+.write_btn_area a.cancel {
+  border: 1px solid #d5d5d5;
+  margin-right: 1.4rem;
+}
+
+.write_btn_area a.cancel:hover {
+  background: #fafafa;
+}
+
+.write_btn_area button.submit {
+  background: var(--primary01);
+  color: #fff;
+}
+
+.write_btn_area button.submit:hover {
+  opacity: 0.9;
+}
+
+@media screen and (max-width: 1024px) {
+  .ib_item {
+    width: calc(50% - 1rem);
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .ib_item {
+    margin-right: 1rem;
+    margin-bottom: 2.4rem;
+  }
+
+  .ib_item:nth-child(3n) {
+    margin-right: 1rem;
+  }
+
+  .ib_item a figure {
+    max-height: 20rem;
+  }
+}

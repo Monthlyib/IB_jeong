@@ -1,0 +1,359 @@
+.pay .header_tit_wrap {
+  padding: 5.6rem 0 3.8rem;
+}
+
+.pay_box_wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.pay_box_wrap .pay_left {
+  width: calc(100% - 37.3rem);
+  border-top: 0.2rem solid #000;
+}
+
+.product_cont .product_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3rem 0;
+  border-bottom: 1px solid #d5d5d5;
+}
+
+.product_cont .product_item figure {
+  width: 8.8rem;
+  margin-right: 2.4rem;
+}
+
+.product_cont .product_item figure img {
+  display: block;
+  width: 100%;
+  height: 8.8rem;
+  border-radius: 1rem;
+  object-fit: cover;
+}
+
+.product_cont .product_item .product_item_info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% - 11.2rem);
+}
+
+.product_cont .product_item .product_item_info .product_item_nm p {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.6rem;
+}
+
+.product_cont .product_item .product_item_info .product_item_nm span {
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+
+.product_cont .product_item .product_item_info .product_item_price span {
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+
+.product_cont .product_item .product_item_info .product_item_price span b {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.product_cont .product_item .product_item_info .product_item_price {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.product_cont
+  .product_item
+  .product_item_info
+  .product_item_price
+  .product_price_cont {
+  margin-bottom: 0.4rem;
+}
+
+.product_cont
+  .product_item
+  .product_item_info
+  .product_item_price
+  .product_price {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.product_cont
+  .product_item
+  .product_item_info
+  .product_item_price
+  .product_month {
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+
+.product_cont
+  .product_item
+  .product_item_info
+  .product_item_price
+  .product_ori_price {
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: #333;
+  text-decoration: line-through;
+}
+
+.pay_box_wrap .pay_right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 35.3rem;
+  height: 47rem;
+  background: #fafafa;
+  border-radius: 1rem;
+  margin-left: 2rem;
+  padding: 2rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .buyer_info {
+  padding-bottom: 3.2rem;
+  border-bottom: 1px solid #d5d5d5;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .buyer_info h4 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1.6rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .buyer_input {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .buyer_input input:first-child {
+  margin-bottom: 1.2rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .buyer_input input {
+  height: 6rem;
+  padding: 0 2.4rem;
+  font-size: 1.7rem;
+  font-weight: 300;
+  border: 1px solid #d5d5d5;
+  border-radius: 0.5rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info {
+  padding: 3rem 0;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div:last-child {
+  margin-bottom: 0;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div h6 {
+  font-size: 1.6rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div span {
+  font-size: 1.4rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div span b {
+  font-size: 1.8rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div.pricing_price {
+  color: #444;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div.pricing_sales {
+  color: #f00;
+}
+
+.pay_box_wrap .pay_right .pay_box_top .price_info > div.prcing_total {
+  color: #000;
+}
+
+.pay_box_wrap .pay_right .pay_box_bottom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.pay_box_wrap .pay_right .pay_box_bottom button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  background: var(--primary01);
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 600;
+  width: 100%;
+  height: 7.2rem;
+}
+
+.pay_box_wrap .pay_right .pay_box_bottom .btn_disabled {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+  background: gray;
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 600;
+  width: 100%;
+  height: 7.2rem;
+}
+
+.header_tit_wrap.tit_center.pay_complete {
+  padding-bottom: 2.4rem;
+}
+
+.pay_complete_msg {
+  width: 100%;
+  border: 1px solid #d5d5d5;
+  border-radius: 1rem;
+  text-align: center;
+  margin-top: 4.4rem;
+  padding: 2.4rem 0;
+}
+
+.pay_complete_msg p {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 0.6rem;
+}
+
+.pay_complete_msg p > span {
+  color: var(--primary01);
+  font-weight: 800;
+  margin-right: 0.4rem;
+}
+
+.pay_complete_msg > span {
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.tb_wrap {
+  margin-top: 4.4rem;
+}
+
+.tb_wrap h3 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.tb_wrap .tb_cont {
+  padding: 2rem 0;
+  border-top: 2px solid #000;
+  border-bottom: 1px solid #d5d5d5;
+}
+
+.tb_wrap .tb_cont .buy_list {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 1.6rem;
+}
+
+.tb_wrap .tb_cont .buy_list:first-child {
+  margin-bottom: 1rem;
+}
+
+.tb_wrap .tb_cont .buy_list h6 {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.tb_wrap .tb_cont .buy_list span {
+  font-weight: 400;
+}
+
+.tb_wrap .product_cont .product_item {
+  padding: 0;
+  border-bottom: none;
+}
+
+.tb_wrap.product_wrap {
+  margin-bottom: 4.4rem;
+}
+
+@media screen and (max-width: 640px) {
+  /**************
+       Pay
+    **************/
+  .pay_box_wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .pay_box_wrap .pay_left {
+    width: 100%;
+    margin-bottom: 2.4rem;
+  }
+
+  .pay_box_wrap .pay_right {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .product_cont .product_item figure {
+    margin-right: 1.4rem;
+  }
+
+  .product_cont .product_item .product_item_info {
+    width: calc(100% - 10.2rem);
+  }
+
+  .product_cont
+    .product_item
+    .product_item_info
+    .product_item_price
+    .product_price {
+    font-size: 1.8rem;
+  }
+
+  .pay_box_wrap .pay_right .pay_box_top .buyer_info h4 {
+    font-size: 1.8rem;
+  }
+
+  .pay_box_wrap .pay_right {
+    padding: 1.4rem;
+  }
+
+  .pay_box_wrap .pay_right .pay_box_top .price_info > div h6 {
+    font-size: 1.4rem;
+  }
+
+  .pay_box_wrap .pay_right .pay_box_top .price_info > div span b {
+    font-size: 1.6rem;
+  }
+}

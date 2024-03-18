@@ -1,0 +1,96 @@
+header .my_util {
+    position: relative;
+}
+
+header .my_util .util_wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+header .my_util .util_wrap .util_img figure {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4.6rem;
+    height: 4.6rem;
+    border: 2px solid var(--primary01);
+    border-radius: 4.6rem;
+}
+
+header .my_util .util_wrap .util_img figure img {
+    display: block;
+    width: 3.6rem;
+    height: 3.6rem;
+    object-fit: cover;
+    border-radius: 3.6rem;
+}
+
+header .my_util .util_wrap .util_name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: 1.4rem;
+}
+
+header .my_util .util_wrap .util_name span {
+    font-size: 1.4rem;
+}
+
+header .my_util .util_wrap .util_name span b {
+    font-size: 1.8rem;
+}
+
+header .my_util .util_wrap .util_name .icon {
+    margin-left: .2rem;
+    font-size: 1.7rem;
+    position: relative;
+    top: 1px;
+
+}
+
+header .my_util .util_box {
+    position: absolute;
+    left: 0;
+    top: calc(100% + .6rem);
+    width: 15.2rem;
+    height: auto;
+    background: #fff;
+    border-radius: 1rem;
+    box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+header .my_util .util_box ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+header .my_util .util_box ul li {
+    width: 100%;
+    text-align: center;
+}
+
+header .my_util .util_box ul li a {
+    display: block;
+    padding: 1.4rem 0;
+    font-size: 1.6rem;
+    font-weight: 500;
+    color: #242424;
+}
+
+header .my_util .util_box ul li:hover a {
+    background: #f1f1f1;
+}
+
+header .my_util .util_box ul li:last-child a {
+    color: var(--primary01);
+    padding: 1.4rem 0;
+    font-size: 1.6rem;
+    font-weight: 500;
+    cursor: pointer;
+}

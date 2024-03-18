@@ -1,0 +1,211 @@
+.main_wrap {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 0;
+}
+
+.main_wrap .left_cont span {
+    display: block;
+    font-size: 2rem;
+    font-weight: 500;
+    color: #888;
+    margin-bottom: .5rem;
+}
+
+.main_wrap .left_cont h2 {
+    font-size: 4.8rem;
+    font-weight: 700;
+    margin-bottom: 5.2rem;
+}
+
+.main_wrap .left_cont p {
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 2.8rem;
+}
+
+.main_wrap .right_cont {
+    width: 68rem;
+}
+
+.main_wrap .right_cont .test_box {
+    width: 100%;
+    height: 28rem;
+    background: var(--primary01);
+    line-height: 28rem;
+    text-align: center;
+    color: #fff;
+    font-size: 2rem;
+}
+
+.controller {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 9.6rem;
+}
+
+.controller button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 4.4rem;
+    height: 4.4rem;
+    border: 1px solid #d5d5d5;
+    border-radius: 4.4rem;
+}
+
+.controller button:hover {
+    background: #fafafa;
+}
+
+.controller button svg {
+    color: black;
+    position: relative;
+    top: 2px;
+    font-size: 1.8rem;
+    font-weight: bolder;
+}
+
+.controller button[disabled] {
+    border-color: #f1f1f1;
+}
+
+.controller button[disabled] svg {
+    color: #aaa;
+
+}
+
+
+.main_wrap .right_cont {
+    width: 68rem;
+}
+
+.main_wrap .right_cont .test_box {
+    width: 100%;
+    height: 28rem;
+    background: var(--primary01);
+    line-height: 28rem;
+    text-align: center;
+    color: #fff;
+    font-size: 2rem;
+}
+
+.main_project_swiper {
+    height: 28.6rem;
+}
+
+.swiper-slide {
+    width: 26rem;
+    background: var(--primary01);
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
+.main_project_swiper a.pr_wrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    padding: 1.6rem;
+    height: 100%;
+    color: #fff;
+}
+
+.main_project_swiper .pr_wrap .pr_top {
+    font-size: 1.8rem;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.main_project_swiper .pr_wrap .pr_md {
+    font-size: 12rem;
+    font-weight: 900;
+    text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.25);
+    line-height: 1;
+    margin: 0 auto;
+}
+
+.main_project_swiper .pr_wrap .pr_bt {
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.main_project_swiper .pr_wrap .pr_dim {
+    position: absolute;
+    width: 100%;
+    height: 5.5rem;
+    left: 0;
+    bottom: 0;
+    background: var(--primary02);
+    z-index: -1;
+    transition: .5s all;
+}
+
+.main_project_swiper a:hover.pr_wrap .pr_dim {
+    height: 100%;
+    transition: .5s all;
+}
+
+.main_project_swiper a:hover.pr_wrap .pr_bt {
+    text-decoration: underline;
+}
+
+@media screen and (max-width: 1024px) {
+    .main_wrap {
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    }
+
+    .main_wrap .left_cont {
+        margin-bottom: 3.2rem;
+    }
+
+    .main_wrap .left_cont span {
+        font-size: 1.8rem;
+    }
+
+    .main_wrap .left_cont h2 {
+        font-size: 3.2rem;
+        margin-bottom: 3.4rem;
+    }
+
+    .main_wrap .right_cont {
+        width: 100%;
+    }
+
+    .main_project_swiper .swiper-slide {
+        width: 24rem;
+    }
+}
+
+@media screen and (max-width: 640px) {
+
+    /* section 1 */
+    .main_wrap .left_cont p {
+        font-size: 1.5rem;
+    }
+
+    .main_project_swiper {
+        height: 24rem;
+    }
+
+    .main_project_swiper .swiper-slide .pr_top {
+        font-size: 1.6rem;
+    }
+
+    .main_project_swiper .swiper-slide .pr_md {
+        font-size: 11.5rem;
+    }
+
+    .main_project_swiper .swiper-slide .pr_bt {
+        font-size: 1.5rem;
+        line-height: 1.5;
+    }
+}
