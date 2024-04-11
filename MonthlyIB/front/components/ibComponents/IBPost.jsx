@@ -1,29 +1,47 @@
-import { Form } from "antd";
-import { useCallback, useRef, useState } from "react";
-import { useDispatch } from "react-redux";
-import { ibPostActions } from "../../reducers/ibpost";
-import { useRouter } from "next/router";
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import styles from "./IbComponents.module.css";
 import Link from "next/link";
 
 const IBPost = () => {
-  const router = useRouter();
-  const dispatch = useDispatch();
   const imageInput = useRef();
   const fileInput = useRef();
   const [title, setTitle] = useState("");
+  const router = useRouter();
+  const { data: session } = useSession();
 
-  const onSubmit = useCallback(() => {
-    dispatch(
-      ibPostActions.addIBPostRequest({
-        title,
-        image: imageInput.current,
-        file: fileInput.current,
-      })
-    );
-    router.push("/ib");
-  }, [title]);
+  const onSubmitForm = useCallback(
+    async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}api/monthly-ib`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: session?.accessToken,
+            },
+            body: JSON.stringify({
+              title,
+              content: "dummy",
+            }),
+          }
+        );
+        if (res.ok) {
+          router.push("/ib");
+          console.log("hi");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    [title]
+  );
 
   const onChangeTitle = useCallback((e) => {
     setTitle(e.target.value);
@@ -40,7 +58,7 @@ const IBPost = () => {
   return (
     <>
       <main className="width_content">
-        <Form onFinish={onSubmit}>
+        <form onSubmit={onSubmitForm}>
           <div className={styles.write_wrap}>
             <input
               type="text"
@@ -76,7 +94,7 @@ const IBPost = () => {
               등록
             </button>
           </div>
-        </Form>
+        </form>
       </main>
     </>
   );

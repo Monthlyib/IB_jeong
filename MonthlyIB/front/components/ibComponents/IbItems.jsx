@@ -3,9 +3,8 @@ import _ from "lodash";
 import Pagination from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-// import { useDispatch, useSelector } from "react-redux";
-// import { ibPostActions } from "../../reducers/ibpost";
 import { useCallback } from "react";
+import { useSession } from "next-auth/react";
 
 const IbItems = ({
   IBContents,
@@ -18,12 +17,20 @@ const IbItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(IBContents, currentPage);
+  const { data: session } = useSession();
 
-  // const { User } = useSelector((state) => state.user);
-  // const dispatch = useDispatch();
-  // const onClickDelete = useCallback((num) => {
-  //   dispatch(ibPostActions.deleteIBPostRequest({ num }));
-  // }, []);
+  const onClickDelete = useCallback(async (num) => {
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC.URL}/api/monthly-ib/${num}`,
+        {
+          method: "DELETE",
+        }
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
 
   // const onClickPost = useCallback((num) => {
   //   dispatch(ibPostActions.getIBPdfRequest({ num }));
@@ -33,7 +40,7 @@ const IbItems = ({
       {IBContents.length > 0 ? (
         paginatedPage.map((content) => (
           <div className={styles.ib_item} key={content.num}>
-            {User?.role === 100 && (
+            {session?.userId === 1 && (
               <button
                 onClick={() => {
                   onClickDelete(content.num);

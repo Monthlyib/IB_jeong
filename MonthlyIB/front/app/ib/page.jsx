@@ -1,9 +1,5 @@
-import IbComponents from "../../components/ibComponents/IbComponents";
+import IbComponents from "@/components/ibComponents/IbComponents";
 
 export default function IbPost() {
-  return (
-    <>
-      <IbComponents />
-    </>
-  );
+  return <IbComponents />;
 }

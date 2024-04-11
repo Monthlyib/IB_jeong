@@ -2,30 +2,23 @@
 import { useCallback, useEffect, useState } from "react";
 import styles from "./IbComponents.module.css";
 import IbItems from "./IbItems";
-// import { useDispatch, useSelector } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-// import { ibPostActions } from "../../reducers/ibpost";
+
+const getIBPostList = async (credentials) => {};
 
 const IbComponents = () => {
-  // const dispatch = useDispatch();
   const [currentPage, setCurrentPage] = useState(1);
   const [formModal, setFormModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
+  const { data: session } = useSession();
 
   const [ibposts, setIbposts] = useState([]);
-  // const { User, logInDone } = useSelector((state) => state.user);
-  // const { getIBPostDone, ibposts } = useSelector((state) => state.ibpost);
   const [windowSize, setWindowSize] = useState(0);
   const [searchedPosts, setSearchedPosts] = useState([]);
-
-  // useEffect(() => {
-  //   if (getIBPostDone === false) {
-  //     dispatch(ibPostActions.getIBPostRequest());
-  //   }
-  // }, [getIBPostDone]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -33,13 +26,7 @@ const IbComponents = () => {
   const onChange = useCallback((e) => {
     setSearchKeyword(e.target.value);
   }, []);
-  // const onClickSearchButton = useCallback(() => {
-  //   setSearchedPosts([
-  //     ...ibposts.filter((v) => v.title.includes(searchKeyword)),
-  //   ]);
-  //   setCurrentPage(1);
-  //   setSeraching(true);
-  // }, [searchKeyword]);
+
   const onClickOpenModal = useCallback(() => {
     setFormModal((prevState) => !prevState);
     console.log(formModal);
@@ -61,6 +48,12 @@ const IbComponents = () => {
         });
     }
   }, []);
+
+  useEffect(() => {
+    console.log(session?.accessToken);
+  }, [session]);
+
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -91,14 +84,14 @@ const IbComponents = () => {
           </div>
         </div>
 
-        {/* {User.role === 100 && (
+        {session?.userId === 1 && (
           <div className={styles.right_btn}>
             <Link href="/ibwrite" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />
               <span>글쓰기</span>
             </Link>
           </div>
-        )} */}
+        )}
 
         <div className={styles.ib_archive_wrap}>
           <div className={styles.ib_archive_cont}>

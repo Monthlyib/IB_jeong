@@ -8,19 +8,18 @@ import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-// import { useDispatch, useSelector } from "react-redux";
 import MobileAppLayout from "./MobileAppLayout";
 import { useCallback, useEffect, useState } from "react";
-// import { userActions } from "../reducers/user";
+import { useSession } from "next-auth/react";
 
 const AppLayout = ({ children, disable }) => {
-  // const dispatch = useDispatch();
-  // const { logInDone } = useSelector((state) => state.user);
   const [mouseOverMenu, setMouseOverMenu] = useState(false);
   const [asideModal, setAsideModal] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: undefined,
   });
+
+  const { data: session } = useSession();
   const onMouseOverMenu = useCallback(() => {
     setMouseOverMenu(true);
   }, [mouseOverMenu]);
@@ -28,10 +27,6 @@ const AppLayout = ({ children, disable }) => {
   const onMouseLeaveMenu = useCallback(() => {
     setMouseOverMenu(false);
   }, [mouseOverMenu]);
-
-  // useEffect(() => {
-  //   if (cookie.get("token")) dispatch(userActions.loadInfoRequest());
-  // }, [cookie.get("token")]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -112,8 +107,7 @@ const AppLayout = ({ children, disable }) => {
               </li>
             </ul>
           </nav>
-          {<LoginForm />}
-          {/* {logInDone ? <UserProfile /> : <LoginForm />} */}
+          {session ? <UserProfile /> : <LoginForm />}
         </div>
         <MobileAppLayout
           asideModal={asideModal}
@@ -134,7 +128,7 @@ const AppLayout = ({ children, disable }) => {
         onClick={() => {
           setAsideModal(false);
         }}
-      />
+      ></div>
     </>
   );
 };
