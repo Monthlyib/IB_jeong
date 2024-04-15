@@ -341,7 +341,7 @@ button.read_btn.delete:hover {
 
 .calc_list select.group_one {
   display: block;
-  width: 20rem;
+  width: 33rem;
   height: 100%;
   border-radius: 0.5rem;
   background: url("/img/icon/caret-down.png") no-repeat;
@@ -352,6 +352,7 @@ button.read_btn.delete:hover {
   font-size: 1.8rem;
   line-height: 1.4;
   padding: 0 1.2rem;
+  text-align: center;
 }
 
 .calc_list select:selected {

@@ -39,6 +39,7 @@ const Calculator = () => {
     hk: HKUniversityInfo,
     ca: CanadaUniversityInfo,
   };
+
   const numCalcMenu = [1, 2, 3, 4, 5, 6];
   const [points, setPoints] = useState([0, 0, 0, 0, 0, 0, 0]);
   const [totalPoint, setTotalPoint] = useState(0);
@@ -46,7 +47,7 @@ const Calculator = () => {
   const [groups, setGroups] = useState([0, 0, 0, 0, 0, 0]);
   const [currentPage, setCurrentPage] = useState(1);
   const [country, setCountry] = useState("all");
-  const [calculating, setCalculating] = useState(1);
+  const [levels, setLevels] = useState([0, 0]);
   const [group, setGroup] = useState([
     "all",
     "all",
@@ -56,14 +57,7 @@ const Calculator = () => {
     "all",
   ]);
 
-  // 계산 버튼만 눌렀을때, 대학리스트 보여주기
   useEffect(() => {
-    let temp = 0;
-    for (let i = 0; i < 7; i++) {
-      temp += Number(points[i]);
-    }
-    setTotalPoint(temp);
-
     if (totalPoint >= 44) {
       setPointCat("44");
     } else if (totalPoint >= 43 && totalPoint < 44) {
@@ -79,11 +73,14 @@ const Calculator = () => {
     } else {
       setPointCat("0");
     }
-  }, [calculating]);
+  }, [totalPoint]);
 
-  // 계산 버튼 클릭했을때만 대학리스트를 업데이트 시켜주기위한 state
   const onClickCalculating = () => {
-    setCalculating(calculating + 1);
+    let temp = 0;
+    for (let i = 0; i < 7; i++) {
+      temp += Number(points[i]);
+    }
+    setTotalPoint(temp);
   };
 
   const handleCountryChange = (e) => {
@@ -123,6 +120,8 @@ const Calculator = () => {
               setGroups={setGroups}
               group={group}
               setGroup={setGroup}
+              levels={levels}
+              setLevels={setLevels}
               key={i}
             />
           ))}

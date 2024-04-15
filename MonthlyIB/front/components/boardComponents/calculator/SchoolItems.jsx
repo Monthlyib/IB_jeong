@@ -22,7 +22,7 @@ const SchoolItems = ({
     <>
       {schoolList.length > 0 ? (
         paginatedPage.map((schoolName) => (
-          <div className={styles.school_item}>
+          <div className={styles.school_item} key={schoolName}>
             <div className={styles.school_left}>
               <figure className={styles.school_logo}>
                 <img src={schoolObj[schoolName].img} alt="University Logo" />

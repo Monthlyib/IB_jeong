@@ -15,7 +15,7 @@ const Resource = () => {
           </Link>
         </li>
         <li>
-          <Link href="/board/calc">
+          <Link href="/board/calculator">
             <span>합격예측 계산기</span>
             <FontAwesomeIcon icon={faChevronRight} className={styles.icon} />
           </Link>
