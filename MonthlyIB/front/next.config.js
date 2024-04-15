@@ -1,8 +1,16 @@
-// next.config.js
-
-const debug = process.env.NODE_ENV !== "production";
-const repository = "joonyoung-s-portfolio-page";
-
 const nextConfig = {
-    basePath: "/{/Monthly_IB_deploy}",
-}
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+    ],
+  },
+};
+
+module.exports = nextConfig;
