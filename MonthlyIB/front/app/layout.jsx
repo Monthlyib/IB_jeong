@@ -3,7 +3,7 @@ import "@/styles/global.css";
 import Footer from "@/components/layoutComponents/Footer";
 import AppLayout from "@/components/layoutComponents/AppLayout";
 
-import Providers from "@/components/provider";
+import Providers from "@/components/Provider";
 import SessionWrapper from "@/components/SessionWrapper";
 
 export const metadata = {
