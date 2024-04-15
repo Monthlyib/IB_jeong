@@ -1,8 +1,8 @@
-import { Form } from "antd";
+"use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+
 import { bulletinBoardActions } from "../../../reducers/bulletinboard";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 import styles from "../BoardCommon.module.css";
 import Link from "next/link";
@@ -14,39 +14,24 @@ const DynamicEditor = dynamic(() => import("../EditorComponents"), {
 
 const BulletinBoardPost = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
   const imageInput = useRef();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [edit, setEdit] = useState(false);
 
   useEffect(() => {
-    // 수정할 때
-    if (router.query.edit) {
-      setEdit(true);
-      setTitle(router.query.prevTitle);
-      setContent(router.query.prevContent);
-    }
+    // // 수정할 때
+    // if (router.query.edit) {
+    //   setEdit(true);
+    //   setTitle(router.query.prevTitle);
+    //   setContent(router.query.prevContent);
+    // }
   }, [router.query]);
 
   const onSubmit = useCallback(() => {
     if (edit) {
       let pageId = router.query.pageId;
-      dispatch(
-        bulletinBoardActions.editBulletinBoardRequest({
-          num: pageId,
-          title,
-          body: content,
-        })
-      );
     } else {
-      dispatch(
-        bulletinBoardActions.addBulletinBoardRequest({
-          board: 2,
-          title,
-          body: content,
-        })
-      );
     }
     router.push("/board/bulletinboard");
   }, [title, content]);
@@ -64,11 +49,10 @@ const BulletinBoardPost = () => {
     }
     imageInput.current.click();
   }, []);
-  console.log(edit);
   return (
     <>
       <main className="width_content">
-        <Form onFinish={onSubmit}>
+        <form onSubmit={onSubmit}>
           <div className={styles.write_wrap}>
             <input
               type="text"
@@ -102,7 +86,7 @@ const BulletinBoardPost = () => {
               </button>
             </div>
           </div>
-        </Form>
+        </form>
       </main>
     </>
   );

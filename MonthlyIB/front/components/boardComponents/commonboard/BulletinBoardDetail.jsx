@@ -1,3 +1,4 @@
+"use client";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "../BoardCommon.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
