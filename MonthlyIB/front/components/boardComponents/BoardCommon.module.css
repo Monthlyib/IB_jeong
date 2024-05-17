@@ -987,6 +987,7 @@ select#recommendSchools:selected {
   display: block;
   width: 100%;
   object-fit: cover;
+  max-width: 140px;
 }
 
 .schools_list_wrap .school_item .school_left .school_tit {

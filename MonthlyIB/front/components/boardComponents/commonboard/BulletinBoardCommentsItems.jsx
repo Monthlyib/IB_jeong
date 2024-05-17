@@ -1,10 +1,10 @@
-"use client";
 import styles from "../BoardCommon.module.css";
 import profileImg from "../../../assets/img/common/user_profile.jpg";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { bulletinBoardActions } from "../../../reducers/bulletinboard";
 import Pagination from "../../Paginatation";
 
@@ -15,6 +15,9 @@ const BulletinBoardCommentsItems = ({
   onPageChange,
   pageId,
 }) => {
+  const dispatch = useDispatch();
+
+  const { User, logInDone } = useSelector((state) => state.user);
   const [editStatus, setEditStatus] = useState("");
   const comments = useRef("");
 
@@ -67,26 +70,26 @@ const BulletinBoardCommentsItems = ({
   );
 
   const onClickLike = useCallback((id) => {
-    // if (logInDone) {
-    //   dispatch(
-    //     bulletinBoardActions.likeBulletinBoardCommentsRequest({
-    //       pageId,
-    //       id,
-    //       User,
-    //     })
-    //   );
-    // }
+    if (logInDone) {
+      dispatch(
+        bulletinBoardActions.likeBulletinBoardCommentsRequest({
+          pageId,
+          id,
+          User,
+        })
+      );
+    }
   }, []);
   const onClickUnLike = useCallback((id) => {
-    // if (logInDone) {
-    //   dispatch(
-    //     bulletinBoardActions.unlikeBulletinBoardCommentsRequest({
-    //       pageId,
-    //       id,
-    //       User,
-    //     })
-    //   );
-    // }
+    if (logInDone) {
+      dispatch(
+        bulletinBoardActions.unlikeBulletinBoardCommentsRequest({
+          pageId,
+          id,
+          User,
+        })
+      );
+    }
   }, []);
   return (
     <>
@@ -110,7 +113,7 @@ const BulletinBoardCommentsItems = ({
                   </div>
                 </div>
               </div>
-              {/* {User.num === content.owner && (
+              {User.num === content.owner && (
                 <div className={styles.comment_option}>
                   <button
                     type="button"
@@ -129,7 +132,7 @@ const BulletinBoardCommentsItems = ({
                     삭제
                   </button>
                 </div>
-              )} */}
+              )}
             </div>
             {editStatus === content.num ? (
               <div className={styles.comment_content_wrap}>

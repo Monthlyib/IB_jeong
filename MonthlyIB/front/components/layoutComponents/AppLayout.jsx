@@ -18,8 +18,8 @@ const AppLayout = ({ children, disable }) => {
   const [windowSize, setWindowSize] = useState({
     width: undefined,
   });
-
   const { data: session } = useSession();
+
   const onMouseOverMenu = useCallback(() => {
     setMouseOverMenu(true);
   }, [mouseOverMenu]);
@@ -97,6 +97,9 @@ const AppLayout = ({ children, disable }) => {
                 </ul>
               </li>
               <li>
+                <Link href="/learningtest">학습유형 테스트</Link>
+              </li>
+              <li>
                 <Link
                   href="http://monthlyib.co.kr/contact"
                   target="_blank"
@@ -107,7 +110,11 @@ const AppLayout = ({ children, disable }) => {
               </li>
             </ul>
           </nav>
-          {session ? <UserProfile /> : <LoginForm />}
+          {session?.userStatus === "ACTIVE" ? (
+            <UserProfile session={session} />
+          ) : (
+            <LoginForm />
+          )}
         </div>
         <MobileAppLayout
           asideModal={asideModal}

@@ -1,0 +1,143 @@
+.dashboard_top_wrap {
+  display: flex;
+  flex-wrap: wrap;
+  height: 500px;
+  margin: 0 auto;
+  margin-top: 10rem;
+  align-items: center;
+  width: 110rem;
+  justify-content: center;
+}
+.dashboard_mid_wrap {
+  display: flex;
+  width: 110rem;
+  margin: 0 auto;
+}
+
+.dashboard_top_wrap .dashboard_top {
+  width: 100%;
+  padding: 0 15px;
+  border-radius: 12px;
+  box-shadow: 10px 6px 10px 4px rgba(0, 0, 0, 0.25);
+  background-color: #ffffffd0;
+  color: #252422;
+  margin-right: 5rem;
+  position: relative;
+  border: 0;
+}
+
+.dashboard_top_wrap .dashboard_top .dashboard_card_top {
+  padding: 15px 15px 0;
+  flex: 1 1 auto;
+  min-height: 1px;
+}
+
+.dashboard_top_wrap .dashboard_top .dashboard_card_top .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -15px;
+  padding: 3rem;
+}
+.dashboard_top_wrap .dashboard_top .dashboard_card_top .row .left {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+}
+
+.dashboard_top_wrap .dashboard_top .dashboard_card_top .row .left svg {
+  font-size: 2rem;
+  min-height: 48px;
+  color: var(--primary01);
+}
+.dashboard_top_wrap .dashboard_top .dashboard_card_top .row .right {
+  flex: 0 0 66.666667%;
+  max-width: 66.666667%;
+  text-align: right;
+}
+.dashboard_top_wrap .dashboard_top .dashboard_card_top .row .right .title {
+  color: #9a9a9a;
+  font-size: 2rem;
+  line-height: 1.4rem;
+}
+.dashboard_top_wrap .dashboard_top .dashboard_card_top .row .right .number {
+  margin-bottom: 0;
+  font-size: 2rem;
+  position: relative;
+  display: block;
+  margin-block-start: 1em;
+  margin-block-end: 1em;
+  margin-inline-start: 0px;
+  margin-inline-end: 0px;
+  unicode-bidi: isolate;
+  margin-right: 1rem;
+  margin-left: 6rem;
+}
+
+.dashboard_mid_wrap .dashboard_mid_card {
+  border-radius: 12px;
+  box-shadow: 10px 6px 10px 4px rgba(0, 0, 0, 0.25);
+  background-color: #fff;
+  color: #252422;
+  margin-bottom: 20px;
+  position: relative;
+  border: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffffd0;
+  height: 400px;
+  overflow: auto;
+  margin-right: 10rem;
+}
+.dashboard_mid_wrap .dashboard_mid_card .title {
+  font-size: 3rem;
+  margin-top: 1rem;
+  padding: 3rem;
+}
+
+.dashboard_mid_wrap .dashboard_mid_card hr {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border: 0;
+  border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+  width: 90%;
+}
+.dashboard_mid_wrap .dashboard_mid_card .users {
+  padding: 0 3rem;
+  margin-top: 1rem;
+  font-size: 1.8rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--primary01);
+}
+
+.dashboard_mid_wrap .dashboard_mid_card .users svg {
+  margin-right: 0.5rem;
+  margin-top: 0;
+  padding: 0 0.5rem;
+  color: var(--primary01);
+}
+
+.dashboard_mid_wrap .dashboard_mid_card .schedule {
+  padding: 0 3rem;
+  margin-top: 1rem;
+  font-size: 1.8rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--primary01);
+}
+.dashboard_mid_wrap .dashboard_mid_card .schedule svg {
+  margin-right: 0.5rem;
+  margin-top: 0;
+  padding: 0 0.5rem;
+  color: var(--primary01);
+}
+
+@media screen and (min-width: 992px) {
+  .dashboard_top {
+    flex: 0 0 25%;
+    max-width: 33%;
+  }
+  .dashboard_mid_card {
+    flex: 0 0 45%;
+    max-width: 50%;
+  }
+}

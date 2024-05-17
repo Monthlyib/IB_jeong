@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./AppLayout.module.css";
-import { useDispatch, useSelector } from "react-redux";
 import { useCallback, useState } from "react";
 import Link from "next/link";
 // import IBLogo from "../assets/img/common/logo.png"

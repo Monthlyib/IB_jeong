@@ -3,7 +3,7 @@ import Link from "next/link";
 const BoardCommon = ({ modal }) => {
   return (
     <>
-      <div className="archive_tab" style={{ marginBottom: 30 }}>
+      <div className="archive_tab" style={{ marginBottom: 50 }}>
         <Link href="/board" className={modal === 0 ? "active" : ""}>
           IB 입시뉴스
         </Link>

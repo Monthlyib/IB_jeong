@@ -1,4 +1,3 @@
-"use client";
 import styles from "./MainMid.module.css";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,28 +9,28 @@ import {
   faCalculator,
   faClipboard,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useState } from "react";
+
 // import { useRouter } from "next/router";
 
 const MainMid = () => {
   //   const router = useRouter();
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const onChangeSearchKeyword = useCallback((e) => {
-    setSearchKeyword(e.target.value);
-  }, []);
-  const onCheckEnter = useCallback((e) => {
-    if (e.key === "Enter") {
-      //   if (searchKeyword !== "") {
-      //     router.push(
-      //       {
-      //         pathname: "/search",
-      //         query: { keyword: searchKeyword },
-      //       },
-      //       "/search"
-      //     );
-      //   }
-    }
-  }, []);
+  // const [searchKeyword, setSearchKeyword] = useState("");
+  // const onChangeSearchKeyword = useCallback((e) => {
+  //   setSearchKeyword(e.target.value);
+  // }, []);
+  // const onCheckEnter = useCallback((e) => {
+  //   if (e.key === "Enter") {
+  //     //   if (searchKeyword !== "") {
+  //     //     router.push(
+  //     //       {
+  //     //         pathname: "/search",
+  //     //         query: { keyword: searchKeyword },
+  //     //       },
+  //     //       "/search"
+  //     //     );
+  //     //   }
+  //   }
+  // }, []);
   return (
     <>
       <section className={styles.search_wrap}>
@@ -48,13 +47,24 @@ const MainMid = () => {
           >
             <FontAwesomeIcon icon={faMagnifyingGlass} />
           </Link> */}
-          <FontAwesomeIcon icon={faMagnifyingGlass} />
+          <FontAwesomeIcon
+            icon={faMagnifyingGlass}
+            style={{
+              position: "absolute",
+              left: "2.6rem",
+              top: "2.2rem",
+              fontSize: "2.8rem",
+              fontWeight: "bold",
+              color: "var(--primary01)",
+              zIndex: 2,
+            }}
+          />
           <input
             type="text"
             placeholder="궁금한 키워드를 입력해보세요"
-            value={searchKeyword}
-            onChange={onChangeSearchKeyword}
-            onKeyDown={onCheckEnter}
+            // value={searchKeyword}
+            // onChange={onChangeSearchKeyword}
+            // onKeyDown={onCheckEnter}
           />
         </div>
       </section>

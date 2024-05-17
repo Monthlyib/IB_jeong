@@ -17,15 +17,21 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@tanstack/react-query": "^5.28.14",
     "@tanstack/react-query-devtools": "^5.28.14",
+    "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "font-awesome": "^4.7.0",
+    "install": "^0.13.0",
     "lodash": "^4.17.21",
     "next": "^14.1.4",
     "next-auth": "^4.24.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-fontawesome": "^1.7.1",
-    "react-redux": "^9.1.0",
-    "swiper": "^8.4.7"
+    "react-quill": "^2.0.0",
+    "react-spinners": "^0.13.8",
+    "shortid": "^2.2.16",
+    "swiper": "^8.4.7",
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.2"
   }
 }

@@ -1,4 +1,4 @@
-import NewsComponents from "../../components/boardComponents/news/NewsComponents";
+import NewsComponents from "@/components/boardComponents/news/NewsComponents";
 
 const BoardHome = () => {
   return (

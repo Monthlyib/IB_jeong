@@ -4,21 +4,22 @@ import styles from "./IbComponents.module.css";
 import IbItems from "./IbItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
-import { useSession } from "next-auth/react";
+
 import Link from "next/link";
 
-const getIBPostList = async (credentials) => {};
+import { monthlyIBGetList } from "@/api/openAPI";
+import { useSession } from "next-auth/react";
 
 const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [formModal, setFormModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
-  const { data: session } = useSession();
-
   const [ibposts, setIbposts] = useState([]);
   const [windowSize, setWindowSize] = useState(0);
   const [searchedPosts, setSearchedPosts] = useState([]);
+
+  const { data: session } = useSession();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -29,10 +30,10 @@ const IbComponents = () => {
 
   const onClickOpenModal = useCallback(() => {
     setFormModal((prevState) => !prevState);
-    console.log(formModal);
   }, [formModal]);
 
   useEffect(() => {
+    getIBList();
     if (typeof window !== "undefined") {
       const handleResize = () => {
         setWindowSize(window.innerWidth);
@@ -48,12 +49,10 @@ const IbComponents = () => {
         });
     }
   }, []);
-
-  useEffect(() => {
-    console.log(session?.accessToken);
-  }, [session]);
-
-  useEffect(() => {}, []);
+  const getIBList = async () => {
+    const res = await monthlyIBGetList("", currentPage - 1);
+    setIbposts([...res.data]);
+  };
 
   return (
     <>
@@ -84,7 +83,7 @@ const IbComponents = () => {
           </div>
         </div>
 
-        {session?.userId === 1 && (
+        {session?.authority === "ADMIN" && (
           <div className={styles.right_btn}>
             <Link href="/ibwrite" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />
@@ -100,6 +99,7 @@ const IbComponents = () => {
               currentPage={currentPage}
               numShowContents={windowSize > 640 ? 6 : 4}
               onPageChange={handlePageChange}
+              setIbpost={setIbposts}
             />
           </div>
         </div>

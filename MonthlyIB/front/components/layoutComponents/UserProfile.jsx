@@ -4,11 +4,10 @@ import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserProfile.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
-const UserProfile = () => {
+const UserProfile = ({ session }) => {
   const [toggleUtilBox, setToggleUtilBox] = useState(false);
-  const { data: session } = useSession();
   const onClickIcon = useCallback(() => {
     setToggleUtilBox(!toggleUtilBox);
   }, [toggleUtilBox]);
@@ -19,7 +18,16 @@ const UserProfile = () => {
         <div className={styles.util_wrap} onClick={onClickIcon}>
           <div className={styles.util_img}>
             <figure>
-              <img src={""} width="100" height="100" alt="user profile img" />
+              <Image
+                src={
+                  session?.userImage === undefined
+                    ? "/img/common/user_profile.jpg"
+                    : session?.userImage
+                }
+                width="100"
+                height="100"
+                alt="user profile img"
+              />
             </figure>
           </div>
           <div className={styles.util_name}>

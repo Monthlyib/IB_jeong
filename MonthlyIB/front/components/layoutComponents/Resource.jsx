@@ -32,6 +32,12 @@ const Resource = () => {
             <FontAwesomeIcon icon={faChevronRight} className={styles.icon} />
           </Link>
         </li>
+        <li>
+          <Link href="/board/learningtest">
+            <span>학습유형테스트</span>
+            <FontAwesomeIcon icon={faChevronRight} className={styles.icon} />
+          </Link>
+        </li>
       </ul>
     </>
   );

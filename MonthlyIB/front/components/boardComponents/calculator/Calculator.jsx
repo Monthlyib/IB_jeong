@@ -4,42 +4,10 @@ import { useEffect, useState } from "react";
 import styles from "../BoardCommon.module.css";
 import BoardCommon from "../BoardCommon";
 import CalculatorMenu from "./CalculatorMenu";
-import {
-  USUniversityList,
-  UKUniversityList,
-  SingaporeUniversityList,
-  KoreaUniversityList,
-  HKUniversityList,
-  CanadaUniversityList,
-  USUniversityInfo,
-  KoreaUniversityInfo,
-  SingaporeUniversityInfo,
-  UKUniversityInfo,
-  CanadaUniversityInfo,
-  HKUniversityInfo,
-} from "./UniversityList";
+import { listWrap, infoWrap } from "./UniversityList";
 import SchoolItems from "./SchoolItems";
 
 const Calculator = () => {
-  const listWrap = {
-    "-": [],
-    us: USUniversityList,
-    gb: UKUniversityList,
-    sg: SingaporeUniversityList,
-    kr: KoreaUniversityList,
-    hk: HKUniversityList,
-    ca: CanadaUniversityList,
-  };
-
-  const infoWrap = {
-    us: USUniversityInfo,
-    gb: UKUniversityInfo,
-    sg: SingaporeUniversityInfo,
-    kr: KoreaUniversityInfo,
-    hk: HKUniversityInfo,
-    ca: CanadaUniversityInfo,
-  };
-
   const numCalcMenu = [1, 2, 3, 4, 5, 6];
   const [points, setPoints] = useState([0, 0, 0, 0, 0, 0, 0]);
   const [totalPoint, setTotalPoint] = useState(0);
@@ -56,7 +24,6 @@ const Calculator = () => {
     "all",
     "all",
   ]);
-
   useEffect(() => {
     if (totalPoint >= 44) {
       setPointCat("44");
@@ -73,6 +40,7 @@ const Calculator = () => {
     } else {
       setPointCat("0");
     }
+    setCurrentPage(1);
   }, [totalPoint]);
 
   const onClickCalculating = () => {
@@ -85,6 +53,7 @@ const Calculator = () => {
 
   const handleCountryChange = (e) => {
     setCountry(e.target.value);
+    console.log(country);
   };
 
   const handlePageChange = (page) => {
@@ -174,13 +143,15 @@ const Calculator = () => {
               onChange={handleCountryChange}
               value={country}
             >
-              <option value="all"> - </option>
+              <option value="all"> 국가별 </option>
               <option value="us">미국</option>
               <option value="gb">영국</option>
               <option value="sg">싱가포르</option>
               <option value="kr">한국</option>
               <option value="hk">홍콩</option>
               <option value="ca">캐나다</option>
+              <option value="au">호주</option>
+              <option value="jp">일본</option>
             </select>
           </div>
           <div className={styles.schools_list_wrap}>

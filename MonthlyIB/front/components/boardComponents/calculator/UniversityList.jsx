@@ -1,4 +1,4 @@
-export const USUniversityList = {
+const USUniversityList = {
   44: [
     "Amherst College",
     "Brown University",
@@ -84,7 +84,7 @@ export const USUniversityList = {
   0: [],
 };
 
-export const UKUniversityList = {
+const UKUniversityList = {
   44: ["Cambridge", "Oxford"],
   43: ["Imperial College London", "UCL"],
   40: [
@@ -107,6 +107,14 @@ export const UKUniversityList = {
     "University of St Andrews",
     "University of Strathclyde",
     "University of Warwick",
+    "Queenmary University",
+    "University of Nottingham",
+    "The University of Sheffield",
+    "Newcastle University",
+    "Cardiff University",
+    "University of Reading",
+    "University of Liverpool",
+    "University of Sussex",
   ],
   33: [
     "Durham University",
@@ -116,37 +124,59 @@ export const UKUniversityList = {
     "University of Birmingham",
     "University of Southampton",
     "University of West London",
+    "University of Leicester",
+    "City, University of London",
   ],
   0: [],
 };
 
-export const SingaporeUniversityList = {
+const SingaporeUniversityList = {
   44: ["NUS"],
   43: [],
   40: ["Nanyang Technological University"],
   37: ["SUTD"],
-  34: [],
+  34: ["Singapore Management University"],
   33: [],
   0: [],
 };
 
-export const KoreaUniversityList = {
+const KoreaUniversityList = {
   44: ["KAIST", "Seoul National University"],
   43: ["Korea University", "Yonsei University", "POSTECH"],
-  40: ["Hanyang University", "Sogang University", "SungKyunKwan University"],
+  40: [
+    "Hanyang University",
+    "Sogang University",
+    "SungKyunKwan University",
+    "Ulsan National Institute of Science and Technology",
+    "Daegu Gyeongbuk Institute of Science and Technology",
+    "Gwangju Institute of Science and Technology",
+  ],
   37: [
     "Chungang University",
     "Ewha Womens University",
     "Konkuk University",
     "Yonsei University Underwood",
     "Hankuk University of Foreign Studies",
+    "Kyungpook National University",
+    "Pusan National University",
+    "Ajou University",
+    "Dongguk University",
+    "Inha University",
   ],
-  34: ["Sookmyung University", "Sungshin University"],
+  34: [
+    "Sookmyung University",
+    "Sungshin University",
+    "Jeonbuk National University",
+    "University of Ulsan",
+    "The Catholic University of Korea",
+    "Kyung Hee University",
+    "Sejong University",
+  ],
   33: [],
   0: [],
 };
 
-export const CanadaUniversityList = {
+const CanadaUniversityList = {
   44: [],
   43: [],
   40: [],
@@ -156,12 +186,24 @@ export const CanadaUniversityList = {
     "University of Toronto",
     "University of Waterloo",
   ],
-  34: [],
-  33: [],
+  34: ["University of Alberta"],
+  33: [
+    "McMaster University",
+    "Universite de Montreal",
+    "University of Calgary",
+    "University of Ottawa",
+    "Western University",
+    "Dalhousie University",
+    "Simon Fraser University",
+    "University of Victoria",
+    "University of Manitoba",
+    "Laval University",
+    "York University",
+  ],
   0: [],
 };
 
-export const HKUniversityList = {
+const HKUniversityList = {
   44: [],
   43: [],
   40: [],
@@ -171,11 +213,42 @@ export const HKUniversityList = {
     "Hong Kong University of Science and Technology",
   ],
   34: ["Hong Kong Polytechnic University"],
-  33: ["City University of Hong Kong"],
+  33: [
+    "City University of Hong Kong",
+    "Hong Kong Baptist University",
+    "Lingnan University, Hong Kong",
+  ],
   0: [],
 };
 
-export const USUniversityInfo = {
+const AustraliaUniversityList = {
+  44: [],
+  43: ["University of Melbourne"],
+  40: [],
+  37: ["Australian National University"],
+  34: ["University of Sydney", "University of New South Wales Sydney"],
+  33: ["University of Queensland", "Monash University"],
+  0: [],
+};
+
+const JapanUniversityList = {
+  44: [],
+  43: [],
+  40: [],
+  37: ["University of Tokyo", "Waseda University"],
+  34: [],
+  33: [
+    "Kyoto University",
+    "Osaka University",
+    "Tohoku University",
+    "Nagoya University",
+    "Hokkaido University",
+    "Keio University",
+  ],
+  0: [],
+};
+
+const USUniversityInfo = {
   MIT: {
     name: "Massachusetts Institute of Technology",
     IBScore: "44-45",
@@ -668,7 +741,7 @@ export const USUniversityInfo = {
   },
 };
 
-export const UKUniversityInfo = {
+const UKUniversityInfo = {
   Cambridge: {
     name: "University of Cambridge",
     IBScore: "44-45",
@@ -851,9 +924,82 @@ export const UKUniversityInfo = {
     rank: "801-1000",
     img: "/img/univ_logos/University of West London.png",
   },
+
+  "Queenmary University": {
+    name: "Queenmary University",
+    IBScore: "34-36",
+    tuition: "£28,350",
+    rank: 145,
+    img: "/img/univ_logos/Queenmary University.png",
+  },
+  "University of Nottingham": {
+    name: "University of Nottingham",
+    IBScore: "34-36",
+    tuition: "£30,750",
+    rank: 100,
+    img: "/img/univ_logos/the-university-of-nottingham.png",
+  },
+
+  "The University of Sheffield": {
+    name: "The University of Sheffield",
+    IBScore: "34-36",
+    tuition: "£29,110",
+    rank: 104,
+    img: "/img/univ_logos/university-of-sheffield-new-20227008.logowik.com.webp",
+  },
+  "Newcastle University": {
+    name: "Newcastle University",
+    IBScore: "34-36",
+    tuition: "£28,190",
+    rank: 110,
+    img: "/img/univ_logos/Newcastle-University-Logo.png",
+  },
+  "Cardiff University": {
+    name: "Cardiff University",
+    IBScore: "34-36",
+    tuition: "£28,200",
+    rank: 154,
+    img: "/img/univ_logos/Cardiff University.png",
+  },
+
+  "University of Reading": {
+    name: "University of Reading",
+    IBScore: "34-36",
+    tuition: "£29,950",
+    rank: 169,
+    img: "/img/univ_logos/university-of-reading-logo-vector.png",
+  },
+  "University of Liverpool": {
+    name: "University of Liverpool",
+    IBScore: "34-36",
+    tuition: "£27,200",
+    rank: 176,
+    img: "/img/univ_logos/University of Liverpool.jpg",
+  },
+  "University of Sussex": {
+    name: "University of Sussex",
+    IBScore: "34-36",
+    tuition: "£21,500",
+    rank: 218,
+    img: "/img/univ_logos/University_of_Sussex_Logo.png",
+  },
+  "University of Leicester": {
+    name: "University of Leicester",
+    IBScore: "≤ 34",
+    tuition: "£24,500",
+    rank: 272,
+    img: "/img/univ_logos/leicester.png",
+  },
+  "City, University of London": {
+    name: "City, University of London",
+    IBScore: "≤ 34",
+    tuition: "£20,700",
+    rank: 328,
+    img: "/img/univ_logos/City University of London.png",
+  },
 };
 
-export const SingaporeUniversityInfo = {
+const SingaporeUniversityInfo = {
   NUS: {
     name: "National University of Singapore",
     IBScore: "44-45",
@@ -869,15 +1015,71 @@ export const SingaporeUniversityInfo = {
     img: "/img/univ_logos/Nanyang_Technological_University.png",
   },
   SUTD: {
-    name: "Singapore University of Technology and Design ",
+    name: "Singapore University of Technology and Design",
     IBScore: "37-39",
     tuition: "$31,950",
     rank: 429,
     img: "/img/univ_logos/SUTD-Singapore-University-of-Technology-and-Design.png",
   },
+  "Singapore Management University": {
+    name: "Singapore Management University",
+    IBScore: "34-36",
+    tuition: "HKD 25,080",
+    rank: 545,
+    img: "/img/univ_logos/singapore-management-university-logo-png-transparent.png",
+  },
 };
 
-export const KoreaUniversityInfo = {
+const AustraliaUniversityInfo = {
+  "University of Melbourne": {
+    name: "University of Melbourne",
+    IBScore: "43",
+    tuition: "AUD 49,326",
+    rank: 14,
+    img: "/img/univ_logos/the-university-of-melbourne-logo-black-and-white.png",
+  },
+
+  "University of Sydney": {
+    name: "University of Sydney",
+    IBScore: "34-36",
+    tuition: "AUD 52,000",
+    rank: 19,
+    img: "/img/univ_logos/university-of-sydney-logo-DBC20EBA62-seeklogo.com.png",
+  },
+
+  "Australian National University": {
+    name: "Australian National University",
+    IBScore: "37-39",
+    tuition: "AUD 48,035",
+    rank: 34,
+    img: "/img/univ_logos/Australian National University.png",
+  },
+
+  "University of New South Wales Sydney": {
+    name: "University of New South Wales Sydney",
+    IBScore: "34-36",
+    tuition: "AUD 42,500",
+    rank: 19,
+    img: "/img/univ_logos/university-of-new-south-wales-logo-png-transparent-background.png",
+  },
+
+  "University of Queensland": {
+    name: "University of Queensland",
+    IBScore: "≤ 34",
+    tuition: "AUD 48,160",
+    rank: 43,
+    img: "/img/univ_logos/university-of-queensland-logo-DA3D407ABB-seeklogo.com.png",
+  },
+
+  "Monash University": {
+    name: "Monash University",
+    IBScore: "≤ 34",
+    tuition: "AUD 52,200",
+    rank: 42,
+    img: "/img/univ_logos/Monash University.png",
+  },
+};
+const KoreaUniversityInfo = {
   KAIST: {
     name: "KAIST",
     IBScore: "44-45",
@@ -983,58 +1185,317 @@ export const KoreaUniversityInfo = {
     rank: "901-905",
     img: "/img/univ_logos/Sungshin.png",
   },
+
+  "Ulsan National Institute of Science and Technology": {
+    name: "Ulsan National Institute of Science and Technology",
+    IBScore: "40-42",
+    tuition: "￦6,211,000",
+    rank: 266,
+    img: "/img/univ_logos/UNIST.jpeg",
+  },
+
+  "Daegu Gyeongbuk Institute of Science and Technology": {
+    name: "Daegu Gyeongbuk Institute of Science and Technology",
+    IBScore: "40-42",
+    tuition: "￦7,280,000",
+    rank: 307,
+    img: "/img/univ_logos/DGIST.jpeg",
+  },
+
+  "Gwangju Institute of Science and Technology": {
+    name: "Gwangju Institute of Science and Technology",
+    IBScore: "40-42",
+    tuition: "￦2,060,000",
+    rank: 328,
+    img: "/img/univ_logos/GIST.jpeg",
+  },
+  "Kyung Hee University": {
+    name: "Kyung Hee University",
+    IBScore: "34-36",
+    tuition: "￦7,991,000",
+    rank: 332,
+    img: "/img/univ_logos/경희대.jpeg",
+  },
+
+  "Sejong University": {
+    name: "Sejong University",
+    IBScore: "34-36",
+    tuition: "￦7,945,000",
+    rank: 436,
+    img: "/img/univ_logos/세종대.jpeg",
+  },
+
+  "Kyungpook National University": {
+    name: "Kyungpook National University",
+    IBScore: "37-39",
+    tuition: "￦4,500,000",
+    rank: 520,
+    img: "/img/univ_logos/경북대.jpeg",
+  },
+
+  "Pusan National University": {
+    name: "Pusan National University",
+    IBScore: "37-39",
+    tuition: "￦4,465,000",
+    rank: "611-620",
+    img: "/img/univ_logos/부산대.jpeg",
+  },
+  "Ajou University": {
+    name: "Ajou University",
+    IBScore: "37-39",
+    tuition: "￦8,312,000",
+    rank: "631-640",
+    img: "/img/univ_logos/아주대.jpeg",
+  },
+  "Dongguk University": {
+    name: "Dongguk University",
+    IBScore: "37-39",
+    tuition: "￦8,007,000",
+    rank: "671-680",
+    img: "/img/univ_logos/동국대.png",
+  },
+
+  "Inha University": {
+    name: "Inha University",
+    IBScore: "37-39",
+    tuition: "￦7,771,000",
+    rank: "691-700",
+    img: "/img/univ_logos/인하대.jpeg",
+  },
+
+  "Jeonbuk National University": {
+    name: "Jeonbuk National University",
+    IBScore: "34-36",
+    tuition: "￦4,432,000",
+    rank: "721-730",
+    img: "/img/univ_logos/전북대.jpeg",
+  },
+
+  "University of Ulsan": {
+    name: "University of Ulsan",
+    IBScore: "34-36",
+    tuition: "￦7,334,000",
+    rank: "751-760",
+    img: "/img/univ_logos/울산대.jpeg",
+  },
+
+  "The Catholic University of Korea": {
+    name: "The Catholic University of Korea",
+    IBScore: "34-36",
+    tuition: "￦7,022,000",
+    rank: "781-790",
+    img: "/img/univ_logos/가톨릭대학교.jpeg",
+  },
 };
 
-export const CanadaUniversityInfo = {
+const CanadaUniversityInfo = {
   "McGill University": {
     name: "McGill University",
     IBScore: "37-39",
-    tuition: "$65,604",
+    tuition: "CAD 65,604",
     rank: 30,
     img: "/img/univ_logos/McGill_University.png",
   },
   "University of British Columbia": {
     name: "University of British Columbia",
     IBScore: "37-39",
-    tuition: "$61,743",
+    tuition: "CAD 61,743",
     rank: 34,
     img: "/img/univ_logos/UBC- University of British Columbia.png",
   },
   "University of Toronto": {
     name: "University of Toronto",
     IBScore: "37-39",
-    tuition: "$65,076",
+    tuition: "CAD 65,076",
     rank: 21,
     img: "/img/univ_logos/University_of_Toronto.png",
   },
   "University of Waterloo": {
     name: "University of Waterloo",
     IBScore: "37-39",
-    tuition: "$67,941",
+    tuition: "CAD 67,941",
     rank: 112,
     img: "/img/univ_logos/University Of Waterloo.png",
   },
+
+  "University of Alberta": {
+    name: "University of Alberta",
+    IBScore: "34-36",
+    tuition: "CAD 33,968",
+    rank: 111,
+    img: "/img/univ_logos/university-of-alberta-3-logo.png",
+  },
+
+  "McMaster University": {
+    name: "McMaster University",
+    IBScore: "≤ 34",
+    tuition: "CAD 44,625",
+    rank: 189,
+    img: "/img/univ_logos/McMaster_University_logo.svg.png",
+  },
+
+  "Universite de Montreal": {
+    name: "Universite de Montreal",
+    IBScore: "≤ 34",
+    tuition: "CAD 56,507",
+    rank: 141,
+    img: "/img/univ_logos/University of Montreal.png",
+  },
+
+  "University of Calgary": {
+    name: "University of Calgary",
+    IBScore: "≤ 34",
+    tuition: "CAD 32,543",
+    rank: 182,
+    img: "/img/univ_logos/UCalgary-vertical-logo_1.png",
+  },
+
+  "University of Ottawa": {
+    name: "University of Ottawa",
+    IBScore: "≤ 34",
+    tuition: "CAD 57,910",
+    rank: 203,
+    img: "/img/univ_logos/university-of-ottawa-logo-88B9787547-seeklogo.com.png",
+  },
+
+  "Western University": {
+    name: "Western University",
+    IBScore: "≤ 34",
+    tuition: "CAD 42,233",
+    rank: 114,
+    img: "/img/univ_logos/western_landingr127596624961852879370484998391615659684704052568r.png",
+  },
+
+  "Dalhousie University": {
+    name: "Dalhousie University",
+    IBScore: "≤ 34",
+    tuition: "CAD 36,030",
+    rank: 298,
+    img: "/img/univ_logos/Dalhousie University.png",
+  },
+
+  "Simon Fraser University": {
+    name: "Simon Fraser University",
+    IBScore: "≤ 34",
+    tuition: "CAD 42,898",
+    rank: 318,
+    img: "/img/univ_logos/SFU-block-logo.svg.png",
+  },
+
+  "University of Victoria": {
+    name: "University of Victoria",
+    IBScore: "≤ 34",
+    tuition: "CAD 32,007",
+    rank: 322,
+    img: "/img/univ_logos/university-of-victoria-logo-DEF809D6B0-seeklogo.com.png",
+  },
+
+  "University of Manitoba": {
+    name: "University of Manitoba",
+    IBScore: "≤ 34",
+    tuition: "CAD 22,830",
+    rank: "671-680",
+    img: "/img/univ_logos/University-of-Manitoba-350x169.png",
+  },
+
+  "Laval University": {
+    name: "Laval University",
+    IBScore: "≤ 34",
+    tuition: "CAD 40,700",
+    rank: 441,
+    img: "/img/univ_logos/universite-laval-logo-B83BF03158-seeklogo.com.png",
+  },
+
+  "York University": {
+    name: "York University",
+    IBScore: "≤ 34",
+    tuition: "CAD 36,555",
+    rank: 353,
+    img: "/img/univ_logos/university-of-york8313.jpg",
+  },
 };
 
-export const HKUniversityInfo = {
+const JapanUniversityInfo = {
+  "University of Tokyo": {
+    name: "University of Tokyo",
+    IBScore: "37-39",
+    tuition: "¥834,800",
+    rank: 28,
+    img: "/img/univ_logos/University_of_Tokyo-Logo.wine.png",
+  },
+
+  "Kyoto University": {
+    name: "Kyoto University",
+    IBScore: "≤ 34",
+    tuition: "¥834,800",
+    rank: 46,
+    img: "/img/univ_logos/Kyoto University.png",
+  },
+  "Osaka University": {
+    name: "Osaka University",
+    IBScore: "≤ 34",
+    tuition: "¥834,800",
+    rank: 80,
+    img: "/img/univ_logos/Osaka_University_Logo.png",
+  },
+  "Tohoku University": {
+    name: "Tohoku University",
+    IBScore: "≤ 34",
+    tuition: "¥834,800",
+    rank: 113,
+    img: "/img/univ_logos/Tohoku_University_Logo.svg.png",
+  },
+
+  "Nagoya University": {
+    name: "Nagoya University",
+    IBScore: "≤ 34",
+    tuition: "¥822,800",
+    rank: 176,
+    img: "/img/univ_logos/Nagoya University.png",
+  },
+  "Hokkaido University": {
+    name: "Hokkaido University",
+    IBScore: "≤ 34",
+    tuition: "¥834,800",
+    rank: 196,
+    img: "/img/univ_logos/Hokkaido University.png",
+  },
+
+  "Waseda University": {
+    name: "Waseda University",
+    IBScore: "37-39",
+    tuition: "¥1,281,000",
+    rank: 199,
+    img: "/img/univ_logos/Waseda_university_logo.svg.png",
+  },
+
+  "Keio University": {
+    name: "Keio University",
+    IBScore: "≤ 34",
+    tuition: "¥1,373,350",
+    rank: 214,
+    img: "/img/univ_logos/Keio University.png",
+  },
+};
+const HKUniversityInfo = {
   "Chinese University of Hongkong": {
     name: "Chinese University of Hongkong",
     IBScore: "37-39",
-    tuition: "HKD145,000",
+    tuition: "HKD 145,000",
     rank: 47,
     img: "/img/univ_logos/Chinese_University_of_Hong_Kong.png",
   },
   "Hong Kong University": {
     name: "Hong Kong University",
     IBScore: "37-39",
-    tuition: "HKD145,000",
+    tuition: "HKD 145,000",
     rank: 26,
     img: "/img/univ_logos/University_of_Hong_Kong.png",
   },
   "Hong Kong University of Science and Technology": {
     name: "Hong Kong University of Science and Technology",
     IBScore: "37-39",
-    tuition: "HKD170,000",
+    tuition: "HKD 170,000",
     rank: 60,
     img: "/img/univ_logos/Hong_Kong_University_of_Science_and_Technology.png",
   },
@@ -1052,4 +1513,129 @@ export const HKUniversityInfo = {
     rank: 70,
     img: "/img/univ_logos/City-University-of-Hong-Kong.png",
   },
+  "Hong Kong Baptist University": {
+    name: "Hong Kong Baptist University",
+    IBScore: "≤ 34",
+    tuition: "HKD 160,000",
+    rank: 295,
+    img: "/img/univ_logos/Hong_Kong_Baptist_University-logo-41C356C9A4-seeklogo.com.png",
+  },
+  "Lingnan University, Hong Kong": {
+    name: "Lingnan University, Hong Kong",
+    IBScore: "≤ 34",
+    tuition: "HKD 145,000",
+    rank: "641-650",
+    img: "/img/univ_logos/Lingnan University.png",
+  },
+};
+
+export const listWrap = {
+  all: {
+    44: [].concat.apply(
+      [],
+      [
+        USUniversityList[44],
+        UKUniversityList[44],
+        SingaporeUniversityList[44],
+        KoreaUniversityList[44],
+        HKUniversityList[44],
+        CanadaUniversityList[44],
+        AustraliaUniversityList[44],
+        JapanUniversityList[44],
+      ]
+    ),
+    43: [].concat.apply(
+      [],
+      [
+        USUniversityList[43],
+        UKUniversityList[43],
+        SingaporeUniversityList[43],
+        KoreaUniversityList[43],
+        HKUniversityList[43],
+        CanadaUniversityList[43],
+        AustraliaUniversityList[43],
+        JapanUniversityList[43],
+      ]
+    ),
+    40: [].concat.apply(
+      [],
+      [
+        USUniversityList[40],
+        UKUniversityList[40],
+        SingaporeUniversityList[40],
+        KoreaUniversityList[40],
+        HKUniversityList[40],
+        CanadaUniversityList[40],
+        AustraliaUniversityList[40],
+        JapanUniversityList[40],
+      ]
+    ),
+    37: [].concat.apply(
+      [],
+      [
+        USUniversityList[37],
+        UKUniversityList[37],
+        SingaporeUniversityList[37],
+        KoreaUniversityList[37],
+        HKUniversityList[37],
+        CanadaUniversityList[37],
+        AustraliaUniversityList[37],
+        JapanUniversityList[37],
+      ]
+    ),
+    34: [].concat.apply(
+      [],
+      [
+        USUniversityList[34],
+        UKUniversityList[34],
+        SingaporeUniversityList[34],
+        KoreaUniversityList[34],
+        HKUniversityList[34],
+        CanadaUniversityList[34],
+        AustraliaUniversityList[34],
+        JapanUniversityList[34],
+      ]
+    ),
+    33: [].concat.apply(
+      [],
+      [
+        USUniversityList[33],
+        UKUniversityList[33],
+        SingaporeUniversityList[33],
+        KoreaUniversityList[33],
+        HKUniversityList[33],
+        CanadaUniversityList[33],
+        AustraliaUniversityList[33],
+        JapanUniversityList[33],
+      ]
+    ),
+  },
+  us: USUniversityList,
+  gb: UKUniversityList,
+  sg: SingaporeUniversityList,
+  kr: KoreaUniversityList,
+  hk: HKUniversityList,
+  ca: CanadaUniversityList,
+  au: AustraliaUniversityList,
+  jp: JapanUniversityList,
+};
+export const infoWrap = {
+  all: {
+    ...USUniversityInfo,
+    ...UKUniversityInfo,
+    ...SingaporeUniversityInfo,
+    ...KoreaUniversityInfo,
+    ...HKUniversityInfo,
+    ...CanadaUniversityInfo,
+    ...AustraliaUniversityInfo,
+    ...JapanUniversityInfo,
+  },
+  us: USUniversityInfo,
+  gb: UKUniversityInfo,
+  sg: SingaporeUniversityInfo,
+  kr: KoreaUniversityInfo,
+  hk: HKUniversityInfo,
+  ca: CanadaUniversityInfo,
+  au: AustraliaUniversityInfo,
+  jp: JapanUniversityInfo,
 };

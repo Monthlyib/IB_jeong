@@ -1,10 +1,6 @@
-import { useRouter } from "next/navigation";
+import BulletinBoardDetail from "@/components/boardComponents/commonboard/BulletinBoardDetail";
 
-import BulletinBoardDetail from "../../../../components/boardComponents/commonboard/BulletinBoardDetail";
-
-const bulletinBoardDetail = () => {
-  const router = useRouter();
-
+const bulletinBoardDetail = ({ pageId }) => {
   const { pid } = router.query;
   if (!pid) {
     return null;

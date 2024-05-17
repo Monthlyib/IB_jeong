@@ -5,12 +5,17 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { useCallback } from "react";
 import { useSession } from "next-auth/react";
+import shortid from "shortid";
+import Image from "next/image";
+
+import { monthlyIBDeleteItem } from "@/api/monthlyIbAPI";
 
 const IbItems = ({
   IBContents,
   currentPage,
   numShowContents,
   onPageChange,
+  setIbpost,
 }) => {
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
@@ -18,19 +23,11 @@ const IbItems = ({
   };
   const paginatedPage = paginate(IBContents, currentPage);
   const { data: session } = useSession();
-
-  const onClickDelete = useCallback(async (num) => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC.URL}/api/monthly-ib/${num}`,
-        {
-          method: "DELETE",
-        }
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
+  const onClickDelete = async (num) => {
+    monthlyIBDeleteItem(num, session);
+    const temp = [...IBContents];
+    setIbpost([...temp.filter((v) => v.monthlyIbId !== num)]);
+  };
 
   // const onClickPost = useCallback((num) => {
   //   dispatch(ibPostActions.getIBPdfRequest({ num }));
@@ -39,11 +36,11 @@ const IbItems = ({
     <>
       {IBContents.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.ib_item} key={content.num}>
-            {session?.userId === 1 && (
+          <div className={styles.ib_item} key={shortid.generate()}>
+            {session?.authority === "ADMIN" && (
               <button
                 onClick={() => {
-                  onClickDelete(content.num);
+                  onClickDelete(content.monthlyIbId);
                 }}
               >
                 <FontAwesomeIcon icon={faCircleXmark} />
@@ -56,11 +53,11 @@ const IbItems = ({
               }}
             >
               <figure>
-                <img
-                  src={content.Image.src}
+                <Image
+                  src={content.monthlyIbThumbnailUrl}
                   alt="잡지 이미지"
-                  width={353}
-                  height={400}
+                  width="353"
+                  height="400"
                 />
               </figure>
               <span className={styles.ib_txt}>{content.title}</span>

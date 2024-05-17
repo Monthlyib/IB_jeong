@@ -1,11 +1,25 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import styles from "./signup.module.css";
-import { useRouter } from "next/navigation";
+import styles from "./Signup.module.css";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
+import { userRegisterWithSocialInfo } from "@/api/userAPI";
+
+import {
+  openAPIVerifyEmail,
+  openAPIVerifyNum,
+  openAPIRegister,
+  openAPIVerifyUsername,
+} from "@/api/openAPI";
 
 const SignUp = () => {
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("id");
+  const paramEmail = searchParams.get("email");
+  const accessToken = searchParams.get("access_token");
+  const authCode = searchParams.get("auth_code");
+  const socialType = searchParams.get("social");
   const checkBoxes = [
     {
       id: "1",
@@ -18,18 +32,19 @@ const SignUp = () => {
   ];
 
   const router = useRouter();
-  const query = router.query;
+  const { data: session } = useSession();
 
-  const pattern = /^(?=.*?[A-Za-z])(?=.*?[0-9])(?=.*?[\W_]).{8,}$/;
+  const pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
 
   const [username, setUsername] = useState("");
-  const [checkDuplication, setCheckDuplication] = useState(true);
+  const [checkDuplication, setCheckDuplication] = useState(null);
   const [password, setPassword] = useState("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [country, setCountry] = useState("");
   const name = useRef("");
   const email = useRef("");
+  if (paramEmail) email.current = paramEmail;
   const dob = useRef("");
   const school = useRef("");
   const grade = useRef("");
@@ -40,12 +55,10 @@ const SignUp = () => {
   const [termError, setTermError] = useState(true);
   const [consent_marketing, setMarketing] = useState(false);
 
-  const [duplicationCheckStatus, setDuplicationCheckStatus] = useState(true);
   const [verifyEmail, setVerifyEmail] = useState(false);
-  const { data: session } = useSession();
 
   useEffect(() => {
-    if (session?.username) {
+    if (session?.userStatus === "ACTIVE") {
       router.replace("/");
     }
   }, [session]);
@@ -123,106 +136,65 @@ const SignUp = () => {
     (e) => {
       setPasswordCheck(e.target.value);
       setPasswordError(e.target.value !== password);
+      if (userId) setPasswordError(false);
     },
     [password]
   );
 
-  const onClickVerifyEmail = useCallback(async () => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}open-api/verify-email`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: email.current }),
-        }
-      );
-      if (res.ok) {
-        console.log("yay");
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const onClickVerifyEmail = useCallback(() => {
+    openAPIVerifyEmail(email);
   }, [email]);
 
   const onClickVerifyEmailNum = useCallback(async () => {
-    try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}open-api/verify-num`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email.current,
-            verifyNum: verifyNum.current,
-          }),
-        }
-      );
-      if (res.ok) {
-        console.log("yay");
-        setVerifyEmail(true);
-      }
-    } catch (error) {
-      console.error(error);
+    const res = await openAPIVerifyNum(email, verifyNum);
+    if (res?.result.status === 200) setVerifyEmail(true);
+    else if (res?.message === "잘못된 인증 번호 입니다.") {
+      setVerifyEmail(false);
+      alert("잘못된 인증 번호 입니다.");
+    } else {
+      alert("다시 시도해주세요.");
     }
   }, [email]);
 
-  const onClickDuplicationCheck = useCallback(() => {}, [username]);
+  const onClickDuplicationCheck = useCallback(async () => {
+    const res = await openAPIVerifyUsername(username);
+    if (res?.result.status === 200) setCheckDuplication(true);
+    else if (res?.message === "USER EXIST") setCheckDuplication(false);
+  }, [username]);
 
-  const onSubmitForm = useCallback(
-    async (e) => {
-      e.preventDefault();
-      try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}open-api/register`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username,
-              password,
-              nickname: name.current,
-              birth: dob.current,
-              school: school.current,
-              grade: grade.current,
-              address: address.current,
-              termsOfUseCheck: true,
-              privacyTermsCheck: true,
-              marketingTermsCheck: consent_marketing,
-            }),
-          }
-        );
-        if (res.ok) {
-          await signIn("credentials", {
-            username,
-            password,
-            redirect: false,
-          });
-          router.push("/");
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    [
-      username,
-      password,
-      name,
-      email,
-      dob,
-      grade,
-      address,
-      consent_marketing,
-      school,
-      query,
-    ]
-  );
+  const onSubmitForm = async (e) => {
+    e.preventDefault();
+    if (userId) {
+      userRegisterWithSocialInfo(
+        userId,
+        accessToken,
+        username,
+        name,
+        dob,
+        school,
+        grade,
+        address,
+        consent_marketing,
+        signIn,
+        authCode,
+        socialType
+      );
+    } else
+      openAPIRegister(
+        username,
+        password,
+        name,
+        email,
+        dob,
+        school,
+        grade,
+        address,
+        country,
+        verifyNum,
+        consent_marketing,
+        signIn
+      );
+  };
 
   return (
     <>
@@ -250,11 +222,11 @@ const SignUp = () => {
               중복 확인
             </button>
             <div className={styles.frm_msg_cont}>
-              {duplicationCheckStatus === null ? (
+              {checkDuplication === null ? (
                 <span className={styles.frm_msg}>
                   사용하실 아이디를 입력해주세요.
                 </span>
-              ) : duplicationCheckStatus === true ? (
+              ) : checkDuplication === true ? (
                 <span className={`${styles.frm_msg} ${styles.good}`}>
                   사용가능한 아이디 입니다.
                 </span>
@@ -265,7 +237,6 @@ const SignUp = () => {
               )}
             </div>
           </div>
-
           <div className={styles.inputbox_cont}>
             <input
               type="password"
@@ -276,6 +247,7 @@ const SignUp = () => {
               placeholder="비밀번호"
               value={password}
               onChange={onChangePassword}
+              disabled={userId === null ? false : true}
             />
             <div className={styles.frm_msg_cont}>
               {password === "" || !pattern.test(password) ? (
@@ -300,6 +272,7 @@ const SignUp = () => {
               name="user-pwcheck"
               value={passwordCheck}
               onChange={onChangePasswordCheck}
+              disabled={userId === null ? false : true}
             />
             <div className={styles.frm_msg_cont}>
               {passwordCheck === "" ? (
@@ -317,7 +290,6 @@ const SignUp = () => {
               )}
             </div>
           </div>
-
           <div className={styles.inputbox_cont}>
             <div className={styles.input_btn_wrap}>
               <input
@@ -326,13 +298,21 @@ const SignUp = () => {
                 placeholder="이메일"
                 defaultValue={email.current}
                 onChange={onChangeEmail}
+                disabled={
+                  paramEmail === null && verifyEmail === false ? false : true
+                }
               />
-              <button type="button" onClick={onClickVerifyEmail}>
+              <button
+                type="button"
+                onClick={onClickVerifyEmail}
+                disabled={
+                  paramEmail === null && verifyEmail === false ? false : true
+                }
+              >
                 인증번호 발송
               </button>
             </div>
           </div>
-
           <div className={styles.inputbox_cont}>
             <div className={styles.input_btn_wrap}>
               <input
@@ -341,13 +321,21 @@ const SignUp = () => {
                 placeholder="인증번호"
                 maxLength="6"
                 onChange={onChangeVerifyNum}
+                disabled={
+                  paramEmail === null && verifyEmail === false ? false : true
+                }
               />
-              <button type="button" onClick={onClickVerifyEmailNum}>
+              <button
+                type="button"
+                onClick={onClickVerifyEmailNum}
+                disabled={
+                  paramEmail === null && verifyEmail === false ? false : true
+                }
+              >
                 확인
               </button>
             </div>
           </div>
-
           <div className={styles.inputbox_cont}>
             <input
               type="text"
@@ -360,7 +348,6 @@ const SignUp = () => {
               onChange={onChangeName}
             />
           </div>
-
           <div className={styles.inputbox_cont}>
             <input
               type="text"
@@ -373,7 +360,6 @@ const SignUp = () => {
               onChange={onChangeDob}
             />
           </div>
-
           <div className={styles.inputbox_cont}>
             <input
               type="text"
@@ -386,7 +372,6 @@ const SignUp = () => {
               onChange={onChangeSchool}
             />
           </div>
-
           <div className={styles.inputbox_cont}>
             <input
               type="text"
@@ -399,7 +384,6 @@ const SignUp = () => {
               onChange={onChangeGrade}
             />
           </div>
-
           <div className={styles.inputbox_cont}>
             <div className={styles.select_cont}>
               <select className="contry_select" onChange={onChangeCountry}>
@@ -419,7 +403,6 @@ const SignUp = () => {
               />
             </div>
           </div>
-
           <div className={styles.frm_agree_cont}>
             <div className={styles.frm_agree_all}>
               <input
@@ -496,6 +479,7 @@ const SignUp = () => {
             {checkDuplication === true &&
             passwordError === false &&
             termError === false ? (
+              // (userId !== null || verifyEmail === true)
               <button type="submit" className={styles.login_btn}>
                 가입하기
               </button>

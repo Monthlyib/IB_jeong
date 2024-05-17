@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import BoardCommonHead from "../BoardCommonHead";
+import { useSession } from "next-auth/react";
 
 const NewsComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,9 +15,8 @@ const NewsComponents = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
   const [news, setNews] = useState([]);
-  // const { news } = useSelector((state) => state.news);
-  // const { logInDone } = useSelector((state) => state.user);
-
+  const { data: session } = useSession();
+  // const { news } = useSelector((state) => state.news)
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -39,14 +39,14 @@ const NewsComponents = () => {
           modal={0}
           placeholder="입시뉴스 검색"
         />
-        {/* {logInDone && (
+        {session?.userId === 1 && (
           <div className={styles.right_btn}>
             <Link href="/board/newswrite" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />
               <span>글쓰기</span>
             </Link>
           </div>
-        )} */}
+        )}
         <div className={styles.board_wrap}>
           <NewsItems
             newsContents={searching ? searchedPosts : news}

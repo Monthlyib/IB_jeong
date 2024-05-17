@@ -1,30 +1,20 @@
 import NextAuth from "next-auth/next";
 import CredentialProvider from "next-auth/providers/credentials";
+import {
+  openAPILogin,
+  openAPIReissueToken,
+  openAPISocialLoginCheck,
+  openAPINaverLogin,
+} from "@/api/openAPI";
 
-const loginPost = async (credentials) => {
+async function refreshAcessToken(userId) {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}open-api/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: credentials?.username,
-          password: credentials?.password,
-        }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-    const json = await res.json();
-    return json;
+    const res = await openAPIReissueToken(userId);
+    return res.data;
   } catch (error) {
     console.error(error);
   }
-};
+}
 
 export const authOptions = {
   pages: {
@@ -32,12 +22,41 @@ export const authOptions = {
   },
   providers: [
     CredentialProvider({
-      name: "credentials",
-      credentails: {},
-      async authorize(credentails) {
+      id: "credentials",
+      name: "Credentials",
+      credentials: {},
+      async authorize(credentials) {
         try {
-          const user = await loginPost(credentails);
-          console.log("success?", user);
+          const user = await openAPILogin(credentials);
+          return user.data;
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      },
+    }),
+    CredentialProvider({
+      id: "social",
+      name: "social",
+      credentials: {},
+      async authorize(credentials) {
+        try {
+          const user = await openAPISocialLoginCheck(credentials);
+          return user.data;
+        } catch (error) {
+          console.error(error);
+          return null;
+        }
+      },
+    }),
+
+    CredentialProvider({
+      id: "naver",
+      name: "naver",
+      credentials: {},
+      async authorize(credentials) {
+        try {
+          const user = await openAPINaverLogin(credentials);
           return user.data;
         } catch (error) {
           console.error(error);
@@ -48,11 +67,17 @@ export const authOptions = {
   ],
   callbacks: {
     async jwt({ token, user }) {
+      token.expires = Date.now() + 500;
+      token.refresh = true;
       if (user?.userId) {
         token.userId = user.userId;
       }
       if (user?.username) {
         token.username = user.username;
+      }
+
+      if (user?.email) {
+        token.email = user.email;
       }
 
       if (user?.accessToken) {
@@ -62,14 +87,29 @@ export const authOptions = {
       if (user?.nickname) {
         token.nickname = user.nickname;
       }
-      return token;
+      if (user?.authority) {
+        token.authority = user.authority;
+      }
+
+      if (user?.userStatus) {
+        token.userStatus = user.userStatus;
+      }
+
+      if (Date.now() < token.expires) {
+        return token;
+      }
+      return refreshAcessToken(user?.userId);
     },
 
-    async session({ session, token, user }) {
+    async session({ session, token }) {
       session.userId = token.userId;
       session.username = token.username;
+      session.email = token.email;
       session.nickname = token.nickname;
       session.accessToken = token.accessToken;
+      session.authority = token.authority;
+      session.refresh = token.refresh;
+      session.userStatus = token.userStatus;
       return session;
     },
   },
@@ -78,7 +118,7 @@ export const authOptions = {
     strategy: "jwt",
   },
 
-  secret: process.env.AUTH_SECRET,
+  secret: process.env.NEXT_PUBLIC_AUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
