@@ -299,6 +299,7 @@ export const questionGetItem = async (questionId) => {
 
 export const boardGetList = async (page, keyWord) => {
   try {
+    console.log("testing ", process.env.NEXT_PUBLIC_API_URL);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/board?page=${page}&keyWord=${keyWord}`,
       {
