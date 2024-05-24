@@ -1,4 +1,4 @@
-import NextAuth from "next-auth/next";
+import NextAuth from "next-auth";
 import CredentialProvider from "next-auth/providers/credentials";
 import {
   openAPILogin,
