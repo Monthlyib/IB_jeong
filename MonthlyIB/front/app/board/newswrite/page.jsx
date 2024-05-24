@@ -1,9 +1,12 @@
 import NewsPost from "@/components/boardComponents/news/NewsPost";
+import { Suspense } from "react";
 
 const NewsWrite = () => {
   return (
     <>
-      <NewsPost />
+      <Suspense>
+        <NewsPost />
+      </Suspense>
     </>
   );
 };

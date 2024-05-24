@@ -1,9 +1,12 @@
 import BulletinBoardPost from "@/components/boardComponents/commonboard/BulletinBoardPost";
+import { Suspense } from "react";
 
 const BulletinBoardWrite = () => {
   return (
     <>
-      <BulletinBoardPost />
+      <Suspense>
+        <BulletinBoardPost />
+      </Suspense>
     </>
   );
 };
