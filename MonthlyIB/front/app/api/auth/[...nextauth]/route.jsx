@@ -5,7 +5,7 @@ import {
   openAPIReissueToken,
   openAPISocialLoginCheck,
   openAPINaverLogin,
-} from "@/api/openAPI";
+} from "@/apis/openAPI";
 
 async function refreshAcessToken(userId) {
   try {

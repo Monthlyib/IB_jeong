@@ -7,7 +7,7 @@ import { faCalendarAlt, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { questionDelete } from "@/api/questionAPI";
+import { questionDelete } from "@/apis/questionAPI";
 import { useRouter } from "next/navigation";
 import QuestionWrite from "./QuestionWrite";
 import { useQuestionStore } from "@/store/question";

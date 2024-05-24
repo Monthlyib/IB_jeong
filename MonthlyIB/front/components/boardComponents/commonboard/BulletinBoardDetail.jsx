@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import shortid from "shortid";
-import { boardDeleteItem } from "@/api/boardAPI";
+import { boardDeleteItem } from "@/apis/boardAPI";
 import { useBoardStore } from "@/store/board";
 
 const BulletinBoardDetail = (pageId) => {

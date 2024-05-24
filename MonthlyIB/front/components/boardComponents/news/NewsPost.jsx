@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import styles from "../BoardCommon.module.css";
 import Link from "next/link";
-import { newsPost, newsReviseItem } from "@/api/newsAPI";
+import { newsPost, newsReviseItem } from "@/apis/newsAPI";
 import { useSession } from "next-auth/react";
 import { useNewstore } from "@/store/news";
 

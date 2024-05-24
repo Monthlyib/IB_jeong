@@ -13,7 +13,7 @@ import { useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useNewstore } from "@/store/news";
-import { newsDeleteItem } from "@/api/newsAPI";
+import { newsDeleteItem } from "@/apis/newsAPI";
 
 const NewsDetail = (pageId) => {
   const router = useRouter();

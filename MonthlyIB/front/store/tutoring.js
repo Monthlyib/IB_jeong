@@ -1,4 +1,4 @@
-import { TutoringPostItem } from "@/api/tutoringAPI";
+import { TutoringPostItem } from "@/apis/tutoringAPI";
 import { create } from "zustand";
 
 export const useTutoringStore = create((set, get) => ({

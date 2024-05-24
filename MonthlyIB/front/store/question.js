@@ -1,11 +1,11 @@
-import { questionGetItem, questionGetList } from "@/api/openAPI";
+import { questionGetItem, questionGetList } from "@/apis/openAPI";
 import {
   questionDeleteAnswer,
   questionPostAnswerItem,
   questionPostItem,
   questionReviseAnswerItem,
   questionReviseItem,
-} from "@/api/questionAPI";
+} from "@/apis/questionAPI";
 import { create } from "zustand";
 
 export const useQuestionStore = create((set, get) => ({

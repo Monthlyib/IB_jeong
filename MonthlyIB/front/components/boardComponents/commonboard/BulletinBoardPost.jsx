@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../BoardCommon.module.css";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { boardPost, boardReviseItem } from "@/api/boardAPI";
+import { boardPost, boardReviseItem } from "@/apis/boardAPI";
 import { useSession } from "next-auth/react";
 import { useBoardStore } from "@/store/board";
 

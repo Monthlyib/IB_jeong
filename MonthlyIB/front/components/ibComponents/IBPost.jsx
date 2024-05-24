@@ -10,7 +10,7 @@ import {
   monthlyIBPostItem,
   monthlyIBPostThumbnail,
   monthlyIBPostPDFFile,
-} from "@/api/monthlyIbAPI";
+} from "@/apis/monthlyIbAPI";
 
 const IBPost = () => {
   const imageInput = useRef();

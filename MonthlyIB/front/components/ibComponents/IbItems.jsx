@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import shortid from "shortid";
 import Image from "next/image";
 
-import { monthlyIBGetItem } from "@/api/monthlyIbAPI";
+import { monthlyIBGetItem } from "@/apis/monthlyIbAPI";
 import Link from "next/link";
 import { useIBStore } from "@/store/ib";
 

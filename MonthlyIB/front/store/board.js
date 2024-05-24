@@ -3,8 +3,8 @@ import {
   boardReplyPost,
   boardReplyReviseItem,
   boardReplyVote,
-} from "@/api/boardAPI";
-import { boardGetItem, boardGetList } from "@/api/openAPI";
+} from "@/apis/boardAPI";
+import { boardGetItem, boardGetList } from "@/apis/openAPI";
 import { create } from "zustand";
 
 export const useBoardStore = create((set, get) => ({

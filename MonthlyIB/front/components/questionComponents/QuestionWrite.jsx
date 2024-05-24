@@ -5,7 +5,7 @@ import styles from "./Question.module.css";
 
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
-import { questionPostItem, questionReviseItem } from "@/api/questionAPI";
+import { questionPostItem, questionReviseItem } from "@/apis/questionAPI";
 import { useQuestionStore } from "@/store/question";
 
 const DynamicEditor = dynamic(

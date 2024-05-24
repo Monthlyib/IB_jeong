@@ -1,5 +1,5 @@
-import { monthlyIBDeleteItem, monthlyIBGetItem } from "@/api/monthlyIbAPI";
-import { monthlyIBGetList } from "@/api/openAPI";
+import { monthlyIBDeleteItem, monthlyIBGetItem } from "@/apis/monthlyIbAPI";
+import { monthlyIBGetList } from "@/apis/openAPI";
 import { create } from "zustand";
 export const useIBStore = create((set, get) => ({
   loading: false,

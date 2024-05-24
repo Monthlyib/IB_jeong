@@ -1,5 +1,5 @@
-import { newsGetItem } from "@/api/newsAPI";
-import { newsGetList } from "@/api/openAPI";
+import { newsGetItem } from "@/apis/newsAPI";
+import { newsGetList } from "@/apis/openAPI";
 import { create } from "zustand";
 
 export const useNewstore = create((set, get) => ({

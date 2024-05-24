@@ -4,14 +4,14 @@ import styles from "./Signup.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
-import { userRegisterWithSocialInfo } from "@/api/userAPI";
+import { userRegisterWithSocialInfo } from "@/apis/userAPI";
 
 import {
   openAPIVerifyEmail,
   openAPIVerifyNum,
   openAPIRegister,
   openAPIVerifyUsername,
-} from "@/api/openAPI";
+} from "@/apis/openAPI";
 
 const SignUp = () => {
   const searchParams = useSearchParams();
