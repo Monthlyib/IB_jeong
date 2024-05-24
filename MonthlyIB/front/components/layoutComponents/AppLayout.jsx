@@ -76,7 +76,7 @@ const AppLayout = ({ children, disable }) => {
                 <Link href="/ib">월간 IB</Link>
               </li>
               <li>
-                <Link href="/course">영상강의</Link>
+                <Link href="#">영상강의</Link>
               </li>
               <li>
                 <Resource />

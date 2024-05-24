@@ -26,7 +26,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
     2: (
       <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
         <div className={styles.mo_sub_item}>
-          <Link href="/course" className={styles.tit}>
+          <Link href="#" className={styles.tit}>
             전체강의
           </Link>
         </div>
@@ -105,7 +105,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
         </Link>
 
         <div className={styles.util}>
-          <Link href="/subscribe">구독플랜</Link>
+          <Link href="#">구독플랜</Link>
         </div>
       </div>
 
