@@ -18,7 +18,7 @@ const AppLayout = ({ children, disable }) => {
   const [windowSize, setWindowSize] = useState({
     width: undefined,
   });
-  const { data: session } = useSession();
+  const { data: session, status, update } = useSession();
 
   const onMouseOverMenu = useCallback(() => {
     setMouseOverMenu(true);
@@ -46,6 +46,14 @@ const AppLayout = ({ children, disable }) => {
         });
     }
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      update();
+    }, 1000 * 60 * 8);
+    console.log(interval);
+    return () => clearInterval(interval);
+  }, [update]);
 
   return (
     <>

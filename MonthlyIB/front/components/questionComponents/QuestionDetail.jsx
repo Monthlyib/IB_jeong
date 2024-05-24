@@ -1,23 +1,87 @@
 "use client";
 import styles from "./Question.module.css";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCalendarAlt, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { questionGetItem } from "@/api/openAPI";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { questionDelete } from "@/api/questionAPI";
+import { useRouter } from "next/navigation";
+import QuestionWrite from "./QuestionWrite";
+import { useQuestionStore } from "@/store/question";
+const DynamicEditor = dynamic(
+  () => import("@/components/boardComponents/EditorComponents"),
+  {
+    ssr: false,
+  }
+);
 
 const QuestionDetail = (pageId) => {
   const { data: session } = useSession();
-  const [questionDetail, setQuestionDetail] = useState({});
-  const getQuestionDetail = async () => {
-    const res = await questionGetItem(pageId?.pageId);
-    setQuestionDetail({ ...res.data });
+  const {
+    questionDetail,
+    getQuestionDetail,
+    deleteQuestionAnswer,
+    reviseQuestionAnswer,
+    submitQuestionAnswer,
+  } = useQuestionStore();
+  const [answerContent, setAnswerContent] = useState("");
+  const [modal, setModal] = useState(false);
+  const [answerReviseModal, setAnswerReviseModal] = useState(false);
+  const [reviseModal, setReviseModal] = useState(false);
+  const router = useRouter();
+
+  const onClickWriteAnswer = () => {
+    setModal(!modal);
+  };
+
+  const onClickRevise = () => {
+    setReviseModal(!reviseModal);
+  };
+  const onClickAnswerRevise = () => {
+    setAnswerReviseModal(!answerReviseModal);
+  };
+
+  const onClickAnswerDelete = () => {
+    deleteQuestionAnswer(
+      questionDetail?.answer.answerId,
+      pageId?.pageId,
+      session
+    );
+  };
+
+  const onClickDelete = () => {
+    questionDelete(pageId?.pageId, session);
+    router.push("/question");
+  };
+
+  const onClickSumitReviseAnswer = async (e) => {
+    e.preventDefault();
+    reviseQuestionAnswer(
+      questionDetail.answer.answerId,
+      pageId?.pageId,
+      answerContent,
+      session
+    );
+    setAnswerReviseModal(!answerReviseModal);
+  };
+
+  const onClickSumitAnswer = async (e) => {
+    e.preventDefault();
+    submitQuestionAnswer(pageId?.pageId, answerContent, session);
+    setAnswerContent("");
+    setModal(!modal);
   };
 
   useEffect(() => {
-    getQuestionDetail();
+    if (answerReviseModal) setAnswerContent(questionDetail?.answer.content);
+  }, [answerReviseModal]);
+
+  useEffect(() => {
+    getQuestionDetail(pageId?.pageId);
+    console.log(questionDetail);
   }, []);
 
   return (
@@ -30,12 +94,14 @@ const QuestionDetail = (pageId) => {
                 <div className={styles.dt_question_top}>
                   <span
                     className={`${styles.q_ceiling} ${
-                      questionDetail.answer === null
+                      questionDetail?.answer?.answerId !== undefined
                         ? styles.wait
                         : styles.reserve
                     }`}
                   >
-                    {questionDetail.answer === true ? "답변완료" : "답변대기"}
+                    {questionDetail?.answer?.answerId !== undefined
+                      ? "답변완료"
+                      : "답변대기"}
                   </span>
 
                   <div className={styles.dt_question_info}>
@@ -43,13 +109,27 @@ const QuestionDetail = (pageId) => {
                       {questionDetail?.subject}
                     </span>
                     <span className={styles.date}>
-                      {questionDetail.createAt}
+                      {questionDetail?.createAt}
                     </span>
                   </div>
                 </div>
                 <div className={styles.dt_question_title}>
                   <span>Q.</span>
                   <h2>{questionDetail?.title}</h2>
+                  {(questionDetail?.authorId === session?.userId ||
+                    session?.authority === "ADMIN") && (
+                    <div className={styles.dt_question_title_menu}>
+                      <button onClick={onClickRevise}>수정</button>
+                      <button onClick={onClickDelete}>삭제</button>
+                    </div>
+                  )}
+                  {reviseModal === true && (
+                    <QuestionWrite
+                      setModal={setReviseModal}
+                      type="revise"
+                      questionId={pageId.pageId}
+                    />
+                  )}
                 </div>
                 <span
                   className={styles.dt_question_content}
@@ -58,8 +138,8 @@ const QuestionDetail = (pageId) => {
                   }}
                 ></span>
               </div>
-              {questionDetail.answer == true ? (
-                <div className={styles.dt_answer}>
+              {questionDetail?.answer?.answerId !== undefined ? (
+                <div className={styles.dt_answer_exist}>
                   <div className={styles.dt_answer_top}>
                     <span className={`${styles.q_ceiling} ${styles.answer}`}>
                       답변내용
@@ -67,8 +147,14 @@ const QuestionDetail = (pageId) => {
 
                     <div className={styles.dt_answer_info}>
                       <span className={styles.date}>
-                        {questionDetail.answer.date}
+                        {questionDetail.answer?.createAt}
                       </span>
+                      {session?.authority === "ADMIN" && (
+                        <div className={styles.dt_question_title_menu}>
+                          <button onClick={onClickAnswerRevise}>수정</button>
+                          <button onClick={onClickAnswerDelete}>삭제</button>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className={styles.dt_answer_content}>
@@ -76,7 +162,7 @@ const QuestionDetail = (pageId) => {
                     <div>
                       <p
                         dangerouslySetInnerHTML={{
-                          __html: questionDetail?.answer.content,
+                          __html: questionDetail?.answer?.content,
                         }}
                       ></p>
                     </div>
@@ -85,6 +171,46 @@ const QuestionDetail = (pageId) => {
               ) : (
                 <div className={styles.dt_answer}>
                   <h1>아직 답변이 없습니다.</h1>
+                  {session?.authority === "ADMIN" && (
+                    <button
+                      type="button"
+                      className="btn_write"
+                      onClick={onClickWriteAnswer}
+                    >
+                      <FontAwesomeIcon icon={faPenAlt} />
+                      <span>답글작성</span>
+                    </button>
+                  )}
+                </div>
+              )}
+              {(modal === true || answerReviseModal) && (
+                <DynamicEditor
+                  styleName={styles.answer_editor}
+                  content={answerContent}
+                  setContent={setAnswerContent}
+                />
+              )}
+            </div>
+            <div>
+              {(modal === true || answerReviseModal) && (
+                <div
+                  className="inputbox_cont"
+                  style={{ height: 50, textAlign: "center" }}
+                >
+                  <button
+                    style={{
+                      position: "relative",
+                      margin: "0 auto",
+                      minWidth: "18.5rem",
+                    }}
+                    onClick={
+                      modal === true
+                        ? onClickSumitAnswer
+                        : onClickSumitReviseAnswer
+                    }
+                  >
+                    제출
+                  </button>
                 </div>
               )}
             </div>

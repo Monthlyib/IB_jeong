@@ -577,7 +577,7 @@ button.read_btn.delete:hover {
   font-weight: 500;
 }
 
-.comment_filter .comment_select span {
+.comment_filter .comment_select button {
   display: block;
   position: relative;
   padding: 0 0.8rem;
@@ -585,15 +585,15 @@ button.read_btn.delete:hover {
   color: #888;
 }
 
-.comment_filter .comment_select span.active {
+.comment_filter .comment_select button.active {
   color: #000;
 }
 
-.comment_filter .comment_select span:last-child {
+.comment_filter .comment_select button:last-child {
   padding-right: 0;
 }
 
-.comment_filter .comment_select span:before {
+.comment_filter .comment_select button:before {
   content: "";
   position: absolute;
   right: 0;
@@ -603,7 +603,7 @@ button.read_btn.delete:hover {
   background: #000;
 }
 
-.comment_filter .comment_select span:last-child:before {
+.comment_filter .comment_select button:last-child:before {
   display: none;
 }
 
@@ -679,6 +679,10 @@ button.read_btn.delete:hover {
   position: relative;
   font-size: 1.2rem;
   color: #888;
+}
+
+.comment_item .comment_top .comment_option button:hover {
+  font-weight: 900;
 }
 
 .comment_item .comment_top .comment_option button:before {

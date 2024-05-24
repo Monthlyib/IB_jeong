@@ -20,17 +20,21 @@ const NewsItems = ({
       {newsContents.length > 0 ? (
         paginatedPage.map((content) => (
           <div className={styles.board_item} key={content.id}>
-            <Link href={`/board/${content.id}`}>
+            <Link href={`/board/${content.newsId}`}>
               <div className={styles.board_cont}>
                 <p>{content.title}</p>
-                <span>{content.content}</span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: content.content,
+                  }}
+                ></span>
               </div>
               <div>
-                <span>{content.User.userName}</span>
+                <span>{content.authorUsername}</span>
                 <b> · </b>
-                <span>{content.Date}</span>
+                <span>{content.createAt}</span>
                 <b> · </b>
-                <span>{content.View}</span>
+                <span>{content.viewCount}</span>
               </div>
             </Link>
           </div>

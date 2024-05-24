@@ -23,7 +23,7 @@ const QuestionItems = ({
           <div
             className={`${styles.question_item} 
                         ${
-                          content.answered === true
+                          content.questionStatus !== "COMPLETE"
                             ? styles.reserve
                             : styles.wait
                         }`}
@@ -36,7 +36,9 @@ const QuestionItems = ({
               <div className={styles.q_flex_bottom}>
                 <span className={styles.q_class}>{content?.subject}</span>
                 <span className={styles.q_ceiling}>
-                  {content.answered === true ? "답변완료" : "답변대기"}
+                  {content.questionStatus === "COMPLETE"
+                    ? "답변완료"
+                    : "답변대기"}
                 </span>
               </div>
             </Link>

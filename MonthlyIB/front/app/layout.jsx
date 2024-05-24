@@ -2,7 +2,6 @@ import "@/styles/global.css";
 
 import Footer from "@/components/layoutComponents/Footer";
 import AppLayout from "@/components/layoutComponents/AppLayout";
-import Providers from "@/components/Provider";
 import SessionWrapper from "@/components/SessionWrapper";
 
 export const metadata = {
@@ -17,7 +16,7 @@ export default async function RootLayout({ children }) {
         <html lang="en">
           <body>
             <AppLayout />
-            <Providers>{children}</Providers>
+            {children}
             <footer>
               <Footer />
             </footer>

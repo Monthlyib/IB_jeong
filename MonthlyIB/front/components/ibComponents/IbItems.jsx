@@ -3,19 +3,19 @@ import _ from "lodash";
 import Pagination from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-import { useCallback } from "react";
 import { useSession } from "next-auth/react";
 import shortid from "shortid";
 import Image from "next/image";
 
-import { monthlyIBDeleteItem } from "@/api/monthlyIbAPI";
+import { monthlyIBGetItem } from "@/api/monthlyIbAPI";
+import Link from "next/link";
+import { useIBStore } from "@/store/ib";
 
 const IbItems = ({
   IBContents,
   currentPage,
   numShowContents,
   onPageChange,
-  setIbpost,
 }) => {
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
@@ -23,15 +23,15 @@ const IbItems = ({
   };
   const paginatedPage = paginate(IBContents, currentPage);
   const { data: session } = useSession();
+  const { deleteIBList } = useIBStore();
   const onClickDelete = async (num) => {
-    monthlyIBDeleteItem(num, session);
-    const temp = [...IBContents];
-    setIbpost([...temp.filter((v) => v.monthlyIbId !== num)]);
+    deleteIBList(num, session, currentPage);
   };
-
-  // const onClickPost = useCallback((num) => {
-  //   dispatch(ibPostActions.getIBPdfRequest({ num }));
-  // }, []);
+  // console.log(IBContents);
+  const onClickPost = async (num) => {
+    // const res = await monthlyIBGetItem(num, session);
+    // console.log(res);
+  };
   return (
     <>
       {IBContents.length > 0 ? (
@@ -39,6 +39,7 @@ const IbItems = ({
           <div className={styles.ib_item} key={shortid.generate()}>
             {session?.authority === "ADMIN" && (
               <button
+                className={styles.delete_button}
                 onClick={() => {
                   onClickDelete(content.monthlyIbId);
                 }}
@@ -47,11 +48,7 @@ const IbItems = ({
               </button>
             )}
 
-            <a
-              onClick={() => {
-                onClickPost(content.num);
-              }}
-            >
+            <Link href={`/ib/${content.monthlyIbId}`}>
               <figure>
                 <Image
                   src={content.monthlyIbThumbnailUrl}
@@ -61,7 +58,7 @@ const IbItems = ({
                 />
               </figure>
               <span className={styles.ib_txt}>{content.title}</span>
-            </a>
+            </Link>
           </div>
         ))
       ) : (

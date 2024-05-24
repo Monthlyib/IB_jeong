@@ -1,0 +1,244 @@
+.sc_main_wrap {
+  width: 100%;
+  background: #fafafa;
+}
+
+.sc_main_wrap .sc_main_cont {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 110rem;
+  margin: 0 auto;
+  padding: 5rem 0 10.6rem;
+}
+
+.sc_main_wrap .sc_main_cont h6 {
+  margin-bottom: 1.2rem;
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #222;
+}
+
+.sc_main_wrap .calendar_info {
+  display: flex;
+  align-items: center;
+  padding: 1.2rem 0;
+}
+
+.sc_main_wrap .calendar_info .calendar_item {
+  display: flex;
+  align-items: center;
+  margin-right: 1.8rem;
+}
+
+.sc_main_wrap .calendar_info .calendar_item:last-child {
+  margin-right: 0;
+}
+
+.sc_main_wrap .calendar_info .calendar_item span {
+  font-size: 1.4rem;
+  color: #000;
+}
+
+.sc_main_wrap .calendar_info .calendar_item .label {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.6rem;
+}
+
+.sc_main_wrap .calendar_info .calendar_item .label.possible {
+  background: #000;
+}
+
+.sc_main_wrap .calendar_info .calendar_item .label.active {
+  background: var(--primary01);
+}
+
+.sc_main_wrap .calendar_info .calendar_item .label.none {
+  background: #888;
+}
+
+.sc_main_wrap .sc_left_cont {
+  width: 53.9rem;
+  margin-right: 5rem;
+}
+
+.sc_main_wrap .sc_left_cont .calendar {
+  width: 100%;
+  height: 44rem;
+  background: #fff;
+  border: 1px solid #eeeeee;
+  line-height: 1.125em;
+  border-radius: 10px;
+  box-shadow: 0px 0px 20px #e0e0e0;
+  font-size: 2rem;
+  padding: 0 2rem;
+}
+
+.sc_main_wrap .sc_right_cont {
+  width: calc(100% - 55.9rem);
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_wrap {
+  width: 100%;
+  border-bottom: 1px solid #d5d5d5;
+  margin-bottom: 3.2rem;
+  padding-bottom: 4rem;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul li {
+  width: calc(33.3% - 1.33rem);
+  height: 5.8rem;
+  margin-right: 2rem;
+  margin-bottom: 1.2rem;
+  background: #fff;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul li.active {
+  border: 2px solid var(--primary01);
+}
+.sc_main_wrap .sc_right_cont .sc_time_select ul li:hover button.active,
+.sc_main_wrap .sc_right_cont .sc_time_select ul li:hover {
+  background: var(--primary01);
+  color: white;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul li button.active {
+  color: var(--primary01);
+  font-weight: 600;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul li.none {
+  background: #f1f1f1;
+  pointer-events: none;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul li button.none {
+  color: #888;
+  pointer-events: none;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul li:nth-child(3n) {
+  margin-right: 0;
+}
+
+.sc_main_wrap .sc_right_cont .sc_time_select ul li button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+.sc_main_wrap .sc_right_cont .sc_description {
+  padding-bottom: 1.8rem;
+}
+
+.sc_main_wrap .sc_right_cont .sc_description textarea {
+  display: block;
+  width: 100%;
+  height: 21rem;
+  padding: 2rem 1.6rem;
+  font-size: 1.6rem;
+  color: #000;
+  line-height: 1.4;
+  border: none;
+  resize: none;
+}
+
+.sc_main_wrap .sc_right_cont .sc_description textarea::placeholder {
+  color: #888;
+}
+
+.sc_main_wrap .center_btn_wrap {
+  margin-bottom: 1.2rem;
+}
+
+.sc_main_wrap .center_btn_wrap button svg {
+  margin-right: 1.2rem;
+}
+
+.sc_main_wrap .sc_over {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.sc_main_wrap .sc_over span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.sc_main_wrap .sc_over span b {
+  display: block;
+  margin-left: 1.2rem;
+  color: #666;
+  font-size: 1.6rem;
+  font-weight: 400;
+}
+
+.sc_main_wrap .sc_over span b.count {
+  color: var(--primary01);
+  font-weight: 600;
+}
+
+.center_btn_wrap {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.center_btn_wrap button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 7.2rem;
+  color: #fff;
+  background: var(--primary01);
+  border-radius: 1rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media screen and (max-width: 1024px) {
+  /**************
+       Tutor
+    **************/
+  .scheduling .header_flex {
+    padding: 5.4rem 2.4rem 5.4rem;
+  }
+
+  .sc_main_wrap {
+    padding: 0 2.4rem;
+  }
+
+  .sc_main_wrap .sc_main_cont {
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .sc_main_wrap .sc_left_cont {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 3.2rem;
+  }
+
+  .sc_main_wrap .sc_right_cont {
+    width: 100%;
+  }
+}

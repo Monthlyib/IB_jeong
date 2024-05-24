@@ -10,11 +10,11 @@ import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 import { useSession } from "next-auth/react";
-import { questionGetList } from "@/api/openAPI";
+import { useQuestionStore } from "@/store/question";
 
 const QuestionComponents = () => {
   const router = useRouter();
-  const [questionList, setQuestionList] = useState([]);
+  const { questionList, getQuestionList } = useQuestionStore();
   const [modal, setModal] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -28,12 +28,8 @@ const QuestionComponents = () => {
     setCurrentPage(page);
   };
 
-  const getQuestionList = async () => {
-    const res = await questionGetList("", "", currentPage - 1);
-    setQuestionList([...res.data]);
-  };
   const onClickWrite = useCallback(() => {
-    setModal(!modal);
+    setModal(!modal); // 배경 클릭 혹은 없애는 버튼 만들기
   });
   const onChange = useCallback((e) => {
     setSearchKeyword(e.target.value);
@@ -47,7 +43,7 @@ const QuestionComponents = () => {
   //   }, [searchKeyword]);
 
   useEffect(() => {
-    getQuestionList();
+    getQuestionList(currentPage);
   }, []);
   return (
     <>
@@ -80,7 +76,7 @@ const QuestionComponents = () => {
               <span>총 질문 수</span>
               <b>{questionList?.length}</b>
             </div>
-            {session?.userStatus === "ACTIVE" && (
+            {session?.authority === "ADMIN" && (
               <button
                 type="button"
                 className="btn_write"
@@ -94,7 +90,8 @@ const QuestionComponents = () => {
           {modal === true && (
             <QuestionWrite
               setModal={setModal}
-              setQuestionList={setQuestionList}
+              currentPage={currentPage}
+              type="write"
             />
           )}
           <div className={styles.question_wrap}>

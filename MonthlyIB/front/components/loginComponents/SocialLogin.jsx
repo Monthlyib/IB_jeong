@@ -29,6 +29,7 @@ const SocialLogin = ({ social }) => {
       handleGoogleLogin(access_token, "GOOGLE");
     } else if (social === 2 || social === 3) {
       code = new URL(window.location.href).searchParams.get("code");
+      console.log(code);
       if (social === 2) handleKakaoLogin(code, "KAKAO");
       else if (social === 3) handleNaverLogin(code, "NAVER");
     }

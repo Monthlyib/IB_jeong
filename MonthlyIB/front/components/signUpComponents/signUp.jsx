@@ -165,7 +165,7 @@ const SignUp = () => {
   const onSubmitForm = async (e) => {
     e.preventDefault();
     if (userId) {
-      userRegisterWithSocialInfo(
+      const res = await userRegisterWithSocialInfo(
         userId,
         accessToken,
         username,
@@ -174,11 +174,12 @@ const SignUp = () => {
         school,
         grade,
         address,
-        consent_marketing,
-        signIn,
-        authCode,
-        socialType
+        consent_marketing
       );
+      if (res.result.status === 200) {
+        alert("회원가입이 완료되었습니다. 다시 로그인 해주세요.");
+        router.push("/login");
+      }
     } else
       openAPIRegister(
         username,

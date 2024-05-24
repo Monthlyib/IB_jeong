@@ -218,6 +218,17 @@
   display: flex;
   align-items: flex-start;
   min-height: 6rem;
+  position: relative;
+}
+.dt_question_title_menu {
+  position: absolute;
+  right: 0;
+}
+.dt_question_title_menu button {
+  font-size: 1.3rem;
+  border: 1.8px solid var(--primary01);
+  padding: 5px;
+  margin-right: 3px;
 }
 
 .dt_question_wrap .dt_question .dt_question_title > span {
@@ -243,31 +254,55 @@
   margin-left: 2rem;
   font-size: 2.6rem;
 }
-
+.dt_question_wrap .dt_answer_exist,
 .dt_question_wrap .dt_answer {
   padding: 3.2rem 3.4rem;
   background: #fafafa;
+  display: flex;
+}
+.dt_question_wrap .dt_answer_exist {
+  flex-direction: column;
+}
+.dt_question_wrap .dt_answer {
+  justify-content: space-between;
 }
 
+.dt_answer_exist button,
+.dt_answer button {
+  position: relative;
+  right: 0;
+}
+
+.dt_answer_exist svg,
+.dt_answer svg {
+  width: 5rem;
+  font-size: 2.2rem;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.dt_question_wrap .dt_answer_exist .dt_answer_top,
 .dt_question_wrap .dt_answer .dt_answer_top {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2.2rem;
+  position: relative;
 }
 
+.dt_question_wrap .dt_answer_exist .dt_answer_info .date,
 .dt_question_wrap .dt_answer .dt_answer_top .dt_answer_info .date {
   display: block;
   font-size: 1.6rem;
   color: #444;
   font-weight: 500;
 }
-
+.dt_question_wrap .dt_answer_exist .dt_answer_content,
 .dt_question_wrap .dt_answer .dt_answer_content {
   display: flex;
   align-items: flex-start;
 }
-
+.dt_question_wrap .dt_answer_exist .dt_answer_content > span,
 .dt_question_wrap .dt_answer .dt_answer_content > span {
   display: block;
   font-size: 2.4rem;
@@ -276,6 +311,7 @@
   margin-right: 0.8rem;
 }
 
+.dt_question_wrap .dt_answer_exist .dt_answer_content p,
 .dt_question_wrap .dt_answer .dt_answer_content p {
   font-size: 1.6rem;
   font-weight: 300;
@@ -517,6 +553,9 @@
   height: 24rem;
   margin-bottom: 8rem;
 }
+.answer_editor {
+  height: 36rem;
+}
 
 .md .md_review_content {
   display: flex;
@@ -712,14 +751,15 @@ div.review_stars svg.active:hover ~ svg.empty {
     font-size: 2rem;
   }
 
+  .dt_question_wrap .dt_answer_exist,
   .dt_question_wrap .dt_answer {
     padding: 1.8rem;
   }
-
+  .dt_question_wrap .dt_answer_exist .dt_answer_top,
   .dt_question_wrap .dt_answer .dt_answer_top {
     margin-bottom: 1.4rem;
   }
-
+  .dt_question_wrap .dt_answer_exist .dt_answer_top .dt_answer_info .date,
   .dt_question_wrap .dt_answer .dt_answer_top .dt_answer_info .date {
     font-size: 1.3rem;
   }

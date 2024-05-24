@@ -115,10 +115,7 @@ export const userRegisterWithSocialInfo = async (
   school,
   grade,
   address,
-  consent_marketing,
-  signIn,
-  authCode,
-  social
+  consent_marketing
 ) => {
   try {
     const res = await fetch(
@@ -131,7 +128,7 @@ export const userRegisterWithSocialInfo = async (
         },
         body: JSON.stringify({
           username,
-          nickname: name.current,
+          nickName: name.current,
           birth: dob.current,
           school: school.current,
           grade: grade.current,
@@ -146,11 +143,8 @@ export const userRegisterWithSocialInfo = async (
       throw new Error(`Failed POST Status: ${res.status}`);
     }
 
-    if (res.ok) {
-      await signIn("social", { oauthAccessToken: authCode, loginType: social });
-    }
-
     console.log("success");
+    return res.json();
   } catch (error) {
     console.error(error);
   }

@@ -1,5 +1,5 @@
 import IbComponents from "@/components/ibComponents/IbComponents";
 
-export default async function IbPost() {
+export default function IbPost() {
   return <IbComponents />;
 }

@@ -90,7 +90,7 @@ export const openAPIRegister = async (
         body: JSON.stringify({
           username,
           password,
-          nickname: name.current,
+          nickName: name.current,
           email: email.current,
           birth: dob.current,
           school: school.current,
@@ -175,7 +175,7 @@ export const openAPILogin = async (credentials) => {
       }
     );
     const json = await res.json();
-    console.log(json);
+
     return json;
   } catch (error) {
     console.error(error);
@@ -211,6 +211,7 @@ export const openAPISocialLoginCheck = async (credentials) => {
 
 export const openAPINaverLogin = async (credentials) => {
   try {
+    console.log(credentials?.authorizationCode);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/naver`,
       {
@@ -291,6 +292,66 @@ export const questionGetItem = async (questionId) => {
     }
     const json = await res.json();
     return json;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const boardGetList = async (page, keyWord) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/board?page=${page}&keyWord=${keyWord}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const boardGetItem = async (boardId, replyPage) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/board/${boardId}?replyPage=${replyPage}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const newsGetList = async (page, keyWord) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/news?page=${page}&keyWord=${keyWord}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
   } catch (error) {
     console.error(error);
   }

@@ -1,22 +1,21 @@
 "use client";
-// import { useSelector } from "react-redux";
 import styles from "../BoardCommon.module.css";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import NewsItems from "./NewsItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import BoardCommonHead from "../BoardCommonHead";
 import { useSession } from "next-auth/react";
+import { useNewstore } from "@/store/news";
 
 const NewsComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchedPosts, setSearchedPosts] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
-  const [news, setNews] = useState([]);
   const { data: session } = useSession();
-  // const { news } = useSelector((state) => state.news)
+  const { newsList, getNewsList } = useNewstore();
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -25,10 +24,14 @@ const NewsComponents = () => {
     setSearchKeyword(e.target.value);
   }, []);
   const onClickSearchButton = useCallback(() => {
-    setSearchedPosts([...news.filter((v) => v.title.includes(searchKeyword))]);
-    setCurrentPage(1);
-    setSeraching(true);
+    // setSearchedPosts([...news.filter((v) => v.title.includes(searchKeyword))]);
+    // setCurrentPage(1);
+    // setSeraching(true);
   }, [searchKeyword]);
+
+  useEffect(() => {
+    getNewsList(currentPage, "");
+  }, []);
 
   return (
     <>
@@ -39,9 +42,12 @@ const NewsComponents = () => {
           modal={0}
           placeholder="입시뉴스 검색"
         />
-        {session?.userId === 1 && (
+        {session?.authority === "ADMIN" && (
           <div className={styles.right_btn}>
-            <Link href="/board/newswrite" className={styles.btn_write}>
+            <Link
+              href="/board/newswrite?type=write"
+              className={styles.btn_write}
+            >
               <FontAwesomeIcon icon={faPenAlt} />
               <span>글쓰기</span>
             </Link>
@@ -49,7 +55,7 @@ const NewsComponents = () => {
         )}
         <div className={styles.board_wrap}>
           <NewsItems
-            newsContents={searching ? searchedPosts : news}
+            newsContents={searching ? searchedPosts : newsList}
             currentPage={currentPage}
             numShowContents={5}
             onPageChange={handlePageChange}

@@ -1,12 +1,13 @@
+"use client";
 import styles from "../BoardCommon.module.css";
-import profileImg from "../../../assets/img/common/user_profile.jpg";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { bulletinBoardActions } from "../../../reducers/bulletinboard";
-import Pagination from "../../Paginatation";
+import Pagination from "@/components/layoutComponents/Paginatation";
+import { useSession } from "next-auth/react";
+import shortid from "shortid";
+import { useBoardStore } from "@/store/board";
 
 const BulletinBoardCommentsItems = ({
   bulletinBoardComments,
@@ -15,11 +16,10 @@ const BulletinBoardCommentsItems = ({
   onPageChange,
   pageId,
 }) => {
-  const dispatch = useDispatch();
-
-  const { User, logInDone } = useSelector((state) => state.user);
-  const [editStatus, setEditStatus] = useState("");
+  const [editModal, setEditModal] = useState(false);
   const comments = useRef("");
+  const { deleteBoardComment, reviseBoardComment, voteReply } = useBoardStore();
+  const { data: session } = useSession();
 
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
@@ -27,19 +27,14 @@ const BulletinBoardCommentsItems = ({
   };
   const paginatedPage = paginate(bulletinBoardComments, currentPage);
 
-  const onClickDelete = useCallback((num) => {
-    dispatch(
-      bulletinBoardActions.deleteBulletinBoardCommentsRequest({ pageId, num })
-    );
-  }, []);
+  const onClickDelete = async (boardReplyId) => {
+    deleteBoardComment(boardReplyId, session, pageId, currentPage);
+  };
 
-  const onClickEdit = useCallback(
-    (content, num) => {
-      setEditStatus(num);
-      comments.current = content;
-    },
-    [editStatus]
-  );
+  const onClickEdit = (content) => {
+    comments.current = content;
+    setEditModal(!editModal);
+  };
 
   const onChangeContent = useCallback(
     (e) => {
@@ -48,77 +43,63 @@ const BulletinBoardCommentsItems = ({
     [comments]
   );
 
-  const onSubmit = useCallback(
-    (num, c) => {
-      let content = "";
+  const onSubmit = (boardReplyId, c) => {
+    let content = "";
 
-      if (typeof comments.current === "object") {
-        content = c;
-      } else {
-        content = comments.current;
-      }
-      dispatch(
-        bulletinBoardActions.editBulletinBoardCommentsRequest({
-          pageId,
-          num,
-          content,
-        })
-      );
-      setEditStatus("");
-    },
-    [comments]
-  );
+    if (typeof comments.current === "object") {
+      content = c;
+    } else {
+      content = comments.current;
+    }
+    reviseBoardComment(boardReplyId, content, session, pageId, currentPage);
+    setEditModal(!editModal);
+  };
 
-  const onClickLike = useCallback((id) => {
-    if (logInDone) {
-      dispatch(
-        bulletinBoardActions.likeBulletinBoardCommentsRequest({
-          pageId,
-          id,
-          User,
-        })
-      );
+  const onClickLike = (boardReplyId) => {
+    if (session?.userStatus === "ACTIVE") {
+      voteReply(pageId, currentPage, boardReplyId, session);
     }
-  }, []);
-  const onClickUnLike = useCallback((id) => {
-    if (logInDone) {
-      dispatch(
-        bulletinBoardActions.unlikeBulletinBoardCommentsRequest({
-          pageId,
-          id,
-          User,
-        })
-      );
-    }
-  }, []);
+    console.log(bulletinBoardComments);
+  };
   return (
     <>
       {bulletinBoardComments.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.comment_item} key={content.num}>
+          <div className={styles.comment_item} key={shortid.generate()}>
             <div className={styles.comment_top}>
               <div className={styles.comment_profile_cont}>
                 <figure>
-                  <Image src={profileImg} alt="닉네임" />
+                  <Image
+                    src={
+                      session?.userImage === undefined
+                        ? "/img/common/user_profile.jpg"
+                        : session?.userImage
+                    }
+                    width="100"
+                    height="100"
+                    alt="닉네임"
+                  />
                 </figure>
 
                 <div className={styles.comment_profile}>
                   <div className={styles.comment_txt}>
                     <span className={styles.comment_user}>
-                      <b>{content.owner_name}</b>
-                      {`(${content.owner})`}
+                      <b>{content.authorNickname}</b>
+                      {`(${content.authorUsername})`}
                     </span>
                     <b> · </b>
-                    <span className={styles.comment_date}>{content.time}</span>
+                    <span className={styles.comment_date}>
+                      {content.createAt}
+                    </span>
                   </div>
                 </div>
               </div>
-              {User.num === content.owner && (
+              {session?.username === content.authorUsername && (
                 <div className={styles.comment_option}>
                   <button
                     type="button"
                     onClick={() => {
-                      onClickEdit(content.comment, content.num);
+                      onClickEdit(content.content);
                     }}
                   >
                     수정
@@ -126,7 +107,7 @@ const BulletinBoardCommentsItems = ({
                   <button
                     type="button"
                     onClick={() => {
-                      onClickDelete(content.num);
+                      onClickDelete(content.boardReplyId);
                     }}
                   >
                     삭제
@@ -134,7 +115,7 @@ const BulletinBoardCommentsItems = ({
                 </div>
               )}
             </div>
-            {editStatus === content.num ? (
+            {editModal === true ? (
               <div className={styles.comment_content_wrap}>
                 <div className={styles.comment_content_flex}>
                   <textarea
@@ -144,7 +125,9 @@ const BulletinBoardCommentsItems = ({
                     onChange={onChangeContent}
                   />
                   <button
-                    onClick={() => onSubmit(content.num, content.comment)}
+                    onClick={() =>
+                      onSubmit(content.boardReplyId, content.content)
+                    }
                   >
                     등록
                   </button>
@@ -153,27 +136,27 @@ const BulletinBoardCommentsItems = ({
             ) : (
               <>
                 <div className={styles.comment_content}>
-                  <p>{content.comment}</p>
+                  <p>{content.content}</p>
                 </div>
                 <div className={styles.comment_bottom}>
-                  {/* {content.heart.find((v) => v.id === User?.id) ? (
+                  {content.voteUserId.find((v) => v === session?.userId) ? (
                     <button
                       type="button"
-                      onClick={() => onClickUnLike(content.id)}
+                      onClick={() => onClickLike(content.boardReplyId)}
                       className={styles.active}
                     >
                       <FontAwesomeIcon icon={faHeart} />
-                      <span>{content.heart.length}</span>
+                      <span>{content.voterCount}</span>
                     </button>
                   ) : (
                     <button
                       type="button"
-                      onClick={() => onClickLike(content.id)}
+                      onClick={() => onClickLike(content.boardReplyId)}
                     >
                       <FontAwesomeIcon icon={faHeart} />
-                      <span>{content.heart.length}</span>
+                      <span>{content.voterCount}</span>
                     </button>
-                  )} */}
+                  )}
                 </div>
               </>
             )}

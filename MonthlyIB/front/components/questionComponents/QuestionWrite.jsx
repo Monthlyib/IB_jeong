@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Question.module.css";
 
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
-import { questionPostItem } from "@/api/questionAPI";
+import { questionPostItem, questionReviseItem } from "@/api/questionAPI";
+import { useQuestionStore } from "@/store/question";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -14,12 +15,23 @@ const DynamicEditor = dynamic(
   }
 );
 
-const QuestionWrite = ({ setModal, setQuestionList }) => {
+const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
   const [subject, setSubject] = useState("");
   const [content, setContent] = useState("");
+  const [questionStatus, setQuestionStatus] = useState("");
   const [title, setTitle] = useState("");
-
+  const { questionDetail, postQuestionItem, reviseQuestionItem } =
+    useQuestionStore();
   const { data: session } = useSession();
+
+  useEffect(() => {
+    if (type === "revise") {
+      setTitle(questionDetail?.title);
+      setSubject(questionDetail?.subject);
+      setContent(questionDetail?.content);
+      console.log("hi");
+    }
+  }, []);
 
   const onChangeSubject = (e) => {
     setSubject(e.target.value);
@@ -29,16 +41,25 @@ const QuestionWrite = ({ setModal, setQuestionList }) => {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
-    const res = await questionPostItem(
-      title,
-      content,
-      subject,
-      session?.userId,
-      session
-    );
-    if (res.result.status === 200) {
-      setModal(false);
-      setQuestionList([...res.data]);
+    if (type === "write") {
+      const res = await postQuestionItem(
+        title,
+        content,
+        subject,
+        session,
+        currentPage
+      );
+      if (res?.result.status === 200) setModal(false);
+    } else if (type === "revise") {
+      const res = await reviseQuestionItem(
+        questionId,
+        title,
+        content,
+        subject,
+        questionStatus,
+        session
+      );
+      if (res?.result.status === 200) setModal(false);
     }
   };
   return (

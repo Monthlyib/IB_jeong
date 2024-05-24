@@ -19,7 +19,7 @@ export const questionDelete = async (questionId, session) => {
   }
 };
 
-export const questionAnswerDelete = async (answerId, session) => {
+export const questionDeleteAnswer = async (answerId, session) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}/answer/${answerId}`,
@@ -82,18 +82,18 @@ export const questionReviseItem = async (
           "Content-Type": "application/json",
           Authorization: session?.accessToken,
         },
-        body: {
+        body: JSON.stringify({
           questionId,
           title,
           content,
           subject,
-          questionStatus,
-        },
+        }),
       }
     );
     if (!res.ok) {
       throw new Error(`Failed POST Status: ${res.status}`);
     }
+    return await res.json();
   } catch (error) {
     console.error(error);
   }
@@ -102,17 +102,17 @@ export const questionReviseItem = async (
 export const questionReviseAnswerItem = async (answerId, content, session) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}`,
+      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}/answer`,
       {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: session?.accessToken,
         },
-        body: {
+        body: JSON.stringify({
           answerId,
           content,
-        },
+        }),
       }
     );
     if (!res.ok) {
@@ -167,10 +167,10 @@ export const questionPostAnswerItem = async (questionId, content, session) => {
           "Content-Type": "application/json",
           Authorization: session?.accessToken,
         },
-        body: {
+        body: JSON.stringify({
           questionId,
           content,
-        },
+        }),
       }
     );
     if (!res.ok) {

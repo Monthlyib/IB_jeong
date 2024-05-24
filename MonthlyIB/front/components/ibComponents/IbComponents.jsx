@@ -7,15 +7,15 @@ import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 
 import Link from "next/link";
 
-import { monthlyIBGetList } from "@/api/openAPI";
 import { useSession } from "next-auth/react";
+import { useIBStore } from "@/store/ib";
 
 const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [formModal, setFormModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
-  const [ibposts, setIbposts] = useState([]);
+  const { ibPosts, getIBList } = useIBStore();
   const [windowSize, setWindowSize] = useState(0);
   const [searchedPosts, setSearchedPosts] = useState([]);
 
@@ -33,7 +33,7 @@ const IbComponents = () => {
   }, [formModal]);
 
   useEffect(() => {
-    getIBList();
+    getIBList(currentPage);
     if (typeof window !== "undefined") {
       const handleResize = () => {
         setWindowSize(window.innerWidth);
@@ -49,10 +49,6 @@ const IbComponents = () => {
         });
     }
   }, []);
-  const getIBList = async () => {
-    const res = await monthlyIBGetList("", currentPage - 1);
-    setIbposts([...res.data]);
-  };
 
   return (
     <>
@@ -95,11 +91,10 @@ const IbComponents = () => {
         <div className={styles.ib_archive_wrap}>
           <div className={styles.ib_archive_cont}>
             <IbItems
-              IBContents={searching ? searchedPosts : ibposts}
+              IBContents={searching ? searchedPosts : ibPosts}
               currentPage={currentPage}
               numShowContents={windowSize > 640 ? 6 : 4}
               onPageChange={handlePageChange}
-              setIbpost={setIbposts}
             />
           </div>
         </div>

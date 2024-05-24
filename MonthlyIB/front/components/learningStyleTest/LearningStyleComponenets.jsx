@@ -7,7 +7,7 @@ import { Questions } from "./LearningStyleContents";
 
 const LearningStyleTest = () => {
   // 클릭 안된 상태 -> -1
-  const [type, setTypeOne] = useState({
+  const [type, setType] = useState({
     first: [-1, -1, -1, -1, -1, -1],
     second: [-1, -1, -1, -1, -1],
     third: [-1, -1, -1, -1, -1, -1, -1, -1],
@@ -25,7 +25,7 @@ const LearningStyleTest = () => {
     const temp = { ...type };
     temp[key_ind][ind] = point;
     moveRef?.current[index]?.scrollIntoView({ behavior: "smooth" });
-    setTypeOne(temp);
+    setType(temp);
   };
 
   const onClickSumbit = (e) => {
@@ -96,7 +96,7 @@ const LearningStyleTest = () => {
           <LearningStyleResults
             sumUpData={sumUpData}
             setShowResult={setShowResult}
-            setTypeOne={setTypeOne}
+            setType={setType}
           />
         )}
       </main>

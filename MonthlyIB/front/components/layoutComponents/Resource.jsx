@@ -27,7 +27,7 @@ const Resource = () => {
           </Link>
         </li>
         <li>
-          <Link href="/board/bulletinboard">
+          <Link href="/board/free">
             <span>자유게시판</span>
             <FontAwesomeIcon icon={faChevronRight} className={styles.icon} />
           </Link>

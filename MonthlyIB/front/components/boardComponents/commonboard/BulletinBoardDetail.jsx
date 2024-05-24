@@ -1,5 +1,4 @@
 "use client";
-import { useDispatch, useSelector } from "react-redux";
 import styles from "../BoardCommon.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -10,60 +9,58 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import BulletinBoardCommentsItems from "./BulletinBoardCommentsItems";
 import BulletinBoardCommentsPost from "./BulletinBoardCommentsPost";
-import { useCallback, useEffect, useState } from "react";
-import { bulletinBoardActions } from "../../../reducers/bulletinboard";
-import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import shortid from "shortid";
+import { boardDeleteItem } from "@/api/boardAPI";
+import { useBoardStore } from "@/store/board";
 
-const BulletinBoardDetail = ({ pageId }) => {
-  const dispatch = useDispatch();
+const BulletinBoardDetail = (pageId) => {
   const router = useRouter();
-  const { User } = useSelector((state) => state.user);
-  const { getBulletinBoardDetailDone } = useSelector(
-    (state) => state.bulletinBoard
-  );
+  const { data: session } = useSession();
   const [currentPage, setCurrentPage] = useState(1);
+  const { bulletinBoardDetail } = useBoardStore();
+  const getBoardDetail = useBoardStore((state) => state.getBoardDetail);
+  const [menuClicked, setMenuClicked] = useState({
+    recent: true,
+    likes: false,
+  });
+
+  const onClickRecent = () => {
+    setMenuClicked({ recent: true, likes: false });
+  };
+
+  const onClickLikes = () => {
+    setMenuClicked({ recent: false, likes: true });
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
   useEffect(() => {
-    if (getBulletinBoardDetailDone === false) {
-      dispatch(bulletinBoardActions.getBulletinBoardDetailRequest({ pageId }));
-    }
-  }, [getBulletinBoardDetailDone]);
-
-  const { bulletinBoardDetail } = useSelector((state) => state.bulletinBoard);
-  const onClickDelete = useCallback(() => {
-    dispatch(bulletinBoardActions.deleteBulletinBoardRequest({ num: pageId }));
-    router.push("/board/bulletinboard");
+    getBoardDetail(pageId?.pageId, currentPage);
   }, []);
+  const onClickDelete = async () => {
+    boardDeleteItem(pageId?.pageId, session);
+    router.push("/board/free");
+  };
 
-  const onClickEdit = useCallback(() => {
-    router.push(
-      {
-        pathname: "/board/bulletinboard/write",
-        query: {
-          edit: true,
-          prevTitle: bulletinBoardDetail.title,
-          prevContent: bulletinBoardDetail.body,
-          pageId,
-        },
-      },
-      "/board/bulletinboard/write"
-    );
-  }, [getBulletinBoardDetailDone]);
+  const onClickEdit = () => {
+    router.push(`/board/free/write?type=revise&boardId=${pageId.pageId}`);
+  };
 
   return (
     <>
-      {bulletinBoardDetail.title !== undefined && (
+      {bulletinBoardDetail?.title !== undefined && (
         <main className="width_content">
           <div className={styles.read_wrap}>
             <div className={styles.read_cont}>
               <div className={styles.read_left}>
                 <Link
-                  href="/board/bulletinboard/"
+                  href="/board/free/"
                   className={`${styles.read_btn} ${styles.list}`}
                 >
                   <FontAwesomeIcon icon={faBars} />
@@ -73,39 +70,33 @@ const BulletinBoardDetail = ({ pageId }) => {
                 <div className={styles.read_header}>
                   <h3>{bulletinBoardDetail.title}</h3>
                   <div className={styles.read_info_label}>
-                    <span>{bulletinBoardDetail.owner_name}</span>
+                    <span>{bulletinBoardDetail.authorNickName}</span>
                     <b>·</b>
-                    <span>{bulletinBoardDetail.time}</span>
+                    <span>{bulletinBoardDetail.createAt}</span>
                     <b>·</b>
-                    <span>{bulletinBoardDetail.views}</span>
+                    <span>{bulletinBoardDetail.viewCount}</span>
                   </div>
                 </div>
 
                 <div className={styles.read_content}>
-                  {/* <div className={styles.file_wrap}>
-                  <ul>
-                    {bulletinBoardDetail.Files.length > 0 &&
-                      bulletinBoardDetail.Files.map((f) => (
-                        <li key={shortId.generate()}>
-                          <a href={f.src} download>
-                            <FontAwesomeIcon icon={faFile} />
-                            <span>{f.filename}</span>
-                          </a>
-                        </li>
-                      ))}
-                  </ul>
-                </div> */}
+                  <div className={styles.file_wrap}>
+                    <ul>
+                      {bulletinBoardDetail.files.length > 0 &&
+                        bulletinBoardDetail.files.map((f) => (
+                          <li key={shortid.generate()}>
+                            <a href={f.fileUrl} download>
+                              <FontAwesomeIcon icon={faFile} />
+                              <span>{f.fileName}</span>
+                            </a>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
 
                   <div className={styles.title}>
-                    <p>
-                      {/* <img
-                      src={bulletinBoards[currentIndex].Image.src}
-                      alt="잡지 이미지"
-                    /> */}
-                    </p>
                     <p
                       dangerouslySetInnerHTML={{
-                        __html: bulletinBoardDetail.body,
+                        __html: bulletinBoardDetail.content,
                       }}
                     ></p>
                   </div>
@@ -119,32 +110,51 @@ const BulletinBoardDetail = ({ pageId }) => {
                 <div className={styles.comment_wrap}>
                   <div className={styles.comment_content_wrap}>
                     <h4>댓글 입력</h4>
-                    {User.num && <BulletinBoardCommentsPost pageId={pageId} />}
+                    {session?.userStatus === "ACTIVE" && (
+                      <BulletinBoardCommentsPost pageId={pageId?.pageId} />
+                    )}
                   </div>
 
                   <div className={styles.comment_filter}>
                     <h5>
-                      댓글 <span>{bulletinBoardDetail.comments.length}</span>개
+                      댓글 <span>{bulletinBoardDetail?.reply.data.length}</span>
+                      개
                     </h5>
                     <div className={styles.comment_select}>
-                      <span className="active">최신순</span>
-                      <span>좋아요순</span>
+                      <button
+                        className={
+                          menuClicked.recent === true
+                            ? styles.active
+                            : undefined
+                        }
+                        onClick={onClickRecent}
+                      >
+                        최신순
+                      </button>
+                      <button
+                        className={
+                          menuClicked.likes === true ? styles.active : undefined
+                        }
+                        onClick={onClickLikes}
+                      >
+                        좋아요순
+                      </button>
                     </div>
                   </div>
 
                   <div className={styles.comment_cont}>
                     <BulletinBoardCommentsItems
-                      bulletinBoardComments={bulletinBoardDetail.comments}
+                      bulletinBoardComments={bulletinBoardDetail?.reply.data}
                       currentPage={currentPage}
                       numShowContents={5}
                       onPageChange={handlePageChange}
-                      pageId={pageId}
+                      pageId={pageId?.pageId}
                     />
                   </div>
                 </div>
               </div>
               <div className={styles.read_right}>
-                {User.num === bulletinBoardDetail.owner && (
+                {session?.username === bulletinBoardDetail.authorUsername && (
                   <div className={styles.auth_btn_cont}>
                     <button
                       className={`${styles.read_btn} ${styles.update}`}

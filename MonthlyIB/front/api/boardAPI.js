@@ -15,6 +15,7 @@ export const boardDeleteItem = async (boardId, session) => {
     if (res.ok) {
       console.log("success");
     }
+    return res.json();
   } catch (error) {
     console.error(error);
   }
@@ -42,47 +43,7 @@ export const boardReplyDeleteItem = async (boardReplyId, session) => {
 
 // need to test
 
-export const boardGetList = async (session) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}?keyWord=""`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken, // 없앨것
-        },
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const boardGetItem = async (boardId, session) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/${boardId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken, // 없앨것
-        },
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const boardReviseItem = async (boardId, content, session) => {
+export const boardReviseItem = async (boardId, title, content, session) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/${boardId}`,
@@ -92,7 +53,7 @@ export const boardReviseItem = async (boardId, content, session) => {
           "Content-Type": "application/json",
           Authorization: session?.accessToken,
         },
-        body: { content },
+        body: JSON.stringify({ title, content }),
       }
     );
     if (res.ok) {
@@ -127,7 +88,7 @@ export const boardReplyReviseItem = async (boardReplyId, content, session) => {
 export const boardPost = async (title, content, session) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/`,
+      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}`,
       {
         method: "POST",
         headers: {

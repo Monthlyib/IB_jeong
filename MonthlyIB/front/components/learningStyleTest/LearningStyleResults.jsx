@@ -32,7 +32,7 @@ const setCategory = (arr) => {
   return [first, second, third, fourth];
 };
 
-const LearningStyleResults = ({ sumUpData, setShowResult, setTypeOne }) => {
+const LearningStyleResults = ({ sumUpData, setShowResult, setType }) => {
   const [first, second, third, fourth] = setCategory(sumUpData);
   const wrapClass = {
     first,
@@ -46,7 +46,7 @@ const LearningStyleResults = ({ sumUpData, setShowResult, setTypeOne }) => {
   const onClickSumbit = (e) => {
     e.preventDefault();
     setShowResult(false);
-    setTypeOne({
+    setType({
       first: [-1, -1, -1, -1, -1, -1],
       second: [-1, -1, -1, -1, -1],
       third: [-1, -1, -1, -1, -1, -1, -1, -1],

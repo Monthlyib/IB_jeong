@@ -116,6 +116,7 @@ export const monthlyIBGetItem = async (monthlyIbId, session) => {
     if (res.ok) {
       console.log("success");
     }
+    return res.json();
   } catch (error) {
     console.error(error);
   }

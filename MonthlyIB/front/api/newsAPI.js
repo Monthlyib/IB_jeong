@@ -1,31 +1,11 @@
 const NEWS_API_URL = "api/news";
 
-export const newsDeleteItem = async (boardId, session) => {
+export const newsDeleteItem = async (newsId, session) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${NEWS_API_URL}/${boardId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}${NEWS_API_URL}/${newsId}`,
       {
         method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const newsGetList = async (keyWord, session) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${NEWS_API_URL}?keyWord=${keyWord}`,
-      {
-        method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: session?.accessToken,
@@ -55,12 +35,13 @@ export const newsGetItem = async (newsId, session) => {
     if (res.ok) {
       console.log("success");
     }
+    return res.json();
   } catch (error) {
     console.error(error);
   }
 };
 
-export const newsReviseItem = async (newsId, session, title, content) => {
+export const newsReviseItem = async (newsId, title, content, session) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${NEWS_API_URL}/${newsId}`,
@@ -81,10 +62,10 @@ export const newsReviseItem = async (newsId, session, title, content) => {
   }
 };
 
-export const newsPost = async (session, title, content) => {
+export const newsPost = async (title, content, session) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${NEWS_API_URL}/`,
+      `${process.env.NEXT_PUBLIC_API_URL}${NEWS_API_URL}`,
       {
         method: "POST",
         headers: {

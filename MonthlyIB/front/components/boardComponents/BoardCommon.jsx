@@ -13,7 +13,7 @@ const BoardCommon = ({ modal }) => {
         <Link href="/board/download" className={modal === 2 ? "active" : ""}>
           자료실
         </Link>
-        <Link href="/board/commonboard" className={modal === 3 ? "active" : ""}>
+        <Link href="/board/free" className={modal === 3 ? "active" : ""}>
           자유게시판
         </Link>
       </div>

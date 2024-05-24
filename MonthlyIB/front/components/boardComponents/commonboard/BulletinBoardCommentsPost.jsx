@@ -1,24 +1,22 @@
-import { Form } from "antd";
+"use client";
 import { useCallback, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 import styles from "../BoardCommon.module.css";
-
-import { bulletinBoardActions } from "../../../reducers/bulletinboard";
+import { useSession } from "next-auth/react";
+import { useBoardStore } from "@/store/board";
 
 const BulletinBoardCommentsPost = ({ pageId }) => {
-  const dispatch = useDispatch();
   const [content, setContent] = useState("");
-
-  const onSubmit = useCallback(() => {
-    dispatch(
-      bulletinBoardActions.addBulletinBoardCommentsRequest({
-        post: Number(pageId),
-        body: content,
-      })
-    );
-    setContent("");
-  }, [content, pageId]);
+  const { data: session } = useSession();
+  const { setBoardComment } = useBoardStore();
+  const onSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      setBoardComment(pageId, content, session);
+      setContent("");
+    },
+    [content, pageId]
+  );
 
   const onChangeContent = useCallback((e) => {
     setContent(e.target.value);
@@ -26,7 +24,7 @@ const BulletinBoardCommentsPost = ({ pageId }) => {
 
   return (
     <>
-      <Form onFinish={onSubmit} style={{ position: "relative", zIndex: 5000 }}>
+      <form onSubmit={onSubmit} style={{ position: "relative", zIndex: 0 }}>
         <div className={styles.comment_content_flex}>
           <textarea
             id="comment"
@@ -38,7 +36,7 @@ const BulletinBoardCommentsPost = ({ pageId }) => {
             등록
           </button>
         </div>
-      </Form>
+      </form>
     </>
   );
 };

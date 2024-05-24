@@ -42,6 +42,7 @@ export const authOptions = {
       async authorize(credentials) {
         try {
           const user = await openAPISocialLoginCheck(credentials);
+
           return user.data;
         } catch (error) {
           console.error(error);
@@ -57,6 +58,7 @@ export const authOptions = {
       async authorize(credentials) {
         try {
           const user = await openAPINaverLogin(credentials);
+          console.log(user.data);
           return user.data;
         } catch (error) {
           console.error(error);
@@ -66,9 +68,7 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      token.expires = Date.now() + 500;
-      token.refresh = true;
+    async jwt({ token, trigger, user }) {
       if (user?.userId) {
         token.userId = user.userId;
       }
@@ -95,10 +95,11 @@ export const authOptions = {
         token.userStatus = user.userStatus;
       }
 
-      if (Date.now() < token.expires) {
-        return token;
+      if (trigger === "update" && token?.userId) {
+        console.log("updating");
+        return refreshAcessToken(token?.userId);
       }
-      return refreshAcessToken(user?.userId);
+      return token;
     },
 
     async session({ session, token }) {
@@ -108,7 +109,8 @@ export const authOptions = {
       session.nickname = token.nickname;
       session.accessToken = token.accessToken;
       session.authority = token.authority;
-      session.refresh = token.refresh;
+      session.expires = token.expires;
+      session.accessExpireTime = token.accessExpireTime;
       session.userStatus = token.userStatus;
       return session;
     },

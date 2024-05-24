@@ -18,20 +18,24 @@ const BulletinBoardItems = ({
     <>
       {bulletinBoardContents.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.board_item} key={content.num}>
-            <Link href={`/board/bulletinboard/${content.num}`}>
+          <div className={styles.board_item} key={content.boardId}>
+            <Link href={`/board/free/${content.boardId}`}>
               <div className={styles.board_cont}>
                 <p>{content.title}</p>
-                <span>{content.preview}</span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: content.content,
+                  }}
+                ></span>
               </div>
               <div>
-                <span>{content.owner_name}</span>
+                <span>{content.authorNickName}</span>
                 <b> · </b>
-                <span>{content.time}</span>
+                <span>{content.createAt}</span>
                 <b> · </b>
-                <span>조회수 {content.views}</span>
+                <span>조회수 {content.viewCount}</span>
                 <b> · </b>
-                {/* <span>댓글 {content.Comments.length}</span> */}
+                <span>댓글 {content?.replyCount}</span>
               </div>
             </Link>
           </div>

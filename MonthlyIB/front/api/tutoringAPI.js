@@ -139,7 +139,7 @@ export const TutoringPostItem = async (
 ) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/`,
+      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}`,
       {
         method: "POST",
         headers: {
