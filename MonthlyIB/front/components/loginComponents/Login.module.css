@@ -1,0 +1,244 @@
+.width_content {
+  width: 110rem;
+  margin: 0 auto;
+  min-height: 88rem;
+  padding: 8rem 0 8.8rem;
+}
+
+.width_content.min_content {
+  width: 54rem;
+}
+
+.width_content.login {
+  padding: 6rem 2rem 6.4rem;
+}
+
+.simple_login:before {
+  width: 8rem;
+}
+
+.simple_login:after {
+  width: 8rem;
+}
+
+.simple_login ul {
+  width: 100%;
+}
+
+.header_tit_wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.header_tit_wrap.tit_center {
+  align-items: center;
+}
+
+.header_tit_wrap span {
+  display: block;
+  color: #888;
+  font-size: 1.6rem;
+  font-weight: 400;
+  text-align: center;
+  padding-bottom: 0.4rem;
+}
+
+.header_tit_wrap h2 {
+  font-size: 3.8rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+/*
+Login
+*/
+
+.login .header_tit_wrap {
+  padding: 7.2rem 0 0;
+}
+
+.login span {
+  display: block;
+  color: #888;
+  font-size: 2rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.login h2 {
+  font-size: 4.8rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.login input,
+button.login_btn {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login input {
+  color: #000;
+  font-size: 1.8rem;
+  font-weight: 600;
+  border: 1px solid #d5d5d5;
+  border-radius: 0.5rem;
+  padding: 3.2rem 1.4rem;
+  margin-bottom: 10px;
+}
+
+.login input::placeholder {
+  color: #888;
+  font-size: 1.8rem;
+  font-weight: 600;
+}
+
+.login input:nth-child(2) {
+  margin-bottom: 1.2rem;
+}
+
+.login input:nth-child(3) {
+  margin-bottom: 2.4rem;
+}
+
+.login button.login_btn {
+  color: #fff;
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-align: center;
+  padding: 3rem 0;
+  background: var(--primary01);
+  border-radius: 0.5rem;
+  margin-bottom: 1.8rem;
+}
+
+.login button.login_btn:hover {
+  background: var(--primary03);
+}
+
+.login .bottom_option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8rem;
+}
+
+.login .bottom_option a {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+
+.login .bottom_option a:hover {
+  text-decoration: underline;
+}
+
+.simple_login {
+  position: relative;
+  width: 100%;
+}
+
+.simple_login:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 19rem;
+  height: 0.1rem;
+  background: #d5d5d5;
+}
+
+.simple_login:after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 10px;
+  width: 19rem;
+  height: 0.1rem;
+  background: #d5d5d5;
+}
+
+.simple_login h3 {
+  color: #444;
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2.4rem;
+}
+
+.simple_login ul {
+  display: flex;
+  justify-content: space-between;
+  width: 35.2rem;
+  margin: 0 auto;
+}
+
+.simple_login ul li a figure {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 5.6rem;
+  height: 5.6rem;
+  border-radius: 1rem;
+  border: 1px solid #d9d9d9;
+  margin-bottom: 0.6rem;
+}
+
+.simple_login ul li a span {
+  color: #000;
+  font-size: 1.4rem;
+  font-weight: 400;
+}
+
+.simple_login ul li:hover a figure {
+  background: #fafafa;
+}
+
+@media screen and (max-width: 1024px), (max-height: 768px) {
+  .width_content {
+    width: 100%;
+    padding: 8rem 2.4rem 8.8rem;
+  }
+
+  .header_flex {
+    padding: 5.4rem 0 5.4rem;
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .width_content {
+    min-height: 60rem;
+    padding: 6.4rem 2rem 6.4rem;
+  }
+
+  .width_content.min_content {
+    width: 100%;
+  }
+
+  .header_flex {
+    padding: 5.4rem 0 5.4rem;
+  }
+
+  .header_tit_wrap h2 {
+    font-size: 2.8rem;
+  }
+
+  .width_content.login {
+    padding: 6rem 2rem 6.4rem;
+  }
+
+  .simple_login:before {
+    width: 8rem;
+  }
+
+  .simple_login:after {
+    width: 8rem;
+  }
+
+  .simple_login ul {
+    width: 100%;
+  }
+}
