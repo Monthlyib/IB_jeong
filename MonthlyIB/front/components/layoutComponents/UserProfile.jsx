@@ -55,7 +55,7 @@ const UserUtilBox = () => {
     <div className={styles.util_box}>
       <ul>
         <li>
-          <Link href="#">마이페이지</Link>
+          <Link href="/mypage">마이페이지</Link>
         </li>
         <li>
           <Link href="/tutoring">튜터링 예약</Link>

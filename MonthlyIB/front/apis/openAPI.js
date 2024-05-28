@@ -299,7 +299,6 @@ export const questionGetItem = async (questionId) => {
 
 export const boardGetList = async (page, keyWord) => {
   try {
-    console.log("testing ", process.env.NEXT_PUBLIC_API_URL);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/board?page=${page}&keyWord=${keyWord}`,
       {
@@ -342,6 +341,73 @@ export const newsGetList = async (page, keyWord) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/news?page=${page}&keyWord=${keyWord}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const courseGetCategory = async () => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/video-category`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const courseGetList = async (
+  page,
+  keyWord,
+  status,
+  firstCategoryId,
+  secondCategoryId,
+  thirdCategoryId
+) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/video?page=${page}&keyWord=${keyWord}&firstCategoryId=${firstCategoryId}&secondCategoryId=${secondCategoryId}&thirdCategoryId=${thirdCategoryId}&status=${status}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const courseGetItem = async (videoLessonsId) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/video/${videoLessonsId}?replyPage=0`,
       {
         method: "GET",
         headers: {

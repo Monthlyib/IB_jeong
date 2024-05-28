@@ -3,8 +3,10 @@ import "react-calendar/dist/Calendar.css";
 
 const TutoringCalendar = ({ styles, value, setValue }) => {
   const onChange = (e) => {
+    const newE = e;
     e.setDate(e.getDate() + 1);
-    const f = e.toISOString();
+    const f = newE.toISOString().split("T")[0];
+    console.log(f);
     setValue(f);
   };
   return (

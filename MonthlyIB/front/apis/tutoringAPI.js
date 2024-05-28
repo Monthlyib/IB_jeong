@@ -60,10 +60,10 @@ export const TutoringGetTime = async (date, hour, minute, session) => {
   }
 };
 
-export const TutoringGetDate = async (date, session) => {
+export const TutoringGetDate = async (date, status, page, session) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/date?date=${date}`,
+      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/date?date=${date}&status=${status}&page=${page}`,
       {
         method: "GET",
         headers: {
@@ -75,6 +75,7 @@ export const TutoringGetDate = async (date, session) => {
     if (res.ok) {
       console.log("success");
     }
+    return res.json();
   } catch (error) {
     console.error(error);
   }
@@ -95,6 +96,7 @@ export const TutoringGetDateSimple = async (date, session) => {
     if (res.ok) {
       console.log("success");
     }
+    return res.json();
   } catch (error) {
     console.error(error);
   }
