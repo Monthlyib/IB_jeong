@@ -9,8 +9,8 @@ import CoursePlayerCurriculum from "./CoursePlayerCurriculum";
 import { useCourseStore } from "@/store/course";
 
 const CoursePlayer = (pageId) => {
-  const [chapterNum, setChapterNum] = useState(-1);
-  const [subChapterNum, setSubChapterNum] = useState(-1);
+  const [chapterNum, setChapterNum] = useState(0);
+  const [subChapterNum, setSubChapterNum] = useState(0);
   const [modal, setModal] = useState(false);
   const { courseDetail, getCourseDetail } = useCourseStore();
 
@@ -39,7 +39,7 @@ const CoursePlayer = (pageId) => {
             <div className={styles.player_curri}>
               <div className={styles.curri_tit_cont}>
                 <span>강의 목차</span>
-                <h3>강의 타이틀입니다</h3>
+                <h3>{courseDetail?.title}</h3>
               </div>
 
               <div className={styles.course_curri_wrap}>
