@@ -1107,6 +1107,14 @@ select#recommendSchools:selected {
   border-radius: 0.5rem;
 }
 
+.path_nav {
+  width: calc(100% - 20rem);
+}
+
+.path_nav p {
+  font-size: 2rem;
+}
+
 .md {
   display: block;
   position: fixed;

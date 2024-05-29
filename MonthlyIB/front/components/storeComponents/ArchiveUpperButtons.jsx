@@ -1,4 +1,5 @@
-import styles from "../BoardCommon.module.css";
+"use client";
+import styles from "@/components/boardComponents/BoardCommon.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUpFromBracket,
@@ -15,7 +16,7 @@ const ArchiveUpperButtons = ({
 }) => {
   return (
     <>
-      <div className={styles.right_btn}>
+      <div className={styles.right_btn} style={{ marginBottom: "3rem" }}>
         <button
           className={
             level > 0 ? styles.btn_write_back : styles.btn_write_back_disabled

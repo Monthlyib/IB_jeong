@@ -423,3 +423,43 @@ export const courseGetItem = async (videoLessonsId) => {
     console.error(error);
   }
 };
+
+export const storageGetMain = async () => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/storage`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const storageGetList = async (parentsFolderId, keyWord) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/storage/detail?parentsFolderId=${parentsFolderId}&keyWord=${keyWord}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+    }
+    return res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};

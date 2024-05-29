@@ -1,4 +1,4 @@
-import styles from "../BoardCommon.module.css";
+import styles from "@/components/boardComponents/BoardCommon.module.css";
 
 const ArchiveFolderModal = ({
   closeRef,
@@ -32,7 +32,7 @@ const ArchiveFolderModal = ({
               className={styles.md_btn}
               onClick={() => {
                 setModal(false);
-                onSubmitCreateFolder();
+                onSubmitCreateFolder(title);
               }}
             >
               확인

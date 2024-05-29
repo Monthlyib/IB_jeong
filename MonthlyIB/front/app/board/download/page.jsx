@@ -1,4 +1,4 @@
-import ArchiveComponents from "../../../components/boardComponents/download/ArchiveComponents";
+import ArchiveComponents from "@/components/storeComponents/ArchiveComponents";
 
 const Archive = () => {
   return (
