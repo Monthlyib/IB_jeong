@@ -1,14 +1,15 @@
 "use client";
 import styles from "./CourseComponents.module.css";
-import { useCallback, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 import CoursePostCurriculum from "./CoursePostCurriculum";
 import CoursePostCategory from "./CoursePostCategory";
 import dynamic from "next/dynamic";
-import { coursePostItem } from "@/apis/courseAPI";
+import { coursePostItem, courseReviseItem } from "@/apis/courseAPI";
 import { useSession } from "next-auth/react";
+import { useCourseStore } from "@/store/course";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -61,10 +62,14 @@ const CoursePostWrite = () => {
   const { data: session } = useSession();
   const imageInput = useRef();
 
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
+  const videoLessonsId = searchParams.get("videoLessonsId");
+  const { courseDetail } = useCourseStore();
+
   const [group, setGroup] = useState("all");
   const [level, setLevel] = useState("all");
   const [subject, setSubject] = useState("all");
-  const [edit, setEdit] = useState(false);
 
   const [firstCategoryId, setFirstCategoryId] = useState(-1);
   const [secondCategoryId, setSecondCategoryId] = useState(-1);
@@ -93,6 +98,27 @@ const CoursePostWrite = () => {
       subChapters: subChapters[0],
     },
   ]);
+
+  useEffect(() => {
+    console.log(courseDetail);
+    if (videoLessonsId) {
+      setTitle(courseDetail?.title);
+      setContent(courseDetail?.content);
+      setLecturer(courseDetail?.instructor);
+      setChapters(courseDetail?.chapters);
+      const temp = [];
+      courseDetail?.chapters.map((v) => temp.push(v.subChapters));
+      console.log(temp);
+      setSubChapters(temp);
+      setFirstCategoryId(courseDetail?.firstCategoryId);
+      setSecondCategoryId(courseDetail?.secondCategoryId);
+      setThirdCategoryId(courseDetail?.thirdCategoryId);
+      setGroup(courseDetail?.firstCategory?.categoryName);
+      setSubject(courseDetail?.secondCategory?.categoryName);
+      setLevel(courseDetail?.thirdCategory?.categoryName);
+      setDuration(courseDetail?.duration);
+    }
+  }, []);
 
   const handleGroupChange = (e) => {
     setGroup(e.target.value);
@@ -180,19 +206,33 @@ const CoursePostWrite = () => {
       chapters.length == 1
         ? chapters.length.toString() + " Chapter"
         : chapters.length.toString() + " Chapters";
-    if (duration == "") setDuration("구독기간 동안 무제한 제공");
-    coursePostItem(
-      title,
-      content,
-      lecturer,
-      chapterInfo,
-      duration,
-      chapters,
-      firstCategoryId,
-      secondCategoryId,
-      thirdCategoryId,
-      session
-    );
+    if (type === "edit") {
+      courseReviseItem(
+        videoLessonsId,
+        title,
+        content,
+        lecturer,
+        chapterInfo,
+        duration,
+        chapters,
+        firstCategoryId,
+        secondCategoryId,
+        thirdCategoryId,
+        session
+      );
+    } else
+      coursePostItem(
+        title,
+        content,
+        lecturer,
+        chapterInfo,
+        duration,
+        chapters,
+        firstCategoryId,
+        secondCategoryId,
+        thirdCategoryId,
+        session
+      );
     router.push("/course");
   };
 
@@ -237,6 +277,8 @@ const CoursePostWrite = () => {
               </div>
               <CoursePostCategory
                 group={group}
+                subject={subject}
+                level={level}
                 handleGroupChange={handleGroupChange}
                 handleSubjectChange={handleSubjectChange}
                 handleLevelChange={handleLevelChange}

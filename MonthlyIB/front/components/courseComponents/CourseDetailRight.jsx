@@ -10,13 +10,22 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { courseDeleteItem } from "@/apis/courseAPI";
 
 const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   const router = useRouter();
 
-  const onClickEdit = useCallback(() => {}, []);
+  const { data: session } = useSession();
 
-  const onClickDelete = useCallback(() => {}, []);
+  const onClickEdit = useCallback(() => {
+    router.push(`/course/write?type=edit&videoLessonsId=${pageId}`);
+  }, []);
+
+  const onClickDelete = useCallback(() => {
+    courseDeleteItem(pageId, session);
+    router.push(`/course`);
+  }, []);
   return (
     <div className={styles.course_right}>
       <div className={styles.course_info_cont}>
@@ -52,12 +61,11 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
             </ul>
           </div>
         </div>
-
         <div className={styles.center_btn_wrap}>
           <Link href={`/course/player/${pageId}`}>수강하기</Link>
         </div>
 
-        {/* {User.role === 100 && (
+        {session?.authority === "ADMIN" && (
           <>
             <div className={styles.center_btn_wrap_edit}>
               <a onClick={onClickEdit}>수정하기</a>
@@ -66,7 +74,7 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
               <a onClick={onClickDelete}>삭제하기</a>
             </div>
           </>
-        )} */}
+        )}
       </div>
     </div>
   );

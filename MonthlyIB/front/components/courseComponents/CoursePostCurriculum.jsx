@@ -62,6 +62,9 @@ const CoursePostCurriculum = ({
                       <input
                         style={{ marginLeft: "1rem" }}
                         type="url"
+                        defaultValue={
+                          numCurriculumSubChapter[i][j]?.videoFileUrl
+                        }
                         value={numCurriculumSubChapter[i][j].videoLessonsUrl}
                         className={styles.write_link}
                         onChange={(e) => {

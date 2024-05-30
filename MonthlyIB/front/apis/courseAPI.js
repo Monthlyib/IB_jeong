@@ -18,7 +18,6 @@ export const courseDeleteItem = async (videoLessonsId, session) => {
     if (res.ok) {
       console.log("success");
     }
-    return res.json();
   } catch (error) {
     console.error(error);
   }
@@ -232,6 +231,7 @@ export const coursePostCateogry = async (
 };
 
 export const courseReviseItem = async (
+  videoLessonsId,
   title,
   content,
   instructor,
@@ -253,6 +253,7 @@ export const courseReviseItem = async (
           Authorization: session?.accessToken,
         },
         body: JSON.stringify({
+          videoLessonsId,
           title,
           content,
           instructor,
