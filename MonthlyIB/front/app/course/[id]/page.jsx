@@ -1,9 +1,12 @@
 import CourseDetail from "@/components/courseComponents/CourseDetail";
+import { Suspense } from "react";
 
 const CourseDetailPage = ({ params }) => {
   return (
     <>
-      <CourseDetail pageId={params.id} />
+      <Suspense>
+        <CourseDetail pageId={params.id} />
+      </Suspense>
     </>
   );
 };

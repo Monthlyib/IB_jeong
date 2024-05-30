@@ -1,9 +1,12 @@
 import CoursePostWrite from "@/components/courseComponents/CoursePostWrite";
+import { Suspense } from "react";
 
 const CourseWriteHome = () => {
   return (
     <>
-      <CoursePostWrite />
+      <Suspense>
+        <CoursePostWrite />
+      </Suspense>
     </>
   );
 };
