@@ -49,7 +49,6 @@ const CourseComponents = () => {
       secondCategoryId,
       thirdCategoryId
     );
-    console.log(coursePosts);
   }, []);
 
   // const fillteredCoursePosts = coursePosts.filter((post) => {

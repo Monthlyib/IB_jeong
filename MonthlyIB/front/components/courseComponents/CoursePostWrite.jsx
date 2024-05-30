@@ -7,7 +7,7 @@ import Link from "next/link";
 import CoursePostCurriculum from "./CoursePostCurriculum";
 import CoursePostCategory from "./CoursePostCategory";
 import dynamic from "next/dynamic";
-import { coursePostItem, courseReviseItem } from "@/apis/courseAPI";
+import { courseReviseItem } from "@/apis/courseAPI";
 import { useSession } from "next-auth/react";
 import { useCourseStore } from "@/store/course";
 
@@ -65,7 +65,7 @@ const CoursePostWrite = () => {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const videoLessonsId = searchParams.get("videoLessonsId");
-  const { courseDetail } = useCourseStore();
+  const { courseDetail, postCourseItem } = useCourseStore();
 
   const [group, setGroup] = useState("all");
   const [level, setLevel] = useState("all");
@@ -98,9 +98,26 @@ const CoursePostWrite = () => {
       subChapters: subChapters[0],
     },
   ]);
+  const changeFileName = (file) => {
+    const fileExtention = file.name.split(".")[1];
+    const oldFileName = file.name.split(".")[0];
+    const date = new Date();
+    var hours = ("0" + date.getHours()).slice(-2);
+    var minutes = ("0" + date.getMinutes()).slice(-2);
+    var seconds = ("0" + date.getSeconds()).slice(-2);
+    var timeString = hours + ":" + minutes + ":" + seconds;
+    const newFile = new File(
+      [file],
+      `${oldFileName}_${timeString}.${fileExtention}`,
+      {
+        type: file.type,
+      }
+    );
+    return newFile;
+  };
 
+  // 수정시에 기존 데이터 불러오기
   useEffect(() => {
-    console.log(courseDetail);
     if (videoLessonsId) {
       setTitle(courseDetail?.title);
       setContent(courseDetail?.content);
@@ -198,16 +215,18 @@ const CoursePostWrite = () => {
     setLecturer(e.target.value);
   }, []);
 
-  const onClickImageUpload = useCallback(() => {}, []);
+  const onClickImageUpload = (e) => {
+    imageInput.current = changeFileName(e.target.files[0]);
+  };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
     const chapterInfo =
       chapters.length == 1
         ? chapters.length.toString() + " Chapter"
         : chapters.length.toString() + " Chapters";
     if (type === "edit") {
-      courseReviseItem(
+      await courseReviseItem(
         videoLessonsId,
         title,
         content,
@@ -220,8 +239,8 @@ const CoursePostWrite = () => {
         thirdCategoryId,
         session
       );
-    } else
-      coursePostItem(
+    } else {
+      postCourseItem(
         title,
         content,
         lecturer,
@@ -231,8 +250,11 @@ const CoursePostWrite = () => {
         firstCategoryId,
         secondCategoryId,
         thirdCategoryId,
+        imageInput.current,
         session
       );
+    }
+
     router.push("/course");
   };
 

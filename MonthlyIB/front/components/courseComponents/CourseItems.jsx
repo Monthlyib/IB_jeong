@@ -15,7 +15,7 @@ const CourseItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(courseContents, currentPage);
-
+  console.log(courseContents[0]?.videoLessonsIbThumbnailUrl);
   return (
     <>
       {courseContents.length > 0 ? (

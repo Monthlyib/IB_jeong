@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const COURSE_API_URL = "api/video";
 const COURSE_REPLY_API_URL = "api/video-reply";
 const COURSE_CATEGORY_API_URL = "api/video-category";
@@ -167,20 +169,19 @@ export const courseVoteRelpyItem = async (videoLessonsReplyId, session) => {
 };
 
 export const coursePostThumnail = async (videoLessonsId, image, session) => {
-  // ib post image 참고해서 변경해줘야됨
   try {
-    const res = await fetch(
+    const formData = new FormData(); // formData 생성
+    formData.append("image", image);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await axios.post(
       `${process.env.NEXT_PUBLIC_API_URL}${COURSE_IMAGE_API_URL}/${videoLessonsId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          image,
-        }),
-      }
+      formData,
+      config
     );
     if (res.ok) {
       console.log("success");

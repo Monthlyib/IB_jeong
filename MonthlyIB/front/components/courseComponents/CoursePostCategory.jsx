@@ -9,7 +9,6 @@ const CoursePostCategory = ({
   handleSubjectChange,
   handleLevelChange,
 }) => {
-  console.log(group, subject, level);
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column" }}>
@@ -17,7 +16,7 @@ const CoursePostCategory = ({
           <p>그룹 / 과목 / 레벨</p>
         </div>
         <div className={styles.ft_select_write}>
-          <select onChange={handleGroupChange} defaultValue={group}>
+          <select onChange={handleGroupChange}>
             <option value="all">All</option>
             <option value="Group1" selected={group === "Group1"}>
               Group 1
@@ -39,7 +38,7 @@ const CoursePostCategory = ({
             </option>
           </select>
 
-          <select onChange={handleSubjectChange} defaultValue={subject}>
+          <select onChange={handleSubjectChange}>
             <option value="all">All</option>
             {courseCategoryList[group].map((v, i) => (
               <option key={i} value={v} selected={subject === v}>
@@ -48,7 +47,7 @@ const CoursePostCategory = ({
             ))}
           </select>
 
-          <select onChange={handleLevelChange} defaultValue={level}>
+          <select onChange={handleLevelChange}>
             <option value="all">All</option>
             <option value="SL" selected={level === "SL"}>
               SL

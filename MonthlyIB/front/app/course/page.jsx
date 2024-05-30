@@ -1,9 +1,11 @@
 import CourseComponents from "@/components/courseComponents/CourseComponents";
-
+import { Suspense } from "react";
 const CourseHome = () => {
   return (
     <>
-      <CourseComponents />
+      <Suspense>
+        <CourseComponents />
+      </Suspense>
     </>
   );
 };

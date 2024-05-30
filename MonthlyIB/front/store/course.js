@@ -1,4 +1,4 @@
-import { coursePostItem } from "@/apis/courseAPI";
+import { coursePostItem, coursePostThumnail } from "@/apis/courseAPI";
 import { courseGetItem, courseGetList } from "@/apis/openAPI";
 import { create } from "zustand";
 
@@ -48,10 +48,11 @@ export const useCourseStore = create((set, get) => ({
     firstCategoryId,
     secondCategoryId,
     thirdCategoryId,
+    image,
     session
   ) => {
     try {
-      const res = coursePostItem(
+      const res = await coursePostItem(
         title,
         content,
         lecturer,
@@ -63,7 +64,9 @@ export const useCourseStore = create((set, get) => ({
         thirdCategoryId,
         session
       );
-      get().getCourseList(0, "", "", "", "", "");
+      if (res?.result.status === 200)
+        coursePostThumnail(res?.data?.videoLessonsId, image, session);
+      get().getCourseList(1, "", "", "", "", "");
     } catch (error) {
       console.error(error);
     }
