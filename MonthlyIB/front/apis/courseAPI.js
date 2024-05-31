@@ -115,7 +115,7 @@ export const coursePostItem = async (
 };
 
 export const coursePostRelpyItem = async (
-  videoLessonsReplyId,
+  videoLessonsId,
   authorId,
   content,
   star,
@@ -131,7 +131,7 @@ export const coursePostRelpyItem = async (
           Authorization: session?.accessToken,
         },
         body: JSON.stringify({
-          videoLessonsReplyId,
+          videoLessonsId,
           authorId,
           content,
           star,
@@ -189,7 +189,7 @@ export const coursePostThumnail = async (videoLessonsId, image, session) => {
     }
     if (!res.ok) {
       console.log(res);
-      return res;
+      return res.data;
     }
   } catch (error) {
     console.error(error);

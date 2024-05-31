@@ -4,7 +4,7 @@ import Pagination from "../layoutComponents/Paginatation";
 import Link from "next/link";
 import Image from "next/image";
 
-const CourseItems = ({
+const CourseItems = async ({
   courseContents,
   currentPage,
   numShowContents,
@@ -15,7 +15,6 @@ const CourseItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(courseContents, currentPage);
-  console.log(courseContents[0]?.videoLessonsIbThumbnailUrl);
   return (
     <>
       {courseContents.length > 0 ? (
@@ -24,11 +23,8 @@ const CourseItems = ({
             <Link href={`/course/${content.videoLessonsId}`}>
               <figure>
                 <Image
-                  src={
-                    content?.videoLessonsIbThumbnailUrl !== ""
-                      ? content?.videoLessonsIbThumbnailUrl
-                      : "/img/common/user_profile.jpg"
-                  }
+                  src={content?.videoLessonsIbThumbnailUrl}
+                  priority
                   width="100"
                   height="100"
                   alt="강의 표지 사진"

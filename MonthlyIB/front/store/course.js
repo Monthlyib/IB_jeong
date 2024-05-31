@@ -1,4 +1,8 @@
-import { coursePostItem, coursePostThumnail } from "@/apis/courseAPI";
+import {
+  coursePostItem,
+  coursePostRelpyItem,
+  coursePostThumnail,
+} from "@/apis/courseAPI";
 import { courseGetItem, courseGetList } from "@/apis/openAPI";
 import { create } from "zustand";
 
@@ -66,7 +70,27 @@ export const useCourseStore = create((set, get) => ({
       );
       if (res?.result.status === 200)
         coursePostThumnail(res?.data?.videoLessonsId, image, session);
-      get().getCourseList(1, "", "", "", "", "");
+      await get().getCourseList(1, "", "", "", "", "");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  postCourseReview: async (
+    videoLessonsId,
+    authorId,
+    content,
+    star,
+    session
+  ) => {
+    try {
+      await coursePostRelpyItem(
+        videoLessonsId,
+        authorId,
+        content,
+        star,
+        session
+      );
+      get().getCourseDetail(videoLessonsId);
     } catch (error) {
       console.error(error);
     }

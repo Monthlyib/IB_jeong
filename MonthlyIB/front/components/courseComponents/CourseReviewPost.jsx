@@ -4,18 +4,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "@/components/questionComponents/Question.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { useSession } from "next-auth/react";
+import { useCourseStore } from "@/store/course";
 
 const CourseReviewPost = ({ setFormModal, pageId }) => {
-  const dispatch = useDispatch();
   const [content, setContent] = useState("");
   const [point, setPoint] = useState(0);
 
+  const { data: session } = useSession();
+  const { postCourseReview } = useCourseStore();
   const [clicked, setClicked] = useState([false, false, false, false, false]);
   const array = [0, 1, 2, 3, 4];
 
   const outside = useRef();
-
-  const { User } = useSelector((state) => state.user);
 
   useEffect(() => {
     setPoint(clicked.filter((v) => v === true).length);
@@ -29,12 +30,20 @@ const CourseReviewPost = ({ setFormModal, pageId }) => {
     setClicked(clickStates);
   };
 
-  const onSubmit = useCallback(() => {
-    dispatch(
-      coursePostActions.addCourseReviewRequest({ content, point, pageId, User })
-    );
-    setFormModal(false);
-  }, [content, point, pageId]);
+  const onSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      postCourseReview(
+        parseInt(pageId),
+        session?.userId,
+        content,
+        point,
+        session
+      );
+      setFormModal(false);
+    },
+    [content, point, pageId]
+  );
 
   const onChangeContent = useCallback((e) => {
     setContent(e.target.value);
@@ -42,7 +51,7 @@ const CourseReviewPost = ({ setFormModal, pageId }) => {
 
   return (
     <>
-      <Form onFinish={onSubmit} style={{ position: "relative", zIndex: 5000 }}>
+      <form onSubmit={onSubmit} style={{ position: "relative", zIndex: 5000 }}>
         <div className={`${styles.md} ${styles.md_left}`}>
           <div
             className={styles.md_box_flex}
@@ -91,7 +100,7 @@ const CourseReviewPost = ({ setFormModal, pageId }) => {
           </div>
           <div className={styles.md_dim}></div>
         </div>
-      </Form>
+      </form>
     </>
   );
 };

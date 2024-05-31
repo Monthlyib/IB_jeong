@@ -1,5 +1,11 @@
 import { storageGetList, storageGetMain } from "@/apis/openAPI";
-import { storagePostFile, storagePostFolder } from "@/apis/storageAPI";
+import {
+  storageDeleteFile,
+  storageDeleteFolder,
+  storagePostFile,
+  storagePostFolder,
+  storageReviseFolder,
+} from "@/apis/storageAPI";
 import { create } from "zustand";
 
 export const useStoreStore = create((set, get) => ({
@@ -46,7 +52,7 @@ export const useStoreStore = create((set, get) => ({
         status,
         session
       );
-      if (status == "MAIN") {
+      if (parentsFolderId == 0) {
         get().getMainFolders();
       } else get().getSubLists(parentsFolderId, "");
     } catch (error) {
@@ -57,6 +63,39 @@ export const useStoreStore = create((set, get) => ({
     try {
       const res = await storagePostFile(parentsFolderId, file, session);
       get().getSubLists(parentsFolderId, "");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  deleteFolder: async (storageFolderId, currentFolderId, session) => {
+    try {
+      await storageDeleteFolder(storageFolderId, session);
+      if (currentFolderId === 0) get().getMainFolders();
+      else get().getSubLists(currentFolderId, "");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  deleteFile: async (storageFileId, currentFolderId, session) => {
+    try {
+      await storageDeleteFile(storageFileId, session);
+      get().getSubLists(currentFolderId, "");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  reviseFolder: async (
+    currentFolderId,
+    storageFolderId,
+    folderName,
+    status,
+    session
+  ) => {
+    try {
+      await storageReviseFolder(storageFolderId, folderName, status, session);
+      if (currentFolderId === 0) get().getMainFolders();
+      else get().getSubLists(currentFolderId, "");
     } catch (error) {
       console.error(error);
     }

@@ -6,6 +6,8 @@ import { useState } from "react";
 
 import CourseReviewItems from "./CourseReviewItems";
 import CourseReviewPost from "./CourseReviewPost";
+import { useSession } from "next-auth/react";
+import CourseReviewSummary from "./CourseReviewSummary";
 
 const CourseReview = ({
   pageId,
@@ -16,6 +18,7 @@ const CourseReview = ({
   const [formModal, setFormModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
+  const { data: session } = useSession();
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -25,7 +28,7 @@ const CourseReview = ({
       <div className={styles.course_section}>
         <div className={styles.course_tit_header}>
           <h3>수강생 리뷰</h3>
-          {/* {User.subscribe && (
+          {session?.userStatus === "ACTIVE" && (
             <button type="button" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />
               <span onClick={() => setFormModal(!formModal)}>리뷰쓰기</span>
@@ -33,7 +36,7 @@ const CourseReview = ({
                 <CourseReviewPost setFormModal={setFormModal} pageId={pageId} />
               )}
             </button>
-          )} */}
+          )}
         </div>
       </div>
 
@@ -44,52 +47,19 @@ const CourseReview = ({
             <b>{reviewAvgPoint.toFixed(1)}</b>
           </div>
           <p>
-            리뷰 <span>{courseDetail.reviews?.length}</span>개
+            리뷰 <span>{courseDetail?.replyCount}</span>개
           </p>
         </div>
-
-        <div className={styles.review_aver_right}>
-          <ul>
-            <li>
-              <p className={styles.arg_bar}>
-                <span style={{ height: `${reviewPoint["1"] * 100}%` }}></span>
-              </p>
-              <span>1점</span>
-            </li>
-            <li>
-              <p className={styles.arg_bar}>
-                <span style={{ height: `${reviewPoint["2"] * 100}%` }}></span>
-              </p>
-              <span>2점</span>
-            </li>
-            <li>
-              <p className={styles.arg_bar}>
-                <span style={{ height: `${reviewPoint["3"] * 100}%` }}></span>
-              </p>
-              <span>3점</span>
-            </li>
-            <li>
-              <p className={styles.arg_bar}>
-                <span style={{ height: `${reviewPoint["4"] * 100}%` }}></span>
-              </p>
-              <span>4점</span>
-            </li>
-            <li>
-              <p className={styles.arg_bar}>
-                <span style={{ height: `${reviewPoint["5"] * 100}%` }}></span>
-              </p>
-              <span>5점</span>
-            </li>
-          </ul>
-        </div>
+        <CourseReviewSummary reviewPoint={reviewPoint} />
       </div>
 
       <div className={styles.dt_review_wrap}>
         <div className={styles.dt_review_filter}>
           <h5>
-            리뷰 <span>{courseDetail.reviews?.length}</span>개
+            리뷰 <span>{courseDetail?.replyCount}</span>개
           </h5>
           <div className={styles.dt_review_select}>
+            {/* TODO: click시에 색깔 active 변동 및 기능 구현 */}
             <span data-type="new" className={styles.active}>
               최신순
             </span>

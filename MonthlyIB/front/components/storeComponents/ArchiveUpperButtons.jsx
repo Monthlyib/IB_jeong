@@ -9,7 +9,7 @@ import {
 
 const ArchiveUpperButtons = ({
   onClickUpFolder,
-  level,
+  currentFolderId,
   onClickCreateFolder,
   file,
   onSelectFile,
@@ -19,10 +19,12 @@ const ArchiveUpperButtons = ({
       <div className={styles.right_btn} style={{ marginBottom: "3rem" }}>
         <button
           className={
-            level > 0 ? styles.btn_write_back : styles.btn_write_back_disabled
+            currentFolderId > 0
+              ? styles.btn_write_back
+              : styles.btn_write_back_disabled
           }
           onClick={onClickUpFolder}
-          disabled={level > 0 ? false : true}
+          disabled={currentFolderId > 0 ? false : true}
         >
           <FontAwesomeIcon icon={faArrowUpFromBracket} />
           <span>상위폴더</span>

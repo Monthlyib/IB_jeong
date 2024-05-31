@@ -5,7 +5,7 @@ const STORAGE_API_URL = "api/storage";
 export const storageDeleteFolder = async (storageFolderId, session) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/storage/${storageFolderId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/${storageFolderId}`,
       {
         method: "DELETE",
         headers: {
@@ -26,7 +26,7 @@ export const storageDeleteFolder = async (storageFolderId, session) => {
 export const storageDeleteFile = async (storageFileId, session) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/storage/file/${storageFileId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/file/${storageFileId}`,
       {
         method: "DELETE",
         headers: {
@@ -52,7 +52,7 @@ export const storageReviseFolder = async (
 ) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/storage`,
+      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}`,
       {
         method: "PATCH",
         headers: {

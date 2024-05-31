@@ -1050,6 +1050,7 @@ select#recommendSchools:selected {
   border-radius: 0.5rem;
   padding: 1.4rem 2.4rem;
   cursor: pointer;
+  position: relative;
 }
 .ib_archive_list:hover {
   background: #fafafa;

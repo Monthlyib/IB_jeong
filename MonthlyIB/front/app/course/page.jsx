@@ -1,9 +1,10 @@
+import Loading from "@/components/Loading";
 import CourseComponents from "@/components/courseComponents/CourseComponents";
 import { Suspense } from "react";
 const CourseHome = () => {
   return (
     <>
-      <Suspense>
+      <Suspense fallback={<Loading />}>
         <CourseComponents />
       </Suspense>
     </>

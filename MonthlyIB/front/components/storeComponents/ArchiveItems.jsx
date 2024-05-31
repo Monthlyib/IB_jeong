@@ -5,11 +5,41 @@ import {
   faFolder,
   faFile,
   faTrashAlt,
+  faPenAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useCallback } from "react";
+import { useSession } from "next-auth/react";
+import { useStoreStore } from "@/store/store";
+import ArchiveFolderModal from "./ArchiveFolderModal";
+import { useRef, useState } from "react";
 
-const ArchiveItems = ({ folders, type, onClickFolder, setCurrentPath }) => {
-  const onClickDelete = useCallback(() => {}, []);
+const ArchiveItems = ({
+  folders,
+  type,
+  onClickFolder,
+  setCurrentPath,
+  currentFolderId,
+}) => {
+  const closeRef = useRef();
+  const [modal, setModal] = useState(false);
+  const [storageFolderId, setStorageFolderId] = useState(0);
+  const [folderTitle, setFolderTitle] = useState("");
+  const { deleteFolder, deleteFile, reviseFolder } = useStoreStore();
+  const onClickDeleteFolder = (folderId) => {
+    deleteFolder(folderId, currentFolderId, session);
+  };
+  const onClickDeleteFile = (fileId) => {
+    deleteFile(fileId, currentFolderId, session);
+  };
+
+  const onClickReviseFolderName = (folderId) => {
+    setModal(true);
+    setStorageFolderId(folderId);
+  };
+  const onSubmitReviseFolder = (folderName) => {
+    const status = currentFolderId === 0 ? "MAIN" : "SUB";
+    reviseFolder(currentFolderId, storageFolderId, folderName, status, session);
+  };
+  const { data: session } = useSession();
   return (
     <>
       {type === "folders" &&
@@ -29,11 +59,30 @@ const ArchiveItems = ({ folders, type, onClickFolder, setCurrentPath }) => {
                 <span>{f.name}</span>
               </div>
 
-              <div className={styles.options}>
-                <button type="button" id="delete">
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                </button>
-              </div>
+              {session?.authority === "ADMIN" && (
+                <div className={styles.options}>
+                  <button
+                    type="button"
+                    id="revise"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClickReviseFolderName(f.folderId);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faPenAlt} />
+                  </button>
+                  <button
+                    type="button"
+                    id="delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClickDeleteFolder(f.folderId);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
@@ -51,14 +100,32 @@ const ArchiveItems = ({ folders, type, onClickFolder, setCurrentPath }) => {
                 <span>{f.fileName}</span>
               </div>
 
-              <div className={styles.options}>
-                <button type="button" id="delete">
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                </button>
-              </div>
+              {session?.authority === "ADMIN" && (
+                <div className={styles.options}>
+                  <button
+                    type="button"
+                    id="delete"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onClickDeleteFile(f.fileId);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
+      {modal && (
+        <ArchiveFolderModal
+          closeRef={closeRef}
+          title={folderTitle}
+          setTitle={setFolderTitle}
+          setModal={setModal}
+          onSubmitCreateFolder={onSubmitReviseFolder}
+        />
+      )}
     </>
   );
 };

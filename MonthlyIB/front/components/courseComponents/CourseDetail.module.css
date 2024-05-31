@@ -1030,7 +1030,7 @@ div.review_stars svg.active:hover ~ svg.empty {
   border-radius: 0.5rem;
 }
 
-.btn_write i {
+.btn_write svg {
   font-size: 1.4rem;
   flex: 2;
 }

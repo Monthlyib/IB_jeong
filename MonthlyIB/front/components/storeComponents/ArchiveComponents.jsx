@@ -23,6 +23,7 @@ const ArchiveComponents = () => {
   } = useStoreStore();
   const [currentPath, setCurrentPath] = useState("Home");
   const [currentFolderId, setCurrentFolderId] = useState(0);
+  const [prevFolderId, setPrevFolderId] = useState([]);
   const [folderTitle, setFolderTitle] = useState("");
   const [searchedPosts, setSearchedPosts] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -35,14 +36,13 @@ const ArchiveComponents = () => {
     getMainFolders();
   }, []);
 
-  useEffect(() => {
-    Object.keys(subLists).map((k) => console.log(subLists[k]));
-    console.log(currentFolderId);
-  }, [subLists]);
-
   const onClickFolder = (id) => {
+    const temp = [...prevFolderId];
+    temp.push(currentFolderId);
+    setPrevFolderId(temp);
     setCurrentFolderId(id);
     getSubLists(id, "");
+    console.log("clicked");
   };
 
   const onClickCreateFolder = () => {
@@ -50,7 +50,7 @@ const ArchiveComponents = () => {
   };
 
   const onSubmitCreateFolder = (folderName) => {
-    if (currentPath === "Home") postFolder(0, folderName, "MAIN", session);
+    if (currentFolderId === 0) postFolder(0, folderName, "MAIN", session);
     else postFolder(currentFolderId, folderName, "SUB", session);
   };
   const onSelectFile = (e) => {
@@ -60,7 +60,22 @@ const ArchiveComponents = () => {
     postFile(currentFolderId, file.current, session);
   };
 
-  const onClickUpFolder = () => {};
+  const onClickUpFolder = () => {
+    // TODO: current Path 해결해야됨
+    const temp = [...prevFolderId];
+    setCurrentFolderId(prevFolderId.at(-1));
+    const tempStr = currentPath;
+    tempStr.replace(tempStr.split(" ").at(-1), "");
+    tempStr.replace(tempStr.split(" ").at(-2), "");
+    console.log("dd", tempStr);
+    // setCurrentPath(tempStr.replace(tempStr.split(" /").at(-1), ""));
+    // setCurrentPath(tempStr.replace(tempStr.split(" ").at(-2), ""));
+    if (temp.length > 1) {
+      getSubLists(temp.at(-1), "");
+      temp.pop();
+      setPrevFolderId(temp);
+    }
+  };
 
   /* 서치기능 구현아직 안됨 */
 
@@ -91,7 +106,7 @@ const ArchiveComponents = () => {
         {session?.authority === "ADMIN" && (
           <ArchiveUpperButtons
             onClickUpFolder={onClickUpFolder}
-            level={level}
+            currentFolderId={currentFolderId}
             onClickCreateFolder={onClickCreateFolder}
             file={file}
             onSelectFile={onSelectFile}
@@ -108,8 +123,9 @@ const ArchiveComponents = () => {
                     id={k.folderId}
                     onClickFolder={onClickFolder}
                     setCurrentPath={setCurrentPath}
-                    currentPath={currentPath}
                     key={subLists[k].folderId}
+                    currentFolderId={currentFolderId}
+                    onClickUpFolder={onClickUpFolder}
                   />
                 ))}
               </div>
@@ -127,7 +143,7 @@ const ArchiveComponents = () => {
                 type="folders"
                 onClickFolder={onClickFolder}
                 setCurrentPath={setCurrentPath}
-                currentPath={currentPath}
+                currentFolderId={currentFolderId}
               />
             </div>
           </div>

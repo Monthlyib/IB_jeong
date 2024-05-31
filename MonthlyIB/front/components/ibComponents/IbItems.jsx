@@ -53,6 +53,7 @@ const IbItems = ({
                 <Image
                   src={content.monthlyIbThumbnailUrl}
                   alt="잡지 이미지"
+                  priority
                   width="353"
                   height="400"
                 />

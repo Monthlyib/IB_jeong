@@ -7,7 +7,6 @@ import CourseReview from "./CourseReview";
 import CourseDetailMob from "./CourseDetailMob";
 import CourseDetailRight from "./CourseDetailRight";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { useCourseStore } from "@/store/course";
 import Image from "next/image";
 
@@ -26,8 +25,6 @@ const CourseDetail = (pageId) => {
   const [reviewAvgPoint, setReviewAvgPoint] = useState(0);
   const [reviewStarHeight, setReviewStarHeight] = useState({});
   let reviewValHolder = 0;
-
-  const { data: session } = useSession();
   const { courseDetail, getCourseDetail } = useCourseStore();
 
   const courseContent = useRef();
