@@ -7,7 +7,7 @@ import Link from "next/link";
 import CoursePostCurriculum from "./CoursePostCurriculum";
 import CoursePostCategory from "./CoursePostCategory";
 import dynamic from "next/dynamic";
-import { courseReviseItem } from "@/apis/courseAPI";
+import { coursePostThumnail, courseReviseItem } from "@/apis/courseAPI";
 import { useSession } from "next-auth/react";
 import { useCourseStore } from "@/store/course";
 
@@ -61,11 +61,10 @@ const CoursePostWrite = () => {
   const router = useRouter();
   const { data: session } = useSession();
   const imageInput = useRef();
-
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const videoLessonsId = searchParams.get("videoLessonsId");
-  const { courseDetail, postCourseItem } = useCourseStore();
+  const { courseDetail, postCourseItem, getCourseDetail } = useCourseStore();
 
   const [group, setGroup] = useState("all");
   const [level, setLevel] = useState("all");
@@ -116,16 +115,31 @@ const CoursePostWrite = () => {
     return newFile;
   };
 
+  const loadingInfo = async (videoLessonsId) => {
+    await getCourseDetail(videoLessonsId);
+    console.log("hi");
+  };
+  useEffect(() => {
+    if (videoLessonsId) {
+      console.log("hi", videoLessonsId);
+      loadingInfo(videoLessonsId);
+    }
+  }, []);
+
   // 수정시에 기존 데이터 불러오기
   useEffect(() => {
     if (videoLessonsId) {
+      if (!courseDetail?.title) {
+        alert("잘못된 접근입니다.");
+        router.push("/course/");
+      }
+      getCourseDetail(videoLessonsId);
       setTitle(courseDetail?.title);
       setContent(courseDetail?.content);
       setLecturer(courseDetail?.instructor);
       setChapters(courseDetail?.chapters);
       const temp = [];
-      courseDetail?.chapters.map((v) => temp.push(v.subChapters));
-      console.log(temp);
+      courseDetail?.chapters?.map((v) => temp.push(v.subChapters));
       setSubChapters(temp);
       setFirstCategoryId(courseDetail?.firstCategoryId);
       setSecondCategoryId(courseDetail?.secondCategoryId);
@@ -193,7 +207,7 @@ const CoursePostWrite = () => {
       chapterStatus: "MAIN_CHAPTER",
       chapterTitle: "",
       chapterIndex: subTemp[chptIndex].length,
-      videoLessonsUrl: "",
+      videoFileUrl: "",
     });
 
     setSubChapters(subTemp);
@@ -239,6 +253,8 @@ const CoursePostWrite = () => {
         thirdCategoryId,
         session
       );
+      if (imageInput.current)
+        coursePostThumnail(videoLessonsId, imageInput.current, session);
     } else {
       postCourseItem(
         title,

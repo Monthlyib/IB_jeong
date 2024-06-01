@@ -8,7 +8,6 @@ import shortid from "shortid";
 import Image from "next/image";
 
 import { monthlyIBGetItem } from "@/apis/monthlyIbAPI";
-import Link from "next/link";
 import { useIBStore } from "@/store/ib";
 
 const IbItems = ({
@@ -27,10 +26,11 @@ const IbItems = ({
   const onClickDelete = async (num) => {
     deleteIBList(num, session, currentPage);
   };
-  // console.log(IBContents);
   const onClickPost = async (num) => {
-    // const res = await monthlyIBGetItem(num, session);
-    // console.log(res);
+    const res = await monthlyIBGetItem(num, session);
+    const url = res.data?.pdfFiles[0].fileUrl;
+    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
   };
   return (
     <>
@@ -48,7 +48,7 @@ const IbItems = ({
               </button>
             )}
 
-            <Link href={`/ib/${content.monthlyIbId}`}>
+            <div onClick={() => onClickPost(content.monthlyIbId)}>
               <figure>
                 <Image
                   src={content.monthlyIbThumbnailUrl}
@@ -59,7 +59,7 @@ const IbItems = ({
                 />
               </figure>
               <span className={styles.ib_txt}>{content.title}</span>
-            </Link>
+            </div>
           </div>
         ))
       ) : (

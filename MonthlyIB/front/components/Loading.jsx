@@ -9,6 +9,7 @@ const Loading = () => {
         margin: "50vh auto",
         alignItems: "center",
         justifyContent: "center",
+        color: "#51346c",
       }}
     >
       <h3> Loading...</h3>

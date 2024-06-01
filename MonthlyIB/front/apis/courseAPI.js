@@ -40,7 +40,6 @@ export const courseDeleteRelpyItem = async (videoLessonsReplyId, session) => {
     if (res.ok) {
       console.log("success");
     }
-    return res.json();
   } catch (error) {
     console.error(error);
   }
@@ -162,7 +161,6 @@ export const courseVoteRelpyItem = async (videoLessonsReplyId, session) => {
     if (res.ok) {
       console.log("success");
     }
-    return res.json();
   } catch (error) {
     console.error(error);
   }
@@ -281,8 +279,8 @@ export const courseReviseItem = async (
 };
 
 export const courseReviseRelpyItem = async (
+  videoLessonsId,
   videoLessonsReplyId,
-  authorId,
   content,
   star,
   session
@@ -298,7 +296,7 @@ export const courseReviseRelpyItem = async (
         },
         body: JSON.stringify({
           videoLessonsReplyId,
-          authorId,
+          videoLessonsId,
           content,
           star,
         }),
@@ -306,6 +304,28 @@ export const courseReviseRelpyItem = async (
     );
     if (res.ok) {
       console.log("success");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const courseUserList = async (userId, page, session) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${COURSE_API_URL}/enrolment/${userId}?page=${page}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: session?.accessToken,
+        },
+      }
+    );
+
+    if (!res.ok) {
+      console.log(res);
+      return res;
     }
     return res.json();
   } catch (error) {

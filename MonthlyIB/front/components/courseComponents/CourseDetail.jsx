@@ -64,8 +64,14 @@ const CourseDetail = (pageId) => {
   }, [modalFixed]);
 
   useEffect(() => {
+    reviewValHolder = 0;
+    setReviewAvgPoint(0);
+    for (let i = 1; i < 6; i++) {
+      reviewPoint[i] = 0;
+    }
+    setReviewStarHeight({});
     if (courseDetail.reply?.data.length > 0) {
-      for (let i = 0; i < courseDetail.reviews.length; i++) {
+      for (let i = 0; i < courseDetail.reply?.data.length; i++) {
         reviewValHolder += Number(courseDetail.reply?.data[i].star);
         reviewPoint[String(courseDetail.reply?.data[i].star)] += 1;
       }
@@ -77,7 +83,7 @@ const CourseDetail = (pageId) => {
       setReviewAvgPoint(reviewValHolder);
     }
     setReviewStarHeight(reviewPoint);
-  }, [courseDetail.reply?.data]);
+  }, [courseDetail.reply?.data, courseDetail.reply?.data.star]);
 
   return (
     <>

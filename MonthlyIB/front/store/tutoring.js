@@ -7,6 +7,7 @@ import { create } from "zustand";
 
 export const useTutoringStore = create((set, get) => ({
   tutoringDateSimpleList: {},
+  tutoringDateList: [],
   getTutoringDateList: async (date, status, page, session) => {
     try {
       const res = await TutoringGetDate(date, status, page, session);

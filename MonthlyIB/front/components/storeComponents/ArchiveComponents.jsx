@@ -2,7 +2,7 @@
 import styles from "@/components/boardComponents/BoardCommon.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import BoardCommonHead from "@/components/boardComponents/BoardCommonHead";
-
+import shortid from "shortid";
 import ArchiveItems from "./ArchiveItems";
 import ArchiveFolderModal from "./ArchiveFolderModal";
 import ArchiveUpperButtons from "./ArchiveUpperButtons";
@@ -123,7 +123,7 @@ const ArchiveComponents = () => {
                     id={k.folderId}
                     onClickFolder={onClickFolder}
                     setCurrentPath={setCurrentPath}
-                    key={subLists[k].folderId}
+                    key={shortid.generate()}
                     currentFolderId={currentFolderId}
                     onClickUpFolder={onClickUpFolder}
                   />

@@ -39,6 +39,11 @@ const ArchiveItems = ({
     const status = currentFolderId === 0 ? "MAIN" : "SUB";
     reviseFolder(currentFolderId, storageFolderId, folderName, status, session);
   };
+  const onClickFile = (fileUrl) => {
+    const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
+  };
+  console.log(folders);
   const { data: session } = useSession();
   return (
     <>
@@ -93,6 +98,7 @@ const ArchiveItems = ({
             className={styles.ib_archive_list}
             datatype="file"
             key={f.fileId}
+            onClick={() => onClickFile(f.fileUrl)}
           >
             <div className={styles.ib_archive_box}>
               <div className={styles.ib_archive_info}>

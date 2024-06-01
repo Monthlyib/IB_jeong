@@ -48,7 +48,7 @@
   margin-right: 0;
 }
 
-.ib_item a {
+.ib_item div {
   display: flex;
   flex-direction: column;
 
@@ -56,26 +56,26 @@
   width: 100%;
 }
 
-.ib_item a figure {
+.ib_item div figure {
   display: block;
   width: 100%;
   height: 40rem;
   margin-bottom: 1.4rem;
 }
 
-.ib_item a figure img {
+.ib_item div figure img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.ib_item a .ib_txt {
+.ib_item div .ib_txt {
   font-size: 1.8rem;
   font-weight: 600;
 }
 
-.ib_item a:hover .ib_txt {
+.ib_item div:hover .ib_txt {
   text-decoration: underline;
 }
 

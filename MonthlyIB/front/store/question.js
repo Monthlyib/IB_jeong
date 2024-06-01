@@ -1,6 +1,7 @@
 import { questionGetItem, questionGetList } from "@/apis/openAPI";
 import {
   questionDeleteAnswer,
+  questionGetUserList,
   questionPostAnswerItem,
   questionPostItem,
   questionReviseAnswerItem,
@@ -14,6 +15,19 @@ export const useQuestionStore = create((set, get) => ({
   getQuestionList: async (currentPage) => {
     try {
       const res = await questionGetList("", "", currentPage - 1);
+      set({ questionList: res.data });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getUserQuestionList: async (questionStatus, page, keyWord, session) => {
+    try {
+      const res = await questionGetUserList(
+        questionStatus,
+        page,
+        keyWord,
+        session
+      );
       set({ questionList: res.data });
     } catch (error) {
       console.error(error);

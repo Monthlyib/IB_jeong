@@ -71,7 +71,7 @@ const CourseReview = ({
         <div className={styles.dt_review_cont}>
           {
             <CourseReviewItems
-              coursePostReviewPosts={courseDetail.reviews}
+              coursePostReviewPosts={courseDetail.reply?.data}
               currentPage={currentPage}
               numShowContents={5}
               onPageChange={handlePageChange}

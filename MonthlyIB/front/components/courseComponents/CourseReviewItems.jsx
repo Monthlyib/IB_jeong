@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Pagination from "../layoutComponents/Paginatation";
 import shortid from "shortid";
 import { useSession } from "next-auth/react";
+import { useCourseStore } from "@/store/course";
 
 const CourseReviewItems = ({
   coursePostReviewPosts,
@@ -38,7 +39,9 @@ const CourseReviewItems = ({
   };
 
   const { data: session } = useSession();
-  const [editStatus, setEditStatus] = useState("");
+  const { deleteCourseReview, reviseCourseReview, voteCourseReview } =
+    useCourseStore();
+  const [modal, setModal] = useState(-1);
 
   const [points, setPoints] = useState(0);
   const [clicked, setClicked] = useState([false, false, false, false, false]);
@@ -51,21 +54,18 @@ const CourseReviewItems = ({
   };
   const paginatedPage = paginate(coursePostReviewPosts, currentPage);
 
-  const onClickDelete = useCallback((id) => {
-    dispatch(coursePostActions.deleteCourseReviewRequest({ pageId, id }));
+  const onClickDelete = useCallback((videoLessonsReplyId) => {
+    deleteCourseReview(pageId, videoLessonsReplyId, session);
   }, []);
 
   useEffect(() => {
     setPoints(clicked.filter((v) => v === true).length);
   }, [clicked]);
 
-  const onClickEdit = useCallback(
-    (content, id) => {
-      setEditStatus(id);
-      reviews.current = content;
-    },
-    [editStatus]
-  );
+  const onClickEdit = (content, id) => {
+    setModal(id);
+    reviews.current = content;
+  };
 
   const onChangeContent = (e) => {
     reviews.current = e.target.value;
@@ -80,32 +80,26 @@ const CourseReviewItems = ({
   };
 
   const onSubmit = useCallback(
-    (id, c) => {
-      let review = "";
-
-      if (typeof reviews.current === "object") {
-        review = c;
-      } else {
-        review = reviews.current;
-      }
-
-      setEditStatus("");
+    (videoLessonsReplyId, content) => {
+      console.log(typeof reviews.current);
+      if (typeof reviews.current === "object") reviews.current = content;
+      reviseCourseReview(
+        pageId,
+        videoLessonsReplyId,
+        reviews.current,
+        points,
+        session
+      );
+      setModal(-1);
     },
     [reviews, points]
   );
 
-  const onClickLike = useCallback((id) => {
-    if (logInDone) {
-      dispatch(coursePostActions.likeCourseReviewRequest({ pageId, id, User }));
-    }
-  }, []);
-  const onClickUnLike = useCallback((id) => {
-    if (logInDone) {
-      dispatch(
-        coursePostActions.unlikeCourseReviewRequest({ pageId, id, User })
-      );
-    }
-  }, []);
+  const onClickLike = (id) => {
+    voteCourseReview(pageId, id, session);
+  };
+
+  console.log(coursePostReviewPosts);
 
   return (
     <>
@@ -130,7 +124,7 @@ const CourseReviewItems = ({
                 <div className={styles.dt_review_profile}>
                   <div className={styles.dt_review_star_cont}>
                     <div className={styles.dt_review_star}>
-                      {editStatus === content.id ? (
+                      {modal === content.videoLessonsReplyId ? (
                         <div className={styles.review_stars}>
                           {array.map((el) => (
                             <FontAwesomeIcon
@@ -146,27 +140,30 @@ const CourseReviewItems = ({
                           ))}
                         </div>
                       ) : (
-                        starRendering(content.point)
+                        starRendering(content.star)
                       )}
                     </div>
-                    {editStatus !== content.id && <span> {content.point}</span>}
+                    {modal !== content.videoLessonsReplyId && (
+                      <span> {content.star}</span>
+                    )}
                   </div>
                   <div className={styles.dt_review_txt}>
                     <span className={styles.dt_review_user}>
-                      <b>{content.owner}</b>
-                      {`(${content.owner})`}
+                      <b>{content.authorNickname}</b>
+                      {`(${content.authorUsername})`}
                     </span>
                     <b> · </b>
-                    <span>{content.date}</span>
+                    <span>{content.updateAt}</span>
                   </div>
                 </div>
               </div>
-              {User.username === content.owner && (
+              {(session?.userId === content.authorId ||
+                session?.authority === "ADMIN") && (
                 <div className={styles.comment_option}>
                   <button
                     type="button"
                     onClick={() => {
-                      onClickEdit(content.content, content.id);
+                      onClickEdit(content.content, content.videoLessonsReplyId);
                     }}
                   >
                     수정
@@ -174,7 +171,7 @@ const CourseReviewItems = ({
                   <button
                     type="button"
                     onClick={() => {
-                      onClickDelete(content.id);
+                      onClickDelete(content.videoLessonsReplyId);
                     }}
                   >
                     삭제
@@ -182,7 +179,7 @@ const CourseReviewItems = ({
                 </div>
               )}
             </div>
-            {editStatus === content.id ? (
+            {modal === content.videoLessonsReplyId ? (
               <div className={styles.comment_content_wrap}>
                 <div className={styles.comment_content_flex}>
                   <textarea
@@ -191,7 +188,11 @@ const CourseReviewItems = ({
                     defaultValue={content.content}
                     onChange={onChangeContent}
                   />
-                  <button onClick={() => onSubmit(content.id, content.content)}>
+                  <button
+                    onClick={() =>
+                      onSubmit(content.videoLessonsReplyId, content.content)
+                    }
+                  >
                     등록
                   </button>
                 </div>
@@ -199,28 +200,24 @@ const CourseReviewItems = ({
             ) : (
               <>
                 <div className={styles.dt_review_content}>
-                  <p>{content.body}</p>
+                  <p>{content.content}</p>
                 </div>
-                {/* <div className={styles.dt_review_bottom}>
-                  {content.heart.find((v) => v.id === User?.id) ? (
+                <div className={styles.dt_review_bottom}>
+                  {session?.userStatus === "ACTIVE" && (
                     <button
+                      className={
+                        content.voteUserId.includes(session?.userId)
+                          ? styles.active
+                          : ""
+                      }
                       type="button"
-                      onClick={() => onClickUnLike(content.id)}
-                      className={styles.active}
+                      onClick={() => onClickLike(content.videoLessonsReplyId)}
                     >
                       <FontAwesomeIcon icon={faHeart} />
-                      <span>{content.heart.length}</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={() => onClickLike(content.id)}
-                    >
-                      <FontAwesomeIcon icon={faHeart} />
-                      <span>{content.heart.length}</span>
+                      <span>{content.voteUserId.length}</span>
                     </button>
                   )}
-                </div> */}
+                </div>
               </>
             )}
           </div>

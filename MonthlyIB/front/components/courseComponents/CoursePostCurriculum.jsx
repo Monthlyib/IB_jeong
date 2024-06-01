@@ -11,7 +11,7 @@ const CoursePostCurriculum = ({
   return (
     <>
       <ul>
-        {numCurriculumChapter.map((v, i) => (
+        {numCurriculumChapter?.map((v, i) => (
           <li key={i}>
             <input
               type="text"
@@ -62,14 +62,11 @@ const CoursePostCurriculum = ({
                       <input
                         style={{ marginLeft: "1rem" }}
                         type="url"
-                        defaultValue={
-                          numCurriculumSubChapter[i][j]?.videoFileUrl
-                        }
-                        value={numCurriculumSubChapter[i][j].videoLessonsUrl}
+                        value={numCurriculumSubChapter[i][j].videoFileUrl}
                         className={styles.write_link}
                         onChange={(e) => {
                           let temp = { ...numCurriculumSubChapter };
-                          temp[i][j].videoLessonsUrl = e.target.value;
+                          temp[i][j].videoFileUrl = e.target.value;
                           setSubChapters(temp);
                         }}
                         placeholder="영상 링크를 넣어주세요."

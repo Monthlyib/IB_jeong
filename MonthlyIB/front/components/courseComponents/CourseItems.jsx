@@ -23,7 +23,11 @@ const CourseItems = async ({
             <Link href={`/course/${content.videoLessonsId}`}>
               <figure>
                 <Image
-                  src={content?.videoLessonsIbThumbnailUrl}
+                  src={
+                    content?.videoLessonsIbThumbnailUrl !== ""
+                      ? content?.videoLessonsIbThumbnailUrl
+                      : "/img/common/user_profile.jpg"
+                  }
                   priority
                   width="100"
                   height="100"

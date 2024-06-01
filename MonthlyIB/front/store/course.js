@@ -1,7 +1,11 @@
 import {
+  courseDeleteRelpyItem,
   coursePostItem,
   coursePostRelpyItem,
   coursePostThumnail,
+  courseReviseRelpyItem,
+  courseUserList,
+  courseVoteRelpyItem,
 } from "@/apis/courseAPI";
 import { courseGetItem, courseGetList } from "@/apis/openAPI";
 import { create } from "zustand";
@@ -91,6 +95,50 @@ export const useCourseStore = create((set, get) => ({
         session
       );
       get().getCourseDetail(videoLessonsId);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  deleteCourseReview: async (videoLessonsId, videoLessonsReplyId, session) => {
+    try {
+      await courseDeleteRelpyItem(videoLessonsReplyId, session);
+      get().getCourseDetail(videoLessonsId);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  reviseCourseReview: async (
+    videoLessonsId,
+    videoLessonsReplyId,
+    content,
+    star,
+    session
+  ) => {
+    try {
+      await courseReviseRelpyItem(
+        videoLessonsId,
+        videoLessonsReplyId,
+        content,
+        star,
+        session
+      );
+      get().getCourseDetail(videoLessonsId);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  voteCourseReview: async (videoLessonsId, videoLessonsReplyId, session) => {
+    try {
+      await courseVoteRelpyItem(videoLessonsReplyId, session);
+      get().getCourseDetail(videoLessonsId);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getUserCourseList: async (userId, page, session) => {
+    try {
+      const res = await courseUserList(userId, page, session);
+      set({ coursePosts: res.data });
     } catch (error) {
       console.error(error);
     }
