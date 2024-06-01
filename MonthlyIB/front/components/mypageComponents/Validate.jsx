@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
-import styles from "../page_components/mypage/MyPage.module.css";
-import AppLayout from "../main_components/AppLayout";
+import styles from "./MyPage.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { userActions } from "../reducers/user";
 import { useRouter } from "next/router";
@@ -138,235 +137,233 @@ const Validate = () => {
   );
   return (
     <>
-      <AppLayout>
-        <main className="width_content min_content member">
-          <div className="header_tit_wrap tit_center">
-            <h2>정보수정</h2>
-          </div>
+      <main className="width_content min_content member">
+        <div className="header_tit_wrap tit_center">
+          <h2>정보수정</h2>
+        </div>
 
-          <form onSubmit={onSubmitForm}>
-            <div className={styles.profile_change}>
-              <figure>
-                <img
-                  src={User.Image.src}
-                  width="100"
-                  height="100"
-                  alt="user profile img"
-                />
-              </figure>
+        <form onSubmit={onSubmitForm}>
+          <div className={styles.profile_change}>
+            <figure>
+              <img
+                src={User.Image.src}
+                width="100"
+                height="100"
+                alt="user profile img"
+              />
+            </figure>
 
-              <div className={styles.profile_change_box}>
-                <div className="inputbox_cont">
-                  <h5>이름</h5>
-                  <div className="input_btn_wrap">
-                    <input
-                      type="text"
-                      name="user-userName"
-                      maxLength="50"
-                      autoComplete="off"
-                      placeholder="이름"
-                      value={name}
-                      onChange={onChangeName}
-                    />
-                    <button type="button" onClick={onSubmitChangeName}>
-                      변경
-                    </button>
-                  </div>
-                </div>
-
-                <label className="file_profile_btn">
+            <div className={styles.profile_change_box}>
+              <div className="inputbox_cont">
+                <h5>이름</h5>
+                <div className="input_btn_wrap">
                   <input
-                    type="file"
-                    className="profile_image"
-                    name="profile_image"
-                    onChange={onSelectFile}
+                    type="text"
+                    name="user-userName"
+                    maxLength="50"
+                    autoComplete="off"
+                    placeholder="이름"
+                    value={name}
+                    onChange={onChangeName}
                   />
-                </label>
+                  <button type="button" onClick={onSubmitChangeName}>
+                    변경
+                  </button>
+                </div>
               </div>
-            </div>
 
-            <div className="inputbox_cont">
-              <h5>아이디</h5>
-              <input
-                type="text"
-                name="user-id"
-                disabled
-                autoFocus="autofocus"
-                autoComplete="off"
-                value={User.username}
-                readOnly
-              />
-            </div>
-
-            <div className="inputbox_cont">
-              <input
-                type="password"
-                maxLength="50"
-                autoComplete="off"
-                required="Y"
-                name="user-pw"
-                placeholder="비밀번호"
-                value={password}
-                onChange={onChangePassword}
-              />
-              <div className={styles.frm_msg_cont}>
-                {password === "" || !pattern.test(password) ? (
-                  <span className={styles.frm_msg}>
-                    영문, 숫자, 특수문자 조합 8자 이상 입력하세요.
-                  </span>
-                ) : (
-                  <span className={`${styles.frm_msg} ${styles.good}`}>
-                    사용가능한 비밀번호입니다.
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="inputbox_cont">
-              <input
-                type="password"
-                maxLength="50"
-                autoComplete="off"
-                required="Y"
-                placeholder="비밀번호 확인"
-                name="usser-pwcheck"
-                value={passwordCheck}
-                onChange={onChangePasswordCheck}
-              />
-              <div className={styles.frm_msg_cont}>
-                {passwordCheck === "" ? (
-                  <span className={styles.frm_msg}>
-                    비밀번호를 다시 입력해주세요.
-                  </span>
-                ) : passwordError === true ? (
-                  <span className={`${styles.frm_msg} ${styles.frm_msg_war}`}>
-                    두 비밀번호가 일치하지 않습니다.
-                  </span>
-                ) : (
-                  <span className={`${styles.frm_msg} ${styles.good}`}>
-                    비밀번호가 일치합니다.
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <div className="inputbox_cont">
-              <h5>이메일 인증</h5>
-              <div className="input_btn_wrap">
+              <label className="file_profile_btn">
                 <input
-                  type="email"
-                  name="user-email"
-                  placeholder="이메일"
-                  value={email}
-                  onChange={onChangeEmail}
+                  type="file"
+                  className="profile_image"
+                  name="profile_image"
+                  onChange={onSelectFile}
                 />
-                <button type="button">인증번호 발송</button>
-              </div>
-            </div>
-
-            <div className="inputbox_cont">
-              <div className="input_btn_wrap">
-                <input
-                  type="text"
-                  name="email_confirm"
-                  placeholder="인증번호"
-                  maxLength="6"
-                />
-                <button type="button">확인</button>
-              </div>
-            </div>
-
-            <div className="inputbox_cont">
-              <h5>생년월일</h5>
-              <input
-                type="text"
-                name="user-birthDate"
-                maxLength="6"
-                autoComplete="off"
-                required="Y"
-                placeholder="생년월일 ( 6자 입력 )"
-                value={dob}
-                onChange={onChangeBirthDate}
-              />
-            </div>
-
-            <div className="inputbox_cont">
-              <h5>학교</h5>
-              <input
-                type="text"
-                name="user-school"
-                maxLength="50"
-                autoComplete="off"
-                required="Y"
-                placeholder="학교"
-                value={school}
-                onChange={onChangeSchool}
-              />
-            </div>
-
-            <div className="inputbox_cont">
-              <h5>학년</h5>
-              <input
-                type="text"
-                name="user-grade"
-                maxLength="10"
-                autoComplete="off"
-                required="Y"
-                placeholder="학년"
-                value={grade}
-                onChange={onChangeGrade}
-              />
-            </div>
-
-            <div className="inputbox_cont">
-              <h5>주소</h5>
-              <div className={styles.select_cont}>
-                <select
-                  className={styles.contry_select}
-                  onChange={onChangeCountry}
-                  value={country}
-                >
-                  <option>국가선택</option>
-                  <option value="ko">한국</option>
-                  <option value="en">미국</option>
-                  <option value="jp">일본</option>
-                  <option value="cn">중국</option>
-                </select>
-                <input
-                  type="text"
-                  name="user-address"
-                  autoComplete="off"
-                  required="Y"
-                  placeholder="주소"
-                  value={address}
-                  onChange={onChangeAddress}
-                />
-              </div>
-            </div>
-
-            <div className={styles.mypage_agree}>
-              <input
-                type="checkbox"
-                id="marketing_yn"
-                name="marketing_yn"
-                value={consent_marketing}
-                onChange={onChangeMarketing}
-              />
-              <label htmlFor="marketing_yn">
-                <span>
-                  {" "}
-                  커리큘럼, 입시정보, 프로모션 등에 대한 마케팅 메세지 혹은
-                  이메일 수신에 동의합니다
-                </span>
               </label>
             </div>
+          </div>
 
-            <div className="center_btn_wrap">
-              <button type="submit">수정하기</button>
+          <div className="inputbox_cont">
+            <h5>아이디</h5>
+            <input
+              type="text"
+              name="user-id"
+              disabled
+              autoFocus="autofocus"
+              autoComplete="off"
+              value={User.username}
+              readOnly
+            />
+          </div>
+
+          <div className="inputbox_cont">
+            <input
+              type="password"
+              maxLength="50"
+              autoComplete="off"
+              required="Y"
+              name="user-pw"
+              placeholder="비밀번호"
+              value={password}
+              onChange={onChangePassword}
+            />
+            <div className={styles.frm_msg_cont}>
+              {password === "" || !pattern.test(password) ? (
+                <span className={styles.frm_msg}>
+                  영문, 숫자, 특수문자 조합 8자 이상 입력하세요.
+                </span>
+              ) : (
+                <span className={`${styles.frm_msg} ${styles.good}`}>
+                  사용가능한 비밀번호입니다.
+                </span>
+              )}
             </div>
-          </form>
-        </main>
-      </AppLayout>
+          </div>
+
+          <div className="inputbox_cont">
+            <input
+              type="password"
+              maxLength="50"
+              autoComplete="off"
+              required="Y"
+              placeholder="비밀번호 확인"
+              name="usser-pwcheck"
+              value={passwordCheck}
+              onChange={onChangePasswordCheck}
+            />
+            <div className={styles.frm_msg_cont}>
+              {passwordCheck === "" ? (
+                <span className={styles.frm_msg}>
+                  비밀번호를 다시 입력해주세요.
+                </span>
+              ) : passwordError === true ? (
+                <span className={`${styles.frm_msg} ${styles.frm_msg_war}`}>
+                  두 비밀번호가 일치하지 않습니다.
+                </span>
+              ) : (
+                <span className={`${styles.frm_msg} ${styles.good}`}>
+                  비밀번호가 일치합니다.
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="inputbox_cont">
+            <h5>이메일 인증</h5>
+            <div className="input_btn_wrap">
+              <input
+                type="email"
+                name="user-email"
+                placeholder="이메일"
+                value={email}
+                onChange={onChangeEmail}
+              />
+              <button type="button">인증번호 발송</button>
+            </div>
+          </div>
+
+          <div className="inputbox_cont">
+            <div className="input_btn_wrap">
+              <input
+                type="text"
+                name="email_confirm"
+                placeholder="인증번호"
+                maxLength="6"
+              />
+              <button type="button">확인</button>
+            </div>
+          </div>
+
+          <div className="inputbox_cont">
+            <h5>생년월일</h5>
+            <input
+              type="text"
+              name="user-birthDate"
+              maxLength="6"
+              autoComplete="off"
+              required="Y"
+              placeholder="생년월일 ( 6자 입력 )"
+              value={dob}
+              onChange={onChangeBirthDate}
+            />
+          </div>
+
+          <div className="inputbox_cont">
+            <h5>학교</h5>
+            <input
+              type="text"
+              name="user-school"
+              maxLength="50"
+              autoComplete="off"
+              required="Y"
+              placeholder="학교"
+              value={school}
+              onChange={onChangeSchool}
+            />
+          </div>
+
+          <div className="inputbox_cont">
+            <h5>학년</h5>
+            <input
+              type="text"
+              name="user-grade"
+              maxLength="10"
+              autoComplete="off"
+              required="Y"
+              placeholder="학년"
+              value={grade}
+              onChange={onChangeGrade}
+            />
+          </div>
+
+          <div className="inputbox_cont">
+            <h5>주소</h5>
+            <div className={styles.select_cont}>
+              <select
+                className={styles.contry_select}
+                onChange={onChangeCountry}
+                value={country}
+              >
+                <option>국가선택</option>
+                <option value="ko">한국</option>
+                <option value="en">미국</option>
+                <option value="jp">일본</option>
+                <option value="cn">중국</option>
+              </select>
+              <input
+                type="text"
+                name="user-address"
+                autoComplete="off"
+                required="Y"
+                placeholder="주소"
+                value={address}
+                onChange={onChangeAddress}
+              />
+            </div>
+          </div>
+
+          <div className={styles.mypage_agree}>
+            <input
+              type="checkbox"
+              id="marketing_yn"
+              name="marketing_yn"
+              value={consent_marketing}
+              onChange={onChangeMarketing}
+            />
+            <label htmlFor="marketing_yn">
+              <span>
+                {" "}
+                커리큘럼, 입시정보, 프로모션 등에 대한 마케팅 메세지 혹은 이메일
+                수신에 동의합니다
+              </span>
+            </label>
+          </div>
+
+          <div className="center_btn_wrap">
+            <button type="submit">수정하기</button>
+          </div>
+        </form>
+      </main>
     </>
   );
 };
