@@ -22,7 +22,7 @@ const MyPageCourseListItems = ({
 
   return (
     <>
-      {courseContents.length > 0 ? (
+      {courseContents?.length > 0 ? (
         paginatedPage.map((content) => (
           <div className={styles.course_item} key={shortid.generate()}>
             <Link href={`/course/${content.videoLessonsId}`}>
@@ -42,7 +42,12 @@ const MyPageCourseListItems = ({
 
                 <div className={styles.course_txt}>
                   <p className={styles.course_tit}>{content.title}</p>
-                  <span className={styles.course_des}>{content.content}</span>
+                  <span
+                    className={styles.course_des}
+                    dangerouslySetInnerHTML={{
+                      __html: content.content,
+                    }}
+                  ></span>
                 </div>
               </div>
 
@@ -59,7 +64,7 @@ const MyPageCourseListItems = ({
           <p>강의가 없습니다.</p>
         </div>
       )}
-      {courseContents.length > 0 && (
+      {courseContents?.length > 0 && (
         <Pagination
           contents={courseContents}
           currentPage={currentPage}

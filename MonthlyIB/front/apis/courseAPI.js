@@ -240,6 +240,7 @@ export const courseReviseItem = async (
   firstCategoryId,
   secondCategoryId,
   thirdCategoryId,
+  videoLessonsStatus,
   session
 ) => {
   try {
@@ -262,6 +263,7 @@ export const courseReviseItem = async (
           firstCategoryId,
           secondCategoryId,
           thirdCategoryId,
+          videoLessonsStatus,
         }),
       }
     );
@@ -355,6 +357,31 @@ export const courseReviseCateogry = async (
           categoryName,
           parentsId,
         }),
+      }
+    );
+    if (res.ok) {
+      console.log("success");
+      return res.json();
+    }
+    if (!res.ok) {
+      console.log(res);
+      return res;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const coursePostUser = async (videoLessonsId, session) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${COURSE_API_URL}/enrolment/${videoLessonsId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: session?.accessToken,
+        },
       }
     );
     if (res.ok) {

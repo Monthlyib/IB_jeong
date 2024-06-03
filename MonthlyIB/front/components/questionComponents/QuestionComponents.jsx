@@ -9,8 +9,8 @@ import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
-import { useSession } from "next-auth/react";
 import { useQuestionStore } from "@/store/question";
+import { useUserStore } from "@/store/user";
 
 const QuestionComponents = () => {
   const router = useRouter();
@@ -22,7 +22,7 @@ const QuestionComponents = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
 
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -76,7 +76,7 @@ const QuestionComponents = () => {
               <span>총 질문 수</span>
               <b>{questionList?.length}</b>
             </div>
-            {session?.authority === "ADMIN" && (
+            {userInfo?.authority === "ADMIN" && (
               <button
                 type="button"
                 className="btn_write"

@@ -36,7 +36,6 @@ export const userGetInfo = async (userId, session) => {
     if (!res.ok) {
       throw new Error(`Failed POST Status: ${res.status}`);
     }
-    console.log("success");
     const json = await res.json();
     return json;
   } catch (error) {
@@ -68,13 +67,15 @@ export const userGetAllList = async (session) => {
 
 export const userReviseInfo = async (
   userId,
-  session,
   password,
-  name,
-  dob,
+  email,
+  nickName,
+  birth,
   school,
   grade,
-  address
+  address,
+  country,
+  session
 ) => {
   try {
     const res = await fetch(
@@ -87,11 +88,15 @@ export const userReviseInfo = async (
         },
         body: JSON.stringify({
           password,
-          nickname: name.current,
-          birth: dob.current,
-          school: school.current,
-          grade: grade.current,
-          address: address.current,
+          email,
+          nickName,
+          birth,
+          school,
+          grade,
+          address,
+          country,
+          userStatus: session?.userStatus,
+          authority: session?.authority,
         }),
       }
     );

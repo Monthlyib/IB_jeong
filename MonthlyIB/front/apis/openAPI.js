@@ -105,11 +105,7 @@ export const openAPIRegister = async (
       }
     );
     if (res.ok) {
-      await signIn("credentials", {
-        username,
-        password,
-        redirect: false,
-      });
+      signIn(username, password);
       console.log("success");
     }
   } catch (error) {
@@ -159,7 +155,7 @@ export const openAPIFindPwd = async () => {
   }
 };
 
-export const openAPILogin = async (credentials) => {
+export const openAPILogin = async (username, password) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login`,
@@ -169,8 +165,8 @@ export const openAPILogin = async (credentials) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          username: credentials?.username,
-          password: credentials?.password,
+          username: username,
+          password: password,
         }),
       }
     );
@@ -182,7 +178,7 @@ export const openAPILogin = async (credentials) => {
   }
 };
 
-export const openAPISocialLoginCheck = async (credentials) => {
+export const openAPISocialLoginCheck = async (oauthAccessToken, loginType) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/social`,
@@ -192,8 +188,8 @@ export const openAPISocialLoginCheck = async (credentials) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          oauthAccessToken: credentials?.oauthAccessToken,
-          loginType: credentials?.loginType,
+          oauthAccessToken,
+          loginType,
         }),
       }
     );
@@ -201,17 +197,14 @@ export const openAPISocialLoginCheck = async (credentials) => {
       throw new Error(`Failed POST Status: ${res.status}`);
     }
     const json = await res.json();
-    console.log(json.data);
     return json;
   } catch (error) {
-    console.log("hehehehe");
     console.error(error);
   }
 };
 
-export const openAPINaverLogin = async (credentials) => {
+export const openAPINaverLogin = async (authorizationCode, state) => {
   try {
-    console.log(credentials?.authorizationCode);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/naver`,
       {
@@ -222,8 +215,8 @@ export const openAPINaverLogin = async (credentials) => {
         body: JSON.stringify({
           grantType: "authorization_code",
           clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID,
-          authorizationCode: credentials?.authorizationCode,
-          state: credentials?.state,
+          authorizationCode,
+          state,
         }),
       }
     );

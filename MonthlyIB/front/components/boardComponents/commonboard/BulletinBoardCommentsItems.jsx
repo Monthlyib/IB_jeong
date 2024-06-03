@@ -5,9 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useRef, useState } from "react";
 import Pagination from "@/components/layoutComponents/Paginatation";
-import { useSession } from "next-auth/react";
 import shortid from "shortid";
 import { useBoardStore } from "@/store/board";
+import { useUserStore } from "@/store/user";
 
 const BulletinBoardCommentsItems = ({
   bulletinBoardComments,
@@ -19,7 +19,7 @@ const BulletinBoardCommentsItems = ({
   const [editModal, setEditModal] = useState(false);
   const comments = useRef("");
   const { deleteBoardComment, reviseBoardComment, voteReply } = useBoardStore();
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
 
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
@@ -28,7 +28,7 @@ const BulletinBoardCommentsItems = ({
   const paginatedPage = paginate(bulletinBoardComments, currentPage);
 
   const onClickDelete = async (boardReplyId) => {
-    deleteBoardComment(boardReplyId, session, pageId, currentPage);
+    deleteBoardComment(boardReplyId, userInfo, pageId, currentPage);
   };
 
   const onClickEdit = (content) => {
@@ -51,13 +51,13 @@ const BulletinBoardCommentsItems = ({
     } else {
       content = comments.current;
     }
-    reviseBoardComment(boardReplyId, content, session, pageId, currentPage);
+    reviseBoardComment(boardReplyId, content, userInfo, pageId, currentPage);
     setEditModal(!editModal);
   };
 
   const onClickLike = (boardReplyId) => {
-    if (session?.userStatus === "ACTIVE") {
-      voteReply(pageId, currentPage, boardReplyId, session);
+    if (userInfo?.userStatus === "ACTIVE") {
+      voteReply(pageId, currentPage, boardReplyId, userInfo);
     }
     console.log(bulletinBoardComments);
   };
@@ -71,9 +71,9 @@ const BulletinBoardCommentsItems = ({
                 <figure>
                   <Image
                     src={
-                      session?.userImage === undefined
+                      userInfo?.userImage === undefined
                         ? "/img/common/user_profile.jpg"
-                        : session?.userImage
+                        : userInfo?.userImage
                     }
                     width="100"
                     height="100"
@@ -94,7 +94,7 @@ const BulletinBoardCommentsItems = ({
                   </div>
                 </div>
               </div>
-              {session?.username === content.authorUsername && (
+              {userInfo?.username === content.authorUsername && (
                 <div className={styles.comment_option}>
                   <button
                     type="button"
@@ -139,7 +139,7 @@ const BulletinBoardCommentsItems = ({
                   <p>{content.content}</p>
                 </div>
                 <div className={styles.comment_bottom}>
-                  {content.voteUserId.find((v) => v === session?.userId) ? (
+                  {content.voteUserId.find((v) => v === userInfo?.userId) ? (
                     <button
                       type="button"
                       onClick={() => onClickLike(content.boardReplyId)}

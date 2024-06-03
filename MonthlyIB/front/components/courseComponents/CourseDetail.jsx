@@ -83,7 +83,7 @@ const CourseDetail = (pageId) => {
       setReviewAvgPoint(reviewValHolder);
     }
     setReviewStarHeight(reviewPoint);
-  }, [courseDetail.reply?.data, courseDetail.reply?.data.star]);
+  }, [courseDetail?.reply?.data, courseDetail?.reply?.data.star]);
 
   return (
     <>

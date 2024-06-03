@@ -7,8 +7,8 @@ import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 
 import Link from "next/link";
 
-import { useSession } from "next-auth/react";
 import { useIBStore } from "@/store/ib";
+import { useUserStore } from "@/store/user";
 
 const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +19,7 @@ const IbComponents = () => {
   const [windowSize, setWindowSize] = useState(0);
   const [searchedPosts, setSearchedPosts] = useState([]);
 
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -79,7 +79,7 @@ const IbComponents = () => {
           </div>
         </div>
 
-        {session?.authority === "ADMIN" && (
+        {userInfo?.authority === "ADMIN" && (
           <div className={styles.right_btn}>
             <Link href="/ibwrite" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />

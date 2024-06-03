@@ -6,15 +6,15 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import BoardCommonHead from "../BoardCommonHead";
-import { useSession } from "next-auth/react";
 import { useNewstore } from "@/store/news";
+import { useUserStore } from "@/store/user";
 
 const NewsComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchedPosts, setSearchedPosts] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { newsList, getNewsList } = useNewstore();
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -42,7 +42,7 @@ const NewsComponents = () => {
           modal={0}
           placeholder="입시뉴스 검색"
         />
-        {session?.authority === "ADMIN" && (
+        {userInfo?.authority === "ADMIN" && (
           <div className={styles.right_btn}>
             <Link
               href="/board/newswrite?type=write"

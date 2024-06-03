@@ -13,15 +13,15 @@ import MyPageScheduleList from "./MyPageScheduleList";
 import MyPageChangePayment from "./MyPageChangePayment";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useUserStore } from "@/store/user";
 
 const MyPageComponents = () => {
   const router = useRouter();
   const [modal, setModal] = useState(1);
   const [changePayment, setChangePayment] = useState(false);
   const closeRef = useRef("");
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const mypageModal = {
     1: <MyPageCourseList />,
     2: <MyPageArchiveList />,
@@ -30,12 +30,12 @@ const MyPageComponents = () => {
   };
 
   useEffect(() => {
-    if (!session?.userId) {
+    if (!userInfo?.userId) {
       router.push("/login");
     }
   }, []);
 
-  console.log(session);
+  console.log(userInfo);
   return (
     <>
       <main className="width_content">
@@ -45,9 +45,9 @@ const MyPageComponents = () => {
               <figure>
                 <Image
                   src={
-                    session?.userImage === undefined
+                    userInfo?.userImage === undefined
                       ? "/img/common/user_profile.jpg"
-                      : session?.userImage
+                      : userInfo?.userImage
                   }
                   width="100"
                   height="100"
@@ -57,9 +57,9 @@ const MyPageComponents = () => {
 
               <div className={styles.my_profile_user}>
                 <p>
-                  <span>{session?.nickname}</span>님
+                  <span>{userInfo?.nickname}</span>님
                 </p>
-                <span>{session?.username}</span>
+                <span>{userInfo?.username}</span>
               </div>
 
               <Link href="/mypage/validate" className={styles.my_validate_btn}>

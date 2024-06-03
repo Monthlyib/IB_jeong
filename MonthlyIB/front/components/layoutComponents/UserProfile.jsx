@@ -4,10 +4,11 @@ import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserProfile.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { useUserStore } from "@/store/user";
 
-const UserProfile = ({ session }) => {
+const UserProfile = () => {
   const [toggleUtilBox, setToggleUtilBox] = useState(false);
+  const { userInfo } = useUserStore();
   const onClickIcon = useCallback(() => {
     setToggleUtilBox(!toggleUtilBox);
   }, [toggleUtilBox]);
@@ -20,9 +21,9 @@ const UserProfile = ({ session }) => {
             <figure>
               <Image
                 src={
-                  session?.userImage === undefined
+                  userInfo?.userImage === undefined
                     ? "/img/common/user_profile.jpg"
-                    : session?.userImage
+                    : userInfo?.userImage
                 }
                 width="100"
                 height="100"
@@ -32,7 +33,7 @@ const UserProfile = ({ session }) => {
           </div>
           <div className={styles.util_name}>
             <span>
-              <b>{session?.nickname}</b>님
+              <b>{userInfo?.nickname}</b>님
             </span>
             {toggleUtilBox === false ? (
               <FontAwesomeIcon icon={faCaretDown} className={styles.icon} />
@@ -48,8 +49,11 @@ const UserProfile = ({ session }) => {
 };
 
 const UserUtilBox = () => {
+  const { signOut } = useUserStore();
+  const clearUserStorage = useUserStore.persist.clearStorage;
   const onLoggedOut = useCallback(() => {
     signOut();
+    clearUserStorage();
   }, []);
   return (
     <div className={styles.util_box}>

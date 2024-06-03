@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import styles from "./Question.module.css";
 
 import dynamic from "next/dynamic";
-import { useSession } from "next-auth/react";
-import { questionPostItem, questionReviseItem } from "@/apis/questionAPI";
 import { useQuestionStore } from "@/store/question";
+import { useUserStore } from "@/store/user";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -22,14 +21,14 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
   const [title, setTitle] = useState("");
   const { questionDetail, postQuestionItem, reviseQuestionItem } =
     useQuestionStore();
-  const { data: session } = useSession();
+
+  const { userInfo } = useUserStore();
 
   useEffect(() => {
     if (type === "revise") {
       setTitle(questionDetail?.title);
       setSubject(questionDetail?.subject);
       setContent(questionDetail?.content);
-      console.log("hi");
     }
   }, []);
 
@@ -46,7 +45,7 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
         title,
         content,
         subject,
-        session,
+        userInfo,
         currentPage
       );
       if (res?.result.status === 200) setModal(false);
@@ -57,7 +56,7 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
         content,
         subject,
         questionStatus,
-        session
+        userInfo
       );
       if (res?.result.status === 200) setModal(false);
     }

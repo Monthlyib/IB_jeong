@@ -6,8 +6,8 @@ import { useState } from "react";
 
 import CourseReviewItems from "./CourseReviewItems";
 import CourseReviewPost from "./CourseReviewPost";
-import { useSession } from "next-auth/react";
 import CourseReviewSummary from "./CourseReviewSummary";
+import { useUserStore } from "@/store/user";
 
 const CourseReview = ({
   pageId,
@@ -18,7 +18,7 @@ const CourseReview = ({
   const [formModal, setFormModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -28,7 +28,7 @@ const CourseReview = ({
       <div className={styles.course_section}>
         <div className={styles.course_tit_header}>
           <h3>수강생 리뷰</h3>
-          {session?.userStatus === "ACTIVE" && (
+          {userInfo?.userStatus === "ACTIVE" && (
             <button type="button" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />
               <span onClick={() => setFormModal(!formModal)}>리뷰쓰기</span>

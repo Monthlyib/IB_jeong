@@ -9,8 +9,6 @@ import { useState } from "react";
 // import { useSelector } from "react-redux";
 
 const MainBottom = () => {
-  // const { User } = useSelector((state) => state.user);
-  // const { reviews } = useSelector((state) => state.review);
   const [tab, setTab] = useState(0);
 
   return (

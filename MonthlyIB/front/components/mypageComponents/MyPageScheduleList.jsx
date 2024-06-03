@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { useUserStore } from "@/store/user";
 import styles from "./MyPage.module.css";
 import MyPageScheduleListItems from "./MyPageScheduleListItems";
 import { useTutoringStore } from "@/store/tutoring";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 const MyPageScheduleList = () => {
   const [scheduleByYears, setScheduleByYears] = useState({});
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const [currentPage, setCurrentPage] = useState(1);
   const { tutoringDateList, getTutoringDateList } = useTutoringStore();
   const [years, setYears] = useState([]);
@@ -16,7 +16,7 @@ const MyPageScheduleList = () => {
   };
 
   useEffect(() => {
-    getTutoringDateList("", "", currentPage - 1, session);
+    getTutoringDateList("", "", currentPage - 1, userInfo);
   }, []);
   useEffect(() => {
     if (tutoringDateList?.tutoring?.data.length > 0) {

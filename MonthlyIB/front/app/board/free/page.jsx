@@ -1,9 +1,14 @@
+import Loading from "@/components/Loading";
 import BulletinBoardComponents from "@/components/boardComponents/commonboard/BulletinBoardComponents";
+
+import { Suspense } from "react";
 
 const BulletinBoard = () => {
   return (
     <>
-      <BulletinBoardComponents />
+      <Suspense fallback={<Loading />}>
+        <BulletinBoardComponents />
+      </Suspense>
     </>
   );
 };

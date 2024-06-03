@@ -6,8 +6,8 @@ import dynamic from "next/dynamic";
 import styles from "../BoardCommon.module.css";
 import Link from "next/link";
 import { newsPost, newsReviseItem } from "@/apis/newsAPI";
-import { useSession } from "next-auth/react";
 import { useNewstore } from "@/store/news";
+import { useUserStore } from "@/store/user";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -24,14 +24,14 @@ const NewsPost = () => {
   const type = searchParams.get("type");
   const newsId = searchParams.get("newsId");
   const [content, setContent] = useState("");
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
 
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      if (type === "write") newsPost(title, content, session);
+      if (type === "write") newsPost(title, content, userInfo);
       else if (type === "revise")
-        newsReviseItem(newsId, title, content, session);
+        newsReviseItem(newsId, title, content, userInfo);
       router.push("/board/");
     },
     [title, content]

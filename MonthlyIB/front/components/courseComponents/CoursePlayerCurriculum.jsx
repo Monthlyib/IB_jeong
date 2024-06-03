@@ -1,4 +1,4 @@
-"use effect";
+"use client";
 import styles from "./CourseDetail.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";

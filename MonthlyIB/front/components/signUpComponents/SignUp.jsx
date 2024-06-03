@@ -3,7 +3,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Signup.module.css";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
 import { userRegisterWithSocialInfo } from "@/apis/userAPI";
 
 import {
@@ -12,6 +11,7 @@ import {
   openAPIRegister,
   openAPIVerifyUsername,
 } from "@/apis/openAPI";
+import { useUserStore } from "@/store/user";
 
 const SignUp = () => {
   const searchParams = useSearchParams();
@@ -32,7 +32,7 @@ const SignUp = () => {
   ];
 
   const router = useRouter();
-  const { data: session } = useSession();
+  const { userInfo, signIn, socialSignIn } = useUserStore();
 
   const pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
 
@@ -58,10 +58,11 @@ const SignUp = () => {
   const [verifyEmail, setVerifyEmail] = useState(false);
 
   useEffect(() => {
-    if (session?.userStatus === "ACTIVE") {
+    if (userInfo?.userStatus === "ACTIVE") {
+      alert("잘못된 접근입니다.");
       router.replace("/");
     }
-  }, [session]);
+  }, [userInfo]);
 
   useEffect(() => {
     if (checkedItems.length === 2) {
@@ -177,6 +178,7 @@ const SignUp = () => {
         consent_marketing
       );
       if (res.result.status === 200) {
+        // socialSignIn(authCode, socialType);
         alert("회원가입이 완료되었습니다. 다시 로그인 해주세요.");
         router.push("/login");
       }

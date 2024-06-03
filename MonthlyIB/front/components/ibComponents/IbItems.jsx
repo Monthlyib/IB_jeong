@@ -3,12 +3,12 @@ import _ from "lodash";
 import Pagination from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
-import { useSession } from "next-auth/react";
 import shortid from "shortid";
 import Image from "next/image";
 
 import { monthlyIBGetItem } from "@/apis/monthlyIbAPI";
 import { useIBStore } from "@/store/ib";
+import { useUserStore } from "@/store/user";
 
 const IbItems = ({
   IBContents,
@@ -21,13 +21,13 @@ const IbItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(IBContents, currentPage);
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { deleteIBList } = useIBStore();
   const onClickDelete = async (num) => {
-    deleteIBList(num, session, currentPage);
+    deleteIBList(num, userInfo, currentPage);
   };
   const onClickPost = async (num) => {
-    const res = await monthlyIBGetItem(num, session);
+    const res = await monthlyIBGetItem(num, userInfo);
     const url = res.data?.pdfFiles[0].fileUrl;
     const newWindow = window.open(url, "_blank", "noopener,noreferrer");
     if (newWindow) newWindow.opener = null;
@@ -37,7 +37,7 @@ const IbItems = ({
       {IBContents.length > 0 ? (
         paginatedPage.map((content) => (
           <div className={styles.ib_item} key={shortid.generate()}>
-            {session?.authority === "ADMIN" && (
+            {userInfo?.authority === "ADMIN" && (
               <button
                 className={styles.delete_button}
                 onClick={() => {

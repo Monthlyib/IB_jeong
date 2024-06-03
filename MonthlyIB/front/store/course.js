@@ -1,4 +1,5 @@
 import {
+  courseDeleteItem,
   courseDeleteRelpyItem,
   coursePostItem,
   coursePostRelpyItem,
@@ -72,7 +73,7 @@ export const useCourseStore = create((set, get) => ({
         thirdCategoryId,
         session
       );
-      if (res?.result.status === 200)
+      if (res?.result.status === 200 && image)
         coursePostThumnail(res?.data?.videoLessonsId, image, session);
       await get().getCourseList(1, "", "", "", "", "");
     } catch (error) {
@@ -95,6 +96,14 @@ export const useCourseStore = create((set, get) => ({
         session
       );
       get().getCourseDetail(videoLessonsId);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  deleteCourseItem: async (pageId, userInfo) => {
+    try {
+      await courseDeleteItem(pageId, userInfo);
+      get().getCourseList(1, "", "", "", "", "");
     } catch (error) {
       console.error(error);
     }

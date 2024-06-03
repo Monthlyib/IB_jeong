@@ -50,7 +50,7 @@ const MainSwiper = () => {
         </Link>
       </SwiperSlide>
       <SwiperSlide style={style}>
-        <Link href="/board/guide" className={styles.pr_wrap}>
+        <Link href="/board/download" className={styles.pr_wrap}>
           <div className={styles.pr_top}>STUDY</div>
           <div className={styles.pr_md}>S</div>
           <div className={styles.pr_bt}>Study Material</div>

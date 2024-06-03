@@ -4,14 +4,15 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "@/components/questionComponents/Question.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { useSession } from "next-auth/react";
+
 import { useCourseStore } from "@/store/course";
+import { useUserStore } from "@/store/user";
 
 const CourseReviewPost = ({ setFormModal, pageId }) => {
   const [content, setContent] = useState("");
   const [point, setPoint] = useState(0);
 
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { postCourseReview } = useCourseStore();
   const [clicked, setClicked] = useState([false, false, false, false, false]);
   const array = [0, 1, 2, 3, 4];
@@ -35,10 +36,10 @@ const CourseReviewPost = ({ setFormModal, pageId }) => {
       e.preventDefault();
       postCourseReview(
         parseInt(pageId),
-        session?.userId,
+        userInfo?.userId,
         content,
         point,
-        session
+        userInfo
       );
       setFormModal(false);
     },

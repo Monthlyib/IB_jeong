@@ -7,8 +7,8 @@ import { faStar as regStar } from "@fortawesome/free-regular-svg-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Pagination from "../layoutComponents/Paginatation";
 import shortid from "shortid";
-import { useSession } from "next-auth/react";
 import { useCourseStore } from "@/store/course";
+import { useUserStore } from "@/store/user";
 
 const CourseReviewItems = ({
   coursePostReviewPosts,
@@ -38,7 +38,7 @@ const CourseReviewItems = ({
     return stars;
   };
 
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { deleteCourseReview, reviseCourseReview, voteCourseReview } =
     useCourseStore();
   const [modal, setModal] = useState(-1);
@@ -55,7 +55,7 @@ const CourseReviewItems = ({
   const paginatedPage = paginate(coursePostReviewPosts, currentPage);
 
   const onClickDelete = useCallback((videoLessonsReplyId) => {
-    deleteCourseReview(pageId, videoLessonsReplyId, session);
+    deleteCourseReview(pageId, videoLessonsReplyId, userInfo);
   }, []);
 
   useEffect(() => {
@@ -88,7 +88,7 @@ const CourseReviewItems = ({
         videoLessonsReplyId,
         reviews.current,
         points,
-        session
+        userInfo
       );
       setModal(-1);
     },
@@ -96,10 +96,8 @@ const CourseReviewItems = ({
   );
 
   const onClickLike = (id) => {
-    voteCourseReview(pageId, id, session);
+    voteCourseReview(pageId, id, userInfo);
   };
-
-  console.log(coursePostReviewPosts);
 
   return (
     <>
@@ -111,9 +109,9 @@ const CourseReviewItems = ({
                 <figure>
                   <Image
                     src={
-                      session?.userImage === undefined
+                      userInfo?.userImage === undefined
                         ? "/img/common/user_profile.jpg"
-                        : session?.userImage
+                        : userInfo?.userImage
                     }
                     width="100"
                     height="100"
@@ -157,8 +155,8 @@ const CourseReviewItems = ({
                   </div>
                 </div>
               </div>
-              {(session?.userId === content.authorId ||
-                session?.authority === "ADMIN") && (
+              {(userInfo?.userId === content.authorId ||
+                userInfo?.authority === "ADMIN") && (
                 <div className={styles.comment_option}>
                   <button
                     type="button"
@@ -203,10 +201,10 @@ const CourseReviewItems = ({
                   <p>{content.content}</p>
                 </div>
                 <div className={styles.dt_review_bottom}>
-                  {session?.userStatus === "ACTIVE" && (
+                  {userInfo?.userStatus === "ACTIVE" && (
                     <button
                       className={
-                        content.voteUserId.includes(session?.userId)
+                        content.voteUserId.includes(userInfo?.userId)
                           ? styles.active
                           : ""
                       }

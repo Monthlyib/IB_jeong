@@ -1,8 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { signIn, useSession } from "next-auth/react";
 import { SyncLoader } from "react-spinners";
+import { useUserStore } from "@/store/user";
 
 const SocialLogin = ({ social }) => {
   const socialMethod = { 1: "GOOGLE", 2: "KAKAO", 3: "NAVER" };
@@ -11,15 +11,16 @@ const SocialLogin = ({ social }) => {
   let code = null;
   let access_token = null;
 
-  const { data: session } = useSession();
+  const { userInfo, socialSignIn, signInNaver } = useUserStore();
 
   useEffect(() => {
-    if (session?.userStatus === "ACTIVE") {
+    console.log("ddd ", userInfo);
+    if (userInfo?.userStatus === "ACTIVE") {
       router.replace("/");
-    } else if (session?.userStatus === "WAIT_INFO") {
-      handleNewUser(session, authCode, socialType);
+    } else if (userInfo?.userStatus === "WAIT_INFO") {
+      handleNewUser(userInfo, authCode, socialType);
     }
-  }, [session]);
+  }, [userInfo]);
 
   useEffect(() => {
     if (social === 1) {
@@ -29,7 +30,6 @@ const SocialLogin = ({ social }) => {
       handleGoogleLogin(access_token, "GOOGLE");
     } else if (social === 2 || social === 3) {
       code = new URL(window.location.href).searchParams.get("code");
-      console.log(code);
       if (social === 2) handleKakaoLogin(code, "KAKAO");
       else if (social === 3) handleNaverLogin(code, "NAVER");
     }
@@ -53,11 +53,7 @@ const SocialLogin = ({ social }) => {
 
   const handleNaverLogin = async (code) => {
     try {
-      const res = await signIn("naver", {
-        authorizationCode: code,
-        state: "dijDIJFDIdk",
-        redirect: false,
-      });
+      signInNaver(code, "dijDIJFDIdk");
     } catch (error) {
       console.error(error);
     }
@@ -65,13 +61,8 @@ const SocialLogin = ({ social }) => {
 
   const handleExistUser = async (oauthAccessToken, social) => {
     try {
-      const res = await signIn("social", {
-        oauthAccessToken,
-        loginType: social,
-        redirect: false,
-      });
+      socialSignIn(oauthAccessToken, social);
     } catch (error) {
-      console.log("heheheh");
       console.log(error);
     }
   };

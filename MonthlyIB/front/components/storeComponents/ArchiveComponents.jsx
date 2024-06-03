@@ -6,13 +6,13 @@ import shortid from "shortid";
 import ArchiveItems from "./ArchiveItems";
 import ArchiveFolderModal from "./ArchiveFolderModal";
 import ArchiveUpperButtons from "./ArchiveUpperButtons";
-import { useSession } from "next-auth/react";
 import { useStoreStore } from "@/store/store";
+import { useUserStore } from "@/store/user";
 
 const ArchiveComponents = () => {
   const file = useRef("");
   const closeRef = useRef("");
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const {
     mainFolders,
     subLists,
@@ -42,7 +42,6 @@ const ArchiveComponents = () => {
     setPrevFolderId(temp);
     setCurrentFolderId(id);
     getSubLists(id, "");
-    console.log("clicked");
   };
 
   const onClickCreateFolder = () => {
@@ -50,14 +49,14 @@ const ArchiveComponents = () => {
   };
 
   const onSubmitCreateFolder = (folderName) => {
-    if (currentFolderId === 0) postFolder(0, folderName, "MAIN", session);
-    else postFolder(currentFolderId, folderName, "SUB", session);
+    if (currentFolderId === 0) postFolder(0, folderName, "MAIN", userInfo);
+    else postFolder(currentFolderId, folderName, "SUB", userInfo);
   };
   const onSelectFile = (e) => {
     e.preventDefault();
     e.persist();
     file.current = e.target.files[0];
-    postFile(currentFolderId, file.current, session);
+    postFile(currentFolderId, file.current, userInfo);
   };
 
   const onClickUpFolder = () => {
@@ -103,7 +102,7 @@ const ArchiveComponents = () => {
           <p>{currentPath}</p>
         </div>
 
-        {session?.authority === "ADMIN" && (
+        {userInfo?.authority === "ADMIN" && (
           <ArchiveUpperButtons
             onClickUpFolder={onClickUpFolder}
             currentFolderId={currentFolderId}

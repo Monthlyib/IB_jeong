@@ -11,22 +11,22 @@ import shortid from "shortid";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { useNewstore } from "@/store/news";
 import { newsDeleteItem } from "@/apis/newsAPI";
+import { useUserStore } from "@/store/user";
 
 const NewsDetail = (pageId) => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { newsDetail, getNewsDetail } = useNewstore();
 
   const onClickDelete = useCallback(() => {
-    newsDeleteItem(pageId?.pageId, session);
+    newsDeleteItem(pageId?.pageId, userInfo);
     router.push("/board/");
   }, []);
 
   useEffect(() => {
-    getNewsDetail(pageId?.pageId, session);
+    getNewsDetail(pageId?.pageId, userInfo);
   }, []);
 
   const onClickEdit = useCallback(() => {
@@ -87,7 +87,7 @@ const NewsDetail = (pageId) => {
               </div>
             </div>
             <div className={styles.read_right}>
-              {session?.username === newsDetail.authorUsername && (
+              {userInfo?.username === newsDetail.authorUsername && (
                 <div className={styles.auth_btn_cont}>
                   <button
                     className={`${styles.read_btn} ${styles.update}`}

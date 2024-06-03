@@ -7,10 +7,10 @@ import {
   faTrashAlt,
   faPenAlt,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSession } from "next-auth/react";
 import { useStoreStore } from "@/store/store";
 import ArchiveFolderModal from "./ArchiveFolderModal";
 import { useRef, useState } from "react";
+import { useUserStore } from "@/store/user";
 
 const ArchiveItems = ({
   folders,
@@ -25,10 +25,10 @@ const ArchiveItems = ({
   const [folderTitle, setFolderTitle] = useState("");
   const { deleteFolder, deleteFile, reviseFolder } = useStoreStore();
   const onClickDeleteFolder = (folderId) => {
-    deleteFolder(folderId, currentFolderId, session);
+    deleteFolder(folderId, currentFolderId, userInfo);
   };
   const onClickDeleteFile = (fileId) => {
-    deleteFile(fileId, currentFolderId, session);
+    deleteFile(fileId, currentFolderId, userInfo);
   };
 
   const onClickReviseFolderName = (folderId) => {
@@ -37,14 +37,19 @@ const ArchiveItems = ({
   };
   const onSubmitReviseFolder = (folderName) => {
     const status = currentFolderId === 0 ? "MAIN" : "SUB";
-    reviseFolder(currentFolderId, storageFolderId, folderName, status, session);
+    reviseFolder(
+      currentFolderId,
+      storageFolderId,
+      folderName,
+      status,
+      userInfo
+    );
   };
   const onClickFile = (fileUrl) => {
     const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
     if (newWindow) newWindow.opener = null;
   };
-  console.log(folders);
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   return (
     <>
       {type === "folders" &&
@@ -64,7 +69,7 @@ const ArchiveItems = ({
                 <span>{f.name}</span>
               </div>
 
-              {session?.authority === "ADMIN" && (
+              {userInfo?.authority === "ADMIN" && (
                 <div className={styles.options}>
                   <button
                     type="button"
@@ -106,7 +111,7 @@ const ArchiveItems = ({
                 <span>{f.fileName}</span>
               </div>
 
-              {session?.authority === "ADMIN" && (
+              {userInfo?.authority === "ADMIN" && (
                 <div className={styles.options}>
                   <button
                     type="button"

@@ -8,8 +8,8 @@ import CoursePostCurriculum from "./CoursePostCurriculum";
 import CoursePostCategory from "./CoursePostCategory";
 import dynamic from "next/dynamic";
 import { coursePostThumnail, courseReviseItem } from "@/apis/courseAPI";
-import { useSession } from "next-auth/react";
 import { useCourseStore } from "@/store/course";
+import { useUserStore } from "@/store/user";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -59,7 +59,7 @@ const LEVELS = {
 
 const CoursePostWrite = () => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const imageInput = useRef();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
@@ -78,6 +78,7 @@ const CoursePostWrite = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [lecturer, setLecturer] = useState("");
+  const [videoLessonsStatus, setVideoLessonsStatus] = useState("");
 
   const [subChapters, setSubChapters] = useState({
     0: [
@@ -85,7 +86,7 @@ const CoursePostWrite = () => {
         chapterStatus: "MAIN_CHAPTER",
         chapterTitle: "",
         chapterIndex: 0,
-        videoLessonsUrl: "",
+        videoFileUrl: "",
       },
     ],
   });
@@ -141,13 +142,14 @@ const CoursePostWrite = () => {
       const temp = [];
       courseDetail?.chapters?.map((v) => temp.push(v.subChapters));
       setSubChapters(temp);
-      setFirstCategoryId(courseDetail?.firstCategoryId);
-      setSecondCategoryId(courseDetail?.secondCategoryId);
-      setThirdCategoryId(courseDetail?.thirdCategoryId);
+      setFirstCategoryId(courseDetail?.firstCategory?.videoCategoryId);
+      setSecondCategoryId(courseDetail?.secondCategory?.videoCategoryId);
+      setThirdCategoryId(courseDetail?.thirdCategory?.videoCategoryId);
       setGroup(courseDetail?.firstCategory?.categoryName);
       setSubject(courseDetail?.secondCategory?.categoryName);
       setLevel(courseDetail?.thirdCategory?.categoryName);
       setDuration(courseDetail?.duration);
+      setVideoLessonsStatus(courseDetail?.videoLessonsStatus);
     }
   }, []);
 
@@ -175,7 +177,7 @@ const CoursePostWrite = () => {
         chapterStatus: "MAIN_CHAPTER",
         chapterTitle: "",
         chapterIndex: 0,
-        videoLessonsUrl: "",
+        videoFileUrl: "",
       },
     ];
     temp.push({
@@ -241,7 +243,7 @@ const CoursePostWrite = () => {
         : chapters.length.toString() + " Chapters";
     if (type === "edit") {
       await courseReviseItem(
-        videoLessonsId,
+        parseInt(videoLessonsId),
         title,
         content,
         lecturer,
@@ -251,10 +253,11 @@ const CoursePostWrite = () => {
         firstCategoryId,
         secondCategoryId,
         thirdCategoryId,
-        session
+        videoLessonsStatus,
+        userInfo
       );
       if (imageInput.current)
-        coursePostThumnail(videoLessonsId, imageInput.current, session);
+        coursePostThumnail(videoLessonsId, imageInput.current, userInfo);
     } else {
       postCourseItem(
         title,
@@ -267,7 +270,7 @@ const CoursePostWrite = () => {
         secondCategoryId,
         thirdCategoryId,
         imageInput.current,
-        session
+        userInfo
       );
     }
 

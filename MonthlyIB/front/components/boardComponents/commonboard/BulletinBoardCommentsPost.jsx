@@ -2,17 +2,17 @@
 import { useCallback, useState } from "react";
 
 import styles from "../BoardCommon.module.css";
-import { useSession } from "next-auth/react";
 import { useBoardStore } from "@/store/board";
+import { useUserStore } from "@/store/user";
 
 const BulletinBoardCommentsPost = ({ pageId }) => {
   const [content, setContent] = useState("");
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { setBoardComment } = useBoardStore();
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      setBoardComment(pageId, content, session);
+      setBoardComment(pageId, content, userInfo);
       setContent("");
     },
     [content, pageId]

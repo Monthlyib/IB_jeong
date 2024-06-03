@@ -6,8 +6,8 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import BoardCommonHead from "../BoardCommonHead";
-import { useSession } from "next-auth/react";
 import { useBoardStore } from "@/store/board";
+import { useUserStore } from "@/store/user";
 
 const BulletinBoardComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -15,7 +15,7 @@ const BulletinBoardComponents = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [searching, setSeraching] = useState(false);
 
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { boardList, getBoardList } = useBoardStore();
 
   const handlePageChange = (page) => {
@@ -42,7 +42,7 @@ const BulletinBoardComponents = () => {
           modal={3}
           placeholder="자유게시판 검색"
         />
-        {session?.userStatus === "ACTIVE" && (
+        {userInfo?.userStatus === "ACTIVE" && (
           <div className={styles.right_btn}>
             <Link
               href="/board/free/write?type=write"

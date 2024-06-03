@@ -5,12 +5,12 @@ import dynamic from "next/dynamic";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { questionDelete } from "@/apis/questionAPI";
 import { useRouter } from "next/navigation";
 import QuestionWrite from "./QuestionWrite";
 import { useQuestionStore } from "@/store/question";
+import { useUserStore } from "@/store/user";
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
   {
@@ -19,7 +19,7 @@ const DynamicEditor = dynamic(
 );
 
 const QuestionDetail = (pageId) => {
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const {
     questionDetail,
     getQuestionDetail,
@@ -48,12 +48,12 @@ const QuestionDetail = (pageId) => {
     deleteQuestionAnswer(
       questionDetail?.answer.answerId,
       pageId?.pageId,
-      session
+      userInfo
     );
   };
 
   const onClickDelete = () => {
-    questionDelete(pageId?.pageId, session);
+    questionDelete(pageId?.pageId, userInfo);
     router.push("/question");
   };
 
@@ -63,14 +63,14 @@ const QuestionDetail = (pageId) => {
       questionDetail.answer.answerId,
       pageId?.pageId,
       answerContent,
-      session
+      userInfo
     );
     setAnswerReviseModal(!answerReviseModal);
   };
 
   const onClickSumitAnswer = async (e) => {
     e.preventDefault();
-    submitQuestionAnswer(pageId?.pageId, answerContent, session);
+    submitQuestionAnswer(pageId?.pageId, answerContent, userInfo);
     setAnswerContent("");
     setModal(!modal);
   };
@@ -116,8 +116,8 @@ const QuestionDetail = (pageId) => {
                 <div className={styles.dt_question_title}>
                   <span>Q.</span>
                   <h2>{questionDetail?.title}</h2>
-                  {(questionDetail?.authorId === session?.userId ||
-                    session?.authority === "ADMIN") && (
+                  {(questionDetail?.authorId === userInfo?.userId ||
+                    userInfo?.authority === "ADMIN") && (
                     <div className={styles.dt_question_title_menu}>
                       <button onClick={onClickRevise}>수정</button>
                       <button onClick={onClickDelete}>삭제</button>
@@ -149,7 +149,7 @@ const QuestionDetail = (pageId) => {
                       <span className={styles.date}>
                         {questionDetail.answer?.createAt}
                       </span>
-                      {session?.authority === "ADMIN" && (
+                      {userInfo?.authority === "ADMIN" && (
                         <div className={styles.dt_question_title_menu}>
                           <button onClick={onClickAnswerRevise}>수정</button>
                           <button onClick={onClickAnswerDelete}>삭제</button>
@@ -171,7 +171,7 @@ const QuestionDetail = (pageId) => {
               ) : (
                 <div className={styles.dt_answer}>
                   <h1>아직 답변이 없습니다.</h1>
-                  {session?.authority === "ADMIN" && (
+                  {userInfo?.authority === "ADMIN" && (
                     <button
                       type="button"
                       className="btn_write"
@@ -240,12 +240,12 @@ const QuestionDetail = (pageId) => {
               </div>
             </Link>
           </div>
-          {session?.userStatus === "ACTIVE" && (
+          {userInfo?.userStatus === "ACTIVE" && (
             <div className={styles.dt_question_right}>
               <div className={styles.dt_question_profile}>
                 <div className={styles.dt_question_user}>
                   <span className={styles.user_nm}>
-                    <b>{session?.nickname}</b> 님
+                    <b>{userInfo?.nickname}</b> 님
                   </span>
                   <span className={styles.count}>
                     작성한 질문 수{/* <b>{User.qnas.length}</b> */}
@@ -254,9 +254,9 @@ const QuestionDetail = (pageId) => {
                 <figure>
                   <Image
                     src={
-                      session?.userImage === undefined
+                      userInfo?.userImage === undefined
                         ? "/img/common/user_profile.jpg"
-                        : session?.userImage
+                        : userInfo?.userImage
                     }
                     width="100"
                     height="100"

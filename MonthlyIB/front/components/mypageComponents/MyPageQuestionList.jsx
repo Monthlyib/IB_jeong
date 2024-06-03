@@ -1,16 +1,16 @@
 "use client";
-import { useSession } from "next-auth/react";
 import styles from "./MyPage.module.css";
 import MyPageQuestionListItems from "./MyPageQuestionListItems";
 import { useEffect, useState } from "react";
 import { useQuestionStore } from "@/store/question";
+import { useUserStore } from "@/store/user";
 
 const MyPageQuestionList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { getUserQuestionList, questionList } = useQuestionStore();
   useEffect(() => {
-    getUserQuestionList("", currentPage - 1, "", session);
+    getUserQuestionList("", currentPage - 1, "", userInfo);
   }, []);
 
   const handlePageChange = (page) => {

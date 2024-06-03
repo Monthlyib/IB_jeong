@@ -10,22 +10,29 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
-import { useSession } from "next-auth/react";
-import { courseDeleteItem } from "@/apis/courseAPI";
+import { coursePostUser } from "@/apis/courseAPI";
+import { useUserStore } from "@/store/user";
+import { useCourseStore } from "@/store/course";
 
 const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   const router = useRouter();
 
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
+  const { deleteCourseItem } = useCourseStore();
 
   const onClickEdit = useCallback(() => {
     router.push(`/course/write?type=edit&videoLessonsId=${pageId}`);
   }, []);
 
   const onClickDelete = useCallback(() => {
-    courseDeleteItem(pageId, session);
+    deleteCourseItem(pageId, userInfo);
     router.push(`/course`);
   }, []);
+
+  const onClickTakeCourse = () => {
+    coursePostUser(parseInt(pageId), userInfo);
+  };
+
   return (
     <div className={styles.course_right}>
       <div className={styles.course_info_cont}>
@@ -61,11 +68,11 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
             </ul>
           </div>
         </div>
-        <div className={styles.center_btn_wrap}>
+        <div className={styles.center_btn_wrap} onClick={onClickTakeCourse}>
           <Link href={`/course/player/${pageId}`}>수강하기</Link>
         </div>
 
-        {session?.authority === "ADMIN" && (
+        {userInfo?.authority === "ADMIN" && (
           <>
             <div className={styles.center_btn_wrap_edit}>
               <a onClick={onClickEdit}>수정하기</a>

@@ -5,8 +5,8 @@ import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import shortid from "shortid";
-import { useSession } from "next-auth/react";
 import { useTutoringStore } from "@/store/tutoring";
+import { useUserStore } from "@/store/user";
 
 const DynamicCalendar = dynamic(() => import("./TutoringCalendar"), {
   ssr: false,
@@ -70,7 +70,7 @@ const TIME_TABLE_OBJECT = {
 const TutoringComponents = () => {
   const [date, setDate] = useState("");
   const [timeTable, setTimeTable] = useState(TIME_TABLE_OBJECT);
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const { tutoringDateSimpleList, getTutoringDateSimpleList, postTutoring } =
     useTutoringStore();
   const [hour, setHour] = useState(0);
@@ -93,7 +93,14 @@ const TutoringComponents = () => {
   };
 
   const onSubmit = (e) => {
-    postTutoring(session?.userId, date, hour, minute, detail.current, session);
+    postTutoring(
+      userInfo?.userId,
+      date,
+      hour,
+      minute,
+      detail.current,
+      userInfo
+    );
     detail.current = "";
     setDate("");
 
@@ -142,7 +149,7 @@ const TutoringComponents = () => {
   }, [tutoringDateSimpleList]);
   useEffect(() => {
     if (date) {
-      getTutoringDateSimpleList(date, session);
+      getTutoringDateSimpleList(date, userInfo);
     }
   }, [date]);
 
@@ -188,7 +195,7 @@ const TutoringComponents = () => {
                         <li
                           key={shortid.generate()}
                           className={
-                            session?.userStatus === "ACTIVE"
+                            userInfo?.userStatus === "ACTIVE"
                               ? timeTable[k][m]["counts"] >= 3
                                 ? styles.none
                                 : timeTable[k][m]["select"] === true

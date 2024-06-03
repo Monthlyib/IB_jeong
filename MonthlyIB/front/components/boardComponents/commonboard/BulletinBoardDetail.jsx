@@ -12,14 +12,14 @@ import BulletinBoardCommentsPost from "./BulletinBoardCommentsPost";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import shortid from "shortid";
 import { boardDeleteItem } from "@/apis/boardAPI";
 import { useBoardStore } from "@/store/board";
+import { useUserStore } from "@/store/user";
 
 const BulletinBoardDetail = (pageId) => {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
   const [currentPage, setCurrentPage] = useState(1);
   const { bulletinBoardDetail } = useBoardStore();
   const getBoardDetail = useBoardStore((state) => state.getBoardDetail);
@@ -44,7 +44,7 @@ const BulletinBoardDetail = (pageId) => {
     getBoardDetail(pageId?.pageId, currentPage);
   }, []);
   const onClickDelete = async () => {
-    boardDeleteItem(pageId?.pageId, session);
+    boardDeleteItem(pageId?.pageId, userInfo);
     router.push("/board/free");
   };
 
@@ -110,7 +110,7 @@ const BulletinBoardDetail = (pageId) => {
                 <div className={styles.comment_wrap}>
                   <div className={styles.comment_content_wrap}>
                     <h4>댓글 입력</h4>
-                    {session?.userStatus === "ACTIVE" && (
+                    {userInfo?.userStatus === "ACTIVE" && (
                       <BulletinBoardCommentsPost pageId={pageId?.pageId} />
                     )}
                   </div>
@@ -154,7 +154,7 @@ const BulletinBoardDetail = (pageId) => {
                 </div>
               </div>
               <div className={styles.read_right}>
-                {session?.username === bulletinBoardDetail.authorUsername && (
+                {userInfo?.username === bulletinBoardDetail.authorUsername && (
                   <div className={styles.auth_btn_cont}>
                     <button
                       className={`${styles.read_btn} ${styles.update}`}

@@ -2,7 +2,6 @@
 
 import { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 
 import styles from "./IbComponents.module.css";
 import Link from "next/link";
@@ -11,6 +10,7 @@ import {
   monthlyIBPostThumbnail,
   monthlyIBPostPDFFile,
 } from "@/apis/monthlyIbAPI";
+import { useUserStore } from "@/store/user";
 
 const IBPost = () => {
   const imageInput = useRef();
@@ -19,12 +19,12 @@ const IBPost = () => {
   const [havingImg, setHavingImg] = useState(false);
   const [havingFile, setHavingFile] = useState(false);
   const router = useRouter();
-  const { data: session } = useSession();
+  const { userInfo } = useUserStore();
 
   const onSubmitForm = useCallback(
     async (e) => {
       e.preventDefault();
-      let accessToken = session?.accessToken;
+      let accessToken = userInfo?.accessToken;
       let res = await monthlyIBPostItem(title, accessToken);
       if (res?.result.status === 200) {
         monthlyIBPostThumbnail(

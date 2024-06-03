@@ -59,7 +59,6 @@ const CoursePlayer = (pageId) => {
             <iframe
               width={"100%"}
               height={"100%"}
-              auto
               src={
                 "https://www.youtube.com/embed/" +
                 courseDetail?.chapters[chapterNum].subChapters[
@@ -71,7 +70,7 @@ const CoursePlayer = (pageId) => {
                 ]
               }
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowfullscreen
+              allowFullScreen
             >
               <source type="video/mp4" />
             </iframe>
