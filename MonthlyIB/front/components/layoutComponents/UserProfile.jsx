@@ -50,10 +50,10 @@ const UserProfile = () => {
 
 const UserUtilBox = () => {
   const { signOut } = useUserStore();
-  const clearUserStorage = useUserStore.persist.clearStorage();
+  // const clearUserStorage = useUserStore.persist.clearStorage();
   const onLoggedOut = useCallback(() => {
     signOut();
-    clearUserStorage();
+    // clearUserStorage();
   }, []);
   return (
     <div className={styles.util_box}>
