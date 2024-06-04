@@ -15,7 +15,7 @@ import { useUserStore } from "@/store/user";
 
 const AppLayout = ({ children, disable }) => {
   const pathName = usePathname();
-  const clearUserStorage = useUserStore.persist.clearStorage;
+  const clearUserStorage = useUserStore.persist.clearStorage();
   const id = pathName.split("/")[pathName.split("/").length - 1];
   const [mouseOverMenu, setMouseOverMenu] = useState(false);
   const [asideModal, setAsideModal] = useState(false);
