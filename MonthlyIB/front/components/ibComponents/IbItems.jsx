@@ -2,13 +2,14 @@ import styles from "./IbComponents.module.css";
 import _ from "lodash";
 import Pagination from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import { faCircleXmark, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import shortid from "shortid";
 import Image from "next/image";
 
 import { monthlyIBGetItem } from "@/apis/monthlyIbAPI";
 import { useIBStore } from "@/store/ib";
 import { useUserStore } from "@/store/user";
+import { useRouter } from "next/navigation";
 
 const IbItems = ({
   IBContents,
@@ -16,6 +17,7 @@ const IbItems = ({
   numShowContents,
   onPageChange,
 }) => {
+  const router = useRouter();
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
     return _(items).slice(startIndex).take(numShowContents).value();
@@ -26,9 +28,13 @@ const IbItems = ({
   const onClickDelete = async (num) => {
     deleteIBList(num, userInfo, currentPage);
   };
+
+  const onClickRevise = async (num) => {
+    router.push(`/ibwrite?monthlyIbId=${num}`);
+  };
   const onClickPost = async (num) => {
     const res = await monthlyIBGetItem(num, userInfo);
-    const url = res.data?.pdfFiles[0].fileUrl;
+    const url = res?.data.pdfFiles[0].fileUrl;
     const newWindow = window.open(url, "_blank", "noopener,noreferrer");
     if (newWindow) newWindow.opener = null;
   };
@@ -38,20 +44,34 @@ const IbItems = ({
         paginatedPage.map((content) => (
           <div className={styles.ib_item} key={shortid.generate()}>
             {userInfo?.authority === "ADMIN" && (
-              <button
-                className={styles.delete_button}
-                onClick={() => {
-                  onClickDelete(content.monthlyIbId);
-                }}
-              >
-                <FontAwesomeIcon icon={faCircleXmark} />
-              </button>
+              <>
+                <button
+                  className={styles.delete_button}
+                  onClick={() => {
+                    onClickDelete(content.monthlyIbId);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCircleXmark} />
+                </button>
+                <button
+                  className={styles.revise_button}
+                  onClick={() => {
+                    onClickRevise(content.monthlyIbId);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faPenAlt} />
+                </button>
+              </>
             )}
 
             <div onClick={() => onClickPost(content.monthlyIbId)}>
               <figure>
                 <Image
-                  src={content.monthlyIbThumbnailUrl}
+                  src={
+                    content?.monthlyIbThumbnailUrl !== ""
+                      ? content?.monthlyIbThumbnailUrl
+                      : "/img/common/user_profile.jpg"
+                  }
                   alt="잡지 이미지"
                   priority
                   width="353"

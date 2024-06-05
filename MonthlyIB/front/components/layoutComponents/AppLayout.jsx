@@ -15,15 +15,14 @@ import { useUserStore } from "@/store/user";
 
 const AppLayout = ({ children, disable }) => {
   const pathName = usePathname();
-  // const clearUserStorage = useUserStore.persist.clearStorage();
   const id = pathName.split("/")[pathName.split("/").length - 1];
   const [mouseOverMenu, setMouseOverMenu] = useState(false);
   const [asideModal, setAsideModal] = useState(false);
   const [windowSize, setWindowSize] = useState({
     width: undefined,
   });
-  // const { data: session, status, update } = useSession();
-  const { userInfo, reissueToken, signOut } = useUserStore();
+
+  const { userInfo } = useUserStore();
 
   const onMouseOverMenu = useCallback(() => {
     setMouseOverMenu(true);
@@ -52,23 +51,6 @@ const AppLayout = ({ children, disable }) => {
     }
   }, []);
 
-  useEffect(() => {
-    if (userInfo?.userStatus === "ACTIVE") {
-      const timer = setInterval(
-        () => reissueToken(userInfo.userId),
-        8 * 60 * 1000
-      );
-
-      // const signOutTimer = setInterval(() => {
-      //   signOut();
-      //   clearUserStorage();
-      // }, 2000);
-      return () => {
-        clearInterval(timer);
-        // clearInterval(signOutTimer);
-      };
-    }
-  }, []);
   return (
     <>
       {pathName !== `/course/player/${id}` && (

@@ -1,4 +1,8 @@
-import { monthlyIBDeleteItem, monthlyIBGetItem } from "@/apis/monthlyIbAPI";
+import {
+  monthlyIBDeleteItem,
+  monthlyIBGetItem,
+  monthlyIBReviseItem,
+} from "@/apis/monthlyIbAPI";
 import { monthlyIBGetList } from "@/apis/openAPI";
 import { create } from "zustand";
 export const useIBStore = create((set, get) => ({
@@ -28,6 +32,15 @@ export const useIBStore = create((set, get) => ({
     try {
       const res = await monthlyIBGetItem(monthlyIbId, session);
       set({ ibDetail: res.data });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  reviseItem: async (monthlyIbId, title, userInfo) => {
+    try {
+      const res = await monthlyIBReviseItem(monthlyIbId, title, userInfo);
+      get().getIBItem(monthlyIbId, userInfo);
+      return res;
     } catch (error) {
       console.error(error);
     }

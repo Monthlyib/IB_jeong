@@ -24,7 +24,7 @@ const BulletinBoardPost = () => {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const boardId = searchParams.get("boardId");
-  const { boardDetail } = useBoardStore();
+  const { bulletinBoardDetail } = useBoardStore();
 
   const onSubmit = useCallback(
     (e) => {
@@ -38,8 +38,9 @@ const BulletinBoardPost = () => {
   );
   useEffect(() => {
     if (boardId) {
-      setTitle(boardDetail.title);
-      setContent(boardDetail.content);
+      console.log(bulletinBoardDetail);
+      setTitle(bulletinBoardDetail?.title);
+      setContent(bulletinBoardDetail?.content);
     }
   }, []);
   const onChangeTitle = useCallback((e) => {

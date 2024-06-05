@@ -1,21 +1,16 @@
+import { tokenRequireApi } from "./refreshToken";
+
 const BOARD_API_URL = "api/board";
 
 export const boardDeleteItem = async (boardId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/${boardId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(`${BOARD_API_URL}/${boardId}`, config);
   } catch (error) {
     console.error(error);
   }
@@ -23,19 +18,16 @@ export const boardDeleteItem = async (boardId, session) => {
 
 export const boardReplyDeleteItem = async (boardReplyId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/reply/${boardReplyId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(
+      `${BOARD_API_URL}/reply/${boardReplyId}`,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }
@@ -45,20 +37,14 @@ export const boardReplyDeleteItem = async (boardReplyId, session) => {
 
 export const boardReviseItem = async (boardId, title, content, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/${boardId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ title, content }),
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { title, content };
+    await tokenRequireApi.patch(`${BOARD_API_URL}/${boardId}`, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -66,20 +52,18 @@ export const boardReviseItem = async (boardId, title, content, session) => {
 
 export const boardReplyReviseItem = async (boardReplyId, content, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/reply/${boardReplyId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ content }),
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { content };
+    await tokenRequireApi.patch(
+      `${BOARD_API_URL}/reply/${boardReplyId}`,
+      data,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }
@@ -87,20 +71,14 @@ export const boardReplyReviseItem = async (boardReplyId, content, session) => {
 
 export const boardPost = async (title, content, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ title, content }),
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { title, content };
+    await tokenRequireApi.post(`${BOARD_API_URL}`, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -108,20 +86,18 @@ export const boardPost = async (title, content, session) => {
 
 export const boardReplyPost = async (boardId, content, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/reply/${boardId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ content }),
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { content };
+    await tokenRequireApi.post(
+      `${BOARD_API_URL}/reply/${boardId}`,
+      data,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }
@@ -129,19 +105,18 @@ export const boardReplyPost = async (boardId, content, session) => {
 
 export const boardReplyVote = async (boardReplyId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/reply-vote/${boardReplyId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = {};
+    await tokenRequireApi.post(
+      `${BOARD_API_URL}/reply-vote/${boardReplyId}`,
+      data,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }
@@ -149,20 +124,19 @@ export const boardReplyVote = async (boardReplyId, session) => {
 
 export const boardFilePost = async (boardId, file, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${BOARD_API_URL}/board-file/${boardId}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ file }),
-      }
+    const formData = new FormData();
+    formData.append("file", file);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: accessToken,
+      },
+    };
+    const res = await tokenRequireApi.post(
+      `${BOARD_API_URL}/board-file/${boardId}`,
+      formData,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }

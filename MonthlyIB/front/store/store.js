@@ -32,7 +32,6 @@ export const useStoreStore = create((set, get) => ({
     set({ subListLoading: true });
     try {
       const res = await storageGetList(parentsFolderId, keyWord);
-      console.log(res.data);
       set({
         subLists: res.data,
         subListLoading: false,

@@ -28,7 +28,7 @@ function Login() {
   // }, [session]);
 
   useEffect(() => {
-    if (userInfo.userStatus === "ACTIVE") {
+    if (userInfo?.userStatus === "ACTIVE") {
       router.replace("/");
     }
   }, [userInfo]);
@@ -95,7 +95,7 @@ function Login() {
             name="user-password"
             value={password || ""}
             onChange={onChangePassword}
-            required
+            // required
             placeholder="비밀번호"
           />
           <button type="submit" className={styles.login_btn}>

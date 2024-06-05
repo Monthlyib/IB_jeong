@@ -1,23 +1,20 @@
 import axios from "axios";
+import { tokenRequireApi } from "./refreshToken";
 
 const STORAGE_API_URL = "api/storage";
 
 export const storageDeleteFolder = async (storageFolderId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/${storageFolderId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(
+      `${STORAGE_API_URL}/${storageFolderId}`,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
   } catch (error) {
     console.error(error);
   }
@@ -25,20 +22,13 @@ export const storageDeleteFolder = async (storageFolderId, session) => {
 
 export const storageDeleteFile = async (storageFileId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/file/${storageFileId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(`${STORAGE_API_URL}/${storageFileId}`, config);
   } catch (error) {
     console.error(error);
   }
@@ -51,21 +41,14 @@ export const storageReviseFolder = async (
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ storageFolderId, folderName, status }),
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { storageFolderId, folderName, status };
+    await tokenRequireApi.post(STORAGE_API_URL, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -78,21 +61,14 @@ export const storagePostFolder = async (
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ parentsFolderId, folderName, status }),
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { parentsFolderId, folderName, status };
+    await tokenRequireApi.post(STORAGE_API_URL, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -108,8 +84,8 @@ export const storagePostFile = async (parentsFolderId, file, session) => {
         Authorization: session?.accessToken,
       },
     };
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}${STORAGE_API_URL}/file/${parentsFolderId}`,
+    const res = await tokenRequireApi.post(
+      `${STORAGE_API_URL}/file/${parentsFolderId}`,
       formData,
       config
     );

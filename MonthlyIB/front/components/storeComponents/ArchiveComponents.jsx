@@ -60,15 +60,11 @@ const ArchiveComponents = () => {
   };
 
   const onClickUpFolder = () => {
-    // TODO: current Path 해결해야됨
     const temp = [...prevFolderId];
     setCurrentFolderId(prevFolderId.at(-1));
-    const tempStr = currentPath;
-    tempStr.replace(tempStr.split(" ").at(-1), "");
-    tempStr.replace(tempStr.split(" ").at(-2), "");
-    console.log("dd", tempStr);
-    // setCurrentPath(tempStr.replace(tempStr.split(" /").at(-1), ""));
-    // setCurrentPath(tempStr.replace(tempStr.split(" ").at(-2), ""));
+    const pos = currentPath.lastIndexOf("/");
+    const tempStr = currentPath.substring(0, pos);
+    setCurrentPath(tempStr);
     if (temp.length > 1) {
       getSubLists(temp.at(-1), "");
       temp.pop();

@@ -236,6 +236,7 @@ const CoursePostWrite = () => {
   };
 
   const onSubmit = async (e) => {
+    // course 에다가 revise item 만들기
     e.preventDefault();
     const chapterInfo =
       chapters.length == 1
@@ -259,7 +260,7 @@ const CoursePostWrite = () => {
       if (imageInput.current)
         coursePostThumnail(videoLessonsId, imageInput.current, userInfo);
     } else {
-      postCourseItem(
+      const res = await postCourseItem(
         title,
         content,
         lecturer,

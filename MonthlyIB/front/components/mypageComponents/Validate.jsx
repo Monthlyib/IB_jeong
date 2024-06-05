@@ -26,7 +26,7 @@ const Validate = () => {
   const [school, setSchool] = useState("");
   const [grade, setGrade] = useState("");
   const [address, setAddress] = useState("");
-  console.log(userDetailInfo);
+
   useEffect(() => {
     getUserInfo(userInfo.userId, userInfo);
   }, []);
@@ -152,18 +152,34 @@ const Validate = () => {
 
   const onSubmitForm = (e) => {
     e.preventDefault();
-    userReviseInfo(
-      userDetailInfo?.userId,
-      password,
-      email,
-      name,
-      dob,
-      school,
-      grade,
-      address,
-      country,
-      userInfo
-    );
+
+    if (password === "") {
+      userReviseInfo(
+        userDetailInfo?.userId,
+        userDetailInfo?.password,
+        email,
+        name,
+        dob,
+        school,
+        grade,
+        address,
+        country,
+        userInfo
+      );
+    } else {
+      userReviseInfo(
+        userDetailInfo?.userId,
+        password,
+        email,
+        name,
+        dob,
+        school,
+        grade,
+        address,
+        country,
+        userInfo
+      );
+    }
 
     router.push("/mypage");
   };

@@ -1,6 +1,6 @@
-const MONTHLYIB_API_URL = "api/monthly-ib";
+import { tokenRequireApi } from "./refreshToken";
 
-import axios from "axios";
+const MONTHLYIB_API_URL = "api/monthly-ib";
 
 export const monthlyIBPostThumbnail = async (
   monthlyIbId,
@@ -16,14 +16,11 @@ export const monthlyIBPostThumbnail = async (
         Authorization: accessToken,
       },
     };
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}${MONTHLYIB_API_URL}/monthly-ib-thumbnail/${monthlyIbId}`,
+    await tokenRequireApi.post(
+      `${MONTHLYIB_API_URL}/monthly-ib-thumbnail/${monthlyIbId}`,
       formData,
       config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }
@@ -39,14 +36,11 @@ export const monthlyIBPostPDFFile = async (monthlyIbId, file, accessToken) => {
         Authorization: accessToken,
       },
     };
-    const res = await axios.post(
-      `${process.env.NEXT_PUBLIC_API_URL}${MONTHLYIB_API_URL}/monthly-ib-pdf/${monthlyIbId}`,
+    const res = await tokenRequireApi.post(
+      `${MONTHLYIB_API_URL}/monthly-ib-pdf/${monthlyIbId}`,
       formData,
       config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }
@@ -54,27 +48,15 @@ export const monthlyIBPostPDFFile = async (monthlyIbId, file, accessToken) => {
 
 export const monthlyIBPostItem = async (title, accessToken) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${MONTHLYIB_API_URL}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: accessToken,
-        },
-        body: JSON.stringify({
-          title,
-        }),
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-      return res.json();
-    }
-    if (!res.ok) {
-      console.log(res);
-      return res;
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken,
+      },
+    };
+    const data = { title };
+    const res = await tokenRequireApi.post(MONTHLYIB_API_URL, data, config);
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -82,20 +64,19 @@ export const monthlyIBPostItem = async (title, accessToken) => {
 
 export const monthlyIBReviseItem = async (monthlyIbId, title, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${MONTHLYIB_API_URL}/${monthlyIbId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({ title }),
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { title };
+    const res = await tokenRequireApi.patch(
+      `${MONTHLYIB_API_URL}/${monthlyIbId}`,
+      data,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -103,20 +84,18 @@ export const monthlyIBReviseItem = async (monthlyIbId, title, session) => {
 
 export const monthlyIBGetItem = async (monthlyIbId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${MONTHLYIB_API_URL}/${monthlyIbId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${MONTHLYIB_API_URL}/${monthlyIbId}`,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
+
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -124,19 +103,13 @@ export const monthlyIBGetItem = async (monthlyIbId, session) => {
 
 export const monthlyIBDeleteItem = async (monthlyIbId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${MONTHLYIB_API_URL}/${monthlyIbId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(`${MONTHLYIB_API_URL}/${monthlyIbId}`, config);
   } catch (error) {
     console.error(error);
   }

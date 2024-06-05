@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import styles from "./IbComponents.module.css";
 import Link from "next/link";
@@ -9,36 +9,70 @@ import {
   monthlyIBPostItem,
   monthlyIBPostThumbnail,
   monthlyIBPostPDFFile,
+  monthlyIBReviseItem,
 } from "@/apis/monthlyIbAPI";
 import { useUserStore } from "@/store/user";
+import { useIBStore } from "@/store/ib";
 
 const IBPost = () => {
   const imageInput = useRef();
   const fileInput = useRef();
   const [title, setTitle] = useState("");
-  const [havingImg, setHavingImg] = useState(false);
   const [havingFile, setHavingFile] = useState(false);
   const router = useRouter();
   const { userInfo } = useUserStore();
+  const { ibDetail, getIBItem, reviseItem } = useIBStore();
+  const searchParams = useSearchParams();
+  const monthlyIbId = parseInt(searchParams.get("monthlyIbId"));
+
+  useEffect(() => {
+    if (monthlyIbId) {
+      getIBItem(monthlyIbId, userInfo);
+      console.log(ibDetail);
+      setTitle(ibDetail?.title);
+      setHavingFile(true);
+    }
+  }, []);
 
   const onSubmitForm = useCallback(
     async (e) => {
       e.preventDefault();
-      let accessToken = userInfo?.accessToken;
-      let res = await monthlyIBPostItem(title, accessToken);
-      if (res?.result.status === 200) {
-        monthlyIBPostThumbnail(
-          res?.data.monthlyIbId,
-          imageInput.current,
-          accessToken
-        );
-        monthlyIBPostPDFFile(
-          res?.data.monthlyIbId,
-          fileInput.current,
-          accessToken
-        );
-        router.push("/ib");
-      } else alert("잘못된 접근입니다.");
+      if (monthlyIbId) {
+        let accessToken = userInfo?.accessToken;
+        const res = await reviseItem(monthlyIbId, title, userInfo);
+        if (res?.result.status === 200) {
+          if (imageInput.current)
+            monthlyIBPostThumbnail(
+              res?.data.monthlyIbId,
+              imageInput.current,
+              accessToken
+            );
+          if (fileInput.current)
+            monthlyIBPostPDFFile(
+              res?.data.monthlyIbId,
+              fileInput.current,
+              accessToken
+            );
+          router.push("/ib");
+        }
+      } else {
+        let accessToken = userInfo?.accessToken;
+        let res = await monthlyIBPostItem(title, accessToken);
+        if (res?.result.status === 200) {
+          if (imageInput.current)
+            monthlyIBPostThumbnail(
+              res?.data.monthlyIbId,
+              imageInput.current,
+              accessToken
+            );
+          monthlyIBPostPDFFile(
+            res?.data.monthlyIbId,
+            fileInput.current,
+            accessToken
+          );
+          router.push("/ib");
+        } else alert("잘못된 접근입니다.");
+      }
     },
     [title]
   );
@@ -67,7 +101,6 @@ const IBPost = () => {
 
   const onClickImageUpload = (e) => {
     imageInput.current = changeFileName(e.target.files[0]);
-    if (imageInput.current) setHavingImg(true);
   };
 
   const onClickFileUpload = useCallback((e) => {
@@ -115,11 +148,7 @@ const IBPost = () => {
             <button
               className={styles.submit}
               type="submit"
-              disabled={
-                title !== "" && havingImg === true && havingFile === true
-                  ? false
-                  : true
-              }
+              disabled={title !== "" && havingFile === true ? false : true}
             >
               등록
             </button>

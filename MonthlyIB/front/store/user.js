@@ -10,7 +10,7 @@ import { persist } from "zustand/middleware";
 
 export const useUserStore = create(
   persist(
-    (set) => ({
+    (set, get) => ({
       userInfo: {},
       userDetailInfo: {},
       getUserInfo: async (userId, session) => {
@@ -31,6 +31,7 @@ export const useUserStore = create(
       },
       signOut: () => {
         set({ userInfo: {} });
+        localStorage.removeItem("userInfo");
       },
       socialSignIn: async (oauthAccessToken, loginType) => {
         try {
@@ -52,14 +53,8 @@ export const useUserStore = create(
         }
       },
 
-      reissueToken: async (userId) => {
-        try {
-          console.log("called");
-          const res = await openAPIReissueToken(userId);
-          set({ userInfo: res.data });
-        } catch (error) {
-          console.error(error);
-        }
+      updateUserInfo: (res) => {
+        set({ userInfo: res });
       },
     }),
     {
