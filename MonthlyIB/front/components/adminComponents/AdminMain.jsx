@@ -22,10 +22,14 @@ const AdminMain = () => {
   useEffect(() => {
     getUserList(userInfo);
   }, []);
-  if (userInfo?.authority !== "ADMIN") {
-    alert("잘못된 접근입니다.");
-    router.back();
-  }
+
+  useEffect(() => {
+    if (userInfo?.authority !== "ADMIN") {
+      alert("잘못된 접근입니다.");
+      router.back();
+    }
+  }, [userInfo]);
+
   return (
     <>
       <div className={styles.dashboard_top_wrap}>
