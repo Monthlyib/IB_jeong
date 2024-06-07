@@ -108,12 +108,36 @@
   justify-content: space-between;
   color: var(--primary01);
 }
+.dashboard_mid_wrap .dashboard_mid_card .schedule_subtitle,
+.dashboard_mid_wrap .dashboard_mid_card .subtitle {
+  display: flex;
+  justify-content: space-between;
+  margin-left: 3rem;
+  margin-right: 3rem;
+}
+
+.dashboard_mid_wrap .dashboard_mid_card .schedule_subtitle {
+  margin-right: 7rem;
+  margin-left: 5rem;
+}
+
+.dashboard_mid_wrap .dashboard_mid_card .nickname,
+.dashboard_mid_wrap .dashboard_mid_card .username,
+.dashboard_mid_wrap .dashboard_mid_card .functions {
+  display: inline-block;
+  margin-right: 7rem;
+  font-size: 2rem;
+}
 
 .dashboard_mid_wrap .dashboard_mid_card .users svg {
   margin-right: 0.5rem;
   margin-top: 0;
   padding: 0 0.5rem;
   color: var(--primary01);
+}
+
+.schedule span {
+  line-height: 0.5;
 }
 
 .dashboard_mid_wrap .dashboard_mid_card .schedule {
@@ -129,6 +153,192 @@
   margin-top: 0;
   padding: 0 0.5rem;
   color: var(--primary01);
+}
+
+.dashboard_mid_wrap .dashboard_mid_card .schedule_nickname,
+.dashboard_mid_wrap .dashboard_mid_card .schedule_username,
+.dashboard_mid_wrap .dashboard_mid_card .schedule_functions {
+  display: inline-block;
+  font-size: 1.5rem;
+}
+
+.md {
+  display: block;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+}
+.md .md_box_flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+}
+
+.md .admin_box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 40rem;
+  min-height: 10rem;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 3rem;
+  text-align: center;
+  margin: 0 2rem;
+}
+.md .admin_box select {
+  height: 5rem;
+  width: 10rem;
+  text-align: center;
+  font-size: 1.4rem;
+  margin-bottom: 2rem;
+}
+.md .md_box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 90rem;
+  min-height: 28rem;
+  background: #fff;
+  border-radius: 1rem;
+  padding: 3rem;
+  text-align: center;
+  margin: 0 2rem;
+}
+.md .admin_box .md_top,
+.md .md_box .md_top {
+  padding-bottom: 1rem;
+}
+
+.md .userInfos {
+  margin: 2rem 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+.md .memo {
+  display: flex;
+  flex-direction: column;
+}
+.md .memo textarea {
+  display: block;
+  width: 100%;
+  height: 10rem;
+  font-size: 1.8rem;
+}
+.md .memo span,
+.md .userInfos span {
+  padding-top: 0.5rem;
+  margin-left: 1rem;
+  font-size: 2rem;
+}
+
+.md .userInfos select,
+.md .userInfos input {
+  margin-left: 3rem;
+  width: 50%;
+  height: 4rem;
+  border: 1px solid #d5d5d5;
+  border-radius: 0.5rem;
+  padding: 1.2rem;
+  color: #000;
+  font-size: 1.6rem;
+}
+.md .userInfos select {
+  font-size: 1.4rem;
+  text-align: center;
+}
+
+.md {
+  align-items: flex-start;
+  text-align: left;
+}
+.md .md_top {
+  padding: 0;
+  width: 100%;
+}
+.md .tit {
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.md input {
+  width: 100%;
+  height: 7.2rem;
+  border: 1px solid #d5d5d5;
+  border-radius: 0.5rem;
+  padding: 1.2rem;
+  color: #000;
+  font-size: 1.6rem;
+}
+.md input::placeholder {
+  color: #888;
+}
+
+.md .admin_box .md_top .tit,
+.md .md_box .md_top .tit {
+  font-size: 2.4rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #000;
+  margin-bottom: 2.2rem;
+}
+.md .admin_box .msg,
+.md .md_box .msg {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--primary01);
+}
+.md .admin_box button,
+.md .md_box button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 6.2rem;
+  background: var(--primary01);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #fff;
+  border-radius: 1rem;
+}
+.md .admin_box .btn_wrap {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+.md .admin_box .delete,
+.md .admin_box .ok {
+  align-items: center;
+  width: 50%;
+  height: 6.2rem;
+  background: var(--primary01);
+  font-size: 1.8rem;
+  font-weight: 400;
+  color: #fff;
+  border-radius: 1rem;
+  margin-right: 2rem;
+}
+
+.md .admin_box .delete {
+  background-color: rgb(223, 5, 5);
+}
+
+.md .md_dim {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.25);
 }
 
 @media screen and (min-width: 992px) {

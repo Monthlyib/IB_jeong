@@ -21,18 +21,12 @@ function Login() {
   // const { data: session } = useSession();
   const { userInfo, signIn } = useUserStore();
   const router = useRouter();
-  // useEffect(() => {
-  //   if (session?.userStatus === "ACTIVE") {
-  //     router.replace("/");
-  //   }
-  // }, [session]);
 
   useEffect(() => {
     if (userInfo?.userStatus === "ACTIVE") {
       router.replace("/");
     }
   }, [userInfo]);
-
   const onChangeId = useCallback((e) => {
     setId(e.target.value);
   }, []);
@@ -41,32 +35,13 @@ function Login() {
     setPassword(e.target.value);
   }, []);
 
-  // const onSubmitForm = useCallback(
-  //   async (e) => {
-  //     e.preventDefault();
-  //     try {
-  //       const res = await signIn("credentials", {
-  //         username,
-  //         password,
-  //         redirect: false,
-  //       });
-  //       if (!res.ok && res?.status === 401) {
-  //         alert("아이디/비밀번호가 틀렸거나 존재하지 않는 회원입니다.");
-  //       }
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   },
-  //   [username, password]
-  // );
-
   const onSubmitForm = useCallback(
     async (e) => {
       e.preventDefault();
-      const res = signIn(username, password);
-
-      if (!res.ok && res?.status === 401) {
-        alert("아이디/비밀번호가 틀렸거나 존재하지 않는 회원입니다.");
+      const res = await signIn(username, password);
+      console.log(res);
+      if (res?.result.status !== 200) {
+        alert(res?.message);
       }
     },
     [username, password]

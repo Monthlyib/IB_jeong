@@ -1,22 +1,16 @@
+import { tokenRequireApi } from "./refreshToken";
+
 const USER_API_URL = "api/user";
 
 export const userDelete = async (userId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${USER_API_URL}/${userId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-    console.log(success);
-    const json = await res.json();
-    return json;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(`${USER_API_URL}/${userId}`, config);
   } catch (error) {
     console.error(error);
   }
@@ -24,20 +18,14 @@ export const userDelete = async (userId, session) => {
 
 export const userGetInfo = async (userId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${USER_API_URL}/${userId}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-    const json = await res.json();
-    return json;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(`${USER_API_URL}/${userId}`, config);
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -45,21 +33,14 @@ export const userGetInfo = async (userId, session) => {
 
 export const userGetAllList = async (session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${USER_API_URL}/list`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-    console.log(success);
-    const json = await res.json();
-    return json;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(`${USER_API_URL}/list`, config);
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -75,37 +56,46 @@ export const userReviseInfo = async (
   grade,
   address,
   country,
+  userStatus,
+  authority,
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${USER_API_URL}/${userId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          password,
-          email,
-          nickName,
-          birth,
-          school,
-          grade,
-          address,
-          country,
-          userStatus: session?.userStatus,
-          authority: session?.authority,
-        }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    let data = {};
+    if (password === "") {
+      data = {
+        email,
+        nickName,
+        birth,
+        school,
+        grade,
+        address,
+        country,
+        userStatus,
+        authority,
+      };
+    } else {
+      data = {
+        password,
+        email,
+        nickName,
+        birth,
+        school,
+        grade,
+        address,
+        country,
+        userStatus,
+        authority,
+      };
     }
-    console.log("success");
-    const json = await res.json();
-    return json;
+
+    await tokenRequireApi.patch(`${USER_API_URL}/${userId}`, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -123,56 +113,48 @@ export const userRegisterWithSocialInfo = async (
   consent_marketing
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${USER_API_URL}/social/${userId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: accessToken,
-        },
-        body: JSON.stringify({
-          username,
-          nickName: name.current,
-          birth: dob.current,
-          school: school.current,
-          grade: grade.current,
-          address: address.current,
-          termsOfUseCheck: true,
-          privacyTermsCheck: true,
-          marketingTermsCheck: consent_marketing,
-        }),
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: accessToken,
+      },
+    };
+    const data = {
+      username,
+      nickName: name.current,
+      birth: dob.current,
+      school: school.current,
+      grade: grade.current,
+      address: address.current,
+      termsOfUseCheck: true,
+      privacyTermsCheck: true,
+      marketingTermsCheck: consent_marketing,
+    };
+    const res = await tokenRequireApi.patch(
+      `${USER_API_URL}/social/${userId}`,
+      data,
+      config
     );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
 
-    console.log("success");
-    return res.json();
+    return res.data;
   } catch (error) {
     console.error(error);
   }
 };
 
-export const userVerifyUser = async (credentials) => {
+export const userVerifyUser = async (username, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${USER_API_URL}/verify/${credentials?.username}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: credentials?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${USER_API_URL}/verify/${username}`,
+      config
     );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-
-    console.log("success");
-    return res.json();
+    return res.data;
   } catch (error) {
     console.error(error);
   }

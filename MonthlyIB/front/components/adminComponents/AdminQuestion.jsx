@@ -11,7 +11,7 @@ import { useEffect, useRef, useState } from "react";
 import AdminUserDetail from "./AdminUserDetail";
 import { userReviseInfo } from "@/apis/userAPI";
 
-const AdminUser = () => {
+const AdminQuestion = () => {
   const { userInfo, userList, getUserList, userDetailInfo, getUserInfo } =
     useUserStore();
   const [modal, setModal] = useState(false);
@@ -52,7 +52,7 @@ const AdminUser = () => {
   return (
     <>
       <div className={styles.dashboard_mid_card}>
-        <div className={styles.title}>사용자 관리</div>
+        <div className={styles.title}>질문 관리</div>
         <div className={styles.subtitle}>
           <div className={styles.username}>Username</div>
           <div className={styles.nickname}>Nickname</div>
@@ -130,4 +130,4 @@ const AdminUser = () => {
   );
 };
 
-export default AdminUser;
+export default AdminQuestion;

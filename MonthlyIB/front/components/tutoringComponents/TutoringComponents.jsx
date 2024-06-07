@@ -183,6 +183,10 @@ const TutoringComponents = () => {
                   <span className={`${styles.label} ${styles.active}`}></span>
                   <span>선택</span>
                 </div>
+                <div className={styles.calendar_item}>
+                  <span className={`${styles.label} ${styles.today}`}></span>
+                  <span>오늘</span>
+                </div>
               </div>
             </div>
             <div className={styles.sc_right_cont}>
@@ -227,7 +231,9 @@ const TutoringComponents = () => {
                     <span>선택불가</span>
                   </div>
                   <div className={styles.calendar_item}>
-                    <span className={`${styles.label} ${styles.active}`}></span>
+                    <span
+                      className={`${styles.label} ${styles.time_selected}`}
+                    ></span>
                     <span>선택</span>
                   </div>
                 </div>

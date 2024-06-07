@@ -49,7 +49,7 @@ const UserProfile = () => {
 };
 
 const UserUtilBox = () => {
-  const { signOut } = useUserStore();
+  const { userInfo, signOut } = useUserStore();
   const onLoggedOut = useCallback(() => {
     signOut();
     localStorage.removeItem("userInfo");
@@ -66,6 +66,11 @@ const UserUtilBox = () => {
         <li>
           <a onClick={onLoggedOut}>로그아웃</a>
         </li>
+        {userInfo?.authority === "ADMIN" && (
+          <li>
+            <Link href="/adminpage">관리자 페이지</Link>
+          </li>
+        )}
       </ul>
     </div>
   );

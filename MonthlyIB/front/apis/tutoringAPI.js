@@ -1,20 +1,16 @@
+import { tokenRequireApi } from "./refreshToken";
+
 const TUTORING_API_URL = "api/tutoring";
 
 export const TutoringDeleteItem = async (tutoringId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/${tutoringId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(`${TUTORING_API_URL}/${tutoringId}`, config);
   } catch (error) {
     console.error(error);
   }
@@ -22,19 +18,17 @@ export const TutoringDeleteItem = async (tutoringId, session) => {
 
 export const TutoringGetUserData = async (userId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/user/${userId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${TUTORING_API_URL}/user/${userId}`,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -42,19 +36,17 @@ export const TutoringGetUserData = async (userId, session) => {
 
 export const TutoringGetTime = async (date, hour, minute, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/time?date=${date}&hour=${hour}&minute=${minute}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${TUTORING_API_URL}/time?date=${date}&hour=${hour}&minute=${minute}`,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -62,20 +54,17 @@ export const TutoringGetTime = async (date, hour, minute, session) => {
 
 export const TutoringGetDate = async (date, status, page, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/date?date=${date}&status=${status}&page=${page}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${TUTORING_API_URL}/date?date=${date}&status=${status}&page=${page}`,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -83,20 +72,17 @@ export const TutoringGetDate = async (date, status, page, session) => {
 
 export const TutoringGetDateSimple = async (date, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/date-simple?date=${date}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${TUTORING_API_URL}/date-simple?date=${date}`,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
-    return res.json();
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -109,23 +95,18 @@ export const TutoringReviseItem = async (
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}/${tutoringId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          detail,
-          tutoringStatus,
-        }),
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { detail, tutoringStatus };
+    await tokenRequireApi.patch(
+      `${TUTORING_API_URL}/${tutoringId}`,
+      data,
+      config
     );
-    if (res.ok) {
-      console.log("success");
-    }
   } catch (error) {
     console.error(error);
   }
@@ -140,26 +121,14 @@ export const TutoringPostItem = async (
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${TUTORING_API_URL}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          requestUserId,
-          date,
-          hour,
-          minute,
-          detail,
-        }),
-      }
-    );
-    if (res.ok) {
-      console.log("success");
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { requestUserId, date, hour, minute, detail };
+    await tokenRequireApi.post(`${TUTORING_API_URL}`, data, config);
   } catch (error) {
     console.error(error);
   }

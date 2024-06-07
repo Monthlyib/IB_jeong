@@ -1,19 +1,15 @@
+import { tokenRequireApi } from "./refreshToken";
 const QUESTION_API_URL = "api/question";
 
 export const questionDelete = async (questionId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}/${questionId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: session?.accessToken,
-        },
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(`${QUESTION_API_URL}/${questionId}`, config);
   } catch (error) {
     console.error(error);
   }
@@ -21,18 +17,16 @@ export const questionDelete = async (questionId, session) => {
 
 export const questionDeleteAnswer = async (answerId, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}/answer/${answerId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    await tokenRequireApi.delete(
+      `${QUESTION_API_URL}/answer/${answerId}`,
+      config
     );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
   } catch (error) {
     console.error(error);
   }
@@ -45,21 +39,18 @@ export const questionGetUserList = async (
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}?keyWord=${keyWord}&questionStatus=${questionStatus}&page=${page}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${QUESTION_API_URL}?keyWord=${keyWord}&questionStatus=${questionStatus}&page=${page}`,
+      config
     );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-    const json = await res.json();
-    return json;
+
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -74,26 +65,14 @@ export const questionReviseItem = async (
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          questionId,
-          title,
-          content,
-          subject,
-        }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-    return await res.json();
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { questionId, title, content, subject, questionStatus };
+    await tokenRequireApi.patch(`${QUESTION_API_URL}`, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -101,23 +80,14 @@ export const questionReviseItem = async (
 
 export const questionReviseAnswerItem = async (answerId, content, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}/answer`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          answerId,
-          content,
-        }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { answerId, content };
+    await tokenRequireApi.patch(`${QUESTION_API_URL}/answer`, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -131,27 +101,14 @@ export const questionPostItem = async (
   session
 ) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          title,
-          content,
-          subject,
-          authorId,
-        }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
-    const json = res.json();
-    return json;
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { title, content, subject, authorId };
+    await tokenRequireApi.post(`${QUESTION_API_URL}`, data, config);
   } catch (error) {
     console.error(error);
   }
@@ -159,23 +116,14 @@ export const questionPostItem = async (
 
 export const questionPostAnswerItem = async (questionId, content, session) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${QUESTION_API_URL}/answer`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: session?.accessToken,
-        },
-        body: JSON.stringify({
-          questionId,
-          content,
-        }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
-    }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { questionId, content };
+    await tokenRequireApi.post(`${QUESTION_API_URL}/answer`, data, config);
   } catch (error) {
     console.error(error);
   }

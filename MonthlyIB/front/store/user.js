@@ -4,7 +4,7 @@ import {
   openAPIReissueToken,
   openAPISocialLoginCheck,
 } from "@/apis/openAPI";
-import { userGetInfo } from "@/apis/userAPI";
+import { userGetAllList, userGetInfo } from "@/apis/userAPI";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -13,6 +13,15 @@ export const useUserStore = create(
     (set, get) => ({
       userInfo: {},
       userDetailInfo: {},
+      userList: [],
+      getUserList: async (session) => {
+        try {
+          const res = await userGetAllList(session);
+          set({ userList: res.data });
+        } catch (error) {
+          console.error(error);
+        }
+      },
       getUserInfo: async (userId, session) => {
         try {
           const res = await userGetInfo(userId, session);
@@ -25,6 +34,7 @@ export const useUserStore = create(
         try {
           const res = await openAPILogin(username, password);
           set({ userInfo: res.data });
+          return res;
         } catch (error) {
           console.error(error);
         }

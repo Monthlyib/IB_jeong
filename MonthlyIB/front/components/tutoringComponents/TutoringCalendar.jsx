@@ -14,6 +14,11 @@ const TutoringCalendar = ({ styles, value, setValue }) => {
       <Calendar
         className={styles}
         onChange={onChange}
+        tileDisabled={({ date }) => {
+          const temp = new Date();
+          temp.setDate(temp.getDate() - 1);
+          return date <= temp;
+        }}
         value={value}
         calendarType="hebrew"
         formatDay={(locale, date) =>

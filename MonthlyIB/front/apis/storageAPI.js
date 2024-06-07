@@ -1,4 +1,3 @@
-import axios from "axios";
 import { tokenRequireApi } from "./refreshToken";
 
 const STORAGE_API_URL = "api/storage";

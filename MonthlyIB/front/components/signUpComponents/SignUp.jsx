@@ -175,6 +175,9 @@ const SignUp = () => {
         school,
         grade,
         address,
+        country,
+        userInfo?.userStatus,
+        userInfo?.authority,
         consent_marketing
       );
       if (res.result.status === 200) {

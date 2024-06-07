@@ -1,0 +1,218 @@
+import { useEffect, useRef, useState } from "react";
+import styles from "./AdminStyle.module.css";
+import { userReviseInfo } from "@/apis/userAPI";
+import { useUserStore } from "@/store/user";
+
+const AdminUserDetail = ({ userDetailInfo, setModal }) => {
+  const closeRef = useRef();
+  const [editMode, setEditMode] = useState(false);
+  const [username, setUsername] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [birth, setBirth] = useState("");
+  const [address, setAddress] = useState("");
+  const [country, setCountry] = useState("");
+  const [school, setSchool] = useState("");
+  const [grade, setGrade] = useState("");
+  const [memo, setMemo] = useState("");
+
+  useEffect(() => {
+    setUsername(userDetailInfo?.username);
+    setNickname(userDetailInfo?.nickName);
+    setBirth(userDetailInfo?.birth);
+    setAddress(userDetailInfo?.address);
+    setCountry(userDetailInfo?.country);
+    setSchool(userDetailInfo?.school);
+    setGrade(userDetailInfo?.grade);
+    setMemo(userDetailInfo?.memo);
+  }, [userDetailInfo]);
+
+  const { userInfo } = useUserStore();
+  const onChangeCountry = (e) => {
+    setCountry(e.target.value);
+  };
+
+  const onClickSubmit = () => {
+    if (editMode) {
+      userReviseInfo(
+        userDetailInfo?.userId,
+        "",
+        userDetailInfo?.email,
+        nickname,
+        birth,
+        school,
+        grade,
+        address,
+        country,
+        userDetailInfo?.userStatus,
+        userDetailInfo?.authority,
+        userInfo
+      );
+      setModal(false);
+    } else setModal(false);
+  };
+  return (
+    <div className={styles.md}>
+      <div
+        className={styles.md_box_flex}
+        ref={closeRef}
+        onClick={(e) => closeRef.current === e.target && setModal(false)}
+      >
+        <div className={styles.md_box}>
+          <div className={styles.md_top}>
+            <div className={styles.tit} style={{ position: "relative" }}>
+              {username} 님의 정보
+              <span
+                style={{
+                  fontSize: "1.5rem",
+                  position: "absolute",
+                  right: 0,
+                }}
+                onClick={() => setEditMode(!editMode)}
+              >
+                수정하기{" "}
+              </span>
+            </div>
+
+            <div className={styles.userInfos}>
+              <span>username:</span>
+              <input
+                type="text"
+                value={username}
+                disabled={!editMode}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                }}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>nickname:</span>
+              <input
+                type="text"
+                value={nickname}
+                disabled={!editMode}
+                onChange={(e) => {
+                  setNickname(e.target.value);
+                }}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>email:</span>
+              <input
+                type="text"
+                value={userDetailInfo?.email}
+                disabled={true}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>생년월일:</span>
+              <input
+                type="text"
+                value={birth}
+                disabled={!editMode}
+                onChange={(e) => {
+                  setBirth(e.target.value);
+                }}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>주소:</span>
+              <input
+                type="text"
+                value={address}
+                disabled={!editMode}
+                onChange={(e) => {
+                  setAddress(e.target.value);
+                }}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>Country:</span>
+              <select
+                className="contry_select"
+                value={country}
+                onChange={onChangeCountry}
+                disabled={!editMode}
+              >
+                <option value="정보 없음">국가선택</option>
+                <option value="ko">한국</option>
+                <option value="en">미국</option>
+                <option value="jp">일본</option>
+                <option value="cn">중국</option>
+              </select>
+            </div>
+            <div className={styles.userInfos}>
+              <span>학교:</span>
+              <input
+                type="text"
+                value={school}
+                disabled={!editMode}
+                onChange={(e) => {
+                  setSchool(e.target.value);
+                }}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>학년:</span>
+              <input
+                type="text"
+                value={grade}
+                disabled={!editMode}
+                onChange={(e) => {
+                  setGrade(e.target.value);
+                }}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>권한:</span>
+              <input
+                type="text"
+                value={userDetailInfo?.authority}
+                disabled={true}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>로그인 타입:</span>
+              <input
+                type="text"
+                value={userDetailInfo?.loginType}
+                disabled={true}
+              />
+            </div>
+            <div className={styles.userInfos}>
+              <span>마케팅 수신 여부:</span>
+              <input
+                type="text"
+                value={userDetailInfo?.marketingTermsCheck}
+                disabled={true}
+              />
+            </div>
+
+            <div className={styles.memo}>
+              <span>메모:</span>
+              <textarea
+                type="text"
+                value={memo}
+                disabled={!editMode}
+                onChange={(e) => {
+                  setMemo(e.target.value);
+                }}
+              />
+            </div>
+          </div>
+          <button
+            type="button"
+            className={styles.md_btn}
+            onClick={() => {
+              onClickSubmit();
+            }}
+          >
+            {editMode === true ? "수정" : "확인"}
+          </button>
+        </div>
+      </div>
+      <div className={styles.md_dim}></div>
+    </div>
+  );
+};
+
+export default AdminUserDetail;

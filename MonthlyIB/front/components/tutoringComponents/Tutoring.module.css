@@ -48,11 +48,22 @@
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.possible {
-  background: #000;
+  background: #fff;
+  border: 1px gray solid;
+}
+
+.sc_main_wrap .calendar_info .calendar_item .label.today {
+  background: yellow;
+  border: 1px black solid;
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.active {
-  background: var(--primary01);
+  background: blue;
+}
+
+.sc_main_wrap .calendar_info .calendar_item .label.time_selected {
+  background: white;
+  border: 2px var(--primary01) solid;
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.none {
