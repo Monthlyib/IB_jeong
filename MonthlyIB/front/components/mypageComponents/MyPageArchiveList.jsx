@@ -1,11 +1,18 @@
 "use client";
 import styles from "./MyPage.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MyPageArchiveListItems from "./MyPageArchiveListItems";
+import { useUserStore } from "@/store/user";
+import { useBoardStore } from "@/store/board";
 
 const MyPageArchiveList = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const { userInfo } = useUserStore();
+  const { getBoardUserList, boardList } = useBoardStore();
 
+  useEffect(() => {
+    getBoardUserList(currentPage, " ", userInfo);
+  }, []);
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
@@ -13,12 +20,12 @@ const MyPageArchiveList = () => {
   return (
     <>
       <div className={styles.board_wrap}>
-        {/* <MyPageArchiveListItems
-          bulletinBoardContents={User.posts}
+        <MyPageArchiveListItems
+          bulletinBoardContents={boardList}
           currentPage={currentPage}
           numShowContents={5}
           onPageChange={handlePageChange}
-        /> */}
+        />
       </div>
     </>
   );

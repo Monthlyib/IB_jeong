@@ -31,7 +31,8 @@ const BulletinBoardItems = ({
               <div>
                 <span>{content.authorNickName}</span>
                 <b> · </b>
-                <span>{content.createAt}</span>
+                <span>{content.createAt.split("T")[0]} &nbsp;</span>
+                <span>{content.createAt.split("T")[1]}</span>
                 <b> · </b>
                 <span>조회수 {content.viewCount}</span>
                 <b> · </b>

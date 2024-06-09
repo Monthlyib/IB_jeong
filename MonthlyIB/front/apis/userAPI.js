@@ -58,6 +58,8 @@ export const userReviseInfo = async (
   country,
   userStatus,
   authority,
+  memo,
+  marketingTermsCheck,
   session
 ) => {
   try {
@@ -79,6 +81,8 @@ export const userReviseInfo = async (
         country,
         userStatus,
         authority,
+        memo,
+        marketingTermsCheck,
       };
     } else {
       data = {
@@ -92,10 +96,17 @@ export const userReviseInfo = async (
         country,
         userStatus,
         authority,
+        memo,
+        marketingTermsCheck,
       };
     }
 
-    await tokenRequireApi.patch(`${USER_API_URL}/${userId}`, data, config);
+    const res = await tokenRequireApi.patch(
+      `${USER_API_URL}/${userId}`,
+      data,
+      config
+    );
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -155,6 +166,26 @@ export const userVerifyUser = async (username, session) => {
       config
     );
     return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const userPostImage = async (userId, file, session) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.post(
+      `${USER_API_URL}/image/${userId}`,
+      formData,
+      config
+    );
   } catch (error) {
     console.error(error);
   }

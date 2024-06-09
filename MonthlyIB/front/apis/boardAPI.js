@@ -129,7 +129,7 @@ export const boardFilePost = async (boardId, file, session) => {
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
-        Authorization: accessToken,
+        Authorization: session?.accessToken,
       },
     };
     const res = await tokenRequireApi.post(
@@ -137,6 +137,24 @@ export const boardFilePost = async (boardId, file, session) => {
       formData,
       config
     );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const boardGetUserList = async (page, keyword, session) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${BOARD_API_URL}?page=${page}&keyword=${keyword}`,
+      config
+    );
+    return res.data;
   } catch (error) {
     console.error(error);
   }

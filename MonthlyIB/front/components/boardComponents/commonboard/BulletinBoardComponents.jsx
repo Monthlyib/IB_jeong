@@ -25,7 +25,7 @@ const BulletinBoardComponents = () => {
     setSearchKeyword(e.target.value);
   }, []);
   useEffect(() => {
-    getBoardList(currentPage);
+    getBoardList(currentPage, "");
   }, []);
 
   // const onClickSearchButton = useCallback(() => {

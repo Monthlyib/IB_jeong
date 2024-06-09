@@ -1,4 +1,5 @@
 import {
+  boardGetUserList,
   boardReplyDeleteItem,
   boardReplyPost,
   boardReplyReviseItem,
@@ -13,9 +14,18 @@ export const useBoardStore = create((set, get) => ({
   error: null,
   bulletinBoardDetail: {},
   boardList: [],
-  getBoardList: async (currentPage) => {
+  getBoardList: async (currentPage, keyword) => {
     try {
-      const res = await boardGetList(currentPage - 1, "");
+      const res = await boardGetList(currentPage - 1, keyword);
+      set({ boardList: res.data, loading: false, success: true });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  getBoardUserList: async (currentPage, keyword, session) => {
+    try {
+      const res = await boardGetUserList(currentPage - 1, keyword, session);
       set({ boardList: res.data, loading: false, success: true });
     } catch (error) {
       console.error(error);

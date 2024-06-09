@@ -5,7 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
 import { openAPIVerifyEmail, openAPIVerifyNum } from "@/apis/openAPI";
-import { userReviseInfo } from "@/apis/userAPI";
+import { userPostImage, userReviseInfo } from "@/apis/userAPI";
 
 const Validate = () => {
   const router = useRouter();
@@ -148,7 +148,35 @@ const Validate = () => {
     }
   }, [email]);
 
-  const onSubmitChangeName = useCallback((e) => {}, [name]);
+  const onSubmitChangeName = useCallback(
+    async (e) => {
+      e.preventDefault();
+      const res = await userReviseInfo(
+        userDetailInfo?.userId,
+        userDetailInfo?.password,
+        userDetailInfo?.email,
+        name,
+        userDetailInfo?.birth,
+        userDetailInfo?.school,
+        userDetailInfo?.grade,
+        userDetailInfo?.address,
+        userDetailInfo?.country,
+        userDetailInfo?.userStatus,
+        userDetailInfo?.authority,
+        userDetailInfo?.memo,
+        userDetailInfo?.marketingTermsCheck,
+        userInfo
+      );
+      if (res.result.status === 200 && imageInput.current) {
+        await userPostImage(
+          userDetailInfo?.userId,
+          imageInput.current,
+          userInfo
+        );
+      }
+    },
+    [name, imageInput]
+  );
 
   const onSubmitForm = (e) => {
     e.preventDefault();
@@ -164,6 +192,10 @@ const Validate = () => {
         grade,
         address,
         country,
+        userDetailInfo?.userStatus,
+        userDetailInfo?.authority,
+        userDetailInfo?.memo,
+        consent_marketing,
         userInfo
       );
     } else {
@@ -177,13 +209,17 @@ const Validate = () => {
         grade,
         address,
         country,
+        userDetailInfo?.userStatus,
+        userDetailInfo?.authority,
+        userDetailInfo?.memo,
+        consent_marketing,
         userInfo
       );
     }
 
     router.push("/mypage");
   };
-
+  console.log(userDetailInfo);
   return (
     <>
       <main className="width_content min_content member">
@@ -196,9 +232,9 @@ const Validate = () => {
             <figure>
               <Image
                 src={
-                  userInfo?.userImage === undefined
+                  userDetailInfo?.userImage === undefined
                     ? "/img/common/user_profile.jpg"
-                    : userInfo?.userImage
+                    : userDetailInfo?.userImage?.fileUrl
                 }
                 width="100"
                 height="100"

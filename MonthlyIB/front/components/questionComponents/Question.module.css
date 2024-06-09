@@ -89,12 +89,12 @@
   font-weight: 600;
 }
 
-.question_wrap .question_item.reserve a .q_flex_bottom .q_ceiling {
+.q_flex_bottom .q_ceiling.reserve {
   background: #e5f6ff;
   color: #05a5ff;
 }
 
-.question_wrap .question_item.wait a .q_flex_bottom .q_ceiling {
+.q_flex_bottom .q_ceiling.wait {
   background: #ffead7;
   color: #ff922e;
 }

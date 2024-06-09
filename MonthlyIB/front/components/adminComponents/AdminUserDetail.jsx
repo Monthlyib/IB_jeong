@@ -45,6 +45,8 @@ const AdminUserDetail = ({ userDetailInfo, setModal }) => {
         country,
         userDetailInfo?.userStatus,
         userDetailInfo?.authority,
+        memo,
+        userDetailInfo?.marketingTermsCheck,
         userInfo
       );
       setModal(false);

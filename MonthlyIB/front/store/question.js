@@ -1,5 +1,6 @@
 import { questionGetItem, questionGetList } from "@/apis/openAPI";
 import {
+  questionDelete,
   questionDeleteAnswer,
   questionGetUserList,
   questionPostAnswerItem,
@@ -12,9 +13,9 @@ import { create } from "zustand";
 export const useQuestionStore = create((set, get) => ({
   questionList: {},
   questionDetail: {},
-  getQuestionList: async (currentPage) => {
+  getQuestionList: async (currentPage, keyword) => {
     try {
-      const res = await questionGetList("", "", currentPage - 1);
+      const res = await questionGetList("", keyword, currentPage - 1);
       set({ questionList: res.data });
     } catch (error) {
       console.error(error);
@@ -78,6 +79,14 @@ export const useQuestionStore = create((set, get) => ({
       );
       get().getQuestionDetail(questionId);
       return res;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  deleteQuestionItem: async (questionId, session) => {
+    try {
+      await questionDelete(questionId, session);
+      get().getUserQuestionList("", 0, "", session);
     } catch (error) {
       console.error(error);
     }

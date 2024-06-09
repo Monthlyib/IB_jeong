@@ -14,6 +14,7 @@ const MyPageArchiveListItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(bulletinBoardContents, currentPage);
+  console.log(bulletinBoardContents);
   return (
     <>
       {bulletinBoardContents?.length > 0 ? (
@@ -22,12 +23,17 @@ const MyPageArchiveListItems = ({
             <Link href={`/board/bulletinboard/${content.id}`}>
               <div className={styles.board_cont}>
                 <p>{content.title}</p>
-                <span>{content.content}</span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: content.content,
+                  }}
+                ></span>
               </div>
               <div className={styles.board_txt}>
-                <span>{content.User.userName}</span>
+                <span>{content.authorUsername}</span>
                 <b> · </b>
-                <span>{content.Date}</span>
+                <span>{content.createAt.split("T")[0]} &nbsp;</span>
+                <span>{content.createAt.split("T")[1]}</span>
               </div>
             </Link>
           </div>

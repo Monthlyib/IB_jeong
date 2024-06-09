@@ -15,7 +15,7 @@ const QuestionItems = ({
   };
 
   const paginatedPage = paginate(questions, currentPage);
-
+  console.log(questions);
   return (
     <>
       {questions.length > 0 ? (
@@ -35,7 +35,13 @@ const QuestionItems = ({
               </div>
               <div className={styles.q_flex_bottom}>
                 <span className={styles.q_class}>{content?.subject}</span>
-                <span className={styles.q_ceiling}>
+                <span
+                  className={`${styles.q_ceiling} ${
+                    content?.questionStatus === "ANSWER_WAIT"
+                      ? styles.wait
+                      : styles.reserve
+                  }`}
+                >
                   {content.questionStatus === "COMPLETE"
                     ? "답변완료"
                     : "답변대기"}

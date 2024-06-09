@@ -108,6 +108,19 @@
   justify-content: space-between;
   color: var(--primary01);
 }
+
+.dashboard_mid_wrap .dashboard_mid_card .questions {
+  padding: 0 3rem;
+  margin-top: 1rem;
+  font-size: 1.8rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr;
+  color: var(--primary01);
+}
+
+.dashboard_mid_wrap .dashboard_mid_card .users span {
+  line-height: 0.5;
+}
 .dashboard_mid_wrap .dashboard_mid_card .schedule_subtitle,
 .dashboard_mid_wrap .dashboard_mid_card .subtitle {
   display: flex;
@@ -121,6 +134,22 @@
   margin-left: 5rem;
 }
 
+.dashboard_mid_wrap .dashboard_mid_card .question_subtitle {
+  display: grid;
+  margin: 0 5rem;
+  grid-template-columns: 1fr 1fr 1.5fr 1fr 1fr 1fr;
+}
+
+.dashboard_mid_wrap .dashboard_mid_card .question_subtitle div {
+  font-size: 1.4rem;
+}
+
+.grid {
+  display: grid;
+  margin: 0 5rem;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+}
+
 .dashboard_mid_wrap .dashboard_mid_card .nickname,
 .dashboard_mid_wrap .dashboard_mid_card .username,
 .dashboard_mid_wrap .dashboard_mid_card .functions {
@@ -128,7 +157,7 @@
   margin-right: 7rem;
   font-size: 2rem;
 }
-
+.dashboard_mid_wrap .dashboard_mid_card .questions svg,
 .dashboard_mid_wrap .dashboard_mid_card .users svg {
   margin-right: 0.5rem;
   margin-top: 0;
@@ -316,6 +345,7 @@
   width: 100%;
 }
 .md .admin_box .delete,
+.md .admin_box .revise,
 .md .admin_box .ok {
   align-items: center;
   width: 50%;
@@ -330,6 +360,10 @@
 
 .md .admin_box .delete {
   background-color: rgb(223, 5, 5);
+}
+
+.md .admin_box .revise {
+  background-color: var(--primary03);
 }
 
 .md .md_dim {

@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 import styles from "./UserProfile.module.css";
@@ -8,7 +8,11 @@ import { useUserStore } from "@/store/user";
 
 const UserProfile = () => {
   const [toggleUtilBox, setToggleUtilBox] = useState(false);
-  const { userInfo } = useUserStore();
+  const { userInfo, getUserInfo, userDetailInfo } = useUserStore();
+
+  useEffect(() => {
+    getUserInfo(userInfo.userId, userInfo);
+  }, []);
   const onClickIcon = useCallback(() => {
     setToggleUtilBox(!toggleUtilBox);
   }, [toggleUtilBox]);
@@ -21,9 +25,9 @@ const UserProfile = () => {
             <figure>
               <Image
                 src={
-                  userInfo?.userImage === undefined
+                  userDetailInfo?.userImage === undefined
                     ? "/img/common/user_profile.jpg"
-                    : userInfo?.userImage
+                    : userDetailInfo?.userImage?.fileUrl
                 }
                 width="100"
                 height="100"

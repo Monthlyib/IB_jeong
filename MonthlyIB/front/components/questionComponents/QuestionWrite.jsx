@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./Question.module.css";
 
 import dynamic from "next/dynamic";
@@ -21,6 +21,7 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
   const [title, setTitle] = useState("");
   const { questionDetail, postQuestionItem, reviseQuestionItem } =
     useQuestionStore();
+  const closeRef = useRef();
 
   const { userInfo } = useUserStore();
 
@@ -48,7 +49,7 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
         userInfo,
         currentPage
       );
-      if (res?.result.status === 200) setModal(false);
+      setModal(false);
     } else if (type === "revise") {
       const res = await reviseQuestionItem(
         questionId,
@@ -58,14 +59,18 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
         questionStatus,
         userInfo
       );
-      if (res?.result.status === 200) setModal(false);
+      setModal(false);
     }
   };
   return (
     <>
       <form onSubmit={onSubmit} style={{ position: "relative", zIndex: 5000 }}>
         <div className={`${styles.md} ${styles.md_left}`}>
-          <div className={styles.md_box_flex}>
+          <div
+            className={styles.md_box_flex}
+            ref={closeRef}
+            onClick={(e) => closeRef.current === e.target && setModal(false)}
+          >
             <div className={styles.md_box}>
               <div className={styles.md_top}>
                 <div className={styles.tit}>질문 작성</div>

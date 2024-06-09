@@ -16,9 +16,6 @@ const AdminSchedule = () => {
   };
 
   useEffect(() => {
-    console.log(tutoringDateList);
-  }, [tutoringDateList]);
-  useEffect(() => {
     getTutoringDateList("", "", currentPage - 1, userInfo);
   }, []);
   return (

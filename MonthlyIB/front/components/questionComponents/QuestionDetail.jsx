@@ -94,14 +94,14 @@ const QuestionDetail = (pageId) => {
                 <div className={styles.dt_question_top}>
                   <span
                     className={`${styles.q_ceiling} ${
-                      questionDetail?.answer?.answerId !== undefined
+                      questionDetail?.questionStatus === "ANSWER_WAIT"
                         ? styles.wait
                         : styles.reserve
                     }`}
                   >
-                    {questionDetail?.answer?.answerId !== undefined
-                      ? "답변완료"
-                      : "답변대기"}
+                    {questionDetail?.questionStatus === "ANSWER_WAIT"
+                      ? "답변대기"
+                      : "답변완료"}
                   </span>
 
                   <div className={styles.dt_question_info}>
@@ -109,7 +109,8 @@ const QuestionDetail = (pageId) => {
                       {questionDetail?.subject}
                     </span>
                     <span className={styles.date}>
-                      {questionDetail?.createAt}
+                      {questionDetail?.createAt?.split("T")[0]} &nbsp;
+                      {questionDetail?.createAt?.split("T")[1]}
                     </span>
                   </div>
                 </div>
@@ -147,7 +148,8 @@ const QuestionDetail = (pageId) => {
 
                     <div className={styles.dt_answer_info}>
                       <span className={styles.date}>
-                        {questionDetail.answer?.createAt}
+                        {questionDetail.answer?.createAt.split("T")[0]} &nbsp;
+                        {questionDetail.answer?.createAt.split("T")[1]}
                       </span>
                       {userInfo?.authority === "ADMIN" && (
                         <div className={styles.dt_question_title_menu}>

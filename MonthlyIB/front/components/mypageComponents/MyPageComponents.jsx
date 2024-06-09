@@ -21,7 +21,11 @@ const MyPageComponents = () => {
   const [modal, setModal] = useState(1);
   const [changePayment, setChangePayment] = useState(false);
   const closeRef = useRef("");
-  const { userInfo } = useUserStore();
+  const { userInfo, getUserInfo, userDetailInfo } = useUserStore();
+
+  useEffect(() => {
+    getUserInfo(userInfo.userId, userInfo);
+  }, []);
   const mypageModal = {
     1: <MyPageCourseList />,
     2: <MyPageArchiveList />,
@@ -35,7 +39,6 @@ const MyPageComponents = () => {
     }
   }, []);
 
-  console.log(userInfo);
   return (
     <>
       <main className="width_content">
@@ -45,9 +48,9 @@ const MyPageComponents = () => {
               <figure>
                 <Image
                   src={
-                    userInfo?.userImage === undefined
+                    userDetailInfo?.userImage === undefined
                       ? "/img/common/user_profile.jpg"
-                      : userInfo?.userImage
+                      : userDetailInfo?.userImage?.fileUrl
                   }
                   width="100"
                   height="100"

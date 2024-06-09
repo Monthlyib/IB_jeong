@@ -43,7 +43,7 @@ const QuestionComponents = () => {
   //   }, [searchKeyword]);
 
   useEffect(() => {
-    getQuestionList(currentPage);
+    getQuestionList(currentPage, "");
   }, []);
   return (
     <>
