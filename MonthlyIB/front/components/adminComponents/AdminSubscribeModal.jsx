@@ -158,11 +158,19 @@ const AdminSubscribeModal = ({
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div className={styles.subscribe_price_flex}>
               <span>상품 배경색</span>
-              <ChromePicker color={color} onChange={setColor} />
+              <ChromePicker
+                color={color}
+                onChange={setColor}
+                disableAlpha={true}
+              />
             </div>
             <div className={styles.subscribe_price_flex}>
               <span>글씨색</span>
-              <ChromePicker color={fontColor} onChange={setFontColor} />
+              <ChromePicker
+                color={fontColor}
+                onChange={setFontColor}
+                disableAlpha={true}
+              />
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
