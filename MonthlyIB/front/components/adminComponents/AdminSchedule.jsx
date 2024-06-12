@@ -23,8 +23,8 @@ const AdminSchedule = () => {
       <div className={styles.dashboard_mid_card}>
         <div className={styles.title}>스케쥴링 관리</div>
         <div className={styles.schedule_subtitle}>
-          <div className={styles.schedule_username}>id</div>
-          <div className={styles.schedule_nickname}>name</div>
+          <div className={styles.schedule_username}>ID</div>
+          <div className={styles.schedule_nickname}>Name</div>
           <div className={styles.schedule_nickname}>Date</div>
           <div
             className={styles.schedule_nickname}

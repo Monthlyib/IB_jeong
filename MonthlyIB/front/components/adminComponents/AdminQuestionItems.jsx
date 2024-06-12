@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useUserStore } from "@/store/user";
 import { useRouter } from "next/navigation";
 import { useQuestionStore } from "@/store/question";
+import shortid from "shortid";
 
 const AdminQuestionItems = ({
   questionList,
@@ -45,7 +46,7 @@ const AdminQuestionItems = ({
   return (
     <>
       {paginatedPage.map((v, i) => (
-        <>
+        <div key={shortid.generate()}>
           <hr />
 
           <div className={styles.questions}>
@@ -61,7 +62,7 @@ const AdminQuestionItems = ({
             </div>
           </div>
           <hr />
-        </>
+        </div>
       ))}
       {questionList?.length > 0 && (
         <Paginatation

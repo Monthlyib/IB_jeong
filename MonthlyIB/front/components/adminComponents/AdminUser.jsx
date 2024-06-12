@@ -10,6 +10,7 @@ import { useUserStore } from "@/store/user";
 import { useEffect, useRef, useState } from "react";
 import AdminUserDetail from "./AdminUserDetail";
 import { userReviseInfo } from "@/apis/userAPI";
+import shortid from "shortid";
 
 const AdminUser = () => {
   const { userInfo, userList, getUserList, userDetailInfo, getUserInfo } =
@@ -54,15 +55,15 @@ const AdminUser = () => {
       <div className={styles.dashboard_mid_card}>
         <div className={styles.title}>사용자 관리</div>
         <div className={styles.subtitle}>
-          <div className={styles.username}>Username</div>
-          <div className={styles.nickname}>Nickname</div>
+          <div className={styles.username}>ID</div>
+          <div className={styles.nickname}>Name</div>
           <div className={styles.functions}>Tools</div>
         </div>
 
         {userList.length > 0 && (
           <>
             {userList.map((v) => (
-              <>
+              <div key={shortid.generate()}>
                 <hr />
                 <div className={styles.users}>
                   {v.username}
@@ -80,7 +81,7 @@ const AdminUser = () => {
                   </span>
                 </div>
                 <hr />
-              </>
+              </div>
             ))}
           </>
         )}

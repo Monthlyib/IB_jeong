@@ -36,30 +36,23 @@
 }
 
 .plan_box_wrap {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
   width: 100%;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  justify-content: space-between;
+  justify-items: center;
 }
 
 .plan_box_wrap .plan_box {
+  margin-top: 2rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: calc(50% - 1rem);
+  width: 95%;
   height: 56.8rem;
   padding: 4.4rem;
   border-radius: 1rem;
-}
-
-.plan_box_wrap .plan_box.basic_plan {
-  border: 2px solid #000;
-  background: #fff;
-}
-
-.plan_box_wrap .plan_box.super_plan {
-  background: var(--primary01);
-  color: #fff;
 }
 
 .plan_box_wrap .plan_box .plan_top {
@@ -158,12 +151,7 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  color: #444;
   margin-bottom: 1rem;
-}
-
-.plan_box_wrap .plan_box.super_plan .plan_info ul li {
-  color: #fff;
 }
 
 .plan_box_wrap .plan_box .plan_info ul li svg {
@@ -193,16 +181,6 @@
   border-radius: 1rem;
   font-size: 2rem;
   font-weight: 700;
-}
-
-.plan_box_wrap .plan_box.basic_plan .plan_btn a {
-  background: #000;
-  color: #fff;
-}
-
-.plan_box_wrap .plan_box.super_plan .plan_btn a {
-  background: #fff;
-  color: var(--primary01);
 }
 
 @media screen and (max-width: 1024px) {

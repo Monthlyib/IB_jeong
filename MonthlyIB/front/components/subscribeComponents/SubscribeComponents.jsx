@@ -1,15 +1,61 @@
 "use client";
 import styles from "./Subscribe.module.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SubscribeItems from "./SubscribeItems";
+import { useSubscribeStore } from "@/store/subscribe";
+import shortid from "shortid";
 
 const SubscribeComponents = () => {
   const [modal, setModal] = useState(0);
-  const basicPriceValues = ["45만원", "90만원", "180만원", "360만원"];
-  const superPriceValues = ["80만원", "150만원", "300만원", "600만원"];
-  const oriBasicValues = [null, "135만원", "270만원", "540만원"];
-  const oriSuperValues = [null, "240만원", "480만원", "960만원"];
   const months = ["1개월", "3개월", "6개월", "12개월"];
+
+  const { subscribeList, getSubscribeList } = useSubscribeStore();
+  const [subscirbeDataList, setSubscribeDataList] = useState({});
+  useEffect(() => {
+    getSubscribeList();
+  }, []);
+
+  const planNames = [];
+
+  useEffect(() => {
+    const temp = [];
+    temp.push(
+      subscribeList.filter((item, index, array) => {
+        return array.findIndex((i) => i.title === item.title) === index;
+      })
+    );
+
+    for (let i = 0; i < temp[0].length; i++) {
+      if (!temp[0][i].title.includes("ORI")) {
+        planNames.push(temp[0][i].title);
+      }
+    }
+
+    const tempObj = {};
+    const newTempObj = {};
+    let testingObj = {};
+
+    for (let i = 0; i < planNames.length; i++) {
+      if (!Object.keys(tempObj).includes(planNames[i])) {
+        tempObj[planNames[i]] = subscribeList.filter((item) => {
+          return item.title === planNames[i];
+        });
+        const entris = Object.entries(
+          Object.values(tempObj[planNames[i]])
+        ).sort((a, b) => a[1].subscribeMonthPeriod - b[1].subscribeMonthPeriod);
+        let j = 0;
+        for (let val of entris) {
+          console.log(val);
+          testingObj[j] = val[1];
+          console.log(testingObj);
+          j++;
+        }
+        newTempObj[planNames[i]] = testingObj;
+        testingObj = {};
+      }
+    }
+    setSubscribeDataList(newTempObj);
+  }, [subscribeList]);
 
   return (
     <main className="width_content plan">
@@ -56,20 +102,16 @@ const SubscribeComponents = () => {
       </div>
 
       <div className={styles.plan_box_wrap}>
-        <SubscribeItems
-          valueArray={basicPriceValues}
-          months={months}
-          oriPriceArray={oriBasicValues}
-          modal={modal}
-          basicOrSuper={1}
-        />
-        <SubscribeItems
-          valueArray={superPriceValues}
-          months={months}
-          oriPriceArray={oriSuperValues}
-          modal={modal}
-          basicOrSuper={2}
-        />
+        {Object.keys(subscirbeDataList).map((v) => (
+          <SubscribeItems
+            saledPrice={subscirbeDataList[v]}
+            months={months}
+            oriPrice={subscirbeDataList[v][0].price}
+            modal={modal}
+            planName={v}
+            key={shortid.generate()}
+          />
+        ))}
       </div>
     </main>
   );

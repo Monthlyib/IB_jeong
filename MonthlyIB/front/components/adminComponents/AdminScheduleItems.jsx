@@ -6,6 +6,7 @@ import { faPen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef, useState } from "react";
 import { useUserStore } from "@/store/user";
 import { useTutoringStore } from "@/store/tutoring";
+import shortid from "shortid";
 const AdminScheduleItems = ({
   tutoringDateList,
   currentPage,
@@ -55,7 +56,7 @@ const AdminScheduleItems = ({
   return (
     <>
       {paginatedPage.map((t, i) => (
-        <>
+        <div key={shortid.generate()}>
           <hr />
           <div className={styles.schedule}>
             {t.requestUsername}
@@ -70,7 +71,7 @@ const AdminScheduleItems = ({
             </span>
           </div>
           <hr />
-        </>
+        </div>
       ))}
       {tutoringDateList?.length > 0 && (
         <Paginatation

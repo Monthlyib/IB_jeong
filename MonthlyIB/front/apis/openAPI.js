@@ -456,3 +456,24 @@ export const storageGetList = async (parentsFolderId, keyWord) => {
     console.error(error);
   }
 };
+
+export const subscribeGetList = async () => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/subscribe`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!res.ok) {
+      throw new Error(`Failed POST Status: ${res.status}`);
+    }
+    const json = await res.json();
+    return json;
+  } catch (error) {
+    console.error(error);
+  }
+};

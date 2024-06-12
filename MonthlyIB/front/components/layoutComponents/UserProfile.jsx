@@ -25,7 +25,7 @@ const UserProfile = () => {
             <figure>
               <Image
                 src={
-                  userDetailInfo?.userImage === undefined
+                  userDetailInfo?.userImage === null
                     ? "/img/common/user_profile.jpg"
                     : userDetailInfo?.userImage?.fileUrl
                 }
