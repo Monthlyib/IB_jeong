@@ -27,6 +27,7 @@
     "react-calendar": "^5.0.0",
     "react-color": "^2.19.3",
     "react-color-palette": "^7.1.1",
+    "react-cookie": "^7.1.4",
     "react-dom": "^18.2.0",
     "react-fontawesome": "^1.7.1",
     "react-quill": "^2.0.0",

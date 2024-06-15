@@ -45,9 +45,7 @@ const SubscribeComponents = () => {
         ).sort((a, b) => a[1].subscribeMonthPeriod - b[1].subscribeMonthPeriod);
         let j = 0;
         for (let val of entris) {
-          console.log(val);
           testingObj[j] = val[1];
-          console.log(testingObj);
           j++;
         }
         newTempObj[planNames[i]] = testingObj;

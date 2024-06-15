@@ -1,3 +1,4 @@
+import { setCookie } from "./cookies";
 import { tokenRequireApi } from "./refreshToken";
 
 const USER_API_URL = "api/user";
@@ -121,6 +122,7 @@ export const userRegisterWithSocialInfo = async (
   school,
   grade,
   address,
+  country,
   consent_marketing
 ) => {
   try {
@@ -137,6 +139,7 @@ export const userRegisterWithSocialInfo = async (
       school: school.current,
       grade: grade.current,
       address: address.current,
+      country: country,
       termsOfUseCheck: true,
       privacyTermsCheck: true,
       marketingTermsCheck: consent_marketing,

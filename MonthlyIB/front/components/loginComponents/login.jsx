@@ -3,7 +3,7 @@
 import styles from "./Login.module.css";
 import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 // import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "@/store/user";
@@ -22,11 +22,6 @@ function Login() {
   const { userInfo, signIn } = useUserStore();
   const router = useRouter();
 
-  useEffect(() => {
-    if (userInfo?.userStatus === "ACTIVE") {
-      router.replace("/");
-    }
-  }, [userInfo]);
   const onChangeId = useCallback((e) => {
     setId(e.target.value);
   }, []);
@@ -39,9 +34,10 @@ function Login() {
     async (e) => {
       e.preventDefault();
       const res = await signIn(username, password);
-      console.log(res);
       if (res?.result.status !== 200) {
         alert(res?.message);
+      } else {
+        router.push("/");
       }
     },
     [username, password]

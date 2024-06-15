@@ -1,10 +1,13 @@
 import axios from "axios";
 import { openAPIReissueToken } from "./openAPI";
 import { useUserStore } from "@/store/user";
+import { setCookie } from "./cookies";
 
 export const tokenRequireApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
 });
+
+tokenRequireApi.defaults.withCredentials = true;
 
 tokenRequireApi.interceptors.response.use(
   (response) => {
@@ -20,6 +23,8 @@ tokenRequireApi.interceptors.response.use(
       const res = await openAPIReissueToken(userInfo.state.userInfo.userId);
       if (res.result.status === 200) {
         const newToken = res.data.accessToken;
+        setCookie("accessToken", newToken, { path: "/" });
+        setCookie("authority", res.data.data.authority, { path: "/" });
         userInfo.state.userInfo.accessToken = newToken;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
         useUserStore.getState().updateUserInfo(userInfo.state.userInfo);

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SyncLoader } from "react-spinners";
 import { useUserStore } from "@/store/user";
+import { getCookie } from "@/apis/cookies";
 
 const SocialLogin = ({ social }) => {
   const socialMethod = { 1: "GOOGLE", 2: "KAKAO", 3: "NAVER" };
@@ -15,7 +16,7 @@ const SocialLogin = ({ social }) => {
 
   useEffect(() => {
     console.log("ddd ", userInfo);
-    if (userInfo?.userStatus === "ACTIVE") {
+    if (getCookie("authority")) {
       router.replace("/");
     } else if (userInfo?.userStatus === "WAIT_INFO") {
       handleNewUser(userInfo, authCode, socialType);

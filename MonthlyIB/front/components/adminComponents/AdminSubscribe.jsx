@@ -111,9 +111,6 @@ const AdminSubscribe = () => {
     }
   }, [item]);
 
-  useEffect(() => {
-    console.log(prices);
-  }, [prices]);
   const planNames = [];
 
   useEffect(() => {
@@ -140,8 +137,6 @@ const AdminSubscribe = () => {
       }
     }
     setSubscribeDataList(tempObj);
-    console.log(subscirbeDataList);
-    console.log(subscribeList);
   }, [subscribeList]);
 
   return (

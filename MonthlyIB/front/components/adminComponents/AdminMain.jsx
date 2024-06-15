@@ -11,24 +11,16 @@ import AdminCards from "./AdminCards";
 import AdminUser from "./AdminUser";
 import AdminSchedule from "./AdminSchedule";
 import { useUserStore } from "@/store/user";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import AdminQuestion from "./AdminQuestion";
 import AdminSubscribe from "./AdminSubscribe";
 
 const AdminMain = () => {
   const { userInfo, userList, getUserList } = useUserStore();
-  const router = useRouter();
+
   useEffect(() => {
     getUserList(userInfo);
   }, []);
-
-  useEffect(() => {
-    if (userInfo?.authority !== "ADMIN") {
-      alert("잘못된 접근입니다.");
-      router.back();
-    }
-  }, [userInfo]);
 
   return (
     <>

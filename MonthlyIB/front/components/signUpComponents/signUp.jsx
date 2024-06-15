@@ -59,7 +59,6 @@ const SignUp = () => {
 
   useEffect(() => {
     if (userInfo?.userStatus === "ACTIVE") {
-      alert("잘못된 접근입니다.");
       router.replace("/");
     }
   }, [userInfo]);
@@ -176,8 +175,6 @@ const SignUp = () => {
         grade,
         address,
         country,
-        userInfo?.userStatus,
-        userInfo?.authority,
         consent_marketing
       );
       if (res.result.status === 200) {

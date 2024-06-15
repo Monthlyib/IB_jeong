@@ -1,3 +1,4 @@
+import { removeCookie } from "@/apis/cookies";
 import {
   openAPILogin,
   openAPINaverLogin,
@@ -42,6 +43,8 @@ export const useUserStore = create(
       signOut: () => {
         set({ userInfo: {} });
         localStorage.removeItem("userInfo");
+        removeCookie("accessToken");
+        removeCookie("authority");
       },
       socialSignIn: async (oauthAccessToken, loginType) => {
         try {

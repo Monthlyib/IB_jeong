@@ -1,3 +1,6 @@
+import { setCookie } from "./cookies";
+import { tokenRequireApi } from "./refreshToken";
+
 const OPEN_API_URL = "open-api";
 
 export const openAPIVerifyUsername = async (username) => {
@@ -157,22 +160,22 @@ export const openAPIFindPwd = async () => {
 
 export const openAPILogin = async (username, password) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username: username,
-          password: password,
-        }),
-      }
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+    const data = { username, password };
+    const res = await tokenRequireApi.post(
+      `${OPEN_API_URL}/login`,
+      data,
+      config
     );
-    const json = await res.json();
 
-    return json;
+    setCookie("accessToken", res.data.data.accessToken, { path: "/" });
+    setCookie("authority", res.data.data.authority, { path: "/" });
+
+    return res.data;
   } catch (error) {
     console.error(error);
   }
@@ -197,6 +200,11 @@ export const openAPISocialLoginCheck = async (oauthAccessToken, loginType) => {
       throw new Error(`Failed POST Status: ${res.status}`);
     }
     const json = await res.json();
+    if (json.data.userStatus === "ACTIVE") {
+      setCookie("accessToken", json.data.accessToken, { path: "/" });
+      setCookie("authority", json.data.authority, { path: "/" });
+    }
+
     return json;
   } catch (error) {
     console.error(error);
@@ -225,6 +233,10 @@ export const openAPINaverLogin = async (authorizationCode, state) => {
       return json;
     }
     const json = await res.json();
+    if (json.data.userStatus === "ACTIVE") {
+      setCookie("accessToken", json.data.accessToken, { path: "/" });
+      setCookie("authority", json.data.authority, { path: "/" });
+    }
     return json;
   } catch (error) {
     console.error(error);

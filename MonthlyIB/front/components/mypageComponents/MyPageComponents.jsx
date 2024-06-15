@@ -33,12 +33,6 @@ const MyPageComponents = () => {
     4: <MyPageQuestionList />,
   };
 
-  useEffect(() => {
-    if (!userInfo?.userId) {
-      router.push("/login");
-    }
-  }, []);
-
   return (
     <>
       <main className="width_content">
