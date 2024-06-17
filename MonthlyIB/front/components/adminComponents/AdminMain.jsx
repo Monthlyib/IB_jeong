@@ -14,12 +14,27 @@ import { useUserStore } from "@/store/user";
 import { useEffect } from "react";
 import AdminQuestion from "./AdminQuestion";
 import AdminSubscribe from "./AdminSubscribe";
+import { useSubscribeStore } from "@/store/subscribe";
+import { useTutoringStore } from "@/store/tutoring";
+import { getCookie } from "@/apis/cookies";
+import { useQuestionStore } from "@/store/question";
 
 const AdminMain = () => {
   const { userInfo, userList, getUserList } = useUserStore();
+  const { getTutoringDateList } = useTutoringStore();
+  const { getSubscribeList } = useSubscribeStore();
+  const { getUserQuestionList } = useQuestionStore();
+
+  const tempAccess = {};
 
   useEffect(() => {
-    getUserList(userInfo);
+    tempAccess.accessToken = getCookie("accessToken");
+    if (tempAccess.accessToken) {
+      getUserList(tempAccess);
+      getSubscribeList();
+      getTutoringDateList("", "", 0, tempAccess);
+      getUserQuestionList("", 0, "", tempAccess);
+    }
   }, []);
 
   return (

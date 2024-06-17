@@ -13,15 +13,6 @@ const AdminQuestion = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-
-  useEffect(() => {
-    getUserQuestionList("", currentPage - 1, "", userInfo);
-  }, []);
-
-  useEffect(() => {
-    console.log(questionList);
-  }, [questionList]);
-
   return (
     <>
       <div className={styles.dashboard_mid_card}>

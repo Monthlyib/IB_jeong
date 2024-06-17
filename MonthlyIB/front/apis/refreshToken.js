@@ -24,7 +24,7 @@ tokenRequireApi.interceptors.response.use(
       if (res.result.status === 200) {
         const newToken = res.data.accessToken;
         setCookie("accessToken", newToken, { path: "/" });
-        setCookie("authority", res.data.data.authority, { path: "/" });
+        setCookie("authority", res.data.authority, { path: "/" });
         userInfo.state.userInfo.accessToken = newToken;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
         useUserStore.getState().updateUserInfo(userInfo.state.userInfo);

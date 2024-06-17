@@ -11,14 +11,55 @@ import { useEffect, useRef, useState } from "react";
 import AdminUserDetail from "./AdminUserDetail";
 import { userReviseInfo } from "@/apis/userAPI";
 import shortid from "shortid";
+import { useSubscribeStore } from "@/store/subscribe";
+import { subscribePostUser, subscribeReviseUser } from "@/apis/subscribeAPI";
 
 const AdminUser = () => {
-  const { userInfo, userList, getUserList, userDetailInfo, getUserInfo } =
-    useUserStore();
+  const { userInfo, userList, userDetailInfo, getUserInfo } = useUserStore();
+  const { subscribeList } = useSubscribeStore();
   const [modal, setModal] = useState(false);
   const [adminModal, setAdminModal] = useState(false);
   const [authority, setAuthority] = useState(userDetailInfo?.authority);
+  const [subscirbeDataList, setSubscribeDataList] = useState({});
+  const [subscribeId, setSubscribeId] = useState(-1);
+  const [subscribeTitle, setSubscribeTitle] = useState("BASIC");
+  const [questionCount, setQuestionCount] = useState("");
+  const [tutoringCount, setTutoringCount] = useState("");
+  const [subscribeMonthPeriod, setSubscribeMonthPeriod] = useState("");
+  const [videoLessonsCount, setVideoLessonsCount] = useState("");
   const closeRef = useRef();
+
+  const planNames = [];
+
+  const onChangeMonth = (e) => {
+    setSubscribeId(e.target.value);
+  };
+
+  useEffect(() => {
+    const temp = [];
+    temp.push(
+      subscribeList.filter((item, index, array) => {
+        return array.findIndex((i) => i.title === item.title) === index;
+      })
+    );
+
+    for (let i = 0; i < temp[0].length; i++) {
+      if (!temp[0][i].title.includes("ORI")) {
+        planNames.push(temp[0][i].title);
+      }
+    }
+
+    const tempObj = {};
+
+    for (let i = 0; i < planNames.length; i++) {
+      if (!Object.keys(tempObj).includes(planNames[i])) {
+        tempObj[planNames[i]] = subscribeList.filter((item) => {
+          return item.title === planNames[i];
+        });
+      }
+    }
+    setSubscribeDataList(tempObj);
+  }, [subscribeList]);
 
   const onClickChangeAuthority = (userId) => {
     setAdminModal(!adminModal);
@@ -30,7 +71,7 @@ const AdminUser = () => {
     getUserInfo(userId, userInfo);
   };
 
-  const onSubmitChangeAuthority = () => {
+  const onSubmitChangeAuthority = async () => {
     userReviseInfo(
       userDetailInfo?.userId,
       "",
@@ -45,11 +86,24 @@ const AdminUser = () => {
       authority,
       userInfo
     );
+    const res = await subscribePostUser(
+      userDetailInfo?.userId,
+      subscribeId,
+      userInfo
+    );
+    console.log("testing ", res);
+    subscribeReviseUser(
+      res?.subscribeUserId,
+      questionCount,
+      tutoringCount,
+      subscribeMonthPeriod,
+      videoLessonsCount,
+      [],
+      userInfo
+    );
     setAdminModal(false);
   };
-  useEffect(() => {
-    console.log(userDetailInfo);
-  }, [userDetailInfo]);
+
   return (
     <>
       <div className={styles.dashboard_mid_card}>
@@ -104,7 +158,7 @@ const AdminUser = () => {
               <div className={styles.admin_box}>
                 <div className={styles.md_top}>
                   <div className={styles.tit}>
-                    {userDetailInfo?.username} 님의 권한 변경
+                    {userDetailInfo?.username} 님의 권한 변경 및 구독 관리
                   </div>
                   <select
                     value={authority}
@@ -113,6 +167,76 @@ const AdminUser = () => {
                     <option value="USER">일반유저</option>
                     <option value="ADMIN">관리자</option>
                   </select>
+                  <div>
+                    <span>구독 상품 </span>
+                    <select
+                      value={subscribeTitle}
+                      onChange={(e) => setSubscribeTitle(e.target.value)}
+                    >
+                      {Object.keys(subscirbeDataList).map((v, i) => (
+                        <option value={v} key={i}>
+                          {v}
+                        </option>
+                      ))}
+                    </select>
+
+                    <select value={subscribeId} onChange={onChangeMonth}>
+                      {subscirbeDataList[subscribeTitle]?.map((v, i) => (
+                        <option value={v.subscriberId} key={i}>
+                          {v.subscribeMonthPeriod} 개월
+                          {/* {v.title} */}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className={styles.subscribe_price_flex}>
+                    <span>질문 수</span>
+                    <input
+                      type="number"
+                      autoFocus="true"
+                      autoComplete="off"
+                      required="Y"
+                      placeholder="질문 갯수"
+                      value={questionCount}
+                      onChange={(e) => setQuestionCount(e.target.value)}
+                    />
+                  </div>
+                  <div className={styles.subscribe_price_flex}>
+                    <span>튜터링 갯수</span>
+                    <input
+                      type="number"
+                      autoFocus="true"
+                      autoComplete="off"
+                      required="Y"
+                      placeholder="튜터링 갯수"
+                      value={tutoringCount}
+                      onChange={(e) => setTutoringCount(e.target.value)}
+                    />
+                  </div>
+                  <div className={styles.subscribe_price_flex}>
+                    <span>구독개월 수</span>
+                    <input
+                      type="number"
+                      autoFocus="true"
+                      autoComplete="off"
+                      required="Y"
+                      placeholder="구독개월"
+                      value={subscribeMonthPeriod}
+                      onChange={(e) => setSubscribeMonthPeriod(e.target.value)}
+                    />
+                  </div>
+                  <div className={styles.subscribe_price_flex}>
+                    <span>영상강의 수</span>
+                    <input
+                      type="number"
+                      autoFocus="true"
+                      autoComplete="off"
+                      required="Y"
+                      placeholder="영상강의 수"
+                      value={videoLessonsCount}
+                      onChange={(e) => setVideoLessonsCount(e.target.value)}
+                    />
+                  </div>
                 </div>
                 <button
                   type="button"

@@ -23,7 +23,7 @@ const AdminSubscribeModal = ({
   content,
   setContent,
   onSubmit,
-  subscirbeDataList,
+  subscribeDataList,
 }) => {
   const closeRef = useRef();
   const { userInfo } = useUserStore();
@@ -31,10 +31,10 @@ const AdminSubscribeModal = ({
 
   const onClickDelete = () => {
     for (let i = 0; i < 4; i++)
-      deleteSubscribeItem(subscirbeDataList[title][i]?.subscriberId, userInfo);
+      deleteSubscribeItem(subscribeDataList[title][i]?.subscriberId, userInfo);
     setEditModal(false);
   };
-  console.log(subscirbeDataList[title]);
+
   return (
     <div className={styles.md}>
       <div

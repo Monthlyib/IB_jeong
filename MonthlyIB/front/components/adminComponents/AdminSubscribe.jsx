@@ -16,7 +16,7 @@ const AdminSubscribe = () => {
     postSubscribeItem,
   } = useSubscribeStore();
   const { userInfo } = useUserStore();
-  const [subscirbeDataList, setSubscribeDataList] = useState({});
+  const [subscribeDataList, setSubscribeDataList] = useState({});
 
   const [editModal, setEditModal] = useState(false);
   const [postModal, setPostModal] = useState(false);
@@ -32,17 +32,17 @@ const AdminSubscribe = () => {
 
   const onSubmitReviseSubscribeItem = (item) => {
     setEditModal(!editModal);
-    for (let i = 0; i < subscirbeDataList[item]?.length; i++) {
+    for (let i = 0; i < subscribeDataList[item]?.length; i++) {
       editSubscribeItem(
-        subscirbeDataList[item][i]?.subscriberId,
-        subscirbeDataList[item][i]?.title,
+        subscribeDataList[item][i]?.subscriberId,
+        subscribeDataList[item][i]?.title,
         content,
         prices[i],
         numQuestions,
         numTutoring,
-        subscirbeDataList[item][i]?.subscribeMonthPeriod,
+        subscribeDataList[item][i]?.subscribeMonthPeriod,
         videoLessonsCount,
-        subscirbeDataList[item][i]?.videoLessionsIdList,
+        subscribeDataList[item][i]?.videoLessionsIdList,
         color.hex,
         fontColor.hex,
         userInfo
@@ -98,16 +98,16 @@ const AdminSubscribe = () => {
   useEffect(() => {
     const temp = [...prices];
     if (item !== "") {
-      for (let i = 0; i < subscirbeDataList[item]?.length; i++) {
-        temp[i] = subscirbeDataList[item][i]?.price;
+      for (let i = 0; i < subscribeDataList[item]?.length; i++) {
+        temp[i] = subscribeDataList[item][i]?.price;
       }
       setPrices(temp);
-      setNumQuestions(subscirbeDataList[item][0]?.questionCount);
-      setNumTutoring(subscirbeDataList[item][0]?.tutoringCount);
-      setColor(subscirbeDataList[item][0]?.color);
-      setFontColor(subscirbeDataList[item][0]?.fontColor);
-      setVideoLessonsCount(subscirbeDataList[item][0]?.videoLessonsCount);
-      setContent(subscirbeDataList[item][0]?.content);
+      setNumQuestions(subscribeDataList[item][0]?.questionCount);
+      setNumTutoring(subscribeDataList[item][0]?.tutoringCount);
+      setColor(subscribeDataList[item][0]?.color);
+      setFontColor(subscribeDataList[item][0]?.fontColor);
+      setVideoLessonsCount(subscribeDataList[item][0]?.videoLessonsCount);
+      setContent(subscribeDataList[item][0]?.content);
     }
   }, [item]);
 
@@ -162,9 +162,9 @@ const AdminSubscribe = () => {
           <div style={{ fontSize: "2rem" }}>Tools</div>
         </div>
 
-        {Object.keys(subscirbeDataList).length > 0 && (
+        {Object.keys(subscribeDataList).length > 0 && (
           <>
-            {Object.keys(subscirbeDataList).map((v) => (
+            {Object.keys(subscribeDataList).map((v) => (
               <div key={shortid.generate()}>
                 <hr />
                 <div className={styles.users}>
@@ -227,7 +227,7 @@ const AdminSubscribe = () => {
             content={content}
             setContent={setContent}
             onSubmit={onSubmitReviseSubscribeItem}
-            subscirbeDataList={subscirbeDataList}
+            subscribeDataList={subscribeDataList}
           />
         )}
       </div>

@@ -12,6 +12,7 @@ const UserProfile = () => {
 
   useEffect(() => {
     getUserInfo(userInfo.userId, userInfo);
+    console.log(userDetailInfo);
   }, []);
   const onClickIcon = useCallback(() => {
     setToggleUtilBox(!toggleUtilBox);

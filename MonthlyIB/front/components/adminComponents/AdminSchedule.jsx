@@ -2,22 +2,17 @@
 
 import styles from "./AdminStyle.module.css";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useTutoringStore } from "@/store/tutoring";
-import { useUserStore } from "@/store/user";
 import AdminScheduleItems from "./AdminScheduleItems";
 
 const AdminSchedule = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { tutoringDateList, getTutoringDateList } = useTutoringStore();
-  const { userInfo } = useUserStore();
+  const { tutoringDateList } = useTutoringStore();
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  useEffect(() => {
-    getTutoringDateList("", "", currentPage - 1, userInfo);
-  }, []);
   return (
     <>
       <div className={styles.dashboard_mid_card}>

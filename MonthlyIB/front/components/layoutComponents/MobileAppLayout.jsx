@@ -1,17 +1,24 @@
+"use client";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./AppLayout.module.css";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-// import IBLogo from "../assets/img/common/logo.png"
 import Image from "next/image";
-// import { userActions } from "../reducers/user";
-// import userImage from "../assets/img/common/user_profile.jpg";
+import { useUserStore } from "@/store/user";
 
 const MobileAppLayout = ({ asideModal, setAsideModal }) => {
-  //   const { User, logInDone } = useSelector((state) => state.user);
   const [menuModal, setMenuModal] = useState(1);
-  //   const dispatch = useDispatch();
+  const { userInfo, getUserInfo, userDetailInfo, signOut } = useUserStore();
+
+  useEffect(() => {
+    if (userInfo?.userId) getUserInfo(userInfo.userId, userInfo);
+  }, [userInfo]);
+
+  const onLoggedOut = useCallback(() => {
+    signOut();
+    localStorage.removeItem("userInfo");
+  }, []);
 
   const mbModal = {
     1: (
@@ -40,17 +47,17 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
           </Link>
         </div>
         <div className={styles.mo_sub_item}>
-          <Link href="/board/calc" className={styles.tit}>
+          <Link href="/board/calculator" className={styles.tit}>
             합격예측 계산기
           </Link>
         </div>
         <div className={styles.mo_sub_item}>
-          <Link href="/board/guide" className={styles.tit}>
-            IB 수험가이드
+          <Link href="/board/download" className={styles.tit}>
+            자료실
           </Link>
         </div>
         <div className={styles.mo_sub_item}>
-          <Link href="/board/bulletinboard" className={styles.tit}>
+          <Link href="/board/free" className={styles.tit}>
             자유게시판
           </Link>
         </div>
@@ -73,6 +80,15 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
     5: (
       <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
         <div className={styles.mo_sub_item}>
+          <Link href="/learningtest" className={styles.tit}>
+            학습유형테스트
+          </Link>
+        </div>
+      </div>
+    ),
+    6: (
+      <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
+        <div className={styles.mo_sub_item}>
           <Link
             href="http://monthlyib.co.kr/contact"
             target="_blank"
@@ -89,10 +105,6 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
   const onClickBtn = useCallback(() => {
     setAsideModal((prev) => !prev);
   }, []);
-
-  const onLoggedOut = useCallback(() => {
-    dispatch(userActions.logOutRequest());
-  }, []);
   return (
     <>
       <div className={styles.mo_header_wrap}>
@@ -101,7 +113,12 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
         </div>
 
         <Link href="/">
-          {/* <Image src={IBLogo} alt="Monthly IB Logo" /> */}
+          <Image
+            src={"/img/common/logo.png"}
+            width="40"
+            height="48"
+            alt="Monthly IB Logo"
+          />
         </Link>
 
         <div className={styles.util}>
@@ -114,58 +131,25 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
         style={asideModal ? { display: "flex" } : { display: "none" }}
       >
         <div className={styles.mo_gnb_header}>
-          {
-            <>
-              <div className={styles.util_wrap}>
-                <div className={styles.util_user_cont}>
-                  <Link
-                    href="/login"
-                    className={styles.util_login}
-                    onClick={() => {
-                      setAsideModal(false);
-                    }}
-                  >
-                    로그인을 해주세요
-                  </Link>
-                </div>
-                <button
-                  type="button"
-                  className={styles.mo_gnb_close}
-                  onClick={onClickBtn}
-                >
-                  <FontAwesomeIcon icon={faTimes} />
-                </button>
-              </div>
-              <div className={styles.util_sub}>
-                <Link
-                  href="/login"
-                  onClick={() => {
-                    setAsideModal(false);
-                  }}
-                >
-                  로그인
-                </Link>
-                <Link
-                  href="/signup"
-                  onClick={() => {
-                    setAsideModal(false);
-                  }}
-                >
-                  회원가입
-                </Link>
-              </div>
-            </>
-          }
-          {/* {logInDone ? (
+          {userDetailInfo?.userStatus === "ACTIVE" ? (
             <>
               <div className={styles.util_wrap}>
                 <div className={styles.util_user_cont}>
                   <Link href="/mypage">
                     <figure>
-                      <Image src={userImage} alt="user profile img" />
+                      <Image
+                        src={
+                          userDetailInfo?.userImage === null
+                            ? "/img/common/user_profile.jpg"
+                            : userDetailInfo?.userImage?.fileUrl
+                        }
+                        width="100"
+                        height="100"
+                        alt="user profile img"
+                      />
                     </figure>
                     <span className={styles.util_name}>
-                      <b id="user_nm">{User.userName}</b>님
+                      <b id="user_nm">{userDetailInfo?.username}</b>님
                     </span>
                   </Link>
                 </div>
@@ -178,7 +162,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
                 </button>
               </div>
               <div className={styles.util_sub}>
-                {User.subscribe ? (
+                {userDetailInfo?.subscribe ? (
                   <Link href="/mypage" className={styles.util_plan_active}>
                     <span>구독중</span>
                     <span>
@@ -235,7 +219,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
                 </Link>
               </div>
             </>
-          )} */}
+          )}
           <div
             className={styles.mo_menu_wrap}
             style={{ backgroundColor: "white" }}
@@ -292,7 +276,22 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
                     : styles.mo_menu_item
                 }
               >
-                <div className={styles.tit} onClick={() => setMenuModal(5)}>
+                <div
+                  className={styles.tit}
+                  style={{ fontSize: "1.5rem" }}
+                  onClick={() => setMenuModal(5)}
+                >
+                  학습유형테스트
+                </div>
+              </div>
+              <div
+                className={
+                  menuModal === 6
+                    ? `${styles.mo_menu_item} ${styles.active}`
+                    : styles.mo_menu_item
+                }
+              >
+                <div className={styles.tit} onClick={() => setMenuModal(6)}>
                   학원 현장강의
                 </div>
               </div>

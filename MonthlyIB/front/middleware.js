@@ -5,7 +5,7 @@ export const config = {
 };
 
 const protectedRoutes = ["/mypage"];
-const publicRoutes = ["/login", "/signup"];
+const publicRoutes = ["/login", "/signup", "/find"];
 const adminRoutes = ["/adminpage"];
 
 export async function middleware(req) {

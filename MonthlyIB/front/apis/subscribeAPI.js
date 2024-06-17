@@ -113,3 +113,56 @@ export const subscribePostItem = async (
     console.error(error);
   }
 };
+
+export const subscribePostUser = async (userId, subscribeId, session) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = {};
+    const res = await tokenRequireApi.post(
+      `${SUBSCRIBE_API_URL}/user/${userId}/${subscribeId}`,
+      data,
+      config
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const subscribeReviseUser = async (
+  subscribeUserId,
+  questionCount,
+  tutoringCount,
+  subscribeMonthPeriod,
+  videoLessonsCount,
+  videoLessionsIdList,
+  session
+) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = {
+      questionCount,
+      tutoringCount,
+      subscribeMonthPeriod,
+      videoLessonsCount,
+      videoLessionsIdList,
+    };
+    await tokenRequireApi.patch(
+      `${SUBSCRIBE_API_URL}/user/${subscribeUserId}`,
+      data,
+      config
+    );
+  } catch (error) {
+    console.error(error);
+  }
+};

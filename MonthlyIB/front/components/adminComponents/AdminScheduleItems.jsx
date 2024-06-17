@@ -52,7 +52,7 @@ const AdminScheduleItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(tutoringDateList, currentPage);
-  console.log(paginatedPage);
+
   return (
     <>
       {paginatedPage.map((t, i) => (
