@@ -100,13 +100,17 @@
   border-bottom: 2px solid rgba(0, 0, 0, 0.1);
   width: 90%;
 }
-.dashboard_mid_wrap .dashboard_mid_card .users {
+.dashboard_mid_wrap .dashboard_mid_card .users,
+.dashboard_mid_wrap .dashboard_mid_card .users_inactive {
   padding: 0 3rem;
   margin-top: 1rem;
   font-size: 1.8rem;
   display: flex;
   justify-content: space-between;
   color: var(--primary01);
+}
+.dashboard_mid_wrap .dashboard_mid_card .users_inactive {
+  color: gray;
 }
 
 .dashboard_mid_wrap .dashboard_mid_card .questions {
@@ -158,11 +162,15 @@
   font-size: 2rem;
 }
 .dashboard_mid_wrap .dashboard_mid_card .questions svg,
-.dashboard_mid_wrap .dashboard_mid_card .users svg {
+.dashboard_mid_wrap .dashboard_mid_card .users svg,
+.dashboard_mid_wrap .dashboard_mid_card .users_inactive svg {
   margin-right: 0.5rem;
   margin-top: 0;
   padding: 0 0.5rem;
   color: var(--primary01);
+}
+.dashboard_mid_wrap .dashboard_mid_card .users_inactive svg {
+  color: gray;
 }
 
 .schedule span {

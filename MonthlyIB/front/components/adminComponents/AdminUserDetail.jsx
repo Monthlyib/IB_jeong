@@ -5,6 +5,7 @@ import { useUserStore } from "@/store/user";
 
 const AdminUserDetail = ({ userDetailInfo, setModal }) => {
   const closeRef = useRef();
+  const [deleteCheckModal, setDeleteCheckModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [username, setUsername] = useState("");
   const [nickname, setNickname] = useState("");
@@ -26,7 +27,7 @@ const AdminUserDetail = ({ userDetailInfo, setModal }) => {
     setMemo(userDetailInfo?.memo);
   }, [userDetailInfo]);
 
-  const { userInfo } = useUserStore();
+  const { userInfo, deleteUser } = useUserStore();
   const onChangeCountry = (e) => {
     setCountry(e.target.value);
   };
@@ -52,6 +53,11 @@ const AdminUserDetail = ({ userDetailInfo, setModal }) => {
       setModal(false);
     } else setModal(false);
   };
+
+  const onSubmitDeleteUser = async (userId) => {
+    deleteUser(userId, userInfo);
+    setModal(false);
+  };
   return (
     <div className={styles.md}>
       <div
@@ -67,13 +73,59 @@ const AdminUserDetail = ({ userDetailInfo, setModal }) => {
                 style={{
                   fontSize: "1.5rem",
                   position: "absolute",
-                  right: 0,
+                  right: "8rem",
                 }}
                 onClick={() => setEditMode(!editMode)}
               >
-                수정하기{" "}
+                수정하기
+              </span>
+              <span
+                style={{
+                  fontSize: "1.5rem",
+                  position: "absolute",
+                  right: 0,
+                  color: "red",
+                }}
+                onClick={() => setDeleteCheckModal(true)}
+              >
+                비활성화
               </span>
             </div>
+            {deleteCheckModal === true && (
+              <div className={styles.md}>
+                <div className={styles.md_box_flex}>
+                  <div className={styles.admin_box}>
+                    <div className={styles.md_top}>
+                      <div className={styles.tit}>
+                        {userDetailInfo.username}님을 정말 비활성화
+                        하시겠습니까?
+                      </div>
+                      <div style={{ display: "flex" }}>
+                        <button
+                          style={{
+                            width: "90%",
+                            marginRight: "1rem",
+                            backgroundColor: "red",
+                          }}
+                          onClick={() =>
+                            onSubmitDeleteUser(userDetailInfo?.userId)
+                          }
+                        >
+                          확인
+                        </button>
+                        <button
+                          style={{ width: "90%", marginLeft: "1rem" }}
+                          onClick={() => setDeleteCheckModal(false)}
+                        >
+                          취소
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.md_dim}></div>
+              </div>
+            )}
 
             <div className={styles.userInfos}>
               <span>username:</span>

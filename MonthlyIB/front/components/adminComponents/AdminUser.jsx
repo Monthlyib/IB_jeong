@@ -18,8 +18,14 @@ import {
 } from "@/apis/subscribeAPI";
 
 const AdminUser = () => {
-  const { userInfo, userList, userDetailInfo, getUserInfo, reviseUserInfo } =
-    useUserStore();
+  const {
+    userInfo,
+    userList,
+    userDetailInfo,
+    getUserInfo,
+    reviseUserInfo,
+    deleteUser,
+  } = useUserStore();
   const { subscribeList } = useSubscribeStore();
   const [modal, setModal] = useState(false);
   const [adminModal, setAdminModal] = useState(false);
@@ -154,7 +160,13 @@ const AdminUser = () => {
             {userList.map((v) => (
               <div key={shortid.generate()}>
                 <hr />
-                <div className={styles.users}>
+                <div
+                  className={
+                    v.userStatus === "INACTIVE"
+                      ? styles.users_inactive
+                      : styles.users
+                  }
+                >
                   {v.username}
                   <div>{v.nickName}</div>
                   <span>

@@ -5,7 +5,12 @@ import {
   openAPIReissueToken,
   openAPISocialLoginCheck,
 } from "@/apis/openAPI";
-import { userGetAllList, userGetInfo, userReviseInfo } from "@/apis/userAPI";
+import {
+  userDelete,
+  userGetAllList,
+  userGetInfo,
+  userReviseInfo,
+} from "@/apis/userAPI";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -102,7 +107,14 @@ export const useUserStore = create(
           console.error(error);
         }
       },
-
+      deleteUser: async (userId, session) => {
+        try {
+          await userDelete(userId, session);
+          get().getUserList(session);
+        } catch (error) {
+          console.error(error);
+        }
+      },
       updateUserInfo: (res) => {
         set({ userInfo: res });
       },
