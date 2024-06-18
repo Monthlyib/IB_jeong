@@ -5,7 +5,7 @@ import {
   openAPIReissueToken,
   openAPISocialLoginCheck,
 } from "@/apis/openAPI";
-import { userGetAllList, userGetInfo } from "@/apis/userAPI";
+import { userGetAllList, userGetInfo, userReviseInfo } from "@/apis/userAPI";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -61,6 +61,43 @@ export const useUserStore = create(
         try {
           const res = await openAPINaverLogin(authorizationCode, state);
           set({ userInfo: res.data });
+        } catch (error) {
+          console.error(error);
+        }
+      },
+      reviseUserInfo: async (
+        userId,
+        email,
+        nickName,
+        birth,
+        school,
+        grade,
+        address,
+        country,
+        userStatus,
+        authority,
+        memo,
+        marketingTermsCheck,
+        userInfo
+      ) => {
+        try {
+          const res = await userReviseInfo(
+            userId,
+            "",
+            email,
+            nickName,
+            birth,
+            school,
+            grade,
+            address,
+            country,
+            userStatus,
+            authority,
+            memo,
+            marketingTermsCheck,
+            userInfo
+          );
+          set({ userDetailInfo: res.data });
         } catch (error) {
           console.error(error);
         }

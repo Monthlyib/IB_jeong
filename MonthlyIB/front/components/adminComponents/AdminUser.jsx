@@ -7,19 +7,23 @@ import {
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUserStore } from "@/store/user";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import AdminUserDetail from "./AdminUserDetail";
-import { userReviseInfo } from "@/apis/userAPI";
 import shortid from "shortid";
 import { useSubscribeStore } from "@/store/subscribe";
-import { subscribePostUser, subscribeReviseUser } from "@/apis/subscribeAPI";
+import {
+  subscribeGetUserList,
+  subscribePostUser,
+  subscribeReviseUser,
+} from "@/apis/subscribeAPI";
 
 const AdminUser = () => {
-  const { userInfo, userList, userDetailInfo, getUserInfo } = useUserStore();
+  const { userInfo, userList, userDetailInfo, getUserInfo, reviseUserInfo } =
+    useUserStore();
   const { subscribeList } = useSubscribeStore();
   const [modal, setModal] = useState(false);
   const [adminModal, setAdminModal] = useState(false);
-  const [authority, setAuthority] = useState(userDetailInfo?.authority);
+  const [authority, setAuthority] = useState("");
   const [subscirbeDataList, setSubscribeDataList] = useState({});
   const [subscribeId, setSubscribeId] = useState(-1);
   const [subscribeTitle, setSubscribeTitle] = useState("BASIC");
@@ -36,6 +40,7 @@ const AdminUser = () => {
   };
 
   useEffect(() => {
+    // subscribe data 전처리
     const temp = [];
     temp.push(
       subscribeList.filter((item, index, array) => {
@@ -64,6 +69,7 @@ const AdminUser = () => {
   const onClickChangeAuthority = (userId) => {
     setAdminModal(!adminModal);
     getUserInfo(userId, userInfo);
+    setAuthority(userDetailInfo?.authority);
   };
 
   const onClickGetUserDetailInfo = (userId) => {
@@ -72,35 +78,64 @@ const AdminUser = () => {
   };
 
   const onSubmitChangeAuthority = async () => {
-    userReviseInfo(
-      userDetailInfo?.userId,
-      "",
-      userDetailInfo?.email,
-      userDetailInfo?.nickName,
-      userDetailInfo?.birth,
-      userDetailInfo?.school,
-      userDetailInfo?.grade,
-      userDetailInfo?.address,
-      userDetailInfo?.country,
-      userDetailInfo?.userStatus,
-      authority,
-      userInfo
-    );
-    const res = await subscribePostUser(
-      userDetailInfo?.userId,
-      subscribeId,
-      userInfo
-    );
-    console.log("testing ", res);
-    subscribeReviseUser(
-      res?.subscribeUserId,
-      questionCount,
-      tutoringCount,
-      subscribeMonthPeriod,
-      videoLessonsCount,
-      [],
-      userInfo
-    );
+    if (authority !== userDetailInfo?.authority) {
+      reviseUserInfo(
+        userDetailInfo?.userId,
+        userDetailInfo?.email,
+        userDetailInfo?.nickName,
+        userDetailInfo?.birth,
+        userDetailInfo?.school,
+        userDetailInfo?.grade,
+        userDetailInfo?.address,
+        userDetailInfo?.country,
+        userDetailInfo?.userStatus,
+        authority,
+        userDetailInfo?.memo,
+        userDetailInfo?.marketingTermsCheck,
+        userInfo
+      );
+      getUserInfo(userDetailInfo?.userId, userInfo);
+    }
+
+    if (subscribeId !== -1) {
+      const res = await subscribePostUser(
+        userDetailInfo?.userId,
+        subscribeId,
+        userInfo
+      );
+      subscribeReviseUser(
+        res?.data.subscribeUserId,
+        questionCount,
+        tutoringCount,
+        subscribeMonthPeriod,
+        videoLessonsCount,
+        [],
+        userInfo
+      );
+    } else {
+      if (
+        questionCount !== "" ||
+        tutoringCount !== "" ||
+        subscribeMonthPeriod !== "" ||
+        videoLessonsCount !== ""
+      ) {
+        const res = await subscribeGetUserList(
+          userDetailInfo?.userId,
+          0,
+          userInfo
+        );
+        console.log(res);
+        subscribeReviseUser(
+          res?.data[0]?.subscribeUserId,
+          questionCount,
+          tutoringCount,
+          subscribeMonthPeriod,
+          videoLessonsCount,
+          [],
+          userInfo
+        );
+      }
+    }
     setAdminModal(false);
   };
 
@@ -184,7 +219,6 @@ const AdminUser = () => {
                       {subscirbeDataList[subscribeTitle]?.map((v, i) => (
                         <option value={v.subscriberId} key={i}>
                           {v.subscribeMonthPeriod} 개월
-                          {/* {v.title} */}
                         </option>
                       ))}
                     </select>

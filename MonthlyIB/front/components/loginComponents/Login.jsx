@@ -18,8 +18,7 @@ function Login() {
   const [username, setId] = useState("");
   const [password, setPassword] = useState("");
 
-  // const { data: session } = useSession();
-  const { userInfo, signIn } = useUserStore();
+  const { signIn } = useUserStore();
   const router = useRouter();
 
   const onChangeId = useCallback((e) => {

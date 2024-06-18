@@ -24,10 +24,11 @@ export const subscribeGetUserList = async (userId, page, session) => {
         Authorization: session?.accessToken,
       },
     };
-    await tokenRequireApi.get(
+    const res = await tokenRequireApi.get(
       `${SUBSCRIBE_API_URL}/${userId}?page=${page}`,
       config
     );
+    return res.data;
   } catch (error) {
     console.error(error);
   }
