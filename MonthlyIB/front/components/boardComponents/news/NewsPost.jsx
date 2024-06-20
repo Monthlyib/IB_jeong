@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import styles from "../BoardCommon.module.css";
 import Link from "next/link";
-import { newsPost, newsReviseItem } from "@/apis/newsAPI";
 import { useNewstore } from "@/store/news";
 import { useUserStore } from "@/store/user";
 
@@ -18,7 +17,7 @@ const DynamicEditor = dynamic(
 const NewsPost = () => {
   const router = useRouter();
   const imageInput = useRef();
-  const { newsDetail } = useNewstore();
+  const { newsDetail, postNews, reviseNews } = useNewstore();
   const [title, setTitle] = useState("");
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
@@ -29,9 +28,8 @@ const NewsPost = () => {
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      if (type === "write") newsPost(title, content, userInfo);
-      else if (type === "revise")
-        newsReviseItem(newsId, title, content, userInfo);
+      if (type === "write") postNews(title, content, userInfo);
+      else if (type === "revise") reviseNews(newsId, title, content, userInfo);
       router.push("/board/");
     },
     [title, content]

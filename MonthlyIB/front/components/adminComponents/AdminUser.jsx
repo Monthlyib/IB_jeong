@@ -210,6 +210,7 @@ const AdminUser = () => {
                   <select
                     value={authority}
                     onChange={(e) => setAuthority(e.target.value)}
+                    disabled={userDetailInfo?.userId === 1 ? true : false}
                   >
                     <option value="USER">일반유저</option>
                     <option value="ADMIN">관리자</option>

@@ -47,6 +47,8 @@ const CourseDetail = (pageId) => {
     getCourseDetail(pageId?.pageId);
   }, []);
 
+  
+
   // 어느정도 스크롤 후에 과정소개, 커리큘럼, 리뷰 모달 고정용
   useEffect(() => {
     const onScrollEvent = () => {
@@ -84,7 +86,6 @@ const CourseDetail = (pageId) => {
     }
     setReviewStarHeight(reviewPoint);
   }, [courseDetail?.reply?.data, courseDetail?.reply?.data.star]);
-
   return (
     <>
       <main className="width_content">
@@ -94,9 +95,9 @@ const CourseDetail = (pageId) => {
               <figure className={styles.course_thumbnail}>
                 <Image
                   src={
-                    courseDetail?.videoLessonsIbThumbnailUrl !== ""
-                      ? courseDetail?.videoLessonsIbThumbnailUrl
-                      : "/img/common/user_profile.jpg"
+                    courseDetail?.videoLessonsIbThumbnailUrl === ""
+                      ? "/img/common/user_profile.jpg"
+                      : courseDetail?.videoLessonsIbThumbnailUrl
                   }
                   width="100"
                   height="100"

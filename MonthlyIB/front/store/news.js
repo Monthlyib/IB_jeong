@@ -1,4 +1,4 @@
-import { newsGetItem } from "@/apis/newsAPI";
+import { newsGetItem, newsPost, newsReviseItem } from "@/apis/newsAPI";
 import { newsGetList } from "@/apis/openAPI";
 import { create } from "zustand";
 
@@ -25,6 +25,22 @@ export const useNewstore = create((set, get) => ({
     } catch (error) {
       console.log(error);
       set({ error, loading: false, success: false });
+    }
+  },
+  postNews: async (title, content, userInfo) => {
+    try {
+      await newsPost(title, content, userInfo);
+      get().getNewsList(1);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  reviseNews: async (newsId, title, content, userInfo) => {
+    try {
+      await newsReviseItem(newsId, title, content, userInfo);
+      get().getNewsList(1);
+    } catch (error) {
+      console.error(error);
     }
   },
 }));

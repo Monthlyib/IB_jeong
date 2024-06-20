@@ -24,6 +24,7 @@ const AdminMain = () => {
   const { getTutoringDateList } = useTutoringStore();
   const { getSubscribeList } = useSubscribeStore();
   const { getUserQuestionList } = useQuestionStore();
+  const activatedUserList = userList.filter((v) => v.userStatus === "ACTIVE");
 
   const tempAccess = {};
 
@@ -40,7 +41,11 @@ const AdminMain = () => {
   return (
     <>
       <div className={styles.dashboard_top_wrap}>
-        <AdminCards title="회원" number={userList?.length} icon={faUsers} />
+        <AdminCards
+          title="회원"
+          number={activatedUserList?.length}
+          icon={faUsers}
+        />
         {/* <AdminCards title="매출" number="$10,000" icon={faMoneyBill} /> */}
         <AdminCards title="구독자" number="10" icon={faUserPlus} />
         {/* <AdminCards title="튜터링 예약" number="10" icon={faCalendarDays} />

@@ -412,7 +412,7 @@
   font-weight: 500;
 }
 
-.dt_review_filter .dt_review_select span {
+.dt_review_filter .dt_review_select button {
   display: block;
   position: relative;
   padding: 0 0.8rem;
@@ -420,15 +420,15 @@
   color: #888;
 }
 
-.dt_review_filter .dt_review_select span.active {
+.dt_review_filter .dt_review_select button.active {
   color: #000;
 }
 
-.dt_review_filter .dt_review_select span:last-child {
+.dt_review_filter .dt_review_select button:last-child {
   padding-right: 0;
 }
 
-.dt_review_filter .dt_review_select span:before {
+.dt_review_filter .dt_review_select button:before {
   content: "";
   position: absolute;
   right: 0;
@@ -438,7 +438,7 @@
   background: #000;
 }
 
-.dt_review_filter .dt_review_select span:last-child:before {
+.dt_review_filter .dt_review_select button:last-child:before {
   display: none;
 }
 

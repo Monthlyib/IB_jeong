@@ -10,7 +10,7 @@ import {
 import BulletinBoardCommentsItems from "./BulletinBoardCommentsItems";
 import BulletinBoardCommentsPost from "./BulletinBoardCommentsPost";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import shortid from "shortid";
 import { boardDeleteItem } from "@/apis/boardAPI";
@@ -19,29 +19,64 @@ import { useUserStore } from "@/store/user";
 
 const BulletinBoardDetail = (pageId) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentPage = searchParams.get("currentPage");
   const { userInfo } = useUserStore();
-  const [currentPage, setCurrentPage] = useState(1);
-  const { bulletinBoardDetail } = useBoardStore();
+  const [ReplyCurrentPage, setReplyCurrentPage] = useState(1);
+  const { bulletinBoardDetail, boardList, getBoardList, updateBoardComment } =
+    useBoardStore();
   const getBoardDetail = useBoardStore((state) => state.getBoardDetail);
+  const currentIndex = boardList.findIndex(
+    (v) => v.boardId === parseInt(pageId?.pageId)
+  );
+  const [filteredBoardDetail, setFilteredBoardDetail] = useState({});
+
   const [menuClicked, setMenuClicked] = useState({
     recent: true,
     likes: false,
   });
 
+  useEffect(() => {
+    if (menuClicked.recent) {
+      const temp = { ...bulletinBoardDetail };
+      const test = temp.reply?.data.sort((a, b) => {
+        return new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime();
+      });
+      setFilteredBoardDetail({ ...temp, reply: { data: test } });
+    } else if (menuClicked.likes) {
+      const temp = { ...bulletinBoardDetail };
+      const test = temp.reply?.data.sort((a, b) => {
+        return b.voterCount - a.voterCount;
+      });
+      setFilteredBoardDetail({ ...temp, reply: { data: test } });
+    }
+  }, [bulletinBoardDetail?.reply?.data]);
+
   const onClickRecent = () => {
     setMenuClicked({ recent: true, likes: false });
+    const temp = { ...bulletinBoardDetail };
+    const test = temp.reply.data.sort((a, b) => {
+      return new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime();
+    });
+    setFilteredBoardDetail({ ...temp, reply: { data: test } });
   };
 
   const onClickLikes = () => {
     setMenuClicked({ recent: false, likes: true });
+    const temp = { ...bulletinBoardDetail };
+    const test = temp.reply.data.sort((a, b) => {
+      return b.voterCount - a.voterCount;
+    });
+    setFilteredBoardDetail({ ...temp, reply: { data: test } });
   };
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setReplyCurrentPage(page);
   };
 
   useEffect(() => {
-    getBoardDetail(pageId?.pageId, currentPage);
+    getBoardDetail(pageId?.pageId, ReplyCurrentPage);
+    getBoardList(currentPage, "");
   }, []);
   const onClickDelete = async () => {
     boardDeleteItem(pageId?.pageId, userInfo);
@@ -103,8 +138,38 @@ const BulletinBoardDetail = (pageId) => {
                 </div>
 
                 <div className={styles.read_btn_area}>
-                  <button className={styles.prev}>이전</button>
-                  <button className={styles.next}>다음</button>
+                  <Link
+                    href={
+                      boardList[currentIndex - 1]?.boardId !== undefined
+                        ? `/board/free/${
+                            boardList[currentIndex - 1]?.boardId
+                          }?currentPage=${currentPage}`
+                        : "#"
+                    }
+                    className={
+                      boardList[currentIndex - 1]?.boardId === undefined
+                        ? styles.disabled
+                        : ""
+                    }
+                  >
+                    이전
+                  </Link>
+                  <Link
+                    href={
+                      boardList[currentIndex + 1]?.boardId !== undefined
+                        ? `/board/free/${
+                            boardList[currentIndex + 1]?.boardId
+                          }?currentPage=${currentPage}`
+                        : "#"
+                    }
+                    className={
+                      boardList[currentIndex + 1]?.boardId === undefined
+                        ? styles.disabled
+                        : ""
+                    }
+                  >
+                    다음
+                  </Link>
                 </div>
 
                 <div className={styles.comment_wrap}>
@@ -144,7 +209,7 @@ const BulletinBoardDetail = (pageId) => {
 
                   <div className={styles.comment_cont}>
                     <BulletinBoardCommentsItems
-                      bulletinBoardComments={bulletinBoardDetail?.reply.data}
+                      bulletinBoardComments={filteredBoardDetail?.reply.data}
                       currentPage={currentPage}
                       numShowContents={5}
                       onPageChange={handlePageChange}

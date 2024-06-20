@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../BoardCommon.module.css";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { boardPost, boardReviseItem } from "@/apis/boardAPI";
 import { useBoardStore } from "@/store/board";
 import { useUserStore } from "@/store/user";
 
@@ -24,21 +23,20 @@ const BulletinBoardPost = () => {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const boardId = searchParams.get("boardId");
-  const { bulletinBoardDetail } = useBoardStore();
+  const { bulletinBoardDetail, postBoard, reviseBoard } = useBoardStore();
 
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
-      if (type === "write") boardPost(title, content, userInfo);
+      if (type === "write") postBoard(title, content, userInfo);
       else if (type === "revise")
-        boardReviseItem(boardId, title, content, userInfo);
+        reviseBoard(boardId, title, content, userInfo);
       router.push("/board/free");
     },
     [title, content]
   );
   useEffect(() => {
     if (boardId) {
-      console.log(bulletinBoardDetail);
       setTitle(bulletinBoardDetail?.title);
       setContent(bulletinBoardDetail?.content);
     }

@@ -2,6 +2,7 @@ import styles from "../BoardCommon.module.css";
 import _ from "lodash";
 import Paginatation from "../../layoutComponents/Paginatation";
 import Link from "next/link";
+import { useUserStore } from "@/store/user";
 
 const NewsItems = ({
   newsContents,
@@ -13,14 +14,16 @@ const NewsItems = ({
     const startIndex = (pageNum - 1) * numShowContents;
     return _(items).slice(startIndex).take(numShowContents).value();
   };
-
+  const { userInfo } = useUserStore();
   const paginatedPage = paginate(newsContents, currentPage);
   return (
     <>
       {newsContents.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.board_item} key={content.id}>
-            <Link href={`/board/${content.newsId}`}>
+          <div className={styles.board_item} key={content.newsId}>
+            <Link
+              href={`/board/${content.newsId}?currentPage=${currentPage}&userId=${userInfo.userId}`}
+            >
               <div className={styles.board_cont}>
                 <p>{content.title}</p>
                 <span

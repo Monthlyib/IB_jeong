@@ -19,7 +19,9 @@ const BulletinBoardItems = ({
       {bulletinBoardContents.length > 0 ? (
         paginatedPage.map((content) => (
           <div className={styles.board_item} key={content.boardId}>
-            <Link href={`/board/free/${content.boardId}`}>
+            <Link
+              href={`/board/free/${content.boardId}?currentPage=${currentPage}`}
+            >
               <div className={styles.board_cont}>
                 <p>{content.title}</p>
                 <span

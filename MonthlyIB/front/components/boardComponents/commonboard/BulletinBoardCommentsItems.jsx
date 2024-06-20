@@ -63,7 +63,7 @@ const BulletinBoardCommentsItems = ({
   };
   return (
     <>
-      {bulletinBoardComments.length > 0 ? (
+      {bulletinBoardComments?.length > 0 ? (
         paginatedPage.map((content) => (
           <div className={styles.comment_item} key={shortid.generate()}>
             <div className={styles.comment_top}>
@@ -89,7 +89,8 @@ const BulletinBoardCommentsItems = ({
                     </span>
                     <b> · </b>
                     <span className={styles.comment_date}>
-                      {content.createAt}
+                      {content.createAt.split("T")[0]}&nbsp;
+                      {content.createAt.split("T")[1]}
                     </span>
                   </div>
                 </div>
@@ -167,7 +168,7 @@ const BulletinBoardCommentsItems = ({
           <p>댓글이 없습니다.</p>
         </div>
       )}
-      {bulletinBoardComments.length > 0 && (
+      {bulletinBoardComments?.length > 0 && (
         <Pagination
           contents={bulletinBoardComments}
           currentPage={currentPage}

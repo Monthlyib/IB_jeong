@@ -8,30 +8,41 @@ import {
   faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import shortid from "shortid";
-import { useRouter } from "next/navigation";
-import { useCallback, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useNewstore } from "@/store/news";
 import { newsDeleteItem } from "@/apis/newsAPI";
 import { useUserStore } from "@/store/user";
+import { getCookie } from "@/apis/cookies";
 
 const NewsDetail = (pageId) => {
   const router = useRouter();
-  const { userInfo } = useUserStore();
-  const { newsDetail, getNewsDetail } = useNewstore();
+  const searchParams = useSearchParams();
+  const currentPage = searchParams.get("currentPage");
+  const userId = searchParams.get("userId");
+  const session = getCookie("accessToken");
+  const { getUserInfo, userDetailInfo } = useUserStore();
+  const { newsDetail, getNewsDetail, newsList, getNewsList } = useNewstore();
+  const currentIndex = newsList.findIndex(
+    (v) => v.newsId === parseInt(pageId?.pageId)
+  );
 
   const onClickDelete = useCallback(() => {
-    newsDeleteItem(pageId?.pageId, userInfo);
+    newsDeleteItem(parseInt(pageId?.pageId), { accessToken: session });
     router.push("/board/");
   }, []);
 
   useEffect(() => {
-    getNewsDetail(pageId?.pageId, userInfo);
-  }, []);
+    getUserInfo(userId, { accessToken: session });
 
+    getNewsDetail(parseInt(pageId?.pageId), { accessToken: session });
+    getNewsList(currentPage);
+  }, []);
   const onClickEdit = useCallback(() => {
     router.push(`/board/newswrite?type=revise&newsId=${pageId.pageId}`);
   }, []);
+
   return (
     <>
       <main className="width_content">
@@ -82,12 +93,46 @@ const NewsDetail = (pageId) => {
               </div>
 
               <div className={styles.read_btn_area}>
-                <button className={styles.prev}>이전</button>
-                <button className={styles.next}>다음</button>
+                <Link
+                  href={
+                    newsList[currentIndex - 1]?.newsId !== undefined
+                      ? `/board/${
+                          newsList[currentIndex - 1]?.newsId
+                        }?currentPage=${currentPage}&userId=${
+                          userDetailInfo.userId
+                        }`
+                      : "#"
+                  }
+                  className={
+                    newsList[currentIndex - 1]?.newsId === undefined
+                      ? styles.disabled
+                      : ""
+                  }
+                >
+                  이전
+                </Link>
+                <Link
+                  href={
+                    newsList[currentIndex + 1]?.newsId !== undefined
+                      ? `/board/${
+                          newsList[currentIndex + 1]?.newsId
+                        }?currentPage=${currentPage}&userId=${
+                          userDetailInfo.userId
+                        }`
+                      : "#"
+                  }
+                  className={
+                    newsList[currentIndex + 1]?.newsId === undefined
+                      ? styles.disabled
+                      : ""
+                  }
+                >
+                  다음
+                </Link>
               </div>
             </div>
             <div className={styles.read_right}>
-              {userInfo?.username === newsDetail.authorUsername && (
+              {userDetailInfo?.username === newsDetail.authorUsername && (
                 <div className={styles.auth_btn_cont}>
                   <button
                     className={`${styles.read_btn} ${styles.update}`}

@@ -1,9 +1,11 @@
 import {
   boardGetUserList,
+  boardPost,
   boardReplyDeleteItem,
   boardReplyPost,
   boardReplyReviseItem,
   boardReplyVote,
+  boardReviseItem,
 } from "@/apis/boardAPI";
 import { boardGetItem, boardGetList } from "@/apis/openAPI";
 import { create } from "zustand";
@@ -84,5 +86,25 @@ export const useBoardStore = create((set, get) => ({
     } catch (error) {
       console.error(error);
     }
+  },
+  postBoard: async (title, content, userInfo) => {
+    try {
+      await boardPost(title, content, userInfo);
+      get().getBoardList(1, "");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+
+  reviseBoard: async (boardId, title, content, userInfo) => {
+    try {
+      await boardReviseItem(boardId, title, content, userInfo);
+      get().getBoardList(1, "");
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  updateBoardComment: (res) => {
+    set({ bulletinBoardDetail: res });
   },
 }));
