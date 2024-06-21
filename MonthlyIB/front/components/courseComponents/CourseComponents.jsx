@@ -6,10 +6,11 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCourseStore } from "@/store/course";
+import { courseGetCategory } from "@/apis/openAPI";
 
 export const courseCategoryList = {
   all: [],
-  Group1: ["English Literature", "English Language ", "Korean"],
+  Group1: ["English Literature", "English Language", "Korean"],
   Group2: ["English B", "Mandarin B", "Spanish B"],
   Group3: [
     "Economics",
@@ -21,6 +22,27 @@ export const courseCategoryList = {
   Group4: ["Physics", "Chemistry", "Biology", "Design Technology"],
   Group5: ["Math AA", "Math AI"],
   Group6: ["Visual Arts"],
+};
+
+const subjectList = {
+  "English Literature": 7,
+  "English Language": 8,
+  Korean: 9,
+  "English B": 10,
+  "Mandarin B": 11,
+  "Spanish B": 12,
+  Economics: 13,
+  "Business & Management": 14,
+  Psychology: 15,
+  Geography: 16,
+  History: 17,
+  Physics: 18,
+  Chemistry: 19,
+  Biology: 20,
+  "Design Technology": 21,
+  "Math AA": 22,
+  "Math AI": 23,
+  "Visual Arts": 24,
 };
 
 const CourseComponents = () => {
@@ -49,7 +71,7 @@ const CourseComponents = () => {
       secondCategoryId,
       thirdCategoryId
     );
-  }, []);
+  }, [firstCategoryId, secondCategoryId, thirdCategoryId]);
 
   // const fillteredCoursePosts = coursePosts.filter((post) => {
   //   const groupFiltered = group === "all" ? true : post.group === group;
@@ -79,14 +101,23 @@ const CourseComponents = () => {
 
   const handleGroupChange = (e) => {
     setGroup(e.target.value);
+    if (e.target.value !== "all")
+      setFirstCategoryId(e.target.value.split("Group")[1]);
+    else setFirstCategoryId("");
   };
 
   const handleSubjectChange = (e) => {
     setSubject(e.target.value);
+    if (e.target.value !== "all")
+      setSecondCategoryId(subjectList[e.target.value]);
+    else setSecondCategoryId("");
   };
 
   const handleLevelChange = (e) => {
     setLevel(e.target.value);
+    if (e.target.value === "all") setThirdCategoryId("");
+    else if (e.target.value === "SL") setThirdCategoryId(25);
+    else if (e.target.value === "HL") setThirdCategoryId(26);
   };
 
   return (

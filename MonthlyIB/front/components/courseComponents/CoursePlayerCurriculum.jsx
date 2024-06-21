@@ -9,10 +9,10 @@ const CoursePlayerCurriculum = ({
   curriculum,
   className,
   setChapterNum,
+  subChapterNum,
   setSubChapterNum,
 }) => {
   const [modalOpen, setModalOpen] = useState(0);
-  const [subActive, setSubActive] = useState(0);
 
   let value = -1;
 
@@ -45,8 +45,8 @@ const CoursePlayerCurriculum = ({
                     value={value}
                     index={i}
                     name={s.chapterTitle}
-                    subActive={subActive}
-                    setSubActive={setSubActive}
+                    subActive={subChapterNum}
+                    setSubActive={setSubChapterNum}
                     setSubChapterNum={setSubChapterNum}
                   />
                 );

@@ -16,12 +16,8 @@ const CoursePlayer = (pageId) => {
 
   useEffect(() => {
     getCourseDetail(pageId?.pageId);
+    console.log(courseDetail);
   }, []);
-
-  useEffect(() => {
-    if (chapterNum >= 0)
-      console.log(courseDetail.chapters[chapterNum].subChapters[subChapterNum]);
-  }, [chapterNum, subChapterNum]);
 
   return (
     <div className={styles.player_content}>
@@ -47,6 +43,7 @@ const CoursePlayer = (pageId) => {
                   curriculum={courseDetail.chapters}
                   className={styles.course_curri_inner}
                   setChapterNum={setChapterNum}
+                  subChapterNum={subChapterNum}
                   setSubChapterNum={setSubChapterNum}
                 />
               </div>
@@ -54,14 +51,14 @@ const CoursePlayer = (pageId) => {
           )}
         </nav>
 
-        {chapterNum >= 0 ? (
+        {Object.keys(courseDetail).length > 0 ? (
           <div className={styles.player_wrap}>
             <iframe
               width={"100%"}
               height={"100%"}
               src={
                 "https://www.youtube.com/embed/" +
-                courseDetail?.chapters[chapterNum].subChapters[
+                courseDetail?.chapters[chapterNum]?.subChapters[
                   subChapterNum
                 ]?.videoFileUrl.split("/")[
                   courseDetail?.chapters[chapterNum].subChapters[
@@ -86,7 +83,7 @@ const CoursePlayer = (pageId) => {
             <button
               type="button"
               onClick={() => {
-                numVideo > 0 && setNumVideo((prev) => prev - 1);
+                subChapterNum > 0 && setSubChapterNum((prev) => prev - 1);
               }}
             >
               이전
@@ -95,8 +92,9 @@ const CoursePlayer = (pageId) => {
             <button
               type="button"
               onClick={() => {
-                numVideo + 1 < courseVideo?.length &&
-                  setNumVideo((prev) => prev + 1);
+                subChapterNum + 1 <
+                  courseDetail?.chapters[chapterNum]?.subChapters?.length &&
+                  setSubChapterNum((prev) => prev + 1);
               }}
             >
               다음

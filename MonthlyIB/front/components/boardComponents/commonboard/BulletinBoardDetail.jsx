@@ -50,24 +50,14 @@ const BulletinBoardDetail = (pageId) => {
       });
       setFilteredBoardDetail({ ...temp, reply: { data: test } });
     }
-  }, [bulletinBoardDetail?.reply?.data]);
+  }, [bulletinBoardDetail?.reply?.data, menuClicked]);
 
   const onClickRecent = () => {
     setMenuClicked({ recent: true, likes: false });
-    const temp = { ...bulletinBoardDetail };
-    const test = temp.reply.data.sort((a, b) => {
-      return new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime();
-    });
-    setFilteredBoardDetail({ ...temp, reply: { data: test } });
   };
 
   const onClickLikes = () => {
     setMenuClicked({ recent: false, likes: true });
-    const temp = { ...bulletinBoardDetail };
-    const test = temp.reply.data.sort((a, b) => {
-      return b.voterCount - a.voterCount;
-    });
-    setFilteredBoardDetail({ ...temp, reply: { data: test } });
   };
 
   const handlePageChange = (page) => {

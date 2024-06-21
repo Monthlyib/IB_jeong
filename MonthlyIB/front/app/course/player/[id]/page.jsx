@@ -1,9 +1,12 @@
 import CoursePlayer from "@/components/courseComponents/CoursePlayer";
-
+import Loading from "@/components/Loading";
+import { Suspense } from "react";
 const CoursePlayerPage = ({ params }) => {
   return (
     <>
-      <CoursePlayer pageId={params.id} />
+      <Suspense fallback={<Loading />}>
+        <CoursePlayer pageId={params.id} />
+      </Suspense>
     </>
   );
 };

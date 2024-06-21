@@ -47,8 +47,6 @@ const CourseDetail = (pageId) => {
     getCourseDetail(pageId?.pageId);
   }, []);
 
-  
-
   // 어느정도 스크롤 후에 과정소개, 커리큘럼, 리뷰 모달 고정용
   useEffect(() => {
     const onScrollEvent = () => {

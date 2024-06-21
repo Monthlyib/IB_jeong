@@ -9,6 +9,7 @@ import Pagination from "../layoutComponents/Paginatation";
 import shortid from "shortid";
 import { useCourseStore } from "@/store/course";
 import { useUserStore } from "@/store/user";
+import { getCookie } from "@/apis/cookies";
 
 const CourseReviewItems = ({
   coursePostReviewPosts,
@@ -38,6 +39,7 @@ const CourseReviewItems = ({
     return stars;
   };
 
+  const session = getCookie("accessToken");
   const { userInfo } = useUserStore();
   const { deleteCourseReview, reviseCourseReview, voteCourseReview } =
     useCourseStore();
@@ -55,7 +57,7 @@ const CourseReviewItems = ({
   const paginatedPage = paginate(coursePostReviewPosts, currentPage);
 
   const onClickDelete = useCallback((videoLessonsReplyId) => {
-    deleteCourseReview(pageId, videoLessonsReplyId, userInfo);
+    deleteCourseReview(pageId, videoLessonsReplyId, { accessToken: session });
   }, []);
 
   useEffect(() => {

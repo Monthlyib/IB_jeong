@@ -32,31 +32,14 @@ const CourseReview = ({
   });
   const onClickRecent = () => {
     setMenuClicked({ recent: true, likes: false, stars: false });
-    const temp = { ...courseDetail };
-    const test = temp.reply.data.sort((a, b) => {
-      return new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime();
-    });
-    setFilteredCourseDetail({ ...temp, reply: { data: test } });
   };
 
   const onClickLikes = () => {
     setMenuClicked({ recent: false, likes: true, stars: false });
-    console.log(courseDetail.reply.data);
-    const temp = { ...courseDetail };
-    const test = temp.reply.data.sort((a, b) => {
-      return b.voteUserId.length - a.voteUserId.length;
-    });
-    setFilteredCourseDetail({ ...temp, reply: { data: test } });
   };
 
   const onClickStars = () => {
     setMenuClicked({ recent: false, likes: false, stars: true });
-    console.log(courseDetail.reply.data);
-    const temp = { ...courseDetail };
-    const test = temp.reply.data.sort((a, b) => {
-      return b.star - a.star;
-    });
-    setFilteredCourseDetail({ ...temp, reply: { data: test } });
   };
   useEffect(() => {
     if (menuClicked.recent) {
@@ -78,7 +61,7 @@ const CourseReview = ({
       });
       setFilteredCourseDetail({ ...temp, reply: { data: test } });
     }
-  }, [courseDetail?.reply?.data]);
+  }, [courseDetail?.reply?.data, menuClicked]);
 
   return (
     <>
@@ -89,10 +72,10 @@ const CourseReview = ({
             <button type="button" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />
               <span onClick={() => setFormModal(!formModal)}>리뷰쓰기</span>
-              {formModal === true && (
-                <CourseReviewPost setFormModal={setFormModal} pageId={pageId} />
-              )}
             </button>
+          )}
+          {formModal === true && (
+            <CourseReviewPost setFormModal={setFormModal} pageId={pageId} />
           )}
         </div>
       </div>
