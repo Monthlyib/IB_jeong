@@ -68,7 +68,7 @@ const AppLayout = ({ children, disable }) => {
             </Link>
 
             <nav onMouseOver={onMouseOverMenu} onMouseLeave={onMouseLeaveMenu}>
-              <ul>
+              <ul style={{ listStyle: "none" }}>
                 <li>
                   <Link href="/ib">월간 IB</Link>
                 </li>

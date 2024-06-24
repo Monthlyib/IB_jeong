@@ -53,7 +53,7 @@ export const useQuestionStore = create((set, get) => ({
         session?.userId,
         session
       );
-      get().getQuestionList(currentPage);
+      get().getQuestionList(currentPage, "");
       return res;
     } catch (error) {
       console.error(error);

@@ -132,6 +132,7 @@ const ArchiveItems = ({
         <ArchiveFolderModal
           closeRef={closeRef}
           title={folderTitle}
+          type="edit"
           setTitle={setFolderTitle}
           setModal={setModal}
           onSubmitCreateFolder={onSubmitReviseFolder}

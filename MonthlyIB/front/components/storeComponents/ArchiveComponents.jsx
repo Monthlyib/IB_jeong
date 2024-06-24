@@ -51,6 +51,7 @@ const ArchiveComponents = () => {
   const onSubmitCreateFolder = (folderName) => {
     if (currentFolderId === 0) postFolder(0, folderName, "MAIN", userInfo);
     else postFolder(currentFolderId, folderName, "SUB", userInfo);
+    setFolderTitle("");
   };
   const onSelectFile = (e) => {
     e.preventDefault();

@@ -79,7 +79,7 @@ function Login() {
 
           <div className={styles.simple_login}>
             <h3>간편 로그인</h3>
-            <ul>
+            <ul style={{ listStyle: "none" }}>
               <li>
                 <Link href={googleLink}>
                   <figure>

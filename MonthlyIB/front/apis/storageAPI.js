@@ -47,7 +47,7 @@ export const storageReviseFolder = async (
       },
     };
     const data = { storageFolderId, folderName, status };
-    await tokenRequireApi.post(STORAGE_API_URL, data, config);
+    await tokenRequireApi.patch(STORAGE_API_URL, data, config);
   } catch (error) {
     console.error(error);
   }

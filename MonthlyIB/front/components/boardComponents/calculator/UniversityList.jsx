@@ -54,7 +54,7 @@ const USUniversityList = {
   ],
   33: [
     "Brandeis University",
-    "Colorada State University",
+    "Colorado State University",
     "DePaul University",
     "Eastern Michigan University",
     "Florida A&M University",
@@ -557,8 +557,8 @@ const USUniversityInfo = {
     rank: "661-670",
     img: "/img/univ_logos/Brandeis University.png",
   },
-  "Colorada State University": {
-    name: "Colorada State University",
+  "Colorado State University": {
+    name: "Colorado State University",
     IBScore: "≤ 34",
     tuition: "$33,752",
     rank: 409,

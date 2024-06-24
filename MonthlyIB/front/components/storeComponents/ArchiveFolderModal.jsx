@@ -2,6 +2,7 @@ import styles from "@/components/boardComponents/BoardCommon.module.css";
 
 const ArchiveFolderModal = ({
   closeRef,
+  type = "post",
   title,
   setTitle,
   setModal,
@@ -17,7 +18,9 @@ const ArchiveFolderModal = ({
         >
           <div className={styles.md_box}>
             <div className={styles.md_top}>
-              <div className={styles.tit}>폴더추가</div>
+              <div className={styles.tit}>
+                {type === "post" ? "폴더추가" : "폴더 이름수정"}
+              </div>
               <input
                 type="text"
                 value={title}
