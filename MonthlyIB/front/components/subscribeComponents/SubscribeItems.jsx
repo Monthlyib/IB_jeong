@@ -35,7 +35,7 @@ const SubscribeItems = ({ saledPrice, months, oriPrice, modal, planName }) => {
         <div className={styles.plan_bottom}>
           <div className={styles.plan_info}>
             <h4>플랜혜택 정보</h4>
-            <ul>
+            <ul style={{ listStyle: "none" }}>
               {saledPrice[modal].content
                 .trim()
                 .split("\n")

@@ -105,7 +105,7 @@ const BulletinBoardDetail = (pageId) => {
 
                 <div className={styles.read_content}>
                   <div className={styles.file_wrap}>
-                    <ul>
+                    <ul style={{ listStyle: "none" }}>
                       {bulletinBoardDetail.files.length > 0 &&
                         bulletinBoardDetail.files.map((f) => (
                           <li key={shortid.generate()}>

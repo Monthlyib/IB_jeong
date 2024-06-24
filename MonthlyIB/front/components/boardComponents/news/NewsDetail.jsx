@@ -70,7 +70,7 @@ const NewsDetail = (pageId) => {
 
               <div className={styles.read_content}>
                 <div className={styles.file_wrap}>
-                  <ul>
+                  <ul style={{ listStyle: "none" }}>
                     {newsDetail?.files?.length > 0 &&
                       newsDetail.files.map((f) => (
                         <li key={shortid.generate()}>

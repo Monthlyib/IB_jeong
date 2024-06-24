@@ -392,9 +392,16 @@ const SignUp = () => {
               <select className="contry_select" onChange={onChangeCountry}>
                 <option value="">국가선택</option>
                 <option value="ko">한국</option>
-                <option value="en">미국</option>
+                <option value="us">미국</option>
                 <option value="jp">일본</option>
                 <option value="cn">중국</option>
+                <option value="sp">싱가폴</option>
+                <option value="my">말레이시아</option>
+                <option value="la">남미</option>
+                <option value="th">태국</option>
+                <option value="hk">홍콩</option>
+                <option value="ru">러시아</option>
+                <option value="etc">기타</option>
               </select>
               <input
                 type="text"
@@ -421,7 +428,7 @@ const SignUp = () => {
               </label>
             </div>
 
-            <ul>
+            <ul style={{ listStyle: "none" }}>
               <li className={styles.frm_agree_auth}>
                 <div className={styles.frm_agree_flex}>
                   <input
@@ -479,18 +486,19 @@ const SignUp = () => {
             </ul>
           </div>
           <div className={styles.center_btn_wrap}>
-            {checkDuplication === true &&
-            passwordError === false &&
-            termError === false ? (
-              // (userId !== null || verifyEmail === true)
-              <button type="submit" className={styles.login_btn}>
-                가입하기
-              </button>
-            ) : (
-              <button disabled={true} className={styles.login_btn}>
-                가입하기
-              </button>
-            )}
+            <button
+              type="submit"
+              className={styles.login_btn}
+              disabled={
+                checkDuplication === true &&
+                passwordError === false &&
+                termError === false
+                  ? false
+                  : true
+              }
+            >
+              가입하기
+            </button>
           </div>
         </form>
       </main>

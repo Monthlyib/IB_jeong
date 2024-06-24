@@ -15,7 +15,6 @@ const QuestionItems = ({
   };
 
   const paginatedPage = paginate(questions, currentPage);
-  console.log(questions);
   return (
     <>
       {questions.length > 0 ? (

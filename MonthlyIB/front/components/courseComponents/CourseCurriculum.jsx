@@ -10,7 +10,7 @@ const CourseCurriculum = ({ curriculum }) => {
 
   return (
     <>
-      <ul>
+      <ul style={{ listStyle: "none" }}>
         {curriculum?.chapters?.map((v, i) => (
           <li key={shortid.generate()}>
             <p onClick={() => setModalOpen(i)}>
@@ -22,7 +22,10 @@ const CourseCurriculum = ({ curriculum }) => {
               <span>{v.chapterTitle}</span>
             </p>
             {
-              <ul className={modalOpen === i ? styles.active : ""}>
+              <ul
+                className={modalOpen === i ? styles.active : ""}
+                style={{ listStyle: "none" }}
+              >
                 {v.subChapters.map((s) => (
                   <li key={shortid.generate()}>{s.chapterTitle}</li>
                 ))}

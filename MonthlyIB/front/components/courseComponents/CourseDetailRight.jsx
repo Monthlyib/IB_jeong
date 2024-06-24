@@ -51,7 +51,7 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
             </div>
           </div>
           <div className={styles.course_info_etc}>
-            <ul>
+            <ul style={{ listStyle: "none" }}>
               <li>
                 <FontAwesomeIcon icon={faCirclePlay} />{" "}
                 {courseDetail?.duration === ""

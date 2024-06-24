@@ -7,7 +7,7 @@ const Resource = () => {
   return (
     <>
       <Link href="/board">자료실</Link>
-      <ul className={styles.gnb2}>
+      <ul className={styles.gnb2} style={{ listStyle: "none" }}>
         <li>
           <Link href="/board">
             <span>IB 입시뉴스</span>

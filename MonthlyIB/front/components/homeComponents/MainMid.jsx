@@ -71,7 +71,7 @@ const MainMid = () => {
 
       <section className={styles.guide_wrap}>
         <h2>IB 입시가이드</h2>
-        <ul className={styles.guide_inner}>
+        <ul className={styles.guide_inner} style={{ listStyle: "none" }}>
           <li>
             <Link href="/ib">
               <span>

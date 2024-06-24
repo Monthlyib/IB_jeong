@@ -115,7 +115,7 @@ const CourseDetail = (pageId) => {
                     : { position: "relative" }
                 }
               >
-                <ul>
+                <ul style={{ listStyle: "none" }}>
                   <li
                     className={modal === 1 ? styles.active : ""}
                     onClick={() => setModal(1)}

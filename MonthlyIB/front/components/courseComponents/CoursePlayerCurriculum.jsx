@@ -17,7 +17,7 @@ const CoursePlayerCurriculum = ({
   let value = -1;
 
   return (
-    <ul className={className}>
+    <ul className={className} style={{ listStyle: "none" }}>
       {curriculum?.map((v, i) => (
         <li
           key={shortid.generate()}
@@ -36,7 +36,7 @@ const CoursePlayerCurriculum = ({
             <span style={{ color: "white" }}>{v.chapterTitle}</span>
           </p>
           {
-            <ul>
+            <ul style={{ listStyle: "none" }}>
               {v.subChapters.map(function (s, i) {
                 value += 1;
                 return (

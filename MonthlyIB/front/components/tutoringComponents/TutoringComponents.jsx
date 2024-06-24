@@ -193,7 +193,7 @@ const TutoringComponents = () => {
               <div className={styles.sc_time_wrap}>
                 <h6>시간 선택 (KST)</h6>
                 <div className={styles.sc_time_select}>
-                  <ul>
+                  <ul style={{ listStyle: "none" }}>
                     {Object.entries(timeTable).map(([k, v]) =>
                       Object.keys(v).map((m) => (
                         <li

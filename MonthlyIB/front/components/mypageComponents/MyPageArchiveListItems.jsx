@@ -14,7 +14,6 @@ const MyPageArchiveListItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(bulletinBoardContents, currentPage);
-  console.log(bulletinBoardContents);
   return (
     <>
       {bulletinBoardContents?.length > 0 ? (

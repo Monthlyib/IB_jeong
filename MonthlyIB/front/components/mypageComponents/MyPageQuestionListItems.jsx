@@ -14,7 +14,6 @@ const MyPageQuestionListItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(questionContents, currentPage);
-  console.log(questionContents);
   return (
     <>
       {questionContents.length > 0 ? (

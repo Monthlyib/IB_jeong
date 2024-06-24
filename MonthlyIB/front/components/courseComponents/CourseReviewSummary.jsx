@@ -2,7 +2,7 @@ import styles from "./CourseDetail.module.css";
 const CourseReviewSummary = ({ reviewPoint }) => {
   return (
     <div className={styles.review_aver_right}>
-      <ul>
+      <ul style={{ listStyle: "none" }}>
         <li>
           <p className={styles.arg_bar}>
             <span style={{ height: `${reviewPoint["1"] * 100}%` }}></span>

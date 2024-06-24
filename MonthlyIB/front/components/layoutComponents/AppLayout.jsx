@@ -80,7 +80,7 @@ const AppLayout = ({ children, disable }) => {
                 </li>
                 <li>
                   <Link href="/tutoring">튜터링 예약</Link>
-                  <ul className={styles.gnb2}>
+                  <ul className={styles.gnb2} style={{ listStyle: "none" }}>
                     <li>
                       <Link href="/tutoring">
                         <span>튜터링 예약</span>

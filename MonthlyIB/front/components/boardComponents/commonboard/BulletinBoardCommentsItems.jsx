@@ -59,7 +59,6 @@ const BulletinBoardCommentsItems = ({
     if (userInfo?.userStatus === "ACTIVE") {
       voteReply(pageId, currentPage, boardReplyId, userInfo);
     }
-    console.log(bulletinBoardComments);
   };
   return (
     <>

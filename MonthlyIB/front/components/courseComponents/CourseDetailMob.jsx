@@ -28,7 +28,7 @@ const CourseDetailMob = ({ courseDetail, reviewAvgPoint, pageId }) => {
         </div>
       </div>
       <div className={styles.course_info_etc}>
-        <ul>
+        <ul style={{ listStyle: "none" }}>
           <li>
             <FontAwesomeIcon icon={faCirclePlay} />
             구독기간동안 무제한 제공

@@ -10,7 +10,7 @@ const CoursePostCurriculum = ({
 }) => {
   return (
     <>
-      <ul>
+      <ul style={{ listStyle: "none" }}>
         {numCurriculumChapter?.map((v, i) => (
           <li key={i}>
             <input
@@ -25,7 +25,7 @@ const CoursePostCurriculum = ({
               }}
             />
             {
-              <ul>
+              <ul style={{ listStyle: "none" }}>
                 {numCurriculumSubChapter[i] &&
                   numCurriculumSubChapter[i].map((s, j) => (
                     <li
