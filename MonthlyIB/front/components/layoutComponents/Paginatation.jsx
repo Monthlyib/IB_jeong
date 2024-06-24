@@ -14,7 +14,7 @@ const Pagination = ({
   const pages = range(1, Math.ceil(pageCount) + 1);
   return (
     <div className={styles.page_cont}>
-      <ul>
+      <ul style={{ listStyle: "none" }}>
         <li>
           <a
             onClick={() =>
