@@ -51,7 +51,7 @@ const SUBJECTS = {
 };
 
 const LEVELS = {
-  all: -1,
+  all: 27,
   SL: 25,
   HL: 26,
 };
@@ -118,11 +118,9 @@ const CoursePostWrite = () => {
 
   const loadingInfo = async (videoLessonsId) => {
     await getCourseDetail(videoLessonsId);
-    console.log("hi");
   };
   useEffect(() => {
     if (videoLessonsId) {
-      console.log("hi", videoLessonsId);
       loadingInfo(videoLessonsId);
     }
   }, []);

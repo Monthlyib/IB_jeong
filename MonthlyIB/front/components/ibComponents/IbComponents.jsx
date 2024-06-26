@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./IbComponents.module.css";
 import IbItems from "./IbItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,28 +12,32 @@ import { useUserStore } from "@/store/user";
 
 const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [formModal, setFormModal] = useState(false);
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [searching, setSeraching] = useState(false);
+
   const { ibPosts, getIBList } = useIBStore();
   const [windowSize, setWindowSize] = useState(0);
-  const [searchedPosts, setSearchedPosts] = useState([]);
+
+  const searchKeyword = useRef();
+  const [searching, setSeraching] = useState(false);
 
   const { userInfo } = useUserStore();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  const onChange = useCallback((e) => {
-    setSearchKeyword(e.target.value);
-  }, []);
-
-  const onClickOpenModal = useCallback(() => {
-    setFormModal((prevState) => !prevState);
-  }, [formModal]);
+  const onChange = (e) => {
+    searchKeyword.current = e.target.value;
+  };
+  const onClickSearchButton = () => {
+    setSeraching((prev) => !prev);
+  };
 
   useEffect(() => {
-    getIBList(currentPage);
+    const search =
+      searchKeyword.current === undefined ? "" : searchKeyword.current;
+    getIBList(currentPage, search);
+  }, [searching]);
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
       const handleResize = () => {
         setWindowSize(window.innerWidth);
@@ -63,19 +67,15 @@ const IbComponents = () => {
             <input
               type="text"
               placeholder="월간IB 검색"
-              value={searchKeyword}
+              defaultValue={searchKeyword.current}
               onChange={onChange}
-              // onKeyDown={(e) => {
-              //   if (e.key === "Enter") {
-              //     onClickSearchButton();
-              //   }
-              // }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  onClickSearchButton();
+                }
+              }}
             />
-            <button
-            // onClick={onClickSearchButton}
-            >
-              검색
-            </button>
+            <button onClick={onClickSearchButton}>검색</button>
           </div>
         </div>
 
@@ -91,7 +91,7 @@ const IbComponents = () => {
         <div className={styles.ib_archive_wrap}>
           <div className={styles.ib_archive_cont}>
             <IbItems
-              IBContents={searching ? searchedPosts : ibPosts}
+              IBContents={ibPosts}
               currentPage={currentPage}
               numShowContents={windowSize > 640 ? 6 : 4}
               onPageChange={handlePageChange}

@@ -1,6 +1,6 @@
 "use client";
 import styles from "../BoardCommon.module.css";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import NewsItems from "./NewsItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
@@ -11,8 +11,7 @@ import { useUserStore } from "@/store/user";
 
 const NewsComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchedPosts, setSearchedPosts] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
   const { userInfo } = useUserStore();
   const { newsList, getNewsList } = useNewstore();
@@ -20,25 +19,18 @@ const NewsComponents = () => {
     setCurrentPage(page);
   };
 
-  const onChangeSearch = useCallback((e) => {
-    setSearchKeyword(e.target.value);
-  }, []);
-  const onClickSearchButton = useCallback(() => {
-    // setSearchedPosts([...news.filter((v) => v.title.includes(searchKeyword))]);
-    // setCurrentPage(1);
-    // setSeraching(true);
-  }, [searchKeyword]);
-
   useEffect(() => {
-    getNewsList(currentPage, "");
-  }, []);
+    const search =
+      searchKeyword.current === undefined ? "" : searchKeyword.current;
+    getNewsList(currentPage, search);
+  }, [searching]);
 
   return (
     <>
       <main className="width_content archive">
         <BoardCommonHead
           searchKeyword={searchKeyword}
-          onChangeSearch={onChangeSearch}
+          setSeraching={setSeraching}
           modal={0}
           placeholder="입시뉴스 검색"
         />
@@ -55,7 +47,7 @@ const NewsComponents = () => {
         )}
         <div className={styles.board_wrap}>
           <NewsItems
-            newsContents={searching ? searchedPosts : newsList}
+            newsContents={newsList}
             currentPage={currentPage}
             numShowContents={5}
             onPageChange={handlePageChange}

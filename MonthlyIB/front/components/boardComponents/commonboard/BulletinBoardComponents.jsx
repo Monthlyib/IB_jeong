@@ -1,6 +1,6 @@
 "use client";
 import styles from "../BoardCommon.module.css";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import BulletinBoardItems from "./BulletinBoardItems";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,8 +11,7 @@ import { useUserStore } from "@/store/user";
 
 const BulletinBoardComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchedPosts, setSearchedPosts] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
   const { userInfo } = useUserStore();
@@ -21,27 +20,22 @@ const BulletinBoardComponents = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  const onChangeSearch = useCallback((e) => {
-    setSearchKeyword(e.target.value);
-  }, []);
   useEffect(() => {
-    getBoardList(currentPage, "");
-  }, []);
-
-  // const onClickSearchButton = useCallback(() => {
-  //   setCurrentPage(1);
-  //   setSeraching(true);
-  // }, [searchKeyword]);
+    const search =
+      searchKeyword.current === undefined ? "" : searchKeyword.current;
+    getBoardList(currentPage, search);
+  }, [searching]);
 
   return (
     <>
       <main className="width_content archive">
         <BoardCommonHead
           searchKeyword={searchKeyword}
-          onChangeSearch={onChangeSearch}
+          setSeraching={setSeraching}
           modal={3}
           placeholder="자유게시판 검색"
         />
+
         {userInfo?.userStatus === "ACTIVE" && (
           <div className={styles.right_btn}>
             <Link
@@ -55,7 +49,7 @@ const BulletinBoardComponents = () => {
         )}
         <div className={styles.board_wrap}>
           <BulletinBoardItems
-            bulletinBoardContents={searching ? searchedPosts : boardList}
+            bulletinBoardContents={boardList}
             currentPage={currentPage}
             numShowContents={5}
             onPageChange={handlePageChange}

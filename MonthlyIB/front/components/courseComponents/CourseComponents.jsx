@@ -1,7 +1,7 @@
 "use client";
 import styles from "./CourseComponents.module.css";
 import CourseItems from "./CourseItems";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
@@ -47,8 +47,7 @@ const subjectList = {
 
 const CourseComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [searchedPosts, setSearchedPosts] = useState([]);
+  const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
   const { coursePosts, getCourseList } = useCourseStore();
@@ -63,36 +62,27 @@ const CourseComponents = () => {
   const [level, setLevel] = useState("all");
 
   useEffect(() => {
+    const search =
+      searchKeyword.current === undefined ? "" : searchKeyword.current;
     getCourseList(
       currentPage,
-      "",
+      search,
       status,
       firstCategoryId,
       secondCategoryId,
       thirdCategoryId
     );
-  }, [firstCategoryId, secondCategoryId, thirdCategoryId]);
-
-  // const fillteredCoursePosts = coursePosts.filter((post) => {
-  //   const groupFiltered = group === "all" ? true : post.group === group;
-  //   const subjectFiltered = subject === "all" ? true : post.subject === subject;
-  //   const levelFiltered = level === "all" ? true : post.level === level;
-  //   return groupFiltered && subjectFiltered && levelFiltered;
-  // });
+  }, [firstCategoryId, secondCategoryId, thirdCategoryId, searching]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
   const onChange = useCallback((e) => {
-    setSearchKeyword(e.target.value);
+    searchKeyword.current = e.target.value;
   }, []);
-  const onClickSearchButton = useCallback(() => {
-    // setSearchedPosts([
-    //   ...coursePosts.filter((v) => v.title.includes(searchKeyword)),
-    // ]);
-    // setCurrentPage(1);
-    // setSeraching(true);
-  }, [searchKeyword]);
+  const onClickSearchButton = () => {
+    setSeraching(!searching);
+  };
 
   useEffect(() => {
     setSubject("all");
@@ -166,7 +156,7 @@ const CourseComponents = () => {
               <input
                 type="text"
                 placeholder="강의명 검색"
-                value={searchKeyword}
+                defaultValue={searchKeyword.current}
                 onChange={onChange}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
@@ -187,7 +177,7 @@ const CourseComponents = () => {
         </div>
         <div className={styles.course_wrap}>
           <CourseItems
-            courseContents={searching ? searchedPosts : coursePosts}
+            courseContents={coursePosts}
             currentPage={currentPage}
             numShowContents={5}
             onPageChange={handlePageChange}

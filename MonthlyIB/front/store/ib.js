@@ -11,9 +11,9 @@ export const useIBStore = create((set, get) => ({
   error: null,
   ibPosts: [],
   ibDetail: {},
-  getIBList: async (currentPage) => {
+  getIBList: async (currentPage, keyWord) => {
     try {
-      const res = await monthlyIBGetList("", currentPage - 1);
+      const res = await monthlyIBGetList(keyWord, currentPage - 1);
       set({ ibPosts: res.data, loading: false, success: true });
     } catch (error) {
       console.error(error);

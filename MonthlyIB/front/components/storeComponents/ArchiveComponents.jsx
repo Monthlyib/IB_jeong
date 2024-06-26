@@ -25,16 +25,21 @@ const ArchiveComponents = () => {
   const [currentFolderId, setCurrentFolderId] = useState(0);
   const [prevFolderId, setPrevFolderId] = useState([]);
   const [folderTitle, setFolderTitle] = useState("");
-  const [searchedPosts, setSearchedPosts] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
   const [level, setLevel] = useState(0);
   const [folderNameModal, setFolderNameModal] = useState(false);
   const [archiveListState, setArchiveListState] = useState([]);
 
   useEffect(() => {
-    getMainFolders();
-  }, []);
+    const search =
+      searchKeyword.current === undefined ? "" : searchKeyword.current;
+
+    if (searching) {
+      getSubLists("", search);
+      console.log(subLists);
+    } else getMainFolders();
+  }, [searching]);
 
   const onClickFolder = (id) => {
     const temp = [...prevFolderId];
@@ -73,24 +78,12 @@ const ArchiveComponents = () => {
     }
   };
 
-  /* 서치기능 구현아직 안됨 */
-
-  const onChangeSearch = useCallback((e) => {
-    setSearchKeyword(e.target.value);
-  }, []);
-  const onClickSearchButton = useCallback(() => {
-    setSearchedPosts([
-      ...archiveListState.filter((v) => v.key.includes(searchKeyword)),
-    ]);
-    setSeraching(true);
-  }, [searchKeyword]);
-
   return (
     <>
       <main className="width_content archive">
         <BoardCommonHead
           searchKeyword={searchKeyword}
-          onChangeSearch={onChangeSearch}
+          setSeraching={setSeraching}
           modal={2}
           placeholder="자료실 검색"
         />

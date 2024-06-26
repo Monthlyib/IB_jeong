@@ -2,11 +2,16 @@ import BoardCommon from "./BoardCommon";
 
 const BoardCommonHead = ({
   searchKeyword,
-  onChangeSearch,
-  onClickSearchButton,
+  setSeraching,
   modal,
   placeholder,
 }) => {
+  const onChangeSearch = (e) => {
+    searchKeyword.current = e.target.value;
+  };
+  const onClickSearchButton = () => {
+    setSeraching((prev) => !prev);
+  };
   return (
     <>
       <div className="header_flex">
@@ -18,20 +23,16 @@ const BoardCommonHead = ({
         <div className="ft_search">
           <input
             type="text"
-            // placeholder={placeholder}
-            // value={searchKeyword}
-            // onChange={onChangeSearch}
-            // onKeyDown={(e) => {
-            //   if (e.key === "Enter") {
-            //     onClickSearchButton();
-            //   }
-            // }}
+            placeholder={placeholder}
+            defaultValue={searchKeyword.current}
+            onChange={onChangeSearch}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onClickSearchButton();
+              }
+            }}
           />
-          <button
-          // onClick={onClickSearchButton}
-          >
-            검색
-          </button>
+          <button onClick={onClickSearchButton}>검색</button>
         </div>
       </div>
       <BoardCommon modal={modal} />

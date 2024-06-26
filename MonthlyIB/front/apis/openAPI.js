@@ -451,15 +451,16 @@ export const storageGetMain = async () => {
 
 export const storageGetList = async (parentsFolderId, keyWord) => {
   try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/storage/detail?parentsFolderId=${parentsFolderId}&keyWord=${keyWord}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const url =
+      parentsFolderId === ""
+        ? `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/storage/detail?keyWord=${keyWord}`
+        : `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/storage/detail?parentsFolderId=${parentsFolderId}&keyWord=${keyWord}`;
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (res.ok) {
       console.log("success");
     }

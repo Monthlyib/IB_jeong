@@ -5,7 +5,7 @@ import QuestionItems from "./QuestionItems";
 import QuestionWrite from "./QuestionWrite";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 
@@ -18,8 +18,7 @@ const QuestionComponents = () => {
   const [modal, setModal] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchedPosts, setSearchedPosts] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
   const { userInfo } = useUserStore();
@@ -31,20 +30,18 @@ const QuestionComponents = () => {
   const onClickWrite = useCallback(() => {
     setModal(!modal); // 배경 클릭 혹은 없애는 버튼 만들기
   });
-  const onChange = useCallback((e) => {
-    setSearchKeyword(e.target.value);
-  }, []);
-  //   const onClickSearchButton = useCallback(() => {
-  //     setSearchedPosts([
-  //       ...questionList.filter((v) => v.content.includes(searchKeyword)),
-  //     ]);
-  //     setCurrentPage(1);
-  //     setSeraching(true);
-  //   }, [searchKeyword]);
+  const onChange = (e) => {
+    searchKeyword.current = e.target.value;
+  };
+  const onClickSearchButton = () => {
+    setSeraching((prev) => !prev);
+  };
 
   useEffect(() => {
-    getQuestionList(currentPage, "");
-  }, []);
+    const search =
+      searchKeyword.current === undefined ? "" : searchKeyword.current;
+    getQuestionList(currentPage, search);
+  }, [searching]);
   return (
     <>
       <main className="width_content question">
@@ -58,15 +55,15 @@ const QuestionComponents = () => {
             <input
               type="text"
               placeholder="질문 검색"
-              value={searchKeyword}
+              defaultValue={searchKeyword.current}
               onChange={onChange}
-              // onKeyDown={(e) => {
-              //   if (e.key === "Enter") {
-              //     onClickSearchButton();
-              //   }
-              // }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  onClickSearchButton();
+                }
+              }}
             />
-            <button>검색</button>
+            <button onClick={onClickSearchButton}>검색</button>
           </div>
         </div>
 
