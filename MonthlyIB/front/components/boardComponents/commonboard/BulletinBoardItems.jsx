@@ -16,7 +16,7 @@ const BulletinBoardItems = ({
   const paginatedPage = paginate(bulletinBoardContents, currentPage);
   return (
     <>
-      {bulletinBoardContents.length > 0 ? (
+      {bulletinBoardContents?.length > 0 ? (
         paginatedPage.map((content) => (
           <div className={styles.board_item} key={content.boardId}>
             <Link

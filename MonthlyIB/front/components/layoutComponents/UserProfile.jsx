@@ -5,6 +5,7 @@ import styles from "./UserProfile.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useUserStore } from "@/store/user";
+import { removeCookie } from "@/apis/cookies";
 
 const UserProfile = () => {
   const [toggleUtilBox, setToggleUtilBox] = useState(false);
@@ -59,6 +60,8 @@ const UserUtilBox = () => {
     signOut();
     localStorage.removeItem("userInfo");
     location.reload();
+    removeCookie("accessToken");
+    removeCookie("authority");
   }, []);
   return (
     <div className={styles.util_box}>

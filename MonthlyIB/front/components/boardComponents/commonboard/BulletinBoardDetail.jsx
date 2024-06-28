@@ -23,10 +23,9 @@ const BulletinBoardDetail = (pageId) => {
   const currentPage = searchParams.get("currentPage");
   const { userInfo } = useUserStore();
   const [ReplyCurrentPage, setReplyCurrentPage] = useState(1);
-  const { bulletinBoardDetail, boardList, getBoardList, updateBoardComment } =
-    useBoardStore();
+  const { bulletinBoardDetail, boardList, getBoardList } = useBoardStore();
   const getBoardDetail = useBoardStore((state) => state.getBoardDetail);
-  const currentIndex = boardList.findIndex(
+  const currentIndex = boardList?.findIndex(
     (v) => v.boardId === parseInt(pageId?.pageId)
   );
   const [filteredBoardDetail, setFilteredBoardDetail] = useState({});
@@ -66,7 +65,7 @@ const BulletinBoardDetail = (pageId) => {
 
   useEffect(() => {
     getBoardDetail(pageId?.pageId, ReplyCurrentPage);
-    getBoardList(currentPage, "");
+    getBoardList(currentPage < 1 ? 1 : currentPage, "");
   }, []);
   const onClickDelete = async () => {
     boardDeleteItem(pageId?.pageId, userInfo);
@@ -76,7 +75,6 @@ const BulletinBoardDetail = (pageId) => {
   const onClickEdit = () => {
     router.push(`/board/free/write?type=revise&boardId=${pageId.pageId}`);
   };
-
   return (
     <>
       {bulletinBoardDetail?.title !== undefined && (
@@ -130,14 +128,18 @@ const BulletinBoardDetail = (pageId) => {
                 <div className={styles.read_btn_area}>
                   <Link
                     href={
-                      boardList[currentIndex - 1]?.boardId !== undefined
+                      currentIndex === undefined
+                        ? "#"
+                        : boardList[currentIndex - 1]?.boardId !== undefined
                         ? `/board/free/${
                             boardList[currentIndex - 1]?.boardId
                           }?currentPage=${currentPage}`
                         : "#"
                     }
                     className={
-                      boardList[currentIndex - 1]?.boardId === undefined
+                      currentIndex === undefined
+                        ? ""
+                        : boardList[currentIndex - 1]?.boardId === undefined
                         ? styles.disabled
                         : ""
                     }
@@ -146,14 +148,18 @@ const BulletinBoardDetail = (pageId) => {
                   </Link>
                   <Link
                     href={
-                      boardList[currentIndex + 1]?.boardId !== undefined
+                      currentIndex === undefined
+                        ? "#"
+                        : boardList[currentIndex + 1]?.boardId !== undefined
                         ? `/board/free/${
                             boardList[currentIndex + 1]?.boardId
                           }?currentPage=${currentPage}`
                         : "#"
                     }
                     className={
-                      boardList[currentIndex + 1]?.boardId === undefined
+                      currentIndex === undefined
+                        ? "#"
+                        : boardList[currentIndex + 1]?.boardId === undefined
                         ? styles.disabled
                         : ""
                     }
@@ -199,7 +205,7 @@ const BulletinBoardDetail = (pageId) => {
 
                   <div className={styles.comment_cont}>
                     <BulletinBoardCommentsItems
-                      bulletinBoardComments={filteredBoardDetail?.reply.data}
+                      bulletinBoardComments={filteredBoardDetail?.reply?.data}
                       currentPage={currentPage}
                       numShowContents={5}
                       onPageChange={handlePageChange}

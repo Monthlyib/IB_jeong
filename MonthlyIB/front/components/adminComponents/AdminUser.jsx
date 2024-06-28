@@ -32,7 +32,7 @@ const AdminUser = () => {
   const [authority, setAuthority] = useState("");
   const [subscirbeDataList, setSubscribeDataList] = useState({});
   const [subscribeId, setSubscribeId] = useState(-1);
-  const [subscribeTitle, setSubscribeTitle] = useState("BASIC");
+  const [subscribeTitle, setSubscribeTitle] = useState("");
   const [questionCount, setQuestionCount] = useState("");
   const [tutoringCount, setTutoringCount] = useState("");
   const [subscribeMonthPeriod, setSubscribeMonthPeriod] = useState("");
@@ -221,6 +221,7 @@ const AdminUser = () => {
                       value={subscribeTitle}
                       onChange={(e) => setSubscribeTitle(e.target.value)}
                     >
+                      <option value="">구독 상품</option>
                       {Object.keys(subscirbeDataList).map((v, i) => (
                         <option value={v} key={i}>
                           {v}
@@ -229,6 +230,7 @@ const AdminUser = () => {
                     </select>
 
                     <select value={subscribeId} onChange={onChangeMonth}>
+                      <option value={-1}>-</option>
                       {subscirbeDataList[subscribeTitle]?.map((v, i) => (
                         <option value={v.subscriberId} key={i}>
                           {v.subscribeMonthPeriod} 개월

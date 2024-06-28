@@ -18,8 +18,8 @@ const MyPageArchiveListItems = ({
     <>
       {bulletinBoardContents?.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.board_item} key={content.id}>
-            <Link href={`/board/bulletinboard/${content.id}`}>
+          <div className={styles.board_item} key={content.boardId}>
+            <Link href={`/board/free/${content.boardId}`}>
               <div className={styles.board_cont}>
                 <p>{content.title}</p>
                 <span
@@ -42,7 +42,7 @@ const MyPageArchiveListItems = ({
           <p>게시글이 없습니다.</p>
         </div>
       )}
-      {bulletinBoardContents.length > 0 && (
+      {bulletinBoardContents?.length > 0 && (
         <Pagination
           contents={bulletinBoardContents}
           currentPage={currentPage}
