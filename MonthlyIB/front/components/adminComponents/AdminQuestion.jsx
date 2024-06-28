@@ -1,13 +1,11 @@
 import styles from "./AdminStyle.module.css";
 
-import { useUserStore } from "@/store/user";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuestionStore } from "@/store/question";
 import AdminQuestionItems from "./AdminQuestionItems";
 
 const AdminQuestion = () => {
-  const { userInfo } = useUserStore();
-  const { questionList, getUserQuestionList } = useQuestionStore();
+  const { questionList } = useQuestionStore();
   const [currentPage, setCurrentPage] = useState(1);
 
   const handlePageChange = (page) => {

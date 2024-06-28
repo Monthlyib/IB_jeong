@@ -58,6 +58,7 @@ const UserUtilBox = () => {
   const onLoggedOut = useCallback(() => {
     signOut();
     localStorage.removeItem("userInfo");
+    location.reload();
   }, []);
   return (
     <div className={styles.util_box}>

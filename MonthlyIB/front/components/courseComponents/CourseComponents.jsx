@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCourseStore } from "@/store/course";
 import { courseGetCategory } from "@/apis/openAPI";
+import { useUserStore } from "@/store/user";
 
 export const courseCategoryList = {
   all: [],
@@ -56,6 +57,8 @@ const CourseComponents = () => {
   const [secondCategoryId, setSecondCategoryId] = useState("");
   const [thirdCategoryId, setThirdCategoryId] = useState("");
   const [status, setStatus] = useState("");
+
+  const { userDetailInfo } = useUserStore();
 
   const [group, setGroup] = useState("all");
   const [subject, setSubject] = useState("all");
@@ -168,12 +171,14 @@ const CourseComponents = () => {
             </div>
           </div>
 
-          <div className={styles.right_btn}>
-            <Link href="/course/write" className={styles.btn_write}>
-              <FontAwesomeIcon icon={faPenAlt} />
-              <span>글쓰기</span>
-            </Link>
-          </div>
+          {userDetailInfo?.authority === "ADMIN" && (
+            <div className={styles.right_btn}>
+              <Link href="/course/write" className={styles.btn_write}>
+                <FontAwesomeIcon icon={faPenAlt} />
+                <span>글쓰기</span>
+              </Link>
+            </div>
+          )}
         </div>
         <div className={styles.course_wrap}>
           <CourseItems

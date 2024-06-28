@@ -89,7 +89,7 @@ const MainMid = () => {
             </Link>
           </li>
           <li>
-            <Link href="/board/calc">
+            <Link href="/board/calculator">
               <span>
                 합격예측 계산기 <FontAwesomeIcon icon={faAngleRight} />
               </span>
@@ -97,9 +97,9 @@ const MainMid = () => {
             </Link>
           </li>
           <li>
-            <Link href="/borad/guide">
+            <Link href="/borad/download">
               <span>
-                IB 수험 가이드 <FontAwesomeIcon icon={faAngleRight} />
+                자료실 <FontAwesomeIcon icon={faAngleRight} />
               </span>
               <FontAwesomeIcon icon={faClipboard} />
             </Link>

@@ -7,14 +7,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef, useState } from "react";
 import { useCallback } from "react";
-import { useRouter } from "next/navigation";
 
+import { getCookie } from "@/apis/cookies";
 import { useQuestionStore } from "@/store/question";
 import { useUserStore } from "@/store/user";
 
 const QuestionComponents = () => {
-  const router = useRouter();
-  const { questionList, getQuestionList } = useQuestionStore();
+  const { questionList, getUserQuestionList } = useQuestionStore();
   const [modal, setModal] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -37,10 +36,15 @@ const QuestionComponents = () => {
     setSeraching((prev) => !prev);
   };
 
+  const tempAccess = {};
+
   useEffect(() => {
     const search =
       searchKeyword.current === undefined ? "" : searchKeyword.current;
-    getQuestionList(currentPage, search);
+    tempAccess.accessToken = getCookie("accessToken");
+    if (tempAccess.accessToken) {
+      getUserQuestionList("", currentPage - 1, search, tempAccess);
+    }
   }, [searching]);
   return (
     <>
