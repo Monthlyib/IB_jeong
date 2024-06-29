@@ -14,7 +14,7 @@ const CourseDetailMob = ({ courseDetail, reviewAvgPoint, pageId }) => {
       <div className={styles.course_info_top}>
         <div className={styles.course_info_tit}>
           <span>
-            {/* {`${courseDetail.group} / ${courseDetail.subject} / ${courseDetail.level}`} */}
+            {`${courseDetail?.firstCategory?.categoryName} / ${courseDetail?.secondCategory?.categoryName} / ${courseDetail?.thirdCategory?.categoryName}`}
             {courseDetail.subtitle}
           </span>
           <p className={styles.course_tit}>{courseDetail.title}</p>

@@ -91,16 +91,21 @@ const CourseDetail = (pageId) => {
           <div className={styles.course_left}>
             <div className={styles.course_top}>
               <figure className={styles.course_thumbnail}>
-                <Image
-                  src={
-                    courseDetail?.videoLessonsIbThumbnailUrl === ""
-                      ? "/img/common/user_profile.jpg"
-                      : courseDetail?.videoLessonsIbThumbnailUrl
-                  }
-                  width="100"
-                  height="100"
-                  alt="강의 표지 사진"
-                />
+                {courseDetail?.videoLessonsIbThumbnailUrl === "" ? (
+                  <Image
+                    src={"/img/common/user_profile.jpg"}
+                    width="100"
+                    height="100"
+                    alt="강의 표지 사진"
+                  />
+                ) : (
+                  <Image
+                    src={courseDetail?.videoLessonsIbThumbnailUrl}
+                    width="100"
+                    height="100"
+                    alt="강의 표지 사진"
+                  />
+                )}
               </figure>
               <CourseDetailMob
                 courseDetail={courseDetail}

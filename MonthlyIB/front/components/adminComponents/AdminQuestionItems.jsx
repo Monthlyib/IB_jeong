@@ -3,8 +3,8 @@ import styles from "./AdminStyle.module.css";
 import Paginatation from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useRef, useState } from "react";
-import { useUserStore } from "@/store/user";
+import { useRef, useState } from "react";
+import { useUserInfo } from "@/store/user";
 import { useRouter } from "next/navigation";
 import { useQuestionStore } from "@/store/question";
 import shortid from "shortid";
@@ -21,7 +21,7 @@ const AdminQuestionItems = ({
 
   const closeRef = useRef();
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { deleteQuestionItem } = useQuestionStore();
 
   const onSubmitQuestion = () => {
@@ -42,7 +42,6 @@ const AdminQuestionItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(questionList, currentPage);
-  console.log(paginatedPage);
   return (
     <>
       {paginatedPage.map((v, i) => (

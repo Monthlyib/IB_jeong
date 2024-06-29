@@ -11,7 +11,7 @@ import {
   monthlyIBPostPDFFile,
   monthlyIBReviseItem,
 } from "@/apis/monthlyIbAPI";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import { useIBStore } from "@/store/ib";
 
 const IBPost = () => {
@@ -20,7 +20,7 @@ const IBPost = () => {
   const [title, setTitle] = useState("");
   const [havingFile, setHavingFile] = useState(false);
   const router = useRouter();
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { ibDetail, getIBItem, reviseItem } = useIBStore();
   const searchParams = useSearchParams();
   const monthlyIbId = parseInt(searchParams.get("monthlyIbId"));

@@ -4,7 +4,7 @@ import Paginatation from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef, useState } from "react";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import { useTutoringStore } from "@/store/tutoring";
 import shortid from "shortid";
 const AdminScheduleItems = ({
@@ -19,7 +19,7 @@ const AdminScheduleItems = ({
   const [status, setStatus] = useState("");
   const closeRef = useRef();
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { reviseTutoring, deleteTutoring } = useTutoringStore();
 
   useEffect(() => {

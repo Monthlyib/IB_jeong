@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SyncLoader } from "react-spinners";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import { getCookie } from "@/apis/cookies";
 
 const SocialLogin = ({ social }) => {
@@ -12,10 +12,9 @@ const SocialLogin = ({ social }) => {
   let code = null;
   let access_token = null;
 
-  const { userInfo, socialSignIn, signInNaver } = useUserStore();
+  const { userInfo, socialSignIn, signInNaver } = useUserInfo();
 
   useEffect(() => {
-    console.log("ddd ", userInfo);
     if (getCookie("authority")) {
       router.replace("/");
     } else if (userInfo?.userStatus === "WAIT_INFO") {

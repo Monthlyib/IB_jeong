@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import styles from "../BoardCommon.module.css";
 import Link from "next/link";
 import { useNewstore } from "@/store/news";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -23,7 +23,7 @@ const NewsPost = () => {
   const type = searchParams.get("type");
   const newsId = searchParams.get("newsId");
   const [content, setContent] = useState("");
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
 
   const onSubmit = useCallback(
     (e) => {

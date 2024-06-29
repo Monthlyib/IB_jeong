@@ -10,7 +10,7 @@ import {
 import { useStoreStore } from "@/store/store";
 import ArchiveFolderModal from "./ArchiveFolderModal";
 import { useRef, useState } from "react";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const ArchiveItems = ({
   folders,
@@ -24,6 +24,7 @@ const ArchiveItems = ({
   const [storageFolderId, setStorageFolderId] = useState(0);
   const [folderTitle, setFolderTitle] = useState("");
   const { deleteFolder, deleteFile, reviseFolder } = useStoreStore();
+  const { userInfo } = useUserInfo();
   const onClickDeleteFolder = (folderId) => {
     deleteFolder(folderId, currentFolderId, userInfo);
   };
@@ -49,7 +50,7 @@ const ArchiveItems = ({
     const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
     if (newWindow) newWindow.opener = null;
   };
-  const { userInfo } = useUserStore();
+
   return (
     <>
       {type === "folders" &&

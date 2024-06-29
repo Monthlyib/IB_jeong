@@ -10,7 +10,7 @@ import { useCallback } from "react";
 
 import { getCookie } from "@/apis/cookies";
 import { useQuestionStore } from "@/store/question";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const QuestionComponents = () => {
   const { questionList, getUserQuestionList } = useQuestionStore();
@@ -20,7 +20,7 @@ const QuestionComponents = () => {
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);

@@ -11,13 +11,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { coursePostUser } from "@/apis/courseAPI";
-import { useUserStore } from "@/store/user";
 import { useCourseStore } from "@/store/course";
+import { getCookie } from "@/apis/cookies";
+import { useUserInfo } from "@/store/user";
 
 const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   const router = useRouter();
 
-  const { userInfo } = useUserStore();
+  const accessToken = getCookie("accessToken");
+  const { userInfo } = useUserInfo();
   const { deleteCourseItem } = useCourseStore();
 
   const onClickEdit = useCallback(() => {
@@ -25,12 +27,12 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   }, []);
 
   const onClickDelete = useCallback(() => {
-    deleteCourseItem(pageId, userInfo);
+    deleteCourseItem(pageId, { accessToken });
     router.push(`/course`);
   }, []);
 
   const onClickTakeCourse = () => {
-    coursePostUser(parseInt(pageId), userInfo);
+    coursePostUser(parseInt(pageId), { accessToken });
   };
 
   return (
@@ -44,7 +46,6 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
             <div className={styles.course_review_cont}>
               <FontAwesomeIcon icon={faStar} />
               <p>
-                {" "}
                 {` ${reviewAvgPoint.toFixed(1)}`}{" "}
                 <span>{`(${courseDetail.replyCount})`}</span>
               </p>

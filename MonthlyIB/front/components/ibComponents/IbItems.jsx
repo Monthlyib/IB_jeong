@@ -8,7 +8,7 @@ import Image from "next/image";
 
 import { monthlyIBGetItem } from "@/apis/monthlyIbAPI";
 import { useIBStore } from "@/store/ib";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import { useRouter } from "next/navigation";
 
 const IbItems = ({
@@ -23,7 +23,7 @@ const IbItems = ({
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(IBContents, currentPage);
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { deleteIBList } = useIBStore();
   const onClickDelete = async (num) => {
     deleteIBList(num, userInfo, currentPage);

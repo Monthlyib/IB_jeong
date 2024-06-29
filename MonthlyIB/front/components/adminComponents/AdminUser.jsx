@@ -6,7 +6,7 @@ import {
   faUserGear,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
-import { useUserStore } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 import { useEffect, useState, useRef } from "react";
 import AdminUserDetail from "./AdminUserDetail";
 import shortid from "shortid";
@@ -18,14 +18,9 @@ import {
 } from "@/apis/subscribeAPI";
 
 const AdminUser = () => {
-  const {
-    userInfo,
-    userList,
-    userDetailInfo,
-    getUserInfo,
-    reviseUserInfo,
-    deleteUser,
-  } = useUserStore();
+  const { userInfo } = useUserInfo();
+  const { userList, userDetailInfo, getUserInfo, reviseUserInfo } =
+    useUserStore();
   const { subscribeList } = useSubscribeStore();
   const [modal, setModal] = useState(false);
   const [adminModal, setAdminModal] = useState(false);

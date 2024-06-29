@@ -4,9 +4,8 @@ import styles from "./Login.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-// import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const googleLink = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}.apps.googleusercontent.com&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL}&response_type=token&scope=email profile`;
 
@@ -18,7 +17,7 @@ function Login() {
   const [username, setId] = useState("");
   const [password, setPassword] = useState("");
 
-  const { signIn } = useUserStore();
+  const { signIn } = useUserInfo();
   const router = useRouter();
 
   const onChangeId = useCallback((e) => {
@@ -65,7 +64,7 @@ function Login() {
             name="user-password"
             value={password || ""}
             onChange={onChangePassword}
-            // required
+            required
             placeholder="비밀번호"
           />
           <button type="submit" className={styles.login_btn}>

@@ -11,7 +11,7 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import MobileAppLayout from "./MobileAppLayout";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const AppLayout = ({ children, disable }) => {
   const pathName = usePathname();
@@ -22,7 +22,7 @@ const AppLayout = ({ children, disable }) => {
     width: undefined,
   });
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
 
   const onMouseOverMenu = useCallback(() => {
     setMouseOverMenu(true);

@@ -3,11 +3,11 @@ import styles from "./MyPage.module.css";
 import MyPageQuestionListItems from "./MyPageQuestionListItems";
 import { useEffect, useState } from "react";
 import { useQuestionStore } from "@/store/question";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const MyPageQuestionList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { getUserQuestionList, questionList } = useQuestionStore();
   useEffect(() => {
     getUserQuestionList("", currentPage - 1, "", userInfo);

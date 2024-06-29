@@ -2,7 +2,7 @@ import styles from "../BoardCommon.module.css";
 import _ from "lodash";
 import Paginatation from "../../layoutComponents/Paginatation";
 import Link from "next/link";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const NewsItems = ({
   newsContents,
@@ -14,7 +14,7 @@ const NewsItems = ({
     const startIndex = (pageNum - 1) * numShowContents;
     return _(items).slice(startIndex).take(numShowContents).value();
   };
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const paginatedPage = paginate(newsContents, currentPage);
   return (
     <>

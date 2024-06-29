@@ -11,7 +11,7 @@ import {
   openAPIRegister,
   openAPIVerifyUsername,
 } from "@/apis/openAPI";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const SignUp = () => {
   const searchParams = useSearchParams();
@@ -32,7 +32,7 @@ const SignUp = () => {
   ];
 
   const router = useRouter();
-  const { userInfo, signIn, socialSignIn } = useUserStore();
+  const { userInfo, signIn, socialSignIn } = useUserInfo();
 
   const pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
 

@@ -4,15 +4,14 @@ import styles from "./MyPage.module.css";
 import MyPageCourseListItems from "./MyPageCourseListItems";
 
 import { useCourseStore } from "@/store/course";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const MyPageCourseList = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { coursePosts, getUserCourseList } = useCourseStore();
 
-  console.log(coursePosts);
   useEffect(() => {
     getUserCourseList(userInfo?.userId, currentPage - 1, userInfo);
   }, []);

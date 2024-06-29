@@ -2,7 +2,6 @@ import { removeCookie } from "@/apis/cookies";
 import {
   openAPILogin,
   openAPINaverLogin,
-  openAPIReissueToken,
   openAPISocialLoginCheck,
 } from "@/apis/openAPI";
 import {
@@ -14,28 +13,10 @@ import {
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export const useUserStore = create(
+export const useUserInfo = create(
   persist(
-    (set, get) => ({
+    (set) => ({
       userInfo: {},
-      userDetailInfo: {},
-      userList: [],
-      getUserList: async (session) => {
-        try {
-          const res = await userGetAllList(session);
-          set({ userList: res.data });
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      getUserInfo: async (userId, session) => {
-        try {
-          const res = await userGetInfo(userId, session);
-          set({ userDetailInfo: res.data });
-        } catch (error) {
-          console.error(error);
-        }
-      },
       signIn: async (username, password) => {
         try {
           const res = await openAPILogin(username, password);
@@ -70,8 +51,71 @@ export const useUserStore = create(
           console.error(error);
         }
       },
-      reviseUserInfo: async (
+      updateUserInfo: (res) => {
+        set({ userInfo: res });
+      },
+    }),
+
+    {
+      name: "userInfo",
+    }
+  )
+);
+
+export const useUserStore = create((set, get) => ({
+  userDetailInfo: {},
+  userList: [],
+  getUserList: async (session) => {
+    try {
+      const res = await userGetAllList(session);
+      set({ userList: res.data });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  getUserInfo: async (userId, session) => {
+    try {
+      const res = await userGetInfo(userId, session);
+      set({ userDetailInfo: res.data });
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  signIn: async (username, password) => {
+    try {
+      const res = await openAPILogin(username, password);
+      set({ userInfo: res.data });
+      return res;
+    } catch (error) {
+      console.error(error);
+    }
+  },
+  signOut: () => {
+    set({ userInfo: {} });
+    localStorage.removeItem("userInfo");
+    removeCookie("accessToken");
+    removeCookie("authority");
+  },
+
+  reviseUserInfo: async (
+    userId,
+    email,
+    nickName,
+    birth,
+    school,
+    grade,
+    address,
+    country,
+    userStatus,
+    authority,
+    memo,
+    marketingTermsCheck,
+    userInfo
+  ) => {
+    try {
+      const res = await userReviseInfo(
         userId,
+        "",
         email,
         nickName,
         birth,
@@ -84,43 +128,18 @@ export const useUserStore = create(
         memo,
         marketingTermsCheck,
         userInfo
-      ) => {
-        try {
-          const res = await userReviseInfo(
-            userId,
-            "",
-            email,
-            nickName,
-            birth,
-            school,
-            grade,
-            address,
-            country,
-            userStatus,
-            authority,
-            memo,
-            marketingTermsCheck,
-            userInfo
-          );
-          set({ userDetailInfo: res.data });
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      deleteUser: async (userId, session) => {
-        try {
-          await userDelete(userId, session);
-          get().getUserList(session);
-        } catch (error) {
-          console.error(error);
-        }
-      },
-      updateUserInfo: (res) => {
-        set({ userInfo: res });
-      },
-    }),
-    {
-      name: "userInfo",
+      );
+      set({ userDetailInfo: res.data });
+    } catch (error) {
+      console.error(error);
     }
-  )
-);
+  },
+  deleteUser: async (userId, session) => {
+    try {
+      await userDelete(userId, session);
+      get().getUserList(session);
+    } catch (error) {
+      console.error(error);
+    }
+  },
+}));

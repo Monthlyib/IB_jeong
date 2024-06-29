@@ -3,7 +3,7 @@ import Image from "next/image";
 import styles from "./MyPage.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 import { openAPIVerifyEmail, openAPIVerifyNum } from "@/apis/openAPI";
 import { userPostImage, userReviseInfo } from "@/apis/userAPI";
 
@@ -11,8 +11,8 @@ const Validate = () => {
   const router = useRouter();
 
   const pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
-
-  const { userInfo, userDetailInfo, getUserInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
+  const { userDetailInfo, getUserInfo } = useUserStore();
   const imageInput = useRef();
 
   const [password, setPassword] = useState("");

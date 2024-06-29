@@ -7,14 +7,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import BoardCommonHead from "../BoardCommonHead";
 import { useBoardStore } from "@/store/board";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const BulletinBoardComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { boardList, getBoardList } = useBoardStore();
 
   const handlePageChange = (page) => {

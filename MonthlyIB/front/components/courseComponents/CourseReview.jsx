@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import CourseReviewItems from "./CourseReviewItems";
 import CourseReviewPost from "./CourseReviewPost";
 import CourseReviewSummary from "./CourseReviewSummary";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const CourseReview = ({
   pageId,
@@ -18,7 +18,7 @@ const CourseReview = ({
   const [formModal, setFormModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };

@@ -7,7 +7,7 @@ import { useCallback, useRef, useState } from "react";
 import Pagination from "@/components/layoutComponents/Paginatation";
 import shortid from "shortid";
 import { useBoardStore } from "@/store/board";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const BulletinBoardCommentsItems = ({
   bulletinBoardComments,
@@ -19,7 +19,7 @@ const BulletinBoardCommentsItems = ({
   const [editModal, setEditModal] = useState(false);
   const comments = useRef("");
   const { deleteBoardComment, reviseBoardComment, voteReply } = useBoardStore();
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
 
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;

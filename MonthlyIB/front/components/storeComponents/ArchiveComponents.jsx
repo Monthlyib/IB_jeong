@@ -7,12 +7,12 @@ import ArchiveItems from "./ArchiveItems";
 import ArchiveFolderModal from "./ArchiveFolderModal";
 import ArchiveUpperButtons from "./ArchiveUpperButtons";
 import { useStoreStore } from "@/store/store";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const ArchiveComponents = () => {
   const file = useRef("");
   const closeRef = useRef("");
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const {
     mainFolders,
     subLists,
@@ -29,7 +29,6 @@ const ArchiveComponents = () => {
   const [searching, setSeraching] = useState(false);
   const [level, setLevel] = useState(0);
   const [folderNameModal, setFolderNameModal] = useState(false);
-  const [archiveListState, setArchiveListState] = useState([]);
 
   useEffect(() => {
     const search =
@@ -37,7 +36,6 @@ const ArchiveComponents = () => {
 
     if (searching) {
       getSubLists("", search);
-      console.log(subLists);
     } else getMainFolders();
   }, [searching]);
 

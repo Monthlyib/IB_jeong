@@ -5,12 +5,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import MainBottomSwiper from "./MainBottomSwiper";
 import MainReviewSwiper from "./MainReviewSwiper";
-import { useState } from "react";
-// import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useCourseStore } from "@/store/course";
+import { useTutoringStore } from "@/store/tutoring";
+import { useQuestionStore } from "@/store/question";
 
 const MainBottom = () => {
   const [tab, setTab] = useState(0);
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { coursePosts, getUserCourseList } = useCourseStore();
+  const { getUserQuestionList, questionList } = useQuestionStore();
+  const { getTutoringDateList, tutoringDateList } = useTutoringStore();
+
+  useEffect(() => {
+    const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+    getUserCourseList(
+      localUserInfo.state.userInfo?.userId,
+      currentPage - 1,
+      localUserInfo.state.userInfo
+    );
+    getTutoringDateList("", "", 0, localUserInfo.state.userInfo);
+    getUserQuestionList("", 0, "", localUserInfo.state.userInfo);
+  }, []);
   return (
     <>
       <section className={styles.community_wrap}>
@@ -50,18 +68,14 @@ const MainBottom = () => {
               <FontAwesomeIcon icon={faAngleRight} />
             </button>
           </div>
-          {/* {User.courses?.length > 0 ? (
-            <MainBottomSwiper posts={User.courses} />
+          {coursePosts?.length > 0 ? (
+            <MainBottomSwiper posts={coursePosts} type="video" />
           ) : (
             <div className={styles.no_item}>
               <p>수강중인 강의가 없습니다.</p>
               <Link href="/course">영상강의 이동</Link>
             </div>
-          )} */}
-          <div className={styles.no_item}>
-            <p>수강중인 강의가 없습니다.</p>
-            <Link href="/course">영상강의 이동</Link>
-          </div>
+          )}
         </div>
         <div
           className={`${styles.cm_tab_cont} ${styles.schedule_board_cont}`}
@@ -75,19 +89,17 @@ const MainBottom = () => {
               <FontAwesomeIcon icon={faAngleRight} />
             </button>
           </div>
-          {/* {User.tutors?.length > 0 ? (
-            <MainBottomSwiper posts={User.tutors} />
+          {tutoringDateList?.tutoring?.data?.length > 0 ? (
+            <MainBottomSwiper
+              posts={tutoringDateList?.tutoring?.data}
+              type="tutoring"
+            />
           ) : (
             <div className={styles.no_schedule}>
               <p>예약된 수업이 없습니다</p>
               <Link href="/tutoring">예약하기</Link>
             </div>
-          )} */}
-
-          <div className={styles.no_schedule}>
-            <p>예약된 수업이 없습니다</p>
-            <Link href="/tutoring">예약하기</Link>
-          </div>
+          )}
         </div>
         <div
           className={`${styles.cm_tab_cont} ${styles.schedule_board_cont}`}
@@ -101,19 +113,14 @@ const MainBottom = () => {
               <FontAwesomeIcon icon={faAngleRight} />
             </button>
           </div>
-          {/* {User.qnas?.length > 0 ? (
-            <MainBottomSwiper posts={User.qnas} />
+          {questionList?.length > 0 ? (
+            <MainBottomSwiper posts={questionList} type="question" />
           ) : (
             <div className={styles.no_item}>
               <p>등록된 질문글이 없습니다.</p>
               <Link href="/question">질문하기</Link>
             </div>
-          )} */}
-
-          <div className={styles.no_item}>
-            <p>등록된 질문글이 없습니다.</p>
-            <Link href="/question">질문하기</Link>
-          </div>
+          )}
         </div>
       </section>
       <section className={`${styles.community_wrap} ${styles.review_wrap}`}>

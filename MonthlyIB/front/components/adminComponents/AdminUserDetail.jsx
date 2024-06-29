@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import styles from "./AdminStyle.module.css";
 import { userReviseInfo } from "@/apis/userAPI";
-import { useUserStore } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const AdminUserDetail = ({ userDetailInfo, setModal }) => {
   const closeRef = useRef();
@@ -27,7 +27,9 @@ const AdminUserDetail = ({ userDetailInfo, setModal }) => {
     setMemo(userDetailInfo?.memo);
   }, [userDetailInfo]);
 
-  const { userInfo, deleteUser } = useUserStore();
+  const { userInfo } = useUserInfo();
+
+  const { deleteUser } = useUserStore();
   const onChangeCountry = (e) => {
     setCountry(e.target.value);
   };

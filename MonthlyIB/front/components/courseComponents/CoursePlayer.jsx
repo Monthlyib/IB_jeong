@@ -16,7 +16,6 @@ const CoursePlayer = (pageId) => {
 
   useEffect(() => {
     getCourseDetail(pageId?.pageId);
-    console.log(courseDetail);
   }, []);
 
   return (

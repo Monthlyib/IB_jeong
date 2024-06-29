@@ -6,7 +6,7 @@ import styles from "../BoardCommon.module.css";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useBoardStore } from "@/store/board";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -19,7 +19,7 @@ const BulletinBoardPost = () => {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const boardId = searchParams.get("boardId");

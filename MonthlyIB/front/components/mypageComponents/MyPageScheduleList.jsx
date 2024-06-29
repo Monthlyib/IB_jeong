@@ -1,5 +1,5 @@
 "use client";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import styles from "./MyPage.module.css";
 import MyPageScheduleListItems from "./MyPageScheduleListItems";
 import { useTutoringStore } from "@/store/tutoring";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 
 const MyPageScheduleList = () => {
   const [scheduleByYears, setScheduleByYears] = useState({});
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const [currentPage, setCurrentPage] = useState(1);
   const { tutoringDateList, getTutoringDateList } = useTutoringStore();
   const [years, setYears] = useState([]);

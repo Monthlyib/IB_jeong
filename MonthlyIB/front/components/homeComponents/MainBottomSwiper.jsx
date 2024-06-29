@@ -7,8 +7,10 @@ import styles from "./MainBottom.module.css";
 import { Navigation } from "swiper";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
+import Image from "next/image";
+import shortid from "shortid";
 
-const MainBottomSwiper = ({ posts }) => {
+const MainBottomSwiper = ({ posts, type }) => {
   return (
     <Swiper
       modules={[Navigation]}
@@ -20,7 +22,7 @@ const MainBottomSwiper = ({ posts }) => {
         nextEl: ".community_right_btn",
       }}
       breakpoints={
-        posts[1].tag === "board"
+        type === "video"
           ? {
               //반응형 width
               320: {
@@ -48,13 +50,27 @@ const MainBottomSwiper = ({ posts }) => {
       }
     >
       {posts.map((post) =>
-        post.tag === "board" ? (
-          <SwiperSlide key={post.id}>
+        type === "video" ? (
+          <SwiperSlide key={shortid.generate()}>
             <div className={styles.lesson_item}>
-              <Link href={`/course/${post.id}`}>
+              <Link href={`/course/${post.videoLessonsId}`}>
                 <div className={styles.lesson_info_wrap}>
                   <figure>
-                    <img src={post.Image.src} alt="강의 이미지" />
+                    {post?.videoLessonsIbThumbnailUrl === "" ? (
+                      <Image
+                        src={"/img/common/user_profile.jpg"}
+                        width="100"
+                        height="100"
+                        alt="강의 표지 사진"
+                      />
+                    ) : (
+                      <Image
+                        src={post?.videoLessonsIbThumbnailUrl}
+                        width="100"
+                        height="100"
+                        alt="강의 표지 사진"
+                      />
+                    )}
                   </figure>
 
                   <div className={styles.lesson_txt}>
@@ -68,42 +84,44 @@ const MainBottomSwiper = ({ posts }) => {
               </Link>
             </div>
           </SwiperSlide>
-        ) : post.tag === "schedule" ? (
-          <SwiperSlide key={post.id}>
+        ) : type === "tutoring" ? (
+          <SwiperSlide key={shortid.generate()}>
             <div className={styles.board_item}>
               <Link href="#">
                 <span
                   className={
-                    post.status === "예약"
+                    post.tutoringStatus === "CONFIRM"
                       ? `${styles.sc_ceiling} ${styles.reserve}`
-                      : post.status === "예약취소"
+                      : post.tutoringStatus === "WAIT"
                       ? `${styles.sc_ceiling} ${styles.cancel}`
                       : `${styles.sc_ceiling} ${styles.complete}`
                   }
                 >
-                  {post.status}
+                  {post.tutoringStatus}
                 </span>
-                <h4>{post.Date}</h4>
+                <h4>{post.date}</h4>
                 <div className={styles.sc_subject}>
-                  <span>{post.subject}</span>
+                  <span>{post.detail}</span>
                 </div>
               </Link>
             </div>
           </SwiperSlide>
         ) : (
-          <SwiperSlide key={post.id}>
+          <SwiperSlide key={shortid.generate()}>
             <div className={styles.board_item}>
-              <Link href={`/question/${post.id}`}>
+              <Link href={`/question/${post.questionId}`}>
                 <span
                   className={
-                    post.status === "답변대기"
+                    post.questionStatus === "ANSWER_WAIT"
                       ? `${styles.q_ceiling} ${styles.wait}`
                       : `${styles.q_ceiling} ${styles.complete}`
                   }
                 >
-                  {post.status}
+                  {post.questionStatus === "ANSWER_WAIT"
+                    ? "답변대기"
+                    : "답변완료"}
                 </span>
-                <h4>{post.content}</h4>
+                <h4 dangerouslySetInnerHTML={{ __html: post.content }}></h4>
                 <div className={styles.q_subject}>
                   <span>{post.subject}</span>
                 </div>

@@ -9,7 +9,7 @@ import CoursePostCategory from "./CoursePostCategory";
 import dynamic from "next/dynamic";
 import { coursePostThumnail, courseReviseItem } from "@/apis/courseAPI";
 import { useCourseStore } from "@/store/course";
-import { useUserStore } from "@/store/user";
+import { getCookie } from "@/apis/cookies";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -59,20 +59,19 @@ const LEVELS = {
 
 const CoursePostWrite = () => {
   const router = useRouter();
-  const { userInfo } = useUserStore();
   const imageInput = useRef();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const videoLessonsId = searchParams.get("videoLessonsId");
   const { courseDetail, postCourseItem, getCourseDetail } = useCourseStore();
-
+  const accessToken = getCookie("accessToken");
   const [group, setGroup] = useState("all");
   const [level, setLevel] = useState("all");
   const [subject, setSubject] = useState("all");
 
   const [firstCategoryId, setFirstCategoryId] = useState(-1);
   const [secondCategoryId, setSecondCategoryId] = useState(-1);
-  const [thirdCategoryId, setThirdCategoryId] = useState(-1);
+  const [thirdCategoryId, setThirdCategoryId] = useState(27);
 
   const [duration, setDuration] = useState("");
   const [title, setTitle] = useState("");
@@ -253,11 +252,12 @@ const CoursePostWrite = () => {
         secondCategoryId,
         thirdCategoryId,
         videoLessonsStatus,
-        userInfo
+        { accessToken }
       );
       if (imageInput.current)
-        coursePostThumnail(videoLessonsId, imageInput.current, userInfo);
+        coursePostThumnail(videoLessonsId, imageInput.current, { accessToken });
     } else {
+      console.log(thirdCategoryId);
       const res = await postCourseItem(
         title,
         content,
@@ -269,7 +269,7 @@ const CoursePostWrite = () => {
         secondCategoryId,
         thirdCategoryId,
         imageInput.current,
-        userInfo
+        { accessToken }
       );
     }
 

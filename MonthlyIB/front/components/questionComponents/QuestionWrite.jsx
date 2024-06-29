@@ -5,7 +5,7 @@ import styles from "./Question.module.css";
 
 import dynamic from "next/dynamic";
 import { useQuestionStore } from "@/store/question";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -23,7 +23,7 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
     useQuestionStore();
   const closeRef = useRef();
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
 
   useEffect(() => {
     if (type === "revise") {

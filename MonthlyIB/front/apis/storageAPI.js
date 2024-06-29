@@ -27,7 +27,10 @@ export const storageDeleteFile = async (storageFileId, session) => {
         Authorization: session?.accessToken,
       },
     };
-    await tokenRequireApi.delete(`${STORAGE_API_URL}/${storageFileId}`, config);
+    await tokenRequireApi.delete(
+      `${STORAGE_API_URL}/file/${storageFileId}`,
+      config
+    );
   } catch (error) {
     console.error(error);
   }

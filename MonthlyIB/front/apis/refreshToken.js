@@ -1,6 +1,6 @@
 import axios from "axios";
 import { openAPIReissueToken } from "./openAPI";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import { setCookie } from "./cookies";
 
 export const tokenRequireApi = axios.create({
@@ -27,7 +27,7 @@ tokenRequireApi.interceptors.response.use(
         setCookie("authority", res.data.authority, { path: "/" });
         userInfo.state.userInfo.accessToken = newToken;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-        useUserStore.getState().updateUserInfo(userInfo.state.userInfo);
+        useUserInfo.getState().updateUserInfo(userInfo.state.userInfo);
         originRequest.headers.Authorization = newToken;
         return axios(originRequest);
       } else {

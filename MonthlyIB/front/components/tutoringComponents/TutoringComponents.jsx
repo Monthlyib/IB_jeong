@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import shortid from "shortid";
 import { useTutoringStore } from "@/store/tutoring";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const DynamicCalendar = dynamic(() => import("./TutoringCalendar"), {
   ssr: false,
@@ -70,7 +70,7 @@ const TIME_TABLE_OBJECT = {
 const TutoringComponents = () => {
   const [date, setDate] = useState("");
   const [timeTable, setTimeTable] = useState(TIME_TABLE_OBJECT);
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { tutoringDateSimpleList, getTutoringDateSimpleList, postTutoring } =
     useTutoringStore();
   const [hour, setHour] = useState(0);

@@ -5,7 +5,7 @@ import { faPlus, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useSubscribeStore } from "@/store/subscribe";
 import shortid from "shortid";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import AdminSubscribeModal from "./AdminSubscribeModal";
 
 const AdminSubscribe = () => {
@@ -15,7 +15,7 @@ const AdminSubscribe = () => {
     editSubscribeItem,
     postSubscribeItem,
   } = useSubscribeStore();
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const [subscribeDataList, setSubscribeDataList] = useState({});
 
   const [editModal, setEditModal] = useState(false);

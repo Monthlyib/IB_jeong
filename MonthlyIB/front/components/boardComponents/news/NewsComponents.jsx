@@ -7,13 +7,13 @@ import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import BoardCommonHead from "../BoardCommonHead";
 import { useNewstore } from "@/store/news";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const NewsComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { newsList, getNewsList } = useNewstore();
   const handlePageChange = (page) => {
     setCurrentPage(page);

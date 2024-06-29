@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import styles from "./AdminStyle.module.css";
 import { ChromePicker } from "react-color";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import { useSubscribeStore } from "@/store/subscribe";
 const AdminSubscribeModal = ({
   mode,
@@ -26,7 +26,7 @@ const AdminSubscribeModal = ({
   subscribeDataList,
 }) => {
   const closeRef = useRef();
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { deleteSubscribeItem } = useSubscribeStore();
 
   const onClickDelete = () => {

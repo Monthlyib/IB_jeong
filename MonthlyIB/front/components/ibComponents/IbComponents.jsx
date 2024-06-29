@@ -8,7 +8,7 @@ import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 import { useIBStore } from "@/store/ib";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -19,7 +19,7 @@ const IbComponents = () => {
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);

@@ -3,11 +3,11 @@ import { useCallback, useState } from "react";
 
 import styles from "../BoardCommon.module.css";
 import { useBoardStore } from "@/store/board";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const BulletinBoardCommentsPost = ({ pageId }) => {
   const [content, setContent] = useState("");
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { setBoardComment } = useBoardStore();
   const onSubmit = useCallback(
     (e) => {

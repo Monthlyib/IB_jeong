@@ -20,7 +20,7 @@ import { getCookie } from "@/apis/cookies";
 import { useQuestionStore } from "@/store/question";
 
 const AdminMain = () => {
-  const { userInfo, userList, getUserList } = useUserStore();
+  const { userList, getUserList } = useUserStore();
   const { getTutoringDateList } = useTutoringStore();
   const { getSubscribeList } = useSubscribeStore();
   const { getUserQuestionList } = useQuestionStore();

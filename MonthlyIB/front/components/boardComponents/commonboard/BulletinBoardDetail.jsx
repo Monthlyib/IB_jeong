@@ -15,13 +15,13 @@ import Link from "next/link";
 import shortid from "shortid";
 import { boardDeleteItem } from "@/apis/boardAPI";
 import { useBoardStore } from "@/store/board";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const BulletinBoardDetail = (pageId) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentPage = searchParams.get("currentPage");
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const [ReplyCurrentPage, setReplyCurrentPage] = useState(1);
   const { bulletinBoardDetail, boardList, getBoardList } = useBoardStore();
   const getBoardDetail = useBoardStore((state) => state.getBoardDetail);

@@ -2,12 +2,12 @@
 import styles from "./MyPage.module.css";
 import { useEffect, useState } from "react";
 import MyPageArchiveListItems from "./MyPageArchiveListItems";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 import { useBoardStore } from "@/store/board";
 
 const MyPageArchiveList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { getBoardUserList, boardList } = useBoardStore();
 
   useEffect(() => {

@@ -5,11 +5,12 @@ import styles from "./AppLayout.module.css";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useUserStore } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const MobileAppLayout = ({ asideModal, setAsideModal }) => {
   const [menuModal, setMenuModal] = useState(1);
-  const { userInfo, getUserInfo, userDetailInfo, signOut } = useUserStore();
+  const { userInfo } = useUserInfo();
+  const { getUserInfo, userDetailInfo, signOut } = useUserStore();
 
   useEffect(() => {
     if (userInfo?.userId) getUserInfo(userInfo.userId, userInfo);

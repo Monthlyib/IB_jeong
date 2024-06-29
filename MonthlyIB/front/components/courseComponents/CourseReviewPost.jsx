@@ -6,13 +6,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 
 import { useCourseStore } from "@/store/course";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 
 const CourseReviewPost = ({ setFormModal, pageId }) => {
   const [content, setContent] = useState("");
   const [point, setPoint] = useState(0);
 
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const { postCourseReview } = useCourseStore();
   const [clicked, setClicked] = useState([false, false, false, false, false]);
   const array = [0, 1, 2, 3, 4];

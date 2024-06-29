@@ -10,7 +10,7 @@ import { questionDelete } from "@/apis/questionAPI";
 import { useRouter } from "next/navigation";
 import QuestionWrite from "./QuestionWrite";
 import { useQuestionStore } from "@/store/question";
-import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
   {
@@ -19,7 +19,7 @@ const DynamicEditor = dynamic(
 );
 
 const QuestionDetail = (pageId) => {
-  const { userInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
   const {
     questionDetail,
     getQuestionDetail,
