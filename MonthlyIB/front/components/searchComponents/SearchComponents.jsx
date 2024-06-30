@@ -7,8 +7,7 @@ import CourseItems from "@/components/courseComponents/CourseItems";
 import IbItems from "@/components/ibComponents/IbItems";
 import NewsItems from "@/components/boardComponents/news/NewsItems";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useBoardStore } from "@/store/board";
 import { useIBStore } from "@/store/ib";
@@ -33,23 +32,23 @@ const SearchComponents = () => {
   const [ibCurrentPage, setIbCurrentPage] = useState(1);
   const [courseCurrentPage, setCourseCurrentPage] = useState(1);
   const [newsCurrentPage, setNewsCurrentPage] = useState(1);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const searchKeyword = useRef();
 
   useEffect(() => {
     getBoardList(boardCurrentPage, keyword);
-  }, [boardCurrentPage]);
+  }, [boardCurrentPage, keyword]);
 
   useEffect(() => {
     getIBList(ibCurrentPage, keyword);
-  }, [ibCurrentPage]);
+  }, [ibCurrentPage, keyword]);
 
   useEffect(() => {
     getCourseList(courseCurrentPage, keyword, "", "", "", "");
-  }, [courseCurrentPage]);
+  }, [courseCurrentPage, keyword]);
 
   useEffect(() => {
     getNewsList(newsCurrentPage, keyword);
-  }, [courseCurrentPage]);
+  }, [courseCurrentPage, keyword]);
 
   const handleBoardPageChange = (page) => {
     setBoardCurrentPage(page);
@@ -68,12 +67,12 @@ const SearchComponents = () => {
   };
 
   const onChangeSearchKeyword = useCallback((e) => {
-    setSearchKeyword(e.target.value);
+    searchKeyword.current = e.target.value;
   }, []);
   const onCheckEnter = useCallback((e) => {
     if (e.key === "Enter") {
-      if (searchKeyword !== "") {
-        router.push(`/search?keyword=${keyword}`);
+      if (searchKeyword.current !== "") {
+        router.push(`/search?keyword=${searchKeyword.current}`);
       }
     }
   }, []);
@@ -84,7 +83,7 @@ const SearchComponents = () => {
           <div className={styles.header_tit_wrap}>
             <h2>검색결과</h2>
             <span>
-              검색하신 <b id="title">{`[ ${keyword} ]`}</b> 결과는 총{" "}
+              검색하신 <b id="title">{`[ ${keyword} ]`}</b> 결과는 총 {""}
               <b id="total">
                 {boardList.length +
                   ibPosts.length +
@@ -99,87 +98,93 @@ const SearchComponents = () => {
             <input
               type="text"
               placeholder="검색"
-              value={searchKeyword}
+              defaultValue={searchKeyword.current}
               onChange={onChangeSearchKeyword}
               onKeyDown={onCheckEnter}
             />
-            <Link href={`/search?keyword=${keyword}`}>
-              <button
-                onClick={() => {
-                  router.push(`/search?keyword=${keyword}`);
-                }}
-              >
-                검색
-              </button>
-            </Link>
+
+            <button
+              onClick={() => {
+                console.log("hh");
+                router.push(`/search?keyword=${searchKeyword.current}`);
+              }}
+            >
+              검색
+            </button>
           </div>
         </div>
         <div className="search_box_wrap">
-          {coursePosts.length > 0 && (
-            <div className={styles.category_wrap}>
-              <h3>강의</h3>
-              <div className="course_wrap">
-                <div className="course_cont">
-                  <CourseItems
-                    courseContents={coursePosts}
-                    currentPage={courseCurrentPage}
-                    numShowContents={5}
-                    onPageChange={handleCoursePageChange}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-          {ibPosts.length > 0 && (
-            <div className={styles.category_wrap}>
-              <h3>월간 IB</h3>
-              <div className="course_wrap">
-                <div className="course_cont">
-                  <div className={styles.ib_archive_wrap}>
-                    <div className={styles.ib_archive_cont}>
-                      <IbItems
-                        IBContents={ibPosts}
-                        currentPage={ibCurrentPage}
-                        numShowContents={6}
-                        onPageChange={handleIbPageChange}
+          {boardList.length +
+            ibPosts.length +
+            coursePosts.length +
+            newsList.length >
+          0 ? (
+            <>
+              {coursePosts.length > 0 && (
+                <div className={styles.category_wrap}>
+                  <h3>강의</h3>
+                  <div className="course_wrap">
+                    <div className="course_cont">
+                      <CourseItems
+                        courseContents={coursePosts}
+                        currentPage={courseCurrentPage}
+                        numShowContents={5}
+                        onPageChange={handleCoursePageChange}
                       />
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
-          {newsList.length > 0 && (
-            <div className={styles.category_wrap}>
-              <h3>IB 입시뉴스</h3>
-              <div className="board_wrap">
-                <NewsItems
-                  newsContents={newsList}
-                  currentPage={newsCurrentPage}
-                  numShowContents={5}
-                  onPageChange={handleNewsPageChange}
-                />
-              </div>
-            </div>
-          )}
-          {boardList.length && (
-            <div className={styles.category_wrap}>
-              <h3>자유게시판</h3>
-              <div className="board_wrap">
-                <BulletinBoardItems
-                  bulletinBoardContents={boardList}
-                  currentPage={boardCurrentPage}
-                  numShowContents={5}
-                  onPageChange={handleBoardPageChange}
-                />
-              </div>
-            </div>
-          )}
-          {boardList.length +
-            ibPosts.length +
-            coursePosts.length +
-            newsList.length ===
-            0 && (
+              )}
+
+              {ibPosts.length > 0 && (
+                <div className={styles.category_wrap}>
+                  <h3>월간 IB</h3>
+                  <div className="course_wrap">
+                    <div className="course_cont">
+                      <div className={styles.ib_archive_wrap}>
+                        <div className={styles.ib_archive_cont}>
+                          <IbItems
+                            IBContents={ibPosts}
+                            currentPage={ibCurrentPage}
+                            numShowContents={6}
+                            onPageChange={handleIbPageChange}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {newsList.length > 0 && (
+                <div className={styles.category_wrap}>
+                  <h3>IB 입시뉴스</h3>
+                  <div className="board_wrap">
+                    <NewsItems
+                      newsContents={newsList}
+                      currentPage={newsCurrentPage}
+                      numShowContents={5}
+                      onPageChange={handleNewsPageChange}
+                    />
+                  </div>
+                </div>
+              )}
+
+              {boardList.length && (
+                <div className={styles.category_wrap}>
+                  <h3>자유게시판</h3>
+                  <div className="board_wrap">
+                    <BulletinBoardItems
+                      bulletinBoardContents={boardList}
+                      currentPage={boardCurrentPage}
+                      numShowContents={5}
+                      onPageChange={handleBoardPageChange}
+                    />
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
             <div className={styles.no_search}>
               <FontAwesomeIcon icon={faTimesCircle} />
               <span>검색하신 결과가 없습니다.</span>
