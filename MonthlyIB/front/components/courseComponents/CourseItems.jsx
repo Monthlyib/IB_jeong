@@ -3,6 +3,7 @@ import _ from "lodash";
 import Pagination from "../layoutComponents/Paginatation";
 import Link from "next/link";
 import Image from "next/image";
+import shortid from "shortid";
 
 const CourseItems = async ({
   courseContents,
@@ -19,7 +20,7 @@ const CourseItems = async ({
     <>
       {courseContents.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.course_item} key={content.videoLessonsId}>
+          <div className={styles.course_item} key={shortid.generate()}>
             <Link href={`/course/${content.videoLessonsId}`}>
               <figure>
                 <Image

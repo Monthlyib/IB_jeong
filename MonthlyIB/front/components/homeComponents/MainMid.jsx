@@ -1,3 +1,4 @@
+"use client";
 import styles from "./MainMid.module.css";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,43 +11,30 @@ import {
   faClipboard,
 } from "@fortawesome/free-solid-svg-icons";
 
-// import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const MainMid = () => {
-  //   const router = useRouter();
-  // const [searchKeyword, setSearchKeyword] = useState("");
-  // const onChangeSearchKeyword = useCallback((e) => {
-  //   setSearchKeyword(e.target.value);
-  // }, []);
-  // const onCheckEnter = useCallback((e) => {
-  //   if (e.key === "Enter") {
-  //     //   if (searchKeyword !== "") {
-  //     //     router.push(
-  //     //       {
-  //     //         pathname: "/search",
-  //     //         query: { keyword: searchKeyword },
-  //     //       },
-  //     //       "/search"
-  //     //     );
-  //     //   }
-  //   }
-  // }, []);
+  const router = useRouter();
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const onChangeSearchKeyword = (e) => {
+    setSearchKeyword(e.target.value);
+  };
+  const onCheckEnter = (e) => {
+    if (e.key === "Enter") {
+      if (searchKeyword !== "") {
+        router.push(`/search?keyword=${searchKeyword}`);
+      }
+    }
+  };
   return (
     <>
       <section className={styles.search_wrap}>
         <p>궁금한 키워드를 검색해보세요!</p>
         <div className={styles.search_inner}>
-          {/* <Link
-            href={{
-              pathname: "/search/",
-              query: {
-                keyword: JSON.stringify(searchKeyword),
-              },
-            }}
-            as={"/search/"}
-          >
+          <Link href={`/search?keyword=${searchKeyword}`}>
             <FontAwesomeIcon icon={faMagnifyingGlass} />
-          </Link> */}
+          </Link>
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
             style={{
@@ -58,13 +46,16 @@ const MainMid = () => {
               color: "var(--primary01)",
               zIndex: 2,
             }}
+            onClick={() => {
+              router.push(`/search?keyword=${searchKeyword}`);
+            }}
           />
           <input
             type="text"
             placeholder="궁금한 키워드를 입력해보세요"
-            // value={searchKeyword}
-            // onChange={onChangeSearchKeyword}
-            // onKeyDown={onCheckEnter}
+            value={searchKeyword}
+            onChange={onChangeSearchKeyword}
+            onKeyDown={onCheckEnter}
           />
         </div>
       </section>

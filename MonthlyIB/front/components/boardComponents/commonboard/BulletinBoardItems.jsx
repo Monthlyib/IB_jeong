@@ -2,6 +2,7 @@ import styles from "../BoardCommon.module.css";
 import _ from "lodash";
 import Paginatation from "../../layoutComponents/Paginatation";
 import Link from "next/link";
+import shortid from "shortid";
 
 const BulletinBoardItems = ({
   bulletinBoardContents,
@@ -18,7 +19,7 @@ const BulletinBoardItems = ({
     <>
       {bulletinBoardContents?.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.board_item} key={content.boardId}>
+          <div className={styles.board_item} key={shortid.generate()}>
             <Link
               href={`/board/free/${content.boardId}?currentPage=${currentPage}`}
             >

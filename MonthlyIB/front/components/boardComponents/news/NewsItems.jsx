@@ -3,6 +3,7 @@ import _ from "lodash";
 import Paginatation from "../../layoutComponents/Paginatation";
 import Link from "next/link";
 import { useUserInfo } from "@/store/user";
+import shortid from "shortid";
 
 const NewsItems = ({
   newsContents,
@@ -20,7 +21,7 @@ const NewsItems = ({
     <>
       {newsContents.length > 0 ? (
         paginatedPage.map((content) => (
-          <div className={styles.board_item} key={content.newsId}>
+          <div className={styles.board_item} key={shortid.generate()}>
             <Link
               href={`/board/${content.newsId}?currentPage=${currentPage}&userId=${userInfo.userId}`}
             >

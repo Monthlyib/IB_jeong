@@ -8,9 +8,9 @@ export const useNewstore = create((set, get) => ({
   error: null,
   newsDetail: {},
   newsList: [],
-  getNewsList: async (currentPage) => {
+  getNewsList: async (currentPage, keyWord) => {
     try {
-      const res = await newsGetList(currentPage - 1, "");
+      const res = await newsGetList(currentPage - 1, keyWord);
       set({ newsList: res.data, loading: false, success: true });
     } catch (error) {
       console.error(error);

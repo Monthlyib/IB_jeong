@@ -20,8 +20,6 @@ const UserProfile = () => {
     setToggleUtilBox(!toggleUtilBox);
   }, [toggleUtilBox]);
 
-  console.log(userDetailInfo);
-
   return (
     <>
       {Object.keys(userDetailInfo).length > 0 && (
