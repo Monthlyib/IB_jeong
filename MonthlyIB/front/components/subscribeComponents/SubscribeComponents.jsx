@@ -10,12 +10,16 @@ const SubscribeComponents = () => {
   const months = ["1개월", "3개월", "6개월", "12개월"];
 
   const { subscribeList, getSubscribeList } = useSubscribeStore();
-  const [subscirbeDataList, setSubscribeDataList] = useState({});
+  const [subscribeDataList, setSubscribeDataList] = useState({});
   useEffect(() => {
     getSubscribeList();
   }, []);
 
   const planNames = [];
+
+  useEffect(() => {
+    console.log(subscribeDataList);
+  }, [subscribeDataList]);
 
   useEffect(() => {
     const temp = [];
@@ -100,11 +104,11 @@ const SubscribeComponents = () => {
       </div>
 
       <div className={styles.plan_box_wrap}>
-        {Object.keys(subscirbeDataList).map((v) => (
+        {Object.keys(subscribeDataList).map((v) => (
           <SubscribeItems
-            saledPrice={subscirbeDataList[v]}
+            saledPrice={subscribeDataList[v]}
             months={months}
-            oriPrice={subscirbeDataList[v][0].price}
+            oriPrice={subscribeDataList[v][0].price}
             modal={modal}
             planName={v}
             key={shortid.generate()}

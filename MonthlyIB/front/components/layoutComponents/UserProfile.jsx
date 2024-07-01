@@ -14,7 +14,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
-    getUserInfo(localUser.state.userInfo.userId, localUser.state.userInfo);
+    if (localUser)
+      getUserInfo(localUser.state.userInfo.userId, localUser.state.userInfo);
   }, []);
   const onClickIcon = useCallback(() => {
     setToggleUtilBox(!toggleUtilBox);
@@ -54,6 +55,9 @@ const UserProfile = () => {
                 <FontAwesomeIcon icon={faCaretUp} className={styles.icon} />
               )}
             </div>
+          </div>
+          <div className={styles.util}>
+            <Link href="/subscribe">구독플랜</Link>
           </div>
           {toggleUtilBox && <UserUtilBox />}
         </div>

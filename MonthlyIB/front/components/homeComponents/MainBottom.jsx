@@ -21,13 +21,16 @@ const MainBottom = () => {
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-    getUserCourseList(
-      localUserInfo.state.userInfo?.userId,
-      currentPage - 1,
-      localUserInfo.state.userInfo
-    );
-    getTutoringDateList("", "", 0, localUserInfo.state.userInfo);
-    getUserQuestionList("", 0, "", localUserInfo.state.userInfo);
+
+    if (localUserInfo) {
+      getUserCourseList(
+        localUserInfo.state.userInfo?.userId,
+        currentPage - 1,
+        localUserInfo.state.userInfo
+      );
+      getTutoringDateList("", "", 0, localUserInfo.state.userInfo);
+      getUserQuestionList("", 0, "", localUserInfo.state.userInfo);
+    }
   }, []);
   return (
     <>
