@@ -3,22 +3,33 @@ import { useUserInfo } from "@/store/user";
 import styles from "./pay.module.css";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useSubscribeStore } from "@/store/subscribe";
 
 const PayComponents = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planName = searchParams.get("planName");
-  const oriPrice = searchParams.get("oriPrice");
-  const saledPrice = searchParams.get("saledPrice");
   const months = searchParams.get("months");
   const { userInfo } = useUserInfo();
+  const monthsArray = ["1개월", "3개월", "6개월", "12개월"];
+
+  const index = monthsArray.findIndex((v) => v === months);
+
+  const { subscribeList, getSubscribeList } = useSubscribeStore();
+  const [subscribeDataList, setSubscribeDataList] = useState({});
+
+  const saledPrice = useRef();
+  const [oriPrice, setOriPrice] = useState("");
+
   const [email, setEmail] = useState("");
+
+  const planNames = [];
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-
+    getSubscribeList();
     if (localUserInfo) setEmail(localUserInfo.state.userInfo.email);
   }, []);
   useEffect(() => {
@@ -27,20 +38,74 @@ const PayComponents = () => {
     }
   }, [planName]);
 
-  if (!planName || !saledPrice || !months) {
+  useEffect(() => {
+    const temp = [];
+    temp.push(
+      subscribeList.filter((item, index, array) => {
+        return array.findIndex((i) => i.title === item.title) === index;
+      })
+    );
+
+    for (let i = 0; i < temp[0].length; i++) {
+      if (!temp[0][i].title.includes("ORI")) {
+        planNames.push(temp[0][i].title);
+      }
+    }
+
+    const tempObj = {};
+    const newTempObj = {};
+    let testingObj = {};
+
+    for (let i = 0; i < planNames.length; i++) {
+      if (!Object.keys(tempObj).includes(planNames[i])) {
+        tempObj[planNames[i]] = subscribeList.filter((item) => {
+          return item.title === planNames[i];
+        });
+        const entris = Object.entries(
+          Object.values(tempObj[planNames[i]])
+        ).sort((a, b) => a[1].subscribeMonthPeriod - b[1].subscribeMonthPeriod);
+        let j = 0;
+        for (let val of entris) {
+          testingObj[j] = val[1];
+          j++;
+        }
+        newTempObj[planNames[i]] = testingObj;
+        testingObj = {};
+      }
+    }
+    setSubscribeDataList(newTempObj);
+  }, [subscribeList]);
+
+  useEffect(() => {
+    if (Object.keys(subscribeDataList).length > 0) {
+      const newOriPriceArray = [
+        null,
+        subscribeDataList[planName][0].price * 3,
+        subscribeDataList[planName][0].price * 6,
+        subscribeDataList[planName][0].price * 12,
+      ];
+      setOriPrice(newOriPriceArray[index]);
+      saledPrice.current = subscribeDataList[planName][index].price;
+      console.log(saledPrice.current);
+    }
+  }, [subscribeDataList]);
+  if (!planName || !months) {
     return <></>;
   }
 
   const onSumbitPay = useCallback((e) => {}, []);
 
-  const localedCurrentValNum = saledPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const localedCurrentValNum = String(saledPrice.current).replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    ","
+  );
   let localedOriValNum = "";
-  if (oriPrice !== "null") {
-    localedOriValNum = oriPrice.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  if (oriPrice !== null) {
+    localedOriValNum = String(oriPrice).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
   const salePrice =
-    oriPrice !== "null" ? Number(saledPrice) - Number(oriPrice) : 0;
+    oriPrice !== null ? Number(saledPrice.current) - Number(oriPrice) : 0;
   const localedSalePrice = salePrice
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -73,16 +138,16 @@ const PayComponents = () => {
                   <div className={styles.product_item_price}>
                     <div className={styles.product_price_cont}>
                       <span className={styles.product_price}>
-                        {saledPrice.replace(/0000$/, "")}만원
+                        {String(saledPrice.current).replace(/0000$/, "")}만원
                       </span>
                       <b> / </b>
                       <span className={styles.product_month}> {months}</span>
                     </div>
                     <div className={styles.product_ori_price_cont}>
                       <span className={styles.product_ori_price}>
-                        {oriPrice !== "null" &&
+                        {oriPrice !== null &&
                           String(oriPrice).replace(/0000$/, "")}{" "}
-                        {oriPrice !== "null" && "만원"}
+                        {oriPrice !== null && "만원"}
                       </span>
                     </div>
                   </div>

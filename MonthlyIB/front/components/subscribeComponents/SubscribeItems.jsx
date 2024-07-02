@@ -54,7 +54,7 @@ const SubscribeItems = ({ saledPrice, months, oriPrice, modal, planName }) => {
             }}
           >
             <Link
-              href={`/pay?planName=${planName}&oriPrice=${newOriPriceArray[modal]}&saledPrice=${saledPrice[modal].price}&months=${months[modal]}`}
+              href={`/pay?planName=${planName}&months=${months[modal]}`}
               style={{ color: saledPrice[modal].color }}
             >
               구독하기

@@ -18,10 +18,6 @@ const SubscribeComponents = () => {
   const planNames = [];
 
   useEffect(() => {
-    console.log(subscribeDataList);
-  }, [subscribeDataList]);
-
-  useEffect(() => {
     const temp = [];
     temp.push(
       subscribeList.filter((item, index, array) => {
