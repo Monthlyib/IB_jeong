@@ -16,7 +16,7 @@ export const subscribeDeleteItem = async (subscribeId, session) => {
   }
 };
 
-export const subscribeGetUserList = async (userId, page, session) => {
+export const subscribeGetUserInfo = async (userId, page, session) => {
   try {
     const config = {
       headers: {

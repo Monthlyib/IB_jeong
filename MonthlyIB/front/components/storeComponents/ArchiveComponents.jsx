@@ -12,6 +12,7 @@ import { useUserInfo } from "@/store/user";
 const ArchiveComponents = () => {
   const file = useRef("");
   const closeRef = useRef("");
+  const [key, setKey] = useState(Date.now());
   const { userInfo } = useUserInfo();
   const {
     mainFolders,
@@ -59,8 +60,11 @@ const ArchiveComponents = () => {
   const onSelectFile = (e) => {
     e.preventDefault();
     e.persist();
+    console.log(e.target.files);
     file.current = e.target.files[0];
+    console.log(file.current);
     postFile(currentFolderId, file.current, userInfo);
+    setKey(Date.now());
   };
 
   const onClickUpFolder = () => {
@@ -97,6 +101,7 @@ const ArchiveComponents = () => {
             onClickCreateFolder={onClickCreateFolder}
             file={file}
             onSelectFile={onSelectFile}
+            key={key}
           />
         )}
         {currentFolderId !== 0 ? (

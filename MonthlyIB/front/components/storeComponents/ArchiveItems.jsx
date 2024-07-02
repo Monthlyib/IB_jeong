@@ -9,8 +9,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useStoreStore } from "@/store/store";
 import ArchiveFolderModal from "./ArchiveFolderModal";
-import { useRef, useState } from "react";
-import { useUserInfo } from "@/store/user";
+import { useEffect, useRef, useState } from "react";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const ArchiveItems = ({
   folders,
@@ -25,6 +25,11 @@ const ArchiveItems = ({
   const [folderTitle, setFolderTitle] = useState("");
   const { deleteFolder, deleteFile, reviseFolder } = useStoreStore();
   const { userInfo } = useUserInfo();
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    getUserSubscribeInfo(userInfo.userId, 0, userInfo);
+  }, []);
   const onClickDeleteFolder = (folderId) => {
     deleteFolder(folderId, currentFolderId, userInfo);
   };
@@ -47,9 +52,13 @@ const ArchiveItems = ({
     );
   };
   const onClickFile = (fileUrl) => {
-    const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
-    if (newWindow) newWindow.opener = null;
+    if (userSubscribeInfo?.subscribeStatus === "ACTIVE") {
+      const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
+      if (newWindow) newWindow.opener = null;
+    }
   };
+
+  console.log(userSubscribeInfo);
 
   return (
     <>

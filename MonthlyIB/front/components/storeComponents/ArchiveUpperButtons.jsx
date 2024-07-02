@@ -13,7 +13,16 @@ const ArchiveUpperButtons = ({
   onClickCreateFolder,
   file,
   onSelectFile,
+  key,
 }) => {
+  const handleButtonClick = () => {
+    if (file.current) {
+      console.log("Input element:", file.current); // 디버깅을 위한 로그
+      file.current.click();
+    } else {
+      console.error("File input ref is not assigned");
+    }
+  };
   return (
     <>
       <div className={styles.right_btn} style={{ marginBottom: "3rem" }}>
@@ -34,12 +43,9 @@ const ArchiveUpperButtons = ({
           <FontAwesomeIcon icon={faFolderPlus} />
           <span>폴더추가</span>
         </button>
-        <button
-          className={styles.btn_write_back}
-          onClick={() => file.current.click()}
-        >
+        <button className={styles.btn_write_back} onClick={handleButtonClick}>
           <FontAwesomeIcon icon={faFileCirclePlus} />
-          <input type="file" onChange={onSelectFile} ref={file} />
+          <input key={key} type="file" onChange={onSelectFile} ref={file} />
           <span>파일추가</span>
         </button>
       </div>
