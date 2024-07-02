@@ -12,7 +12,7 @@ import AdminUserDetail from "./AdminUserDetail";
 import shortid from "shortid";
 import { useSubscribeStore } from "@/store/subscribe";
 import {
-  subscribeGetUserList,
+  subscribeGetUserInfo,
   subscribePostUser,
   subscribeReviseUser,
 } from "@/apis/subscribeAPI";
@@ -120,7 +120,7 @@ const AdminUser = () => {
         subscribeMonthPeriod !== "" ||
         videoLessonsCount !== ""
       ) {
-        const res = await subscribeGetUserList(
+        const res = await subscribeGetUserInfo(
           userDetailInfo?.userId,
           0,
           userInfo

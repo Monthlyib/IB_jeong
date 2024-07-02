@@ -1074,6 +1074,11 @@ div.review_stars svg.active:hover ~ svg.empty {
 .center_btn_wrap_edit a {
   background: var(--primary02);
 }
+
+.center_btn_wrap a.disabled {
+  background: gray;
+  cursor: not-allowed;
+}
 .center_btn_wrap_delete a {
   background: rgb(188, 63, 111);
 }

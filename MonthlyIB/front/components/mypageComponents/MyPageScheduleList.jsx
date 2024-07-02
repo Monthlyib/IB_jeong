@@ -1,5 +1,5 @@
 "use client";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 import styles from "./MyPage.module.css";
 import MyPageScheduleListItems from "./MyPageScheduleListItems";
 import { useTutoringStore } from "@/store/tutoring";
@@ -10,6 +10,17 @@ const MyPageScheduleList = () => {
   const { userInfo } = useUserInfo();
   const [currentPage, setCurrentPage] = useState(1);
   const { tutoringDateList, getTutoringDateList } = useTutoringStore();
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
   const [years, setYears] = useState([]);
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -47,7 +58,8 @@ const MyPageScheduleList = () => {
           </div>
           <div className={styles.schedule_right}>
             <span>
-              남은 예약 : <b id="remain">10</b>
+              남은 예약 :{" "}
+              <b id="remain">{userSubscribeInfo?.[0]?.tutoringCount}</b>
             </span>
           </div>
         </div>

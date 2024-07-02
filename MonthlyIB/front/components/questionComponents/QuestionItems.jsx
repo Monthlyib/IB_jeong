@@ -28,7 +28,9 @@ const QuestionItems = ({
                         }`}
             key={content.questionId}
           >
-            <Link href={`/question/${content.questionId}`}>
+            <Link
+              href={`/question/${content.questionId}?currentPage=${currentPage}`}
+            >
               <div className={styles.q_flex_top}>
                 <p>{content?.title}</p>
               </div>

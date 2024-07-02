@@ -17,7 +17,6 @@ const ArchiveUpperButtons = ({
 }) => {
   const handleButtonClick = () => {
     if (file.current) {
-      console.log("Input element:", file.current); // 디버깅을 위한 로그
       file.current.click();
     } else {
       console.error("File input ref is not assigned");

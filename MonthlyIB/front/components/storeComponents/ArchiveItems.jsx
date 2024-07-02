@@ -28,7 +28,12 @@ const ArchiveItems = ({
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
-    getUserSubscribeInfo(userInfo.userId, 0, userInfo);
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        localUser.state.userInfo
+      );
   }, []);
   const onClickDeleteFolder = (folderId) => {
     deleteFolder(folderId, currentFolderId, userInfo);
@@ -52,13 +57,11 @@ const ArchiveItems = ({
     );
   };
   const onClickFile = (fileUrl) => {
-    if (userSubscribeInfo?.subscribeStatus === "ACTIVE") {
+    if (userSubscribeInfo?.[0]?.subscribeStatus === "WAIT") {
       const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
       if (newWindow) newWindow.opener = null;
     }
   };
-
-  console.log(userSubscribeInfo);
 
   return (
     <>

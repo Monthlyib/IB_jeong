@@ -11,7 +11,7 @@ import {
 import { create } from "zustand";
 
 export const useQuestionStore = create((set, get) => ({
-  questionList: {},
+  questionList: [],
   questionDetail: {},
   getQuestionList: async (currentPage, keyword) => {
     try {

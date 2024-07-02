@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import shortid from "shortid";
 import { useTutoringStore } from "@/store/tutoring";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const DynamicCalendar = dynamic(() => import("./TutoringCalendar"), {
   ssr: false,
@@ -76,6 +76,17 @@ const TutoringComponents = () => {
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(0);
   const detail = useRef("");
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
 
   const onClickTime = (h, m) => {
     const temp = { ...timeTable };
@@ -92,23 +103,28 @@ const TutoringComponents = () => {
     detail.current = e.target.value;
   };
 
-  const onSubmit = (e) => {
-    postTutoring(
-      userInfo?.userId,
-      date,
-      hour,
-      minute,
-      detail.current,
-      userInfo
-    );
-    detail.current = "";
-    setDate("");
+  const onSubmit = () => {
+    if (
+      userSubscribeInfo?.[0]?.tutoringCount > 0 &&
+      userSubscribeInfo?.[0]?.subscribeStatus === "WAIT"
+    ) {
+      postTutoring(
+        userInfo?.userId,
+        date,
+        hour,
+        minute,
+        detail.current,
+        userInfo
+      );
+      detail.current = "";
+      setDate("");
 
-    const temp = { ...timeTable };
-    Object.keys(temp).forEach((k) =>
-      Object.keys(temp[k]).forEach((v) => (temp[k][v]["select"] = false))
-    );
-    setTimeTable(temp);
+      const temp = { ...timeTable };
+      Object.keys(temp).forEach((k) =>
+        Object.keys(temp[k]).forEach((v) => (temp[k][v]["select"] = false))
+      );
+      setTimeTable(temp);
+    }
   };
 
   const handleResetState = () => {
@@ -254,7 +270,15 @@ const TutoringComponents = () => {
                 </div>
 
                 <div className={styles.center_btn_wrap}>
-                  <button type="submit" disabled={date == "" || hour == 0}>
+                  <button
+                    type="submit"
+                    disabled={
+                      date == "" ||
+                      hour == 0 ||
+                      userSubscribeInfo?.[0]?.tutoringCount === 0 ||
+                      userSubscribeInfo?.[0]?.subscribeStatus !== "WAIT"
+                    }
+                  >
                     <FontAwesomeIcon icon={faCalendarCheck} />
                     예약하기
                   </button>
@@ -263,7 +287,10 @@ const TutoringComponents = () => {
 
               <div className={styles.sc_over}>
                 <span>
-                  남은예약 : <b className="count">9</b>
+                  남은예약 :{" "}
+                  <b className="count">
+                    {userSubscribeInfo?.[0]?.tutoringCount}
+                  </b>
                 </span>
               </div>
             </div>

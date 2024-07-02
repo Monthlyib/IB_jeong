@@ -7,14 +7,30 @@ import { useEffect, useState } from "react";
 
 import CoursePlayerCurriculum from "./CoursePlayerCurriculum";
 import { useCourseStore } from "@/store/course";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/user";
 
 const CoursePlayer = (pageId) => {
+  const router = useRouter();
   const [chapterNum, setChapterNum] = useState(0);
   const [subChapterNum, setSubChapterNum] = useState(0);
   const [modal, setModal] = useState(false);
   const { courseDetail, getCourseDetail } = useCourseStore();
-
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
   useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
+  useEffect(() => {
+    if (userSubscribeInfo?.[0]?.subscribeStatus !== "WAIT") {
+      alert("잘못된 접근입니다.");
+      router.back();
+    }
     getCourseDetail(pageId?.pageId);
   }, []);
 

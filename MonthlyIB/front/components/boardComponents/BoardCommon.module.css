@@ -213,7 +213,7 @@
   text-align: center;
 }
 
-.read_cont .read_center .read_btn_area button:hover {
+.read_cont .read_center .read_btn_area a:hover {
   border-color: #333;
   color: #333;
 }

@@ -24,6 +24,18 @@ const MyPageComponents = () => {
   const { userInfo } = useUserInfo();
   const { getUserInfo, userDetailInfo } = useUserStore();
 
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
+
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
     getUserInfo(
@@ -37,7 +49,6 @@ const MyPageComponents = () => {
     3: <MyPageScheduleList />,
     4: <MyPageQuestionList />,
   };
-
   return (
     <>
       {Object.keys(userDetailInfo).length > 0 && (
@@ -74,17 +85,17 @@ const MyPageComponents = () => {
                 </Link>
               </div>
               <div className={styles.plan_wrap}>
-                {/* {User.plan !== null ? (
-                <SubscribePlan
-                  plan={User.plan.name}
-                  setChangePayment={setChangePayment}
-                />
-              ) : (
-                <Link href="/subscribe" className={styles.plan_btn}>
-                  <FontAwesomeIcon icon={faPlus} />
-                  <span>PLAN 구독</span>
-                </Link>
-              )} */}
+                {userSubscribeInfo?.[0]?.subscribeStatus === "WAIT" ? (
+                  <SubscribePlan
+                    plan={userSubscribeInfo?.[0]?.title}
+                    expirationDate={userSubscribeInfo?.[0]?.expirationDate}
+                  />
+                ) : (
+                  <Link href="/subscribe" className={styles.plan_btn}>
+                    <FontAwesomeIcon icon={faPlus} />
+                    <span> PLAN 구독</span>
+                  </Link>
+                )}
               </div>
             </div>
 
@@ -137,7 +148,7 @@ const MyPageComponents = () => {
   );
 };
 
-const SubscribePlan = ({ plan, setChangePayment }) => {
+const SubscribePlan = ({ plan, expirationDate }) => {
   return (
     <>
       <div className={styles.plan_active_wrap}>
@@ -146,17 +157,13 @@ const SubscribePlan = ({ plan, setChangePayment }) => {
             plan === "SUPER" ? styles.super : styles.basic
           }`}
         >
-          <p>{plan === "SUPER" ? "SUPER PASS 구독중" : "BASIC PASS 구독중"}</p>
+          <p>{plan} PASS 구독중</p>
           <span>
-            패스잔여기간 : <b>2023.06.20</b>
+            패스잔여기간 : <b>{expirationDate}</b>
           </span>
         </div>
       </div>
       <div className={styles.plan_option}>
-        <button type="button" onClick={() => setChangePayment((prev) => !prev)}>
-          결제수단 변경
-        </button>
-        <b> / </b>
         <button type="button" id="">
           해지하기
         </button>

@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import CourseReviewItems from "./CourseReviewItems";
 import CourseReviewPost from "./CourseReviewPost";
 import CourseReviewSummary from "./CourseReviewSummary";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const CourseReview = ({
   pageId,
@@ -30,6 +30,17 @@ const CourseReview = ({
     likes: false,
     stars: false,
   });
+
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
   const onClickRecent = () => {
     setMenuClicked({ recent: true, likes: false, stars: false });
   };
@@ -68,7 +79,7 @@ const CourseReview = ({
       <div className={styles.course_section}>
         <div className={styles.course_tit_header}>
           <h3>수강생 리뷰</h3>
-          {userInfo?.userStatus === "ACTIVE" && (
+          {userSubscribeInfo?.[0]?.subscribeStatus === "WAIT" && (
             <button type="button" className={styles.btn_write}>
               <FontAwesomeIcon icon={faPenAlt} />
               <span onClick={() => setFormModal(!formModal)}>리뷰쓰기</span>

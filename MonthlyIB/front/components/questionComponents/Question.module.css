@@ -340,11 +340,14 @@
   display: block;
   width: 9rem;
   height: 4.8rem;
-  font-size: 1.6rem;
-  font-weight: 400;
   line-height: 4.8rem;
-  text-align: center;
+  margin-left: 1rem;
+  border: 1px solid #d5d5d5;
   border-radius: 0.5rem;
+  font-size: 1.6rem;
+  background-color: var(--primary01);
+  color: white;
+  text-align: center;
 }
 
 .archive_bottom_btn .btn_area a.list {
@@ -352,14 +355,13 @@
   color: #fff;
 }
 
-.archive_bottom_btn .btn_area a.prev {
+.archive_bottom_btn .btn_area a:first-of-type {
   margin-right: 1rem;
 }
 
-.archive_bottom_btn .btn_area a.prev,
-.archive_bottom_btn .btn_area a.next {
-  border: 1px solid #d5d5d5;
-  color: #666;
+.disabled {
+  background-color: gray;
+  pointer-events: none;
 }
 
 .dt_question_flex .dt_question_right {
@@ -764,7 +766,7 @@ div.review_stars svg.active:hover ~ svg.empty {
     font-size: 1.3rem;
   }
 
-  .archive_bottom_btn .btn_area a.prev {
+  .archive_bottom_btn .btn_area a:first-of-type {
     margin-right: 0.4rem;
   }
 

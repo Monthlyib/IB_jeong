@@ -10,7 +10,7 @@ import { useCallback } from "react";
 
 import { getCookie } from "@/apis/cookies";
 import { useQuestionStore } from "@/store/question";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const QuestionComponents = () => {
   const { questionList, getUserQuestionList } = useQuestionStore();
@@ -21,6 +21,17 @@ const QuestionComponents = () => {
   const [searching, setSeraching] = useState(false);
 
   const { userInfo } = useUserInfo();
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -46,6 +57,7 @@ const QuestionComponents = () => {
       getUserQuestionList("", currentPage - 1, search, tempAccess);
     }
   }, [searching]);
+
   return (
     <>
       <main className="width_content question">
@@ -77,7 +89,8 @@ const QuestionComponents = () => {
               <span>총 질문 수</span>
               <b>{questionList?.length}</b>
             </div>
-            {userInfo?.authority === "ADMIN" && (
+            {(userInfo?.authority === "ADMIN" ||
+              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT") && (
               <button
                 type="button"
                 className="btn_write"
@@ -88,13 +101,15 @@ const QuestionComponents = () => {
               </button>
             )}
           </div>
-          {modal === true && (
-            <QuestionWrite
-              setModal={setModal}
-              currentPage={currentPage}
-              type="write"
-            />
-          )}
+          {modal === true &&
+            (userInfo?.authority === "ADMIN" ||
+              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT") && (
+              <QuestionWrite
+                setModal={setModal}
+                currentPage={currentPage}
+                type="write"
+              />
+            )}
           <div className={styles.question_wrap}>
             <div className={styles.question_cont}>
               <QuestionItems

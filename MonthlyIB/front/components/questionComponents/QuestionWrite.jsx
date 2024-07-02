@@ -5,7 +5,7 @@ import styles from "./Question.module.css";
 
 import dynamic from "next/dynamic";
 import { useQuestionStore } from "@/store/question";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -24,6 +24,17 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
   const closeRef = useRef();
 
   const { userInfo } = useUserInfo();
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
 
   useEffect(() => {
     if (type === "revise") {
@@ -98,8 +109,8 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
 
                   <div className={styles.md_question_count}>
                     <span>
-                      질문 남은 횟수 : <b>8</b> / 10{" "}
-                      {/** 유저 남은 질문횟수 받아오기*/}
+                      질문 남은 횟수 :{" "}
+                      <b>{userSubscribeInfo?.[0]?.questionCount}</b>
                     </span>
                   </div>
                 </div>

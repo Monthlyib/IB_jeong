@@ -7,10 +7,11 @@ import { faCalendarAlt, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { questionDelete } from "@/apis/questionAPI";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import QuestionWrite from "./QuestionWrite";
 import { useQuestionStore } from "@/store/question";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
+import { getCookie } from "@/apis/cookies";
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
   {
@@ -26,12 +27,41 @@ const QuestionDetail = (pageId) => {
     deleteQuestionAnswer,
     reviseQuestionAnswer,
     submitQuestionAnswer,
+    getUserQuestionList,
+    questionList,
   } = useQuestionStore();
   const [answerContent, setAnswerContent] = useState("");
   const [modal, setModal] = useState(false);
   const [answerReviseModal, setAnswerReviseModal] = useState(false);
   const [reviseModal, setReviseModal] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentPage = searchParams.get("currentPage");
+
+  const currentIndex = questionList?.findIndex(
+    (v) => v.questionId === parseInt(pageId?.pageId)
+  );
+
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
+
+  const tempAccess = {};
+
+  useEffect(() => {
+    tempAccess.accessToken = getCookie("accessToken");
+    if (tempAccess.accessToken) {
+      getUserQuestionList("", currentPage - 1, "", tempAccess);
+    }
+  }, []);
 
   const onClickWriteAnswer = () => {
     setModal(!modal);
@@ -224,10 +254,44 @@ const QuestionDetail = (pageId) => {
               </div>
 
               <div className="right_area btn_area">
-                <Link href="#" className="prev">
+                <Link
+                  href={
+                    currentIndex === undefined
+                      ? "#"
+                      : questionList[currentIndex - 1]?.questionId !== undefined
+                      ? `/question/${
+                          questionList[currentIndex - 1]?.questionId
+                        }?currentPage=${currentPage}`
+                      : "#"
+                  }
+                  className={
+                    currentIndex === undefined
+                      ? ""
+                      : questionList[currentIndex - 1]?.questionId === undefined
+                      ? styles.disabled
+                      : ""
+                  }
+                >
                   이전
                 </Link>
-                <Link href="#" className="next">
+                <Link
+                  href={
+                    currentIndex === undefined
+                      ? "#"
+                      : questionList[currentIndex + 1]?.questionId !== undefined
+                      ? `/question/${
+                          questionList[currentIndex + 1]?.questionId
+                        }?currentPage=${currentPage}`
+                      : "#"
+                  }
+                  className={
+                    currentIndex === undefined
+                      ? ""
+                      : questionList[currentIndex + 1]?.questionId === undefined
+                      ? styles.disabled
+                      : ""
+                  }
+                >
                   다음
                 </Link>
               </div>
@@ -250,7 +314,7 @@ const QuestionDetail = (pageId) => {
                     <b>{userInfo?.nickname}</b> 님
                   </span>
                   <span className={styles.count}>
-                    작성한 질문 수{/* <b>{User.qnas.length}</b> */}
+                    남은 질문 수 <b>{userSubscribeInfo?.[0]?.questionCount}</b>
                   </span>
                 </div>
                 <figure>

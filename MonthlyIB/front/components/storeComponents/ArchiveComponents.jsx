@@ -60,9 +60,7 @@ const ArchiveComponents = () => {
   const onSelectFile = (e) => {
     e.preventDefault();
     e.persist();
-    console.log(e.target.files);
     file.current = e.target.files[0];
-    console.log(file.current);
     postFile(currentFolderId, file.current, userInfo);
     setKey(Date.now());
   };

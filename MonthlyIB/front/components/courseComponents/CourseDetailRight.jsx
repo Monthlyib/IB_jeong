@@ -9,11 +9,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { coursePostUser } from "@/apis/courseAPI";
 import { useCourseStore } from "@/store/course";
 import { getCookie } from "@/apis/cookies";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 
 const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   const router = useRouter();
@@ -21,6 +21,18 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   const accessToken = getCookie("accessToken");
   const { userInfo } = useUserInfo();
   const { deleteCourseItem } = useCourseStore();
+
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser)
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+  }, []);
 
   const onClickEdit = useCallback(() => {
     router.push(`/course/write?type=edit&videoLessonsId=${pageId}`);
@@ -32,8 +44,12 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   }, []);
 
   const onClickTakeCourse = () => {
-    coursePostUser(parseInt(pageId), { accessToken });
+    if (userSubscribeInfo?.[0]?.subscribeStatus === "WAIT")
+      coursePostUser(parseInt(pageId), { accessToken });
   };
+
+  console.log(userSubscribeInfo);
+  console.log(userSubscribeInfo?.[0]?.subscribeStatus === "WAIT");
 
   return (
     <div className={styles.course_right}>
@@ -70,7 +86,20 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
           </div>
         </div>
         <div className={styles.center_btn_wrap} onClick={onClickTakeCourse}>
-          <Link href={`/course/player/${pageId}`}>수강하기</Link>
+          <Link
+            href={
+              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT"
+                ? `/course/player/${pageId}`
+                : "#"
+            }
+            className={
+              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT"
+                ? ""
+                : styles.disabled
+            }
+          >
+            수강하기
+          </Link>
         </div>
 
         {userInfo?.authority === "ADMIN" && (
