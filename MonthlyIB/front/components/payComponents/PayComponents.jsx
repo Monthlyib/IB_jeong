@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSubscribeStore } from "@/store/subscribe";
+import Link from "next/link";
 
 const PayComponents = () => {
   const router = useRouter();
@@ -206,6 +207,18 @@ const PayComponents = () => {
               <button type="submit" onClick={onSumbitPay}>
                 구매하기
               </button>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                fontSize: "1.1rem",
+                marginTop: "0.5rem",
+              }}
+            >
+              <Link href="/refundpolicy" className={styles.refund}>
+                환불정책
+              </Link>
             </div>
           </div>
         </div>

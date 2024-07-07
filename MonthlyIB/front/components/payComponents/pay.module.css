@@ -1,3 +1,6 @@
+.refund:hover {
+  text-decoration: underline;
+}
 .pay .header_tit_wrap {
   padding: 5.6rem 0 3.8rem;
 }
