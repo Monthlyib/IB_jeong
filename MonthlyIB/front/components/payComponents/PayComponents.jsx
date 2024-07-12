@@ -133,8 +133,6 @@ const PayComponents = () => {
                 <div className={styles.product_item_info}>
                   <div className={styles.product_item_nm}>
                     <p>{planName} PLAN</p>
-
-                    <span>월 자동결제</span>
                   </div>
                   <div className={styles.product_item_price}>
                     <div className={styles.product_price_cont}>
