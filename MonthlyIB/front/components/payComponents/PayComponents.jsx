@@ -87,7 +87,6 @@ const PayComponents = () => {
       ];
       setOriPrice(newOriPriceArray[index]);
       saledPrice.current = subscribeDataList[planName][index].price;
-      console.log(saledPrice.current);
     }
   }, [subscribeDataList]);
   if (!planName || !months) {
@@ -203,7 +202,12 @@ const PayComponents = () => {
 
             <div className={styles.pay_box_bottom}>
               <button type="submit" onClick={onSumbitPay}>
-                구매하기
+                <Link
+                  href={`/tosspay?planName=${planName}&months=${months}`}
+                  style={{ color: "#fff" }}
+                >
+                  구매하기
+                </Link>
               </button>
             </div>
             <div
