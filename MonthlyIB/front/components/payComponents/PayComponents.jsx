@@ -203,7 +203,7 @@ const PayComponents = () => {
             <div className={styles.pay_box_bottom}>
               <Link
                 href={`/tosspay?planName=${planName}&months=${months}`}
-                style={{ color: "#fff" }}
+                style={{ color: "#fff", width: "100%" }}
               >
                 <button type="submit" onClick={onSumbitPay}>
                   구매하기
