@@ -1,9 +1,13 @@
+import { Suspense } from "react";
+import Loading from "@/components/Loading";
 import TossCheckOut from "@/components/payComponents/TossCheckOut";
 
 const TossWidget = () => {
   return (
     <>
-      <TossCheckOut />
+      <Suspense fallback={<Loading />}>
+        <TossCheckOut />
+      </Suspense>
     </>
   );
 };
