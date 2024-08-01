@@ -201,14 +201,14 @@ const PayComponents = () => {
             </div>
 
             <div className={styles.pay_box_bottom}>
-              <button type="submit" onClick={onSumbitPay}>
-                <Link
-                  href={`/tosspay?planName=${planName}&months=${months}`}
-                  style={{ color: "#fff" }}
-                >
+              <Link
+                href={`/tosspay?planName=${planName}&months=${months}`}
+                style={{ color: "#fff" }}
+              >
+                <button type="submit" onClick={onSumbitPay}>
                   구매하기
-                </Link>
-              </button>
+                </button>
+              </Link>
             </div>
             <div
               style={{
