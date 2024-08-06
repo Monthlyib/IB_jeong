@@ -1,0 +1,27 @@
+.result_wrapper {
+  display: flex;
+  margin: 0 auto;
+  padding-top: 18rem;
+  height: 700px;
+  width: 100%;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+}
+
+.box_selection {
+  height: 35rem;
+  border: 1px solid black;
+  margin-bottom: 5rem;
+  padding: 5rem;
+}
+
+.box_selection h2 {
+  font-size: 6rem;
+  margin-bottom: 3rem;
+}
+
+.box_selection p {
+  font-size: 2rem;
+  margin-bottom: 3rem;
+}
