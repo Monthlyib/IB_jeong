@@ -169,7 +169,7 @@ export function TossCheckOut() {
               // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
               // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
               await widgets.requestPayment({
-                orderId: "2-Vh4kU3pvIT2rxiwOg7r",
+                orderId: "2-Vh4kU3pvIT2rxiwO37r",
                 orderName: `MonthlyIB ${planName} ${months} 결제`,
                 successUrl: window.location.origin + "/success",
                 failUrl: window.location.origin + "/fail",
