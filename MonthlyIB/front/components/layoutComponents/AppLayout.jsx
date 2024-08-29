@@ -12,6 +12,7 @@ import MobileAppLayout from "./MobileAppLayout";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useUserInfo } from "@/store/user";
+import { adjustWindowSize } from "@/utils/utils";
 
 const AppLayout = ({ children, disable }) => {
   const pathName = usePathname();
@@ -33,22 +34,7 @@ const AppLayout = ({ children, disable }) => {
   }, [mouseOverMenu]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const handleResize = () => {
-        setWindowSize({
-          width: window.innerWidth,
-        });
-      };
-      window.addEventListener("resize", handleResize);
-      handleResize();
-
-      return () => window.removeEventListener("resize", handleResize);
-    } else {
-      return () =>
-        window.removeEventListener("resize", () => {
-          return null;
-        });
-    }
+    adjustWindowSize(setWindowSize);
   }, []);
 
   return (

@@ -36,6 +36,7 @@
     "react-fontawesome": "^1.7.1",
     "react-quill": "^2.0.0",
     "react-spinners": "^0.13.8",
+    "run": "^1.5.0",
     "sharp": "^0.33.4",
     "shortid": "^2.2.16",
     "swiper": "^8.4.7",

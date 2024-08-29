@@ -55,7 +55,6 @@ const LEVELS = {
   SL: 25,
   HL: 26,
 };
-// https://youtu.be/HYcesdzTJ18
 
 const CoursePostWrite = () => {
   const router = useRouter();

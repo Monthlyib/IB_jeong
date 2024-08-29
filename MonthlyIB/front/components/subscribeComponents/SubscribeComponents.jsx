@@ -3,6 +3,7 @@ import styles from "./Subscribe.module.css";
 import { useEffect, useState } from "react";
 import SubscribeItems from "./SubscribeItems";
 import { useSubscribeStore } from "@/store/subscribe";
+import { getKnitSubscribeDataList } from "@/utils/utils";
 import shortid from "shortid";
 
 const SubscribeComponents = () => {
@@ -15,44 +16,8 @@ const SubscribeComponents = () => {
     getSubscribeList();
   }, []);
 
-  const planNames = [];
-
   useEffect(() => {
-    const temp = [];
-    temp.push(
-      subscribeList.filter((item, index, array) => {
-        return array.findIndex((i) => i.title === item.title) === index;
-      })
-    );
-
-    for (let i = 0; i < temp[0].length; i++) {
-      if (!temp[0][i].title.includes("ORI")) {
-        planNames.push(temp[0][i].title);
-      }
-    }
-
-    const tempObj = {};
-    const newTempObj = {};
-    let testingObj = {};
-
-    for (let i = 0; i < planNames.length; i++) {
-      if (!Object.keys(tempObj).includes(planNames[i])) {
-        tempObj[planNames[i]] = subscribeList.filter((item) => {
-          return item.title === planNames[i];
-        });
-        const entris = Object.entries(
-          Object.values(tempObj[planNames[i]])
-        ).sort((a, b) => a[1].subscribeMonthPeriod - b[1].subscribeMonthPeriod);
-        let j = 0;
-        for (let val of entris) {
-          testingObj[j] = val[1];
-          j++;
-        }
-        newTempObj[planNames[i]] = testingObj;
-        testingObj = {};
-      }
-    }
-    setSubscribeDataList(newTempObj);
+    getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
 
   return (

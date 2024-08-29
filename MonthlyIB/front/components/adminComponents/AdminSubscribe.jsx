@@ -7,6 +7,7 @@ import { useSubscribeStore } from "@/store/subscribe";
 import shortid from "shortid";
 import { useUserInfo } from "@/store/user";
 import AdminSubscribeModal from "./AdminSubscribeModal";
+import { getKnitSubscribeDataList } from "@/utils/utils";
 
 const AdminSubscribe = () => {
   const {
@@ -111,32 +112,8 @@ const AdminSubscribe = () => {
     }
   }, [item]);
 
-  const planNames = [];
-
   useEffect(() => {
-    const temp = [];
-    temp.push(
-      subscribeList.filter((item, index, array) => {
-        return array.findIndex((i) => i.title === item.title) === index;
-      })
-    );
-
-    for (let i = 0; i < temp[0].length; i++) {
-      if (!temp[0][i].title.includes("ORI")) {
-        planNames.push(temp[0][i].title);
-      }
-    }
-
-    const tempObj = {};
-
-    for (let i = 0; i < planNames.length; i++) {
-      if (!Object.keys(tempObj).includes(planNames[i])) {
-        tempObj[planNames[i]] = subscribeList.filter((item) => {
-          return item.title === planNames[i];
-        });
-      }
-    }
-    setSubscribeDataList(tempObj);
+    getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
 
   return (

@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { payConfirm } from "@/apis/payAPI";
 import styles from "./PaySuccess.module.css";
 
 export function PaySuccess() {
@@ -13,36 +14,30 @@ export function PaySuccess() {
     // 클라이언트에서 결제 금액을 조작하는 행위를 방지할 수 있습니다.
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
     const requestData = {
+      subscribeId: searchParams.get("subscribeId"),
       orderId: searchParams.get("orderId"),
       amount: searchParams.get("amount"),
       paymentKey: searchParams.get("paymentKey"),
     };
 
-    async function confirm() {
-      const response = await fetch(
-        "https://monthlyib.server-get.site/api/order/confirm",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: localUserInfo.state.userInfo.accessToken,
-          },
-          body: JSON.stringify(requestData),
-        }
+    async function confirm(requestData) {
+      const res = await payConfirm(
+        requestData.subscribeId,
+        requestData.orderId,
+        requestData.amount,
+        requestData.paymentKey,
+        localUserInfo.state.userInfo
       );
-
-      const json = await response.json();
-
-      if (!response.ok) {
-        // 결제 실패 비즈니스 로직을 구현하세요.
+      const json = await res.json();
+      if (!res.ok) {
         router.push(`/fail?message=${json.message}&code=${json.code}`);
         return;
       } else {
         console.log("pay success");
       }
-      // 결제 성공 비즈니스 로직을 구현하세요.
     }
-    confirm();
+
+    confirm(requestData);
   }, []);
 
   return (

@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./IbComponents.module.css";
 import IbItems from "./IbItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,6 +9,7 @@ import Link from "next/link";
 
 import { useIBStore } from "@/store/ib";
 import { useUserInfo } from "@/store/user";
+import { adjustWindowSize } from "@/utils/utils";
 
 const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,20 +39,7 @@ const IbComponents = () => {
   }, [searching]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const handleResize = () => {
-        setWindowSize(window.innerWidth);
-      };
-      window.addEventListener("resize", handleResize);
-      handleResize();
-
-      return () => window.removeEventListener("resize", handleResize);
-    } else {
-      return () =>
-        window.removeEventListener("resize", () => {
-          return null;
-        });
-    }
+    adjustWindowSize(setWindowSize);
   }, []);
 
   return (

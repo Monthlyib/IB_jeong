@@ -111,7 +111,6 @@ const QuestionDetail = (pageId) => {
 
   useEffect(() => {
     getQuestionDetail(pageId?.pageId);
-    console.log(questionDetail);
   }, []);
 
   return (

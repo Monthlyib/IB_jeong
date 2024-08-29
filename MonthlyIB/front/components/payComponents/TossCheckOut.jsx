@@ -4,9 +4,21 @@ import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
 import { useSubscribeStore } from "@/store/subscribe";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { getKnitSubscribeDataList } from "@/utils/utils";
 
-const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
 const customerKey = "08D4TrdP_HlECaXa-K44O";
+
+function generateOrderId(length) {
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    const randomIndex = Math.floor(Math.random() * chars.length);
+    result += chars[randomIndex];
+  }
+  return result;
+}
 
 export function TossCheckOut() {
   const [amount, setAmount] = useState({
@@ -35,52 +47,18 @@ export function TossCheckOut() {
       setUserNickname(localUserInfo.state.userInfo.nickname);
     }
   }, []);
-  const planNames = [];
 
   if (!planName || !months) {
     return <></>;
   }
 
   useEffect(() => {
-    const temp = [];
-    temp.push(
-      subscribeList.filter((item, index, array) => {
-        return array.findIndex((i) => i.title === item.title) === index;
-      })
-    );
-
-    for (let i = 0; i < temp[0].length; i++) {
-      if (!temp[0][i].title.includes("ORI")) {
-        planNames.push(temp[0][i].title);
-      }
-    }
-
-    const tempObj = {};
-    const newTempObj = {};
-    let testingObj = {};
-
-    for (let i = 0; i < planNames.length; i++) {
-      if (!Object.keys(tempObj).includes(planNames[i])) {
-        tempObj[planNames[i]] = subscribeList.filter((item) => {
-          return item.title === planNames[i];
-        });
-        const entris = Object.entries(
-          Object.values(tempObj[planNames[i]])
-        ).sort((a, b) => a[1].subscribeMonthPeriod - b[1].subscribeMonthPeriod);
-        let j = 0;
-        for (let val of entris) {
-          testingObj[j] = val[1];
-          j++;
-        }
-        newTempObj[planNames[i]] = testingObj;
-        testingObj = {};
-      }
-    }
-    setSubscribeDataList(newTempObj);
+    getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
 
   useEffect(() => {
     if (Object.keys(subscribeDataList).length > 0) {
+      console.log(subscribeDataList);
       const temp = { ...amount };
       temp["value"] = subscribeDataList[planName][index].price;
       setAmount(temp);
@@ -137,7 +115,7 @@ export function TossCheckOut() {
   }, [widgets, amount]);
 
   return (
-    <div className="wrapper">
+    <div className="wrapper" style={{ marginTop: "5rem" }}>
       <div className="box_section">
         {/* 결제 UI */}
         <div id="payment-method" />
@@ -169,13 +147,14 @@ export function TossCheckOut() {
               // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
               // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
               await widgets.requestPayment({
-                orderId: "2-Vh4kU3pvIT2rxiwO37r",
+                orderId: generateOrderId(21),
                 orderName: `MonthlyIB ${planName} ${months} 결제`,
-                successUrl: window.location.origin + "/success",
+                successUrl:
+                  window.location.origin +
+                  `/success?subscribeId=${searchParams.get("subscribeId")}`,
                 failUrl: window.location.origin + "/fail",
                 customerEmail: email,
                 customerName: userNickname,
-                // customerMobilePhone: "01012341234",
               });
             } catch (error) {
               // 에러 처리하기

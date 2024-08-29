@@ -64,6 +64,7 @@ const CourseDetail = (pageId) => {
   }, [modalFixed]);
 
   useEffect(() => {
+    // Review 점수 표현
     reviewValHolder = 0;
     setReviewAvgPoint(0);
     for (let i = 1; i < 6; i++) {

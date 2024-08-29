@@ -48,9 +48,6 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
       coursePostUser(parseInt(pageId), { accessToken });
   };
 
-  console.log(userSubscribeInfo);
-  console.log(userSubscribeInfo?.[0]?.subscribeStatus === "WAIT");
-
   return (
     <div className={styles.course_right}>
       <div className={styles.course_info_cont}>

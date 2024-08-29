@@ -22,6 +22,7 @@ const PayComponents = () => {
   const [subscribeDataList, setSubscribeDataList] = useState({});
 
   const saledPrice = useRef();
+  const [subscribeId, setSubscribeId] = useState();
   const [oriPrice, setOriPrice] = useState("");
 
   const [email, setEmail] = useState("");
@@ -78,6 +79,10 @@ const PayComponents = () => {
   }, [subscribeList]);
 
   useEffect(() => {
+    console.log(subscribeDataList);
+  }, [subscribeDataList]);
+
+  useEffect(() => {
     if (Object.keys(subscribeDataList).length > 0) {
       const newOriPriceArray = [
         null,
@@ -87,6 +92,7 @@ const PayComponents = () => {
       ];
       setOriPrice(newOriPriceArray[index]);
       saledPrice.current = subscribeDataList[planName][index].price;
+      setSubscribeId(subscribeDataList[planName][index].subscriberId);
     }
   }, [subscribeDataList]);
   if (!planName || !months) {
@@ -202,7 +208,7 @@ const PayComponents = () => {
 
             <div className={styles.pay_box_bottom}>
               <Link
-                href={`/tosspay?planName=${planName}&months=${months}`}
+                href={`/tosspay?planName=${planName}&months=${months}&subscribeId=${subscribeId}`}
                 style={{ color: "#fff", width: "100%" }}
               >
                 <button type="submit" onClick={onSumbitPay}>
