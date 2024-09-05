@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useSubscribeStore } from "@/store/subscribe";
+import { getKnitSubscribeDataList } from "@/utils/utils";
 import Link from "next/link";
 
 const PayComponents = () => {
@@ -14,10 +15,6 @@ const PayComponents = () => {
   const planName = searchParams.get("planName");
   const months = searchParams.get("months");
   const { userInfo } = useUserInfo();
-  const monthsArray = ["1개월", "3개월", "6개월", "12개월"];
-
-  const index = monthsArray.findIndex((v) => v === months);
-
   const { subscribeList, getSubscribeList } = useSubscribeStore();
   const [subscribeDataList, setSubscribeDataList] = useState({});
 
@@ -26,8 +23,6 @@ const PayComponents = () => {
   const [oriPrice, setOriPrice] = useState("");
 
   const [email, setEmail] = useState("");
-
-  const planNames = [];
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -41,60 +36,8 @@ const PayComponents = () => {
   }, [planName]);
 
   useEffect(() => {
-    const temp = [];
-    temp.push(
-      subscribeList.filter((item, index, array) => {
-        return array.findIndex((i) => i.title === item.title) === index;
-      })
-    );
-
-    for (let i = 0; i < temp[0].length; i++) {
-      if (!temp[0][i].title.includes("ORI")) {
-        planNames.push(temp[0][i].title);
-      }
-    }
-
-    const tempObj = {};
-    const newTempObj = {};
-    let testingObj = {};
-
-    for (let i = 0; i < planNames.length; i++) {
-      if (!Object.keys(tempObj).includes(planNames[i])) {
-        tempObj[planNames[i]] = subscribeList.filter((item) => {
-          return item.title === planNames[i];
-        });
-        const entris = Object.entries(
-          Object.values(tempObj[planNames[i]])
-        ).sort((a, b) => a[1].subscribeMonthPeriod - b[1].subscribeMonthPeriod);
-        let j = 0;
-        for (let val of entris) {
-          testingObj[j] = val[1];
-          j++;
-        }
-        newTempObj[planNames[i]] = testingObj;
-        testingObj = {};
-      }
-    }
-    setSubscribeDataList(newTempObj);
+    getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
-
-  useEffect(() => {
-    console.log(subscribeDataList);
-  }, [subscribeDataList]);
-
-  useEffect(() => {
-    if (Object.keys(subscribeDataList).length > 0) {
-      const newOriPriceArray = [
-        null,
-        subscribeDataList[planName][0].price * 3,
-        subscribeDataList[planName][0].price * 6,
-        subscribeDataList[planName][0].price * 12,
-      ];
-      setOriPrice(newOriPriceArray[index]);
-      saledPrice.current = subscribeDataList[planName][index].price;
-      setSubscribeId(subscribeDataList[planName][index].subscriberId);
-    }
-  }, [subscribeDataList]);
   if (!planName || !months) {
     return <></>;
   }

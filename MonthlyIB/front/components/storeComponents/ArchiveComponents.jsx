@@ -28,7 +28,6 @@ const ArchiveComponents = () => {
   const [folderTitle, setFolderTitle] = useState("");
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
-  const [level, setLevel] = useState(0);
   const [folderNameModal, setFolderNameModal] = useState(false);
 
   useEffect(() => {
@@ -99,7 +98,7 @@ const ArchiveComponents = () => {
             onClickCreateFolder={onClickCreateFolder}
             file={file}
             onSelectFile={onSelectFile}
-            key={key}
+            key={shortid.generate()}
           />
         )}
         {currentFolderId !== 0 ? (

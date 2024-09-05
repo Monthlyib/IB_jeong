@@ -32,6 +32,7 @@ const ArchiveItems = ({
     if (localUser)
       getUserSubscribeInfo(
         localUser.state.userInfo.userId,
+        0,
         localUser.state.userInfo
       );
   }, []);
@@ -57,7 +58,7 @@ const ArchiveItems = ({
     );
   };
   const onClickFile = (fileUrl) => {
-    if (userSubscribeInfo?.[0]?.subscribeStatus === "WAIT") {
+    if (userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") {
       const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
       if (newWindow) newWindow.opener = null;
     }

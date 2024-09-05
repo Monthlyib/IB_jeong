@@ -16,6 +16,7 @@ const USUniversityList = {
     "University of Pennsylvania",
     "Williams College",
     "Yale",
+    "a university",
   ],
   43: [
     "Duke University",

@@ -4,6 +4,10 @@ export const getKnitSubscribeDataList = (
 ) => {
   const planNames = [];
   const temp = [];
+  const tempObj = {};
+  const newTempObj = {};
+  let testingObj = {};
+
   temp.push(
     subscribeList.filter((item, index, array) => {
       return array.findIndex((i) => i.title === item.title) === index;
@@ -15,10 +19,6 @@ export const getKnitSubscribeDataList = (
       planNames.push(temp[0][i].title);
     }
   }
-
-  const tempObj = {};
-  const newTempObj = {};
-  let testingObj = {};
 
   for (let i = 0; i < planNames.length; i++) {
     if (!Object.keys(tempObj).includes(planNames[i])) {
