@@ -88,7 +88,7 @@ const MainMid = () => {
             </Link>
           </li>
           <li>
-            <Link href="/borad/download">
+            <Link href="/board/download">
               <span>
                 자료실 <FontAwesomeIcon icon={faAngleRight} />
               </span>
