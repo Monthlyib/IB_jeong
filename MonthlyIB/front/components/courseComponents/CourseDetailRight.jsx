@@ -44,7 +44,7 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   }, []);
 
   const onClickTakeCourse = () => {
-    if (userSubscribeInfo?.[0]?.subscribeStatus === "WAIT")
+    if (userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE")
       coursePostUser(parseInt(pageId), { accessToken });
   };
 
