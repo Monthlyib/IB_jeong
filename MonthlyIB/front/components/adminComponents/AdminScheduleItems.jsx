@@ -3,10 +3,13 @@ import styles from "./AdminStyle.module.css";
 import Paginatation from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useUserInfo } from "@/store/user";
 import { useTutoringStore } from "@/store/tutoring";
 import shortid from "shortid";
+import { mailPost } from "@/apis/mail";
+import AdminScheduleModal from "./AdminSchedulemodal";
+
 const AdminScheduleItems = ({
   tutoringDateList,
   currentPage,
@@ -14,10 +17,10 @@ const AdminScheduleItems = ({
   onPageChange,
 }) => {
   const [modal, setModal] = useState(false);
+  const [mailModal, setMailModal] = useState(false);
   const [ind, setInd] = useState();
   const [detail, setDetail] = useState("");
   const [status, setStatus] = useState("");
-  const closeRef = useRef();
 
   const { userInfo } = useUserInfo();
   const { reviseTutoring, deleteTutoring } = useTutoringStore();
@@ -38,6 +41,11 @@ const AdminScheduleItems = ({
     );
   };
 
+  const onSubmitMail = () => {
+    setMailModal(false);
+    mailPost(paginatedPage[ind]?.requestUserId, detail, userInfo);
+  };
+
   const onSubmitDeleteTutoring = () => {
     setModal(false);
     deleteTutoring(paginatedPage[ind]?.tutoringId, userInfo, currentPage);
@@ -47,6 +55,12 @@ const AdminScheduleItems = ({
     setModal(!modal);
     setInd(index);
   };
+
+  const onClickMail = (index) => {
+    setMailModal(!mailModal);
+    setInd(index);
+  };
+
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
     return _(items).slice(startIndex).take(numShowContents).value();
@@ -67,7 +81,10 @@ const AdminScheduleItems = ({
             <span>{t.tutoringStatus === "WAIT" ? "대기" : "확정"}</span>
             <span>
               <FontAwesomeIcon icon={faPen} onClick={() => onClickEdit(i)} />
-              <FontAwesomeIcon icon={faEnvelope} />
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                onClick={() => onClickMail(i)}
+              />
             </span>
           </div>
           <hr />
@@ -82,77 +99,31 @@ const AdminScheduleItems = ({
         />
       )}
 
-      {modal === true && (
-        <div className={styles.md}>
-          <div
-            className={styles.md_box_flex}
-            ref={closeRef}
-            onClick={(e) => closeRef.current === e.target && setModal(false)}
-          >
-            <div
-              className={styles.admin_box}
-              style={{ width: "60rem", position: "relative" }}
-            >
-              <div className={styles.md_top}>
-                <div className={styles.tit} style={{ marginBottom: "5srem" }}>
-                  {paginatedPage[ind]?.requestUsername} 님의 스케쥴 요청
-                </div>
-                <div
-                  style={{
-                    position: "relative",
-                    textAlign: "left",
-                    fontSize: "2rem",
-                    marginBottom: "2rem",
-                  }}
-                >
-                  상세내용
-                </div>
-                <textarea
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    height: "20rem",
-                    fontSize: "1.8rem",
-                    marginBottom: "3rem",
-                  }}
-                  type="text"
-                  value={detail}
-                  onChange={(e) => {
-                    setDetail(e.target.value);
-                  }}
-                />
-                <span style={{ fontSize: "2rem", marginRight: "2rem" }}>
-                  예약 상태:
-                </span>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                >
-                  <option value="WAIT">대기</option>
-                  <option value="CONFIRM">확정</option>
-                </select>
-              </div>
-              <div className={styles.btn_wrap}>
-                <button
-                  type="button"
-                  className={styles.ok}
-                  onClick={onSubmitChangeTutoring}
-                >
-                  확인
-                </button>
-                <button
-                  type="button"
-                  className={styles.delete}
-                  onClick={onSubmitDeleteTutoring}
-                >
-                  삭제
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className={styles.md_dim}></div>
-        </div>
-      )}
+      <AdminScheduleModal
+        modal={modal}
+        setModal={setModal}
+        status={status}
+        title={"스케쥴 요청"}
+        requestUsername={paginatedPage[ind]?.requestUsername}
+        detail={detail}
+        setDetail={setDetail}
+        setStatus={setStatus}
+        onSubmitChange={onSubmitChangeTutoring}
+        onSubmitDelete={onSubmitDeleteTutoring}
+      />
+
+      <AdminScheduleModal
+        modal={mailModal}
+        setModal={setMailModal}
+        title={"메일 보내기"}
+        status={null}
+        requestUsername={paginatedPage[ind]?.requestUsername}
+        detail={detail}
+        setDetail={setDetail}
+        setStatus={null}
+        onSubmitChange={onSubmitMail}
+        onSubmitDelete={null}
+      />
     </>
   );
 };
