@@ -29,7 +29,7 @@ const AdminQuestion = () => {
             <AdminQuestionItems
               questionList={questionList}
               currentPage={currentPage}
-              numShowContents={30}
+              numShowContents={10}
               onPageChange={handlePageChange}
             />
           </>

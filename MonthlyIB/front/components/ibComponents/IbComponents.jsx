@@ -81,7 +81,7 @@ const IbComponents = () => {
             <IbItems
               IBContents={ibPosts}
               currentPage={currentPage}
-              numShowContents={windowSize > 640 ? 6 : 4}
+              numShowContents={6}
               onPageChange={handlePageChange}
             />
           </div>

@@ -7,7 +7,7 @@ const MyPageScheduleListItems = ({
   currentPage,
   onPageChange,
 }) => {
-  const numShowContents = 30;
+  const numShowContents = 10;
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
     return _(items).slice(startIndex).take(numShowContents).value();

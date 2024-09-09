@@ -44,7 +44,7 @@ const AdminSchedule = () => {
         <AdminScheduleItems
           tutoringDateList={tutoringDateList?.tutoring?.data}
           currentPage={currentPage}
-          numShowContents={30}
+          numShowContents={10}
           onPageChange={handlePageChange}
         />
       </div>

@@ -16,7 +16,8 @@ import {
   subscribeReviseUser,
 } from "@/apis/subscribeAPI";
 import { getKnitSubscribeDataList } from "@/utils/utils";
-
+// 15명씩
+// Refactoring 할것.
 const AdminUser = () => {
   const { userInfo } = useUserInfo();
   const { userList, userDetailInfo, getUserInfo, reviseUserInfo } =
