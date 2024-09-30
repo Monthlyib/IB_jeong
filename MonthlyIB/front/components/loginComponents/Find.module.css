@@ -135,7 +135,7 @@
   width: 100%;
 }
 
-.center_btn_wrap a {
+.center_btn_wrap button {
   display: flex;
   justify-content: center;
   align-items: center;
