@@ -44,7 +44,7 @@ export const openAPIVerifyEmail = async (email) => {
   }
 };
 
-export const openAPIVerifyNum = async (email, verifyNum) => {
+export const openAPIVerifyNum = async (email, verifyNum, pwdReset = false) => {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/verify-num`,
@@ -56,6 +56,7 @@ export const openAPIVerifyNum = async (email, verifyNum) => {
         body: JSON.stringify({
           email: email.current,
           verifyNum: verifyNum.current,
+          pwdReset: pwdReset,
         }),
       }
     );
