@@ -85,12 +85,12 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
         <div className={styles.center_btn_wrap} onClick={onClickTakeCourse}>
           <Link
             href={
-              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT"
+              userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE"
                 ? `/course/player/${pageId}`
                 : "#"
             }
             className={
-              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT"
+              userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE"
                 ? ""
                 : styles.disabled
             }
