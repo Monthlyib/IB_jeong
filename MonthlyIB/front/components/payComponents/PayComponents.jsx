@@ -18,7 +18,7 @@ const PayComponents = () => {
   const { subscribeList, getSubscribeList } = useSubscribeStore();
   const [subscribeDataList, setSubscribeDataList] = useState({});
 
-  const saledPrice = useRef();
+  const saledPrice = useRef(0); // 초기값을 0으로 설정하여 undefined 방지
   const [subscribeId, setSubscribeId] = useState();
   const [oriPrice, setOriPrice] = useState("");
 
@@ -26,9 +26,11 @@ const PayComponents = () => {
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
+
     getSubscribeList();
     if (localUserInfo) setEmail(localUserInfo.state.userInfo.email);
   }, []);
+
   useEffect(() => {
     if (planName === undefined) {
       router.push("/subscribe");
@@ -38,6 +40,13 @@ const PayComponents = () => {
   useEffect(() => {
     getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
+
+  useEffect(() => {
+    if (subscribeDataList[planName]) {
+      saledPrice.current = subscribeDataList[planName][0]?.price || 0;
+    }
+  }, [subscribeDataList, planName]);
+
   if (!planName || !months) {
     return <></>;
   }

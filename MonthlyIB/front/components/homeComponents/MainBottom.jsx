@@ -21,7 +21,7 @@ const MainBottom = () => {
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-    if (localUserInfo.state.userInfo?.userId !== undefined) {
+    if (localUserInfo?.state.userInfo?.userId !== undefined) {
       getUserCourseList(
         localUserInfo.state.userInfo?.userId,
         currentPage - 1,
