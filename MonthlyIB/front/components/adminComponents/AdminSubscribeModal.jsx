@@ -3,6 +3,7 @@ import styles from "./AdminStyle.module.css";
 import { ChromePicker } from "react-color";
 import { useUserInfo } from "@/store/user";
 import { useSubscribeStore } from "@/store/subscribe";
+
 const AdminSubscribeModal = ({
   mode,
   title,
@@ -57,25 +58,20 @@ const AdminSubscribeModal = ({
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div className={styles.md_top}>
               <div className={styles.tit}>
-                {mode === "edit" ? (
-                  `${title} 수정`
-                ) : (
-                  <input
-                    type="text"
-                    required="Y"
-                    placeholder="상품 이름 입력"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                  />
-                )}
+                <input
+                  type="text"
+                  required
+                  placeholder="상품 이름 입력"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
               </div>
               <div className={styles.subscribe_price_flex}>
                 <span>1개월 가격</span>
                 <input
                   type="number"
-                  autoFocus="true"
                   autoComplete="off"
-                  required="Y"
+                  required
                   placeholder="1개월 가격"
                   value={prices[0]}
                   onChange={(e) => onChangePrice(e, 0)}
@@ -85,9 +81,8 @@ const AdminSubscribeModal = ({
                 <span>3개월 가격</span>
                 <input
                   type="number"
-                  autoFocus="true"
                   autoComplete="off"
-                  required="Y"
+                  required
                   placeholder="3개월 가격"
                   value={prices[1]}
                   onChange={(e) => onChangePrice(e, 1)}
@@ -97,9 +92,8 @@ const AdminSubscribeModal = ({
                 <span>6개월 가격</span>
                 <input
                   type="number"
-                  autoFocus="true"
                   autoComplete="off"
-                  required="Y"
+                  required
                   placeholder="6개월 가격"
                   value={prices[2]}
                   onChange={(e) => onChangePrice(e, 2)}
@@ -109,9 +103,8 @@ const AdminSubscribeModal = ({
                 <span>12개월 가격</span>
                 <input
                   type="number"
-                  autoFocus="true"
                   autoComplete="off"
-                  required="Y"
+                  required
                   placeholder="12개월 가격"
                   value={prices[3]}
                   onChange={(e) => onChangePrice(e, 3)}
@@ -121,9 +114,8 @@ const AdminSubscribeModal = ({
                 <span>질문 갯수</span>
                 <input
                   type="number"
-                  autoFocus="true"
                   autoComplete="off"
-                  required="Y"
+                  required
                   placeholder="질문 갯수"
                   value={numQuestions}
                   onChange={(e) => setNumQuestions(e.target.value)}
@@ -133,9 +125,8 @@ const AdminSubscribeModal = ({
                 <span>튜터링 갯수</span>
                 <input
                   type="number"
-                  autoFocus="true"
                   autoComplete="off"
-                  required="Y"
+                  required
                   placeholder="튜터링 갯수"
                   value={numTutoring}
                   onChange={(e) => setNumTutoring(e.target.value)}
@@ -145,9 +136,8 @@ const AdminSubscribeModal = ({
                 <span style={{ fontSize: "1.5rem" }}>영상강의 열람횟수</span>
                 <input
                   type="number"
-                  autoFocus="true"
                   autoComplete="off"
-                  required="Y"
+                  required
                   placeholder="영상강의 열람 횟수"
                   value={videoLessonsCount}
                   onChange={(e) => setVideoLessonsCount(e.target.value)}

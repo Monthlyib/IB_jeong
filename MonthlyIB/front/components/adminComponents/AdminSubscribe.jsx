@@ -10,6 +10,7 @@ import AdminSubscribeModal from "./AdminSubscribeModal";
 import { getKnitSubscribeDataList } from "@/utils/utils";
 
 const AdminSubscribe = () => {
+  // 구독 상품 관련 데이터와 함수들을 구독 스토어에서 가져옴
   const {
     subscribeList,
     getSubscribeList,
@@ -19,6 +20,7 @@ const AdminSubscribe = () => {
   const { userInfo } = useUserInfo();
   const [subscribeDataList, setSubscribeDataList] = useState({});
 
+  // 모달 상태와 관련된 state들
   const [editModal, setEditModal] = useState(false);
   const [postModal, setPostModal] = useState(false);
   const [item, setItem] = useState("");
@@ -30,26 +32,32 @@ const AdminSubscribe = () => {
   const [fontColor, setFontColor] = useState("#000");
   const [content, setContent] = useState("");
   const [videoLessonsCount, setVideoLessonsCount] = useState("");
+  const [subscriberIDList, setSubscribeIDList] = useState([]);
+  const [subscribemonthPeriods, setSubscribeMonthPeriods] = useState([]);
+  const [videoLessonsIDLists, setVideoLessonsIDLists] = useState([]);
 
+  // 구독 상품 수정 제출 함수
   const onSubmitReviseSubscribeItem = (item) => {
     setEditModal(!editModal);
-    for (let i = 0; i < subscribeDataList[item]?.length; i++) {
+    for (let i = 0; i <prices?.length; i++) {
       editSubscribeItem(
-        subscribeDataList[item][i]?.subscriberId,
-        subscribeDataList[item][i]?.title,
+        subscriberIDList[i],
+        title,
         content,
         prices[i],
         numQuestions,
         numTutoring,
-        subscribeDataList[item][i]?.subscribeMonthPeriod,
+        subscribemonthPeriods[i],
         videoLessonsCount,
-        subscribeDataList[item][i]?.videoLessionsIdList,
+        videoLessonsIDLists[i],
         color.hex,
         fontColor.hex,
         userInfo
       );
     }
   };
+
+  // 구독 상품 추가 제출 함수
   const onSubmitPostSubscribeItem = () => {
     setPostModal(!postModal);
     const subscribeMonthPeriod = [1, 3, 6, 12];
@@ -70,6 +78,7 @@ const AdminSubscribe = () => {
     }
   };
 
+  // 구독 상품 추가 모달 열기 함수
   const onClickPostModal = () => {
     setPostModal(!postModal);
     setTitle("");
@@ -82,37 +91,59 @@ const AdminSubscribe = () => {
     setContent("");
   };
 
+  // 가격 변경 처리 함수
   const onChangePrice = (e, i) => {
     const temp = [...prices];
     temp[i] = e.target.value;
     setPrices(temp);
   };
 
+  // 구독 상품 수정 모달 열기 함수
   const onClickEditItem = (itemName) => {
     setEditModal(!editModal);
     setItem(itemName);
+    setTitle(itemName);
   };
+
+  // 컴포넌트 마운트 시 구독 리스트 가져오기
   useEffect(() => {
     getSubscribeList();
   }, []);
 
+  // 선택한 구독 상품의 정보를 수정 모달에 반영
   useEffect(() => {
     const temp = [...prices];
+
     if (item !== "") {
-      for (let i = 0; i < subscribeDataList[item]?.length; i++) {
-        temp[i] = subscribeDataList[item][i]?.price;
-      }
-      setPrices(temp);
+      const newPrices = Object.values(subscribeDataList[item] || {}).map(
+        (data) => data.price
+      );
+      const newIDs = Object.values(subscribeDataList[item] || {}).map(
+        (data) => data.subscriberId
+      );
+      const newPeriods = Object.values(subscribeDataList[item] || {}).map(
+        (data) => data.subscribeMonthPeriod
+      );
+      const newVideosIDs = Object.values(subscribeDataList[item] || {}).map(
+        (data) => data.videoLessonsCount
+      );
+      setPrices(newPrices);
+      setTitle(item)
+      setSubscribeIDList(newIDs);
+      setSubscribeMonthPeriods(newPeriods);
       setNumQuestions(subscribeDataList[item][0]?.questionCount);
       setNumTutoring(subscribeDataList[item][0]?.tutoringCount);
       setColor(subscribeDataList[item][0]?.color);
       setFontColor(subscribeDataList[item][0]?.fontColor);
       setVideoLessonsCount(subscribeDataList[item][0]?.videoLessonsCount);
+      setVideoLessonsIDLists(newVideosIDs);
       setContent(subscribeDataList[item][0]?.content);
     }
   }, [item]);
 
+  // 구독 리스트 데이터를 가공하여 상태에 저장
   useEffect(() => {
+    console.log("Fetching subscribe list...", subscribeList);
     getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
 
@@ -139,6 +170,7 @@ const AdminSubscribe = () => {
           <div style={{ fontSize: "2rem" }}>Tools</div>
         </div>
 
+        {/* 구독 상품 목록 출력 */}
         {Object.keys(subscribeDataList).length > 0 && (
           <>
             {Object.keys(subscribeDataList).map((v) => (
@@ -159,6 +191,7 @@ const AdminSubscribe = () => {
           </>
         )}
 
+        {/* 구독 상품 추가 모달 */}
         {postModal === true && (
           <AdminSubscribeModal
             mode={"post"}
@@ -183,10 +216,11 @@ const AdminSubscribe = () => {
           />
         )}
 
+        {/* 구독 상품 수정 모달 */}
         {editModal === true && (
           <AdminSubscribeModal
             mode={"edit"}
-            title={item}
+            title={title}
             setTitle={setTitle}
             prices={prices}
             onChangePrice={onChangePrice}

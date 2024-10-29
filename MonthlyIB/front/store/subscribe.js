@@ -31,6 +31,7 @@ export const useSubscribeStore = create((set, get) => ({
     session
   ) => {
     try {
+      console.log("function worked", subscribeId)
       await subscribeReviseItem(
         subscribeId,
         title,
