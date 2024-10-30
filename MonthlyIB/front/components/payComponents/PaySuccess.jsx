@@ -28,7 +28,6 @@ export function PaySuccess() {
         requestData.paymentKey,
         localUserInfo.state.userInfo
       );
-      const json = await res.json();
       if (!res.ok) {
         router.push(`/fail?message=${json.message}&code=${json.code}`);
         return;

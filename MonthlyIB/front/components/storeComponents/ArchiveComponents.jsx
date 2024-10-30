@@ -90,9 +90,8 @@ const ArchiveComponents = () => {
         <div className={styles.path_nav}>
           <p>{currentPath}</p>
         </div>
-
-        {userInfo?.authority === "ADMIN" && (
           <ArchiveUpperButtons
+            authority = {userInfo.authority}
             onClickUpFolder={onClickUpFolder}
             currentFolderId={currentFolderId}
             onClickCreateFolder={onClickCreateFolder}
@@ -100,7 +99,6 @@ const ArchiveComponents = () => {
             onSelectFile={onSelectFile}
             key={shortid.generate()}
           />
-        )}
         {currentFolderId !== 0 ? (
           subLists["folders"]?.length > 0 || subLists["files"]?.length > 0 ? (
             <div className={styles.ib_archive_wrap}>

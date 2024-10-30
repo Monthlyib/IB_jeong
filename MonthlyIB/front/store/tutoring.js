@@ -22,6 +22,7 @@ export const useTutoringStore = create((set, get) => ({
     try {
       const res = await TutoringGetDateSimple(date, session);
       set({ tutoringDateSimpleList: res.data });
+      console.log(res.data);
     } catch (error) {
       console.error(error);
     }

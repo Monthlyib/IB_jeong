@@ -8,25 +8,28 @@ import { useSearchParams } from "next/navigation";
 import { useSubscribeStore } from "@/store/subscribe";
 import { getKnitSubscribeDataList } from "@/utils/utils";
 import Link from "next/link";
+import { current } from "@reduxjs/toolkit";
+import { set } from "lodash";
 
 const PayComponents = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const planName = searchParams.get("planName");
   const months = searchParams.get("months");
+  const modal = searchParams.get("modal")
   const { userInfo } = useUserInfo();
   const { subscribeList, getSubscribeList } = useSubscribeStore();
   const [subscribeDataList, setSubscribeDataList] = useState({});
 
-  const saledPrice = useRef(0); // 초기값을 0으로 설정하여 undefined 방지
+  const [saledPrice, setSaledPrice] = useState({current: 0});
   const [subscribeId, setSubscribeId] = useState();
   const [oriPrice, setOriPrice] = useState("");
 
   const [email, setEmail] = useState("");
+  
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-
     getSubscribeList();
     if (localUserInfo) setEmail(localUserInfo.state.userInfo.email);
   }, []);
@@ -43,9 +46,11 @@ const PayComponents = () => {
 
   useEffect(() => {
     if (subscribeDataList[planName]) {
-      saledPrice.current = subscribeDataList[planName][0]?.price || 0;
+      saledPrice.current = subscribeDataList[planName][modal]?.price || 0;
+      setOriPrice(subscribeDataList[planName][0]?.price*(modal== 0 ? 1 : modal*3));
+      setSubscribeId(subscribeDataList[planName][modal]?.subscriberId);
     }
-  }, [subscribeDataList, planName]);
+  }, [subscribeDataList, planName,subscribeList]);
 
   if (!planName || !months) {
     return <></>;

@@ -2,9 +2,18 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Subscribe.module.css";
 import Link from "next/link";
+import { useEffect } from "react";
 
 const SubscribeItems = ({ saledPrice, months, oriPrice, modal, planName }) => {
   const newOriPriceArray = [null, oriPrice * 3, oriPrice * 6, oriPrice * 12];
+
+  useEffect(() => {
+    console.log("saled price : ", saledPrice);
+    console.log("ori: ", oriPrice);
+    console.log("modal: ", modal);
+  }, []);
+
+
   return (
     <>
       <div
@@ -54,7 +63,7 @@ const SubscribeItems = ({ saledPrice, months, oriPrice, modal, planName }) => {
             }}
           >
             <Link
-              href={`/pay?planName=${planName}&months=${months[modal]}`}
+              href={`/pay?planName=${planName}&months=${months[modal]}&modal=${modal}`}
               style={{ color: saledPrice[modal].color }}
             >
               구독하기

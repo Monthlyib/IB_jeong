@@ -78,6 +78,7 @@ export const useUserStore = create((set, get) => ({
   getUserInfo: async (userId, session) => {
     try {
       const res = await userGetInfo(userId, session);
+      console.log(res.data)
       set({ userDetailInfo: res.data });
     } catch (error) {
       console.error(error);
