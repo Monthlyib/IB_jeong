@@ -4,7 +4,7 @@ import styles from "./MyPage.module.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCog, faPlus, faSearch } from "@fortawesome/free-solid-svg-icons";
-import { useRef, useState } from "react";
+import { use, useRef, useState } from "react";
 import Link from "next/link";
 import MyPageArchiveList from "./MyPageArchiveList";
 import MyPageCourseList from "./MyPageCourseList";
@@ -35,6 +35,10 @@ const MyPageComponents = () => {
         localUser.state.userInfo
       );
   }, []);
+
+  useEffect(() => {
+    console.log("유저 구독 정보",userSubscribeInfo?.[0]);
+  }, [userSubscribeInfo]);
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -85,7 +89,7 @@ const MyPageComponents = () => {
                 </Link>
               </div>
               <div className={styles.plan_wrap}>
-                {userSubscribeInfo?.[0]?.subscribeStatus === "WAIT" ? (
+                {userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" ? (
                   <SubscribePlan
                     plan={userSubscribeInfo?.[0]?.title}
                     expirationDate={userSubscribeInfo?.[0]?.expirationDate}

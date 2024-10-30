@@ -7,11 +7,6 @@ import { useEffect } from "react";
 const SubscribeItems = ({ saledPrice, months, oriPrice, modal, planName }) => {
   const newOriPriceArray = [null, oriPrice * 3, oriPrice * 6, oriPrice * 12];
 
-  useEffect(() => {
-    console.log("saled price : ", saledPrice);
-    console.log("ori: ", oriPrice);
-    console.log("modal: ", modal);
-  }, []);
 
 
   return (
