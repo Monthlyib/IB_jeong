@@ -471,7 +471,7 @@
   word-break: keep-all;
 }
 
-.schedule_wrap .schedule_list .schedule_item .schedule_item_right a {
+.schedule_wrap .schedule_list .schedule_item .schedule_item_right button {
   display: block;
   text-decoration: underline;
   text-underline-offset: 3px;

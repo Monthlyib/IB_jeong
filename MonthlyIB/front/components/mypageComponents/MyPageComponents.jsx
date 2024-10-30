@@ -36,9 +36,6 @@ const MyPageComponents = () => {
       );
   }, []);
 
-  useEffect(() => {
-    console.log("유저 구독 정보",userSubscribeInfo?.[0]);
-  }, [userSubscribeInfo]);
 
   useEffect(() => {
     const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));

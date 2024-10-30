@@ -53,7 +53,7 @@ export const useTutoringStore = create((set, get) => ({
   deleteTutoring: async (tutoringId, session, page) => {
     try {
       await TutoringDeleteItem(tutoringId, session);
-      get().getTutoringDateList("", "", page - 1, session);
+      get().getTutoringDateList("", "", page, session);
     } catch (error) {
       console.error(error);
     }

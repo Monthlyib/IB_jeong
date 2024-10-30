@@ -1,18 +1,38 @@
 import styles from "./MyPage.module.css";
 import Paginatation from "@/components/layoutComponents/Paginatation";
 import _ from "lodash";
+import { useEffect } from "react";
 
 const MyPageScheduleListItems = ({
   scheduleContents,
   currentPage,
   onPageChange,
+  onCancelSchedule,
+  userInfo
 }) => {
+  
+  useEffect(()=> {
+    console.log(currentPage)
+    console.log(paginatedPage)
+  },[]);
+
   const numShowContents = 10;
   const paginate = (items, pageNum) => {
     const startIndex = (pageNum - 1) * numShowContents;
     return _(items).slice(startIndex).take(numShowContents).value();
   };
   const paginatedPage = paginate(scheduleContents, currentPage);
+
+  const handleCancel = (tutoringId,status) => {
+    if (status !== "WAIT") {
+      alert("취소할 수 없는 상태입니다.");
+      return;
+    }
+    const isConfirmed = confirm("정말로 예약을 취소하시겠습니까?");
+    if (isConfirmed) {
+      onCancelSchedule(tutoringId,userInfo, currentPage-1); // 예약 취소 핸들러 호출
+    }
+  };
 
   return (
     <>
@@ -57,9 +77,13 @@ const MyPageScheduleListItems = ({
                 <p className={styles.sc_content}>{content.detail}</p>
               </div>
 
-              <a href="#" className={styles.schedule_cancel}>
+              <button
+                type="button"
+                className={styles.schedule_cancel}
+                onClick={() => handleCancel(content.tutoringId, content.tutoringStatus)}
+              >
                 예약취소
-              </a>
+              </button>
             </div>
           </div>
         ))

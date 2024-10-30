@@ -76,7 +76,7 @@ const TutoringComponents = () => {
     // 조건 확인 후, 사용자의 예약이 가능한 경우 예약을 진행
     if (
       userSubscribeInfo?.[0]?.tutoringCount > 0 &&
-      userSubscribeInfo?.[0]?.subscribeStatus === "WAIT"
+      userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE"
     ) {
       postTutoring(
         userInfo?.userId,
@@ -265,7 +265,7 @@ const TutoringComponents = () => {
                       date == "" ||
                       hour == 0 ||
                       userSubscribeInfo?.[0]?.tutoringCount === 0 ||
-                      userSubscribeInfo?.[0]?.subscribeStatus !== "WAIT"
+                      userSubscribeInfo?.[0]?.subscribeStatus !== "ACTIVE"
                     }
                   >
                     <FontAwesomeIcon icon={faCalendarCheck} />

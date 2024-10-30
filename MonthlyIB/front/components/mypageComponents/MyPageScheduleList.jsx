@@ -5,11 +5,12 @@ import MyPageScheduleListItems from "./MyPageScheduleListItems";
 import { useTutoringStore } from "@/store/tutoring";
 import { useEffect, useState } from "react";
 
+
 const MyPageScheduleList = () => {
   const [scheduleByYears, setScheduleByYears] = useState({});
   const { userInfo } = useUserInfo();
   const [currentPage, setCurrentPage] = useState(1);
-  const { tutoringDateList, getTutoringDateList } = useTutoringStore();
+  const { tutoringDateList, getTutoringDateList, deleteTutoring } = useTutoringStore();
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
@@ -28,7 +29,7 @@ const MyPageScheduleList = () => {
 
   useEffect(() => {
     getTutoringDateList("", "", currentPage - 1, userInfo);
-  }, []);
+  }, [currentPage]);
   useEffect(() => {
     if (tutoringDateList?.tutoring?.data.length > 0) {
       const year = [
@@ -72,6 +73,8 @@ const MyPageScheduleList = () => {
                 scheduleContents={scheduleByYears[year]}
                 currentPage={currentPage}
                 onPageChange={handlePageChange}
+                onCancelSchedule={deleteTutoring}
+                userInfo={userInfo}
               />
             </div>
           ))}
