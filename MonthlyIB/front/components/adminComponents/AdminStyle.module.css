@@ -254,6 +254,7 @@
 .md .admin_box .md_top,
 .md .md_box .md_top {
   padding-bottom: 1rem;
+  overflow: auto;
 }
 .subscribe_price_flex {
   display: flex;

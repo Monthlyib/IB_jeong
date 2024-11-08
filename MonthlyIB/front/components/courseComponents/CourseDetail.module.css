@@ -928,6 +928,7 @@ div.review_stars svg.active:hover ~ svg.empty {
   }
 }
 
+
 @media screen and (max-width: 1024px) {
   /* course - detail */
   .mo_course_info {
