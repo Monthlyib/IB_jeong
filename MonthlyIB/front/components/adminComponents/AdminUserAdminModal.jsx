@@ -1,10 +1,12 @@
 import styles from "./AdminStyle.module.css";
-import { useState, useRef } from "react";
+import { useState, useRef, use } from "react";
 import {
   subscribeGetUserInfo,
   subscribePostUser,
   subscribeReviseUser,
+  subscribeActiveUserInfo,
 } from "@/apis/subscribeAPI";
+import { useEffect } from "react";
 
 const AdminUserAdminModal = ({
   adminModal,
@@ -26,7 +28,14 @@ const AdminUserAdminModal = ({
   const closeRef = useRef();
   const onChangeMonth = (e) => {
     setSubscribeId(e.target.value);
+    console.log(e.target.value);
   };
+
+  useEffect(() => {
+    if(userDetailInfo !== undefined){
+      setAuthority(userDetailInfo?.authority);
+    }
+  }, [userDetailInfo]);
 
   const onSubmitChangeAuthority = async () => {
     if (authority !== userDetailInfo?.authority) {

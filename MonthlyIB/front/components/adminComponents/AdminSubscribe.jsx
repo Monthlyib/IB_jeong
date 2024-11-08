@@ -143,7 +143,6 @@ const AdminSubscribe = () => {
 
   // 구독 리스트 데이터를 가공하여 상태에 저장
   useEffect(() => {
-    console.log("Fetching subscribe list...", subscribeList);
     getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
 

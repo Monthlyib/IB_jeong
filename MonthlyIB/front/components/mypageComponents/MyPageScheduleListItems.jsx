@@ -11,10 +11,6 @@ const MyPageScheduleListItems = ({
   userInfo
 }) => {
   
-  useEffect(()=> {
-    console.log(currentPage)
-    console.log(paginatedPage)
-  },[]);
 
   const numShowContents = 10;
   const paginate = (items, pageNum) => {

@@ -27,7 +27,7 @@ const CoursePlayer = (pageId) => {
       );
   }, []);
   useEffect(() => {
-    if (userSubscribeInfo?.[0]?.subscribeStatus !== "WAIT") {
+    if (userSubscribeInfo?.[0]?.subscribeStatus !== "ACTIVE") {
       alert("잘못된 접근입니다.");
       router.back();
     }

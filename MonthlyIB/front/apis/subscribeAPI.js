@@ -2,7 +2,7 @@ import { tokenRequireApi } from "./refreshToken";
 
 const SUBSCRIBE_API_URL = "api/subscribe";
 
-export const subscribeDeleteItem = async (subscribeId, session) => {
+export const subscribeDeleteItem = async (subscribeId, session) => {//subscribe.js
   try {
     const config = {
       headers: {
@@ -16,7 +16,7 @@ export const subscribeDeleteItem = async (subscribeId, session) => {
   }
 };
 
-export const subscribeGetUserInfo = async (userId, page, session) => {
+export const subscribeGetUserInfo = async (userId, page, session) => {//user.js
   try {
     const config = {
       headers: {
@@ -34,7 +34,25 @@ export const subscribeGetUserInfo = async (userId, page, session) => {
   }
 };
 
-export const subscribeReviseItem = async (
+export const subscribeActiveUserInfo = async (userId,session) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${SUBSCRIBE_API_URL}/active/${userId}`,
+      config
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const subscribeReviseItem = async (//subscribe.js
   subscribeId,
   title,
   content,
@@ -77,7 +95,7 @@ export const subscribeReviseItem = async (
   }
 };
 
-export const subscribePostItem = async (
+export const subscribePostItem = async (//subscribe.js
   title,
   content,
   price,
