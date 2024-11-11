@@ -11,6 +11,7 @@ import { coursePostThumnail, courseReviseItem } from "@/apis/courseAPI";
 import { useCourseStore } from "@/store/course";
 import { getCookie } from "@/apis/cookies";
 
+// DynamicEditor: 서버사이드 렌더링을 비활성화한 에디터 컴포넌트
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
   {
@@ -18,52 +19,31 @@ const DynamicEditor = dynamic(
   }
 );
 
-const GROUPS = {
-  all: -1,
-  Group1: 1,
-  Group2: 2,
-  Group3: 3,
-  Group4: 4,
-  Group5: 5,
-  Group6: 6,
-};
+// 카테고리 그룹 정보 상수
+const GROUPS = { all: -1, Group1: 1, Group2: 2, Group3: 3, Group4: 4, Group5: 5, Group6: 6 };
 
+// 과목 목록 상수
 const SUBJECTS = {
-  all: -1,
-  "English Literature": 7,
-  "English Language ": 8,
-  Korean: 9,
-  "English B": 10,
-  "Mandarin B": 11,
-  "Spanish B": 12,
-  Economics: 13,
-  "Business & Management": 14,
-  Psychology: 15,
-  Geography: 16,
-  History: 17,
-  Physics: 18,
-  Chemistry: 19,
-  Biology: 20,
-  "Design Technology": 21,
-  "Math AA": 22,
-  "Math AI": 23,
-  "Visual Arts": 24,
+  all: -1, "English Literature": 7, "English Language ": 8, Korean: 9, "English B": 10,
+  "Mandarin B": 11, "Spanish B": 12, Economics: 13, "Business & Management": 14,
+  Psychology: 15, Geography: 16, History: 17, Physics: 18, Chemistry: 19, Biology: 20,
+  "Design Technology": 21, "Math AA": 22, "Math AI": 23, "Visual Arts": 24
 };
 
-const LEVELS = {
-  all: 27,
-  SL: 25,
-  HL: 26,
-};
+// 레벨 정보 상수
+const LEVELS = { all: 27, SL: 25, HL: 26 };
 
+// 강의 작성 컴포넌트
 const CoursePostWrite = () => {
   const router = useRouter();
   const imageInput = useRef();
   const searchParams = useSearchParams();
-  const type = searchParams.get("type");
-  const videoLessonsId = searchParams.get("videoLessonsId");
+  const type = searchParams.get("type"); // type 파라미터 (수정 또는 새로 등록)
+  const videoLessonsId = searchParams.get("videoLessonsId"); // 수정 시 기존 강의 ID
   const { courseDetail, postCourseItem, getCourseDetail } = useCourseStore();
-  const accessToken = getCookie("accessToken");
+  const accessToken = getCookie("accessToken"); // 사용자 액세스 토큰
+
+  // 상태 관리 변수들
   const [group, setGroup] = useState("all");
   const [level, setLevel] = useState("all");
   const [subject, setSubject] = useState("all");
@@ -81,7 +61,7 @@ const CoursePostWrite = () => {
   const [subChapters, setSubChapters] = useState({
     0: [
       {
-        chapterStatus: "MAIN_CHAPTER",
+        chapterStatus: "SUB_CHAPTER",
         chapterTitle: "",
         chapterIndex: 0,
         videoFileUrl: "",
@@ -96,6 +76,8 @@ const CoursePostWrite = () => {
       subChapters: subChapters[0],
     },
   ]);
+
+  // 파일명 변경 함수: 파일명에 타임스탬프 추가
   const changeFileName = (file) => {
     const fileExtention = file.name.split(".")[1];
     const oldFileName = file.name.split(".")[0];
@@ -114,16 +96,18 @@ const CoursePostWrite = () => {
     return newFile;
   };
 
+  // 강의 정보를 로드하는 함수
   const loadingInfo = async (videoLessonsId) => {
     await getCourseDetail(videoLessonsId);
   };
+
+  // 강의 ID가 있을 경우 강의 정보를 로드
   useEffect(() => {
     if (videoLessonsId) {
       loadingInfo(videoLessonsId);
     }
   }, []);
-
-  // 수정시에 기존 데이터 불러오기
+  // 수정 모드일 때 기존 데이터를 불러오는 함수
   useEffect(() => {
     if (videoLessonsId) {
       if (!courseDetail?.title) {
@@ -149,28 +133,32 @@ const CoursePostWrite = () => {
     }
   }, []);
 
+  // 그룹 변경 시 호출되는 핸들러 함수
   const handleGroupChange = (e) => {
     setGroup(e.target.value);
     setFirstCategoryId(GROUPS[e.target.value]);
   };
 
+  // 레벨 변경 시 호출되는 핸들러 함수
   const handleLevelChange = (e) => {
     setLevel(e.target.value);
     setThirdCategoryId(LEVELS[e.target.value]);
   };
 
+  // 과목 변경 시 호출되는 핸들러 함수
   const handleSubjectChange = (e) => {
     setSubject(e.target.value);
     setSecondCategoryId(SUBJECTS[e.target.value]);
   };
 
+  // 새로운 챕터 추가
   const addNumCurriChapter = () => {
     let temp = [...chapters];
     const subTemp = { ...subChapters };
     let chptIndex = Number(temp.length);
     subTemp[chptIndex] = [
       {
-        chapterStatus: "MAIN_CHAPTER",
+        chapterStatus: "SUB_CHAPTER",
         chapterTitle: "",
         chapterIndex: 0,
         videoFileUrl: "",
@@ -186,6 +174,7 @@ const CoursePostWrite = () => {
     setChapters(temp);
   };
 
+  // 마지막 챕터 제거
   const removeNumCurriChapter = () => {
     let tempNumCurriculumChapter = [...chapters];
     const subTemp = { ...subChapters };
@@ -197,47 +186,79 @@ const CoursePostWrite = () => {
     }
   };
 
-  const addNumCurriSubChapter = () => {
+  // 서브 챕터 추가
+  const addNumCurriSubChapter = (chapterIndex) => {
     const subTemp = { ...subChapters };
-    let chptIndex = Number(chapters.length - 1);
 
-    subTemp[chptIndex].push({
-      chapterStatus: "MAIN_CHAPTER",
+    subTemp[chapterIndex].push({
+      chapterStatus: "SUB_CHAPTER",
       chapterTitle: "",
-      chapterIndex: subTemp[chptIndex].length,
+      chapterIndex: subTemp[chapterIndex].length,
       videoFileUrl: "",
     });
 
     setSubChapters(subTemp);
   };
 
-  const removeNumCurriSubChapter = (index) => {
+  // 특정 메인 챕터의 특정 서브 챕터를 삭제하는 함수
+  const removeNumCurriSubChapter = (index, index_sub) => {
     const subTemp = { ...subChapters };
-    if (subTemp[chapters.length - 1].length > 1) {
-      subTemp[chapters.length - 1].splice(index, 1);
+
+    if (subTemp[index] && subTemp[index][index_sub] !== undefined) {
+      subTemp[index] = subTemp[index].filter((_, idx) => idx !== index_sub);
+
       setSubChapters(subTemp);
+
+      // chapters 상태도 업데이트하여 동기화
+      const updatedChapters = [...chapters];
+      updatedChapters[index] = {
+        ...updatedChapters[index],
+        subChapters: subTemp[index],
+      };
+      setChapters(updatedChapters);
     }
   };
 
+
+
+
+
+  // 제목 변경 핸들러
   const onChangeTitle = useCallback((e) => {
     setTitle(e.target.value);
   }, []);
 
+  // 강사 이름 변경 핸들러
   const onChangeLecturer = useCallback((e) => {
     setLecturer(e.target.value);
   }, []);
 
+  // 썸네일 업로드 핸들러
   const onClickImageUpload = (e) => {
     imageInput.current = changeFileName(e.target.files[0]);
   };
 
+  // 폼 제출 핸들러 (새 강의 생성 또는 기존 강의 수정)
   const onSubmit = async (e) => {
-    // course 에다가 revise item 만들기
     e.preventDefault();
     const chapterInfo =
       chapters.length == 1
         ? chapters.length.toString() + " Chapter"
         : chapters.length.toString() + " Chapters";
+
+    // 수정 모드일 때
+    console.log("type", type);
+    console.log(parseInt(videoLessonsId),
+      title,
+      content,
+      lecturer,
+      chapterInfo,
+      duration,
+      chapters,
+      firstCategoryId,
+      secondCategoryId,
+      thirdCategoryId,
+      videoLessonsStatus);
     if (type === "edit") {
       await courseReviseItem(
         parseInt(videoLessonsId),
@@ -256,7 +277,7 @@ const CoursePostWrite = () => {
       if (imageInput.current)
         coursePostThumnail(videoLessonsId, imageInput.current, { accessToken });
     } else {
-      console.log(thirdCategoryId);
+      // 새 강의 등록 모드일 때
       const res = await postCourseItem(
         title,
         content,
