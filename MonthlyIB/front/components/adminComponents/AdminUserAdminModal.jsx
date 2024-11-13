@@ -1,5 +1,5 @@
 import styles from "./AdminStyle.module.css";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import {
   subscribeGetUserInfo,
   subscribePostUser,
@@ -18,40 +18,99 @@ const AdminUserAdminModal = ({
   getUserInfo,
   reviseUserInfo,
 }) => {
-  const [subscribeId, setSubscribeId] = useState(-1);
-  const [subscribeTitle, setSubscribeTitle] = useState("");
-  const [questionCount, setQuestionCount] = useState("");
-  const [tutoringCount, setTutoringCount] = useState("");
-  const [subscribeMonthPeriod, setSubscribeMonthPeriod] = useState("");
-  const [videoLessonsCount, setVideoLessonsCount] = useState("");
+  const [originalSubscribe, setOriginalSubscribe] = useState({
+    subscribeUserId: -1,
+    subscribeId: -1,
+    title: "",
+    questionCount: "",
+    tutoringCount: "",
+    subscribeMonthPeriod: "",
+    videoLessonsCount: "",
+  });
+  
+  const [newSubscribe, setNewSubscribe] = useState({
+    subscribeUserId: -1,
+    subscribeId: -1,
+    title: "",
+    questionCount: "",
+    tutoringCount: "",
+    subscribeMonthPeriod: "",
+    videoLessonsCount: "",
+  });
+
   const closeRef = useRef();
 
-  const onChangeMonth = (e) => {
-    setSubscribeId(e.target.value);
-    console.log(e.target.value);
+  const onChangeMonth = (selectedId) => {
+    const selectedSubscription = Object.values(subscirbeDataList[newSubscribe.title]).find(
+      (item) => item.subscriberId === Number(selectedId)
+    );
+  
+    if (selectedSubscription) {
+      setNewSubscribe((prev) => ({
+        ...prev,
+        subscribeId: selectedId,
+        questionCount: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.questionCount : prev.questionCount,
+        tutoringCount: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.tutoringCount : prev.tutoringCount,
+        subscribeMonthPeriod: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.subscribeMonthPeriod : prev.subscribeMonthPeriod,
+        videoLessonsCount: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.videoLessonsCount : prev.videoLessonsCount,
+      }));
+    }
   };
+  
+  
 
-  // useEffect로 현재 활성화된 구독 정보를 초기화
+
+  useEffect(() => {
+    console.log("original",originalSubscribe);
+    console.log("new",newSubscribe);
+  }, [originalSubscribe, newSubscribe]);
+
   useEffect(() => {
     const fetchActiveSubscription = async () => {
       const response = await subscribeActiveUserInfo(userDetailInfo?.userId, userInfo);
       const activeSubscription = response?.data;
 
+      console.log("activeSubscription",activeSubscription);
       if (activeSubscription) {
-        setSubscribeId(activeSubscription.subscribeId);
-        setSubscribeTitle(activeSubscription.title);
-        setQuestionCount(activeSubscription.questionCount);
-        setTutoringCount(activeSubscription.tutoringCount);
-        setSubscribeMonthPeriod(activeSubscription.subscribeMonthPeriod);
-        setVideoLessonsCount(activeSubscription.videoLessonsCount);
+        setOriginalSubscribe({
+          subscribeUserId: activeSubscription.subscribeUserId,
+          subscribeId: activeSubscription.subscribeId,
+          title: activeSubscription.title,
+          questionCount: activeSubscription.questionCount,
+          tutoringCount: activeSubscription.tutoringCount,
+          subscribeMonthPeriod: activeSubscription.subscribeMonthPeriod,
+          videoLessonsCount: activeSubscription.videoLessonsCount,
+        });
+        
+        setNewSubscribe({
+          subscribeUserId: activeSubscription.subscribeUserId,
+          subscribeId: activeSubscription.subscribeId,
+          title: activeSubscription.title,
+          questionCount: activeSubscription.questionCount,
+          tutoringCount: activeSubscription.tutoringCount,
+          subscribeMonthPeriod: activeSubscription.subscribeMonthPeriod,
+          videoLessonsCount: activeSubscription.videoLessonsCount,
+        });
       } else {
-        // 구독 정보가 null인 경우 필드를 빈 문자열로 설정
-        setSubscribeId(-1);
-        setSubscribeTitle("");
-        setQuestionCount("");
-        setTutoringCount("");
-        setSubscribeMonthPeriod("");
-        setVideoLessonsCount("");
+        setOriginalSubscribe({
+          subscribeUserId: -1,
+          subscribeId: -1,
+          title: "",
+          questionCount: "",
+          tutoringCount: "",
+          subscribeMonthPeriod: "",
+          videoLessonsCount: "",
+        });
+
+        setNewSubscribe({
+          subscribeUserId: -1,
+          subscribeId: -1,
+          title: "",
+          questionCount: "",
+          tutoringCount: "",
+          subscribeMonthPeriod: "",
+          videoLessonsCount: "",
+        });
       }
     };
 
@@ -62,7 +121,6 @@ const AdminUserAdminModal = ({
   }, [userDetailInfo]);
 
   const onSubmitChangeAuthority = async () => {
-    // 사용자 권한 변경 처리
     if (authority !== userDetailInfo?.authority) {
       reviseUserInfo(
         userDetailInfo.userId,
@@ -83,29 +141,59 @@ const AdminUserAdminModal = ({
     }
 
     // 구독 정보 업데이트 처리
-    if (subscribeId !== -1) {
-      const res = await subscribePostUser(userDetailInfo.userId, subscribeId, userInfo);
+    if (originalSubscribe.subscribeUserId === -1 && newSubscribe.subscribeId !== -1) {
+      const res = await subscribePostUser(userDetailInfo.userId, newSubscribe.subscribeId, userInfo);
       subscribeReviseUser(
         res?.data.subscribeUserId,
-        questionCount,
-        tutoringCount,
-        subscribeMonthPeriod,
-        videoLessonsCount,
+        newSubscribe.questionCount,
+        newSubscribe.tutoringCount,
+        newSubscribe.subscribeMonthPeriod,
+        newSubscribe.videoLessonsCount,
         [],
         userInfo
       );
-    } else if (questionCount || tutoringCount || subscribeMonthPeriod || videoLessonsCount) {
+    } else if (originalSubscribe.subscribeUserId !== -1&& newSubscribe.subscribeId !== -1) {
+      if (newSubscribe.subscribeId !== originalSubscribe.subscribeId) {
+        console.log("구독 변경",originalSubscribe.subscribeUserId,newSubscribe.subscribeId);
+        subscribeReviseUser(
+          originalSubscribe.subscribeUserId,
+          newSubscribe.questionCount,
+          newSubscribe.tutoringCount,
+          newSubscribe.subscribeMonthPeriod,
+          newSubscribe.videoLessonsCount,
+          [],
+          userInfo,
+          newSubscribe.subscribeId
+        );
+      } else {
+        subscribeReviseUser(
+          originalSubscribe.subscribeUserId,
+          newSubscribe.questionCount,
+          newSubscribe.tutoringCount,
+          newSubscribe.subscribeMonthPeriod,
+          newSubscribe.videoLessonsCount,
+          [],
+          userInfo
+        );
+      }
+    } else if (
+      newSubscribe.questionCount ||
+      newSubscribe.tutoringCount ||
+      newSubscribe.subscribeMonthPeriod ||
+      newSubscribe.videoLessonsCount
+    ) {
       const res = await subscribeGetUserInfo(userDetailInfo.userId, 0, userInfo);
       subscribeReviseUser(
         res?.data[0]?.subscribeUserId,
-        questionCount,
-        tutoringCount,
-        subscribeMonthPeriod,
-        videoLessonsCount,
+        newSubscribe.questionCount,
+        newSubscribe.tutoringCount,
+        newSubscribe.subscribeMonthPeriod,
+        newSubscribe.videoLessonsCount,
         [],
         userInfo
       );
     }
+    
     setAdminModal(false);
   };
 
@@ -131,22 +219,25 @@ const AdminUserAdminModal = ({
                 </select>
                 <div>
                   <span>구독 상품 </span>
-                  <select value={subscribeTitle} onChange={(e) => setSubscribeTitle(e.target.value)}>
+                  <select
+                    value={newSubscribe.title}
+                    onChange={(e) => setNewSubscribe((prev) => ({ ...prev, title: e.target.value }))}
+                  >
                     <option value="">구독 상품</option>
                     {Object.keys(subscirbeDataList).map((v, i) => (
                       <option value={v} key={i}>{v}</option>
                     ))}
                   </select>
-                  {subscribeTitle && (
+                  {newSubscribe.title && (
                     <>
-                      <select value={subscribeId} onChange={onChangeMonth}>
+                      <select value={newSubscribe.subscribeId} onChange={(e) => onChangeMonth(e.target.value)}>
                         <option value={-1}>-</option>
-                        {Object.keys(subscirbeDataList[subscribeTitle])?.map((v, i) => (
+                        {Object.keys(subscirbeDataList[newSubscribe.title])?.map((v, i) => (
                           <option
-                            value={subscirbeDataList[subscribeTitle][v].subscriberId}
+                            value={subscirbeDataList[newSubscribe.title][v].subscriberId}
                             key={i}
                           >
-                            {subscirbeDataList[subscribeTitle][v].subscribeMonthPeriod} 개월
+                            {subscirbeDataList[newSubscribe.title][v].subscribeMonthPeriod} 개월
                           </option>
                         ))}
                       </select>
@@ -159,8 +250,8 @@ const AdminUserAdminModal = ({
                     type="number"
                     autoComplete="off"
                     placeholder="질문 갯수"
-                    value={questionCount}
-                    onChange={(e) => setQuestionCount(e.target.value)}
+                    value={newSubscribe.questionCount}
+                    onChange={(e) => setNewSubscribe((prev) => ({ ...prev, questionCount: e.target.value }))}
                   />
                 </div>
                 <div className={styles.subscribe_price_flex}>
@@ -169,8 +260,8 @@ const AdminUserAdminModal = ({
                     type="number"
                     autoComplete="off"
                     placeholder="튜터링 갯수"
-                    value={tutoringCount}
-                    onChange={(e) => setTutoringCount(e.target.value)}
+                    value={newSubscribe.tutoringCount}
+                    onChange={(e) => setNewSubscribe((prev) => ({ ...prev, tutoringCount: e.target.value }))}
                   />
                 </div>
                 <div className={styles.subscribe_price_flex}>
@@ -179,8 +270,8 @@ const AdminUserAdminModal = ({
                     type="number"
                     autoComplete="off"
                     placeholder="구독개월"
-                    value={subscribeMonthPeriod}
-                    onChange={(e) => setSubscribeMonthPeriod(e.target.value)}
+                    value={newSubscribe.subscribeMonthPeriod}
+                    onChange={(e) => setNewSubscribe((prev) => ({ ...prev, subscribeMonthPeriod: e.target.value }))}
                   />
                 </div>
                 <div className={styles.subscribe_price_flex}>
@@ -189,8 +280,8 @@ const AdminUserAdminModal = ({
                     type="number"
                     autoComplete="off"
                     placeholder="영상강의 수"
-                    value={videoLessonsCount}
-                    onChange={(e) => setVideoLessonsCount(e.target.value)}
+                    value={newSubscribe.videoLessonsCount}
+                    onChange={(e) => setNewSubscribe((prev) => ({ ...prev, videoLessonsCount: e.target.value }))}
                   />
                 </div>
               </div>

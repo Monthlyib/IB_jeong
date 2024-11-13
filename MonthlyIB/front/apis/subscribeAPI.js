@@ -160,7 +160,8 @@ export const subscribeReviseUser = async (
   subscribeMonthPeriod,
   videoLessonsCount,
   videoLessionsIdList,
-  session
+  session,
+  newsubscribeId
 ) => {
   try {
     const config = {
@@ -177,7 +178,7 @@ export const subscribeReviseUser = async (
       videoLessionsIdList,
     };
     await tokenRequireApi.patch(
-      `${SUBSCRIBE_API_URL}/user/${subscribeUserId}`,
+      `${SUBSCRIBE_API_URL}/user/${subscribeUserId}?newsubscribeId=${newsubscribeId}`,
       data,
       config
     );

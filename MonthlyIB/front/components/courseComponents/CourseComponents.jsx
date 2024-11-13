@@ -8,6 +8,7 @@ import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCourseStore } from "@/store/course";
 import { courseGetCategory } from "@/apis/openAPI";
 import { useUserStore } from "@/store/user";
+import Loading from "../Loading";
 
 export const courseCategoryList = {
   all: [],
@@ -51,7 +52,7 @@ const CourseComponents = () => {
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
-  const { coursePosts, getCourseList } = useCourseStore();
+  const { coursePosts, getCourseList, loading } = useCourseStore();
 
   const [firstCategoryId, setFirstCategoryId] = useState("");
   const [secondCategoryId, setSecondCategoryId] = useState("");
@@ -76,6 +77,8 @@ const CourseComponents = () => {
       thirdCategoryId
     );
   }, [firstCategoryId, secondCategoryId, thirdCategoryId, searching]);
+
+  if(loading) return <div>loading</div>;
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
