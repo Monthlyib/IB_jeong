@@ -219,7 +219,9 @@ const CoursePostWrite = () => {
     }
   };
 
-
+  useEffect(() => {
+    console.log("subChapters", subChapters);
+  }, [subChapters]);
 
 
 
