@@ -307,5 +307,7 @@ export const coursePostUser = async (videoLessonsId, session) => {
     );
   } catch (error) {
     console.error(error);
+  } finally {
+    console.log("done");
   }
 };

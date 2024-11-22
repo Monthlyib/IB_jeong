@@ -17,7 +17,7 @@ const DynamicEditor = dynamic(
 const NewsPost = () => {
   const router = useRouter();
   const imageInput = useRef();
-  const { newsDetail, postNews, reviseNews } = useNewstore();
+  const { newsDetail, postNews, reviseNews, getNewsList } = useNewstore();
   const [title, setTitle] = useState("");
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
@@ -26,7 +26,7 @@ const NewsPost = () => {
   const { userInfo } = useUserInfo();
 
   const onSubmit = useCallback(
-    (e) => {
+    async(e) => {
       e.preventDefault();
       if (type === "write") postNews(title, content, userInfo);
       else if (type === "revise") reviseNews(newsId, title, content, userInfo);

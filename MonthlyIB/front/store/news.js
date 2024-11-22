@@ -8,10 +8,12 @@ export const useNewstore = create((set, get) => ({
   error: null,
   newsDetail: {},
   newsList: [],
+  PageInfo: {},
   getNewsList: async (currentPage, keyWord) => {
+    set({ loading: true, success: false });
     try {
       const res = await newsGetList(currentPage - 1, keyWord);
-      set({ newsList: res.data, loading: false, success: true });
+      set({ newsList: res.data, loading: false, success: true, PageInfo: res.pageInfo });
     } catch (error) {
       console.error(error);
     }
@@ -28,9 +30,11 @@ export const useNewstore = create((set, get) => ({
     }
   },
   postNews: async (title, content, userInfo) => {
+    set({ loading: true, success: false });
     try {
       await newsPost(title, content, userInfo);
       get().getNewsList(1);
+      set({ loading: false, success: true });
     } catch (error) {
       console.error(error);
     }

@@ -1,26 +1,25 @@
 import styles from "../BoardCommon.module.css";
 import _ from "lodash";
-import Paginatation from "../../layoutComponents/Paginatation";
+import Pagination from "../Pagination";
 import Link from "next/link";
 import { useUserInfo } from "@/store/user";
 import shortid from "shortid";
+import { useEffect } from "react";
 
 const NewsItems = ({
   newsContents,
   currentPage,
-  numShowContents,
+  totalPages,
   onPageChange,
 }) => {
-  const paginate = (items, pageNum) => {
-    const startIndex = (pageNum - 1) * numShowContents;
-    return _(items).slice(startIndex).take(numShowContents).value();
-  };
   const { userInfo } = useUserInfo();
-  const paginatedPage = paginate(newsContents, currentPage);
+
+
+
   return (
     <>
       {newsContents.length > 0 ? (
-        paginatedPage.map((content) => (
+        newsContents.map((content) => (
           <div className={styles.board_item} key={shortid.generate()}>
             <Link
               href={`/board/${content.newsId}?currentPage=${currentPage}&userId=${userInfo.userId}`}
@@ -49,10 +48,9 @@ const NewsItems = ({
         </div>
       )}
       {newsContents.length > 0 && (
-        <Paginatation
-          contents={newsContents}
+        <Pagination
           currentPage={currentPage}
-          numShowContents={numShowContents}
+          totalPages={totalPages}
           onPageChange={onPageChange}
         />
       )}

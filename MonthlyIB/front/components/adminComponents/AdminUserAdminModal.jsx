@@ -56,14 +56,6 @@ const AdminUserAdminModal = ({
       }));
     }
   };
-  
-  
-
-
-  useEffect(() => {
-    console.log("original",originalSubscribe);
-    console.log("new",newSubscribe);
-  }, [originalSubscribe, newSubscribe]);
 
   useEffect(() => {
     const fetchActiveSubscription = async () => {
