@@ -7,6 +7,7 @@ import styles from "../BoardCommon.module.css";
 import Link from "next/link";
 import { useNewstore } from "@/store/news";
 import { useUserInfo } from "@/store/user";
+import { get } from "lodash";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -31,9 +32,11 @@ const NewsPost = () => {
       if (type === "write")
         { 
           postNews(title, content, userInfo);
+          getNewsList(1,"");
         }
       else if (type === "revise") {
         reviseNews(newsId, title, content, userInfo);
+        getNewsList(1, "");
       }
         router.push("/board");
     },
