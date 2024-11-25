@@ -33,7 +33,7 @@ export const useNewstore = create((set, get) => ({
     set({ loading: true, success: false });
     try {
       await newsPost(title, content, userInfo);
-      get().getNewsList(1);
+// get().getNewsList(1);
       set({ loading: false, success: true });
     } catch (error) {
       console.error(error);
@@ -42,7 +42,7 @@ export const useNewstore = create((set, get) => ({
   reviseNews: async (newsId, title, content, userInfo) => {
     try {
       await newsReviseItem(newsId, title, content, userInfo);
-      get().getNewsList(1);
+      // await get().getNewsList(1);
     } catch (error) {
       console.error(error);
     }

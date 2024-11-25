@@ -16,6 +16,7 @@ import { newsDeleteItem } from "@/apis/newsAPI";
 import { useUserStore } from "@/store/user";
 import { getCookie } from "@/apis/cookies";
 import Loading from "../../Loading";
+import { get } from "lodash";
 
 const NewsDetail = (pageId) => {
   const router = useRouter();
@@ -33,8 +34,8 @@ const NewsDetail = (pageId) => {
 
   const onClickDelete = useCallback(() => {
     newsDeleteItem(parseInt(pageId?.pageId), { accessToken: session });
-    // getNewsList(currentPage);
-    router.push("/board/");
+    getNewsList(currentPageInt, "");
+    router.push("/board");
   }, []);
 
   useEffect(() => {

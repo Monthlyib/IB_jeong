@@ -18,13 +18,14 @@ const NewsComponents = () => {
   const { newsList, getNewsList, PageInfo, loading } = useNewstore(); // PageInfo에 totalPages 포함
 
   const handlePageChange = (page) => {
-    setCurrentPage(page);
+    setCurrentPage(page); 
   };
 
   useEffect(() => {
     const search = searchKeyword.current ?? "";
     getNewsList(currentPage, search);
   }, [searching, currentPage]);
+
 
   return (
     <>

@@ -28,9 +28,14 @@ const NewsPost = () => {
   const onSubmit = useCallback(
     async(e) => {
       e.preventDefault();
-      if (type === "write") postNews(title, content, userInfo);
-      else if (type === "revise") reviseNews(newsId, title, content, userInfo);
-      router.push("/board/");
+      if (type === "write")
+        { 
+          postNews(title, content, userInfo);
+        }
+      else if (type === "revise") {
+        reviseNews(newsId, title, content, userInfo);
+      }
+        router.push("/board");
     },
     [title, content]
   );
