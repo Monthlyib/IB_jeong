@@ -6,6 +6,7 @@ import {
   boardReplyReviseItem,
   boardReplyVote,
   boardReviseItem,
+  boardDeleteItem,
 } from "@/apis/boardAPI";
 import { boardGetItem, boardGetList } from "@/apis/openAPI";
 import { create } from "zustand";
@@ -16,10 +17,11 @@ export const useBoardStore = create((set, get) => ({
   error: null,
   bulletinBoardDetail: {},
   boardList: [],
+  PageInfo: {},
   getBoardList: async (currentPage, keyword) => {
     try {
       const res = await boardGetList(currentPage - 1, keyword);
-      set({ boardList: res.data, loading: false, success: true });
+      set({ boardList: res.data, loading: false, success: true, PageInfo: res.pageInfo });
     } catch (error) {
       console.error(error);
     }
@@ -28,7 +30,7 @@ export const useBoardStore = create((set, get) => ({
   getBoardUserList: async (currentPage, keyword, session) => {
     try {
       const res = await boardGetUserList(currentPage - 1, keyword, session);
-      set({ boardList: res.data, loading: false, success: true });
+      set({ boardList: res.data, loading: false, success: true, PageInfo: res.pageInfo });
     } catch (error) {
       console.error(error);
     }
@@ -55,6 +57,19 @@ export const useBoardStore = create((set, get) => ({
       set({ error, loading: false, success: false });
     }
   },
+
+  deleteBoardDetail: async (boardId, session) => {
+    set({loading: true, success: false});
+    try {
+      await boardDeleteItem(boardId, session);
+      get().getBoardList(1, "");
+      set({loading: false, success: true});
+    } catch (error) {
+      console.error(error);
+      set({ error, loading: false, success: false });
+    }
+  },
+
   deleteBoardComment: async (boardReplyId, session, pageId, currentPage) => {
     try {
       await boardReplyDeleteItem(boardReplyId, session);

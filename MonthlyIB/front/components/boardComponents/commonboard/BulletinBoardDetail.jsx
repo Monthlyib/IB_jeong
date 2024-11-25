@@ -9,7 +9,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import BulletinBoardCommentsItems from "./BulletinBoardCommentsItems";
 import BulletinBoardCommentsPost from "./BulletinBoardCommentsPost";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import shortid from "shortid";
@@ -23,7 +23,7 @@ const BulletinBoardDetail = (pageId) => {
   const currentPage = searchParams.get("currentPage");
   const { userInfo } = useUserInfo();
   const [ReplyCurrentPage, setReplyCurrentPage] = useState(1);
-  const { bulletinBoardDetail, boardList, getBoardList } = useBoardStore();
+  const { bulletinBoardDetail, boardList, getBoardList, PageInfo, deleteBoardDetail } = useBoardStore();
   const getBoardDetail = useBoardStore((state) => state.getBoardDetail);
   const currentIndex = boardList?.findIndex(
     (v) => v.boardId === parseInt(pageId?.pageId)
@@ -35,6 +35,8 @@ const BulletinBoardDetail = (pageId) => {
     likes: false,
   });
 
+  const currentPageInt = parseInt(currentPage);
+  
   useEffect(() => {
     if (menuClicked.recent) {
       const temp = { ...bulletinBoardDetail };
@@ -67,8 +69,9 @@ const BulletinBoardDetail = (pageId) => {
     getBoardDetail(pageId?.pageId, ReplyCurrentPage);
     getBoardList(currentPage < 1 ? 1 : currentPage, "");
   }, []);
+
   const onClickDelete = async () => {
-    boardDeleteItem(pageId?.pageId, userInfo);
+    deleteBoardDetail(pageId?.pageId, userInfo);
     router.push("/board/free");
   };
 
@@ -126,40 +129,64 @@ const BulletinBoardDetail = (pageId) => {
                 </div>
 
                 <div className={styles.read_btn_area}>
+                  {/* 이전 버튼 */}
                   <Link
-                    href={
-                      currentIndex === undefined
-                        ? "#"
-                        : boardList[currentIndex - 1]?.boardId !== undefined
-                        ? `/board/free/${
-                            boardList[currentIndex - 1]?.boardId
-                          }?currentPage=${currentPage}`
-                        : "#"
-                    }
+                    href="#"
+                    onClick={async (e) => {
+                      e.preventDefault();
+
+                      if (currentIndex === 0 && currentPageInt > 1) {
+                        // 이전 페이지로 이동하기 위해 데이터 가져오기
+                        await getBoardList(currentPageInt - 1, ""); // 상태 업데이트 대기
+                        const updatedBoardList = useBoardStore.getState().boardList; // 최신 상태 가져오기
+                        router.push(
+                          `/board/free/${updatedBoardList[updatedBoardList.length - 1]?.boardId}?currentPage=${currentPageInt - 1
+                          }`
+                        );
+                      } else if (boardList[currentIndex - 1]?.boardId !== undefined) {
+                        // 현재 페이지 내에서 이동
+                        router.push(
+                          `/board/free/${boardList[currentIndex - 1]?.boardId}?currentPage=${currentPageInt}`
+                        );
+                      }
+                    }}
                     className={
-                      currentIndex === undefined
-                        ? ""
-                        : boardList[currentIndex - 1]?.boardId === undefined
+                      currentIndex === 0 && currentPageInt === 1
                         ? styles.disabled
                         : ""
                     }
                   >
                     이전
                   </Link>
+
+                  {/* 다음 버튼 */}
                   <Link
-                    href={
-                      currentIndex === undefined
-                        ? "#"
-                        : boardList[currentIndex + 1]?.boardId !== undefined
-                        ? `/board/free/${
-                            boardList[currentIndex + 1]?.boardId
-                          }?currentPage=${currentPage}`
-                        : "#"
-                    }
+                    href="#"
+                    onClick={async (e) => {
+                      e.preventDefault();
+
+                      if (
+                        currentIndex === boardList.length - 1 &&
+                        currentPageInt < PageInfo.totalPages
+                      ) {
+                        // 다음 페이지로 이동하기 위해 데이터 가져오기
+                        await getBoardList(currentPageInt + 1, ""); // 상태 업데이트 대기
+                        const updatedBoardList = useBoardStore.getState().boardList; // 최신 상태 가져오기
+                        router.push(
+                          `/board/free/${updatedBoardList[0]?.boardId}?currentPage=${currentPageInt + 1
+                          }`
+                        );
+                      } else if (boardList[currentIndex + 1]?.boardId !== undefined) {
+                        // 현재 페이지 내에서 이동
+                        router.push(
+                          `/board/free/${boardList[currentIndex + 1]?.boardId
+                          }?currentPage=${currentPageInt}`
+                        );
+                      }
+                    }}
                     className={
-                      currentIndex === undefined
-                        ? "#"
-                        : boardList[currentIndex + 1]?.boardId === undefined
+                      currentIndex === boardList.length - 1 &&
+                        currentPageInt === PageInfo.totalPages
                         ? styles.disabled
                         : ""
                     }

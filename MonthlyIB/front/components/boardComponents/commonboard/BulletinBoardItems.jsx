@@ -1,24 +1,25 @@
 import styles from "../BoardCommon.module.css";
 import _ from "lodash";
-import Paginatation from "../../layoutComponents/Paginatation";
+import Pagination from "../Pagination";
 import Link from "next/link";
 import shortid from "shortid";
+import { useUserInfo } from "@/store/user";
 
 const BulletinBoardItems = ({
   bulletinBoardContents,
   currentPage,
   numShowContents,
+  totalPage,
   onPageChange,
 }) => {
-  const paginate = (items, pageNum) => {
-    const startIndex = (pageNum - 1) * numShowContents;
-    return _(items).slice(startIndex).take(numShowContents).value();
-  };
-  const paginatedPage = paginate(bulletinBoardContents, currentPage);
+
+  const { userInfo } = useUserInfo();
+
+
   return (
     <>
       {bulletinBoardContents?.length > 0 ? (
-        paginatedPage.map((content) => (
+        bulletinBoardContents.map((content) => (
           <div className={styles.board_item} key={shortid.generate()}>
             <Link
               href={`/board/free/${content.boardId}?currentPage=${currentPage}`}
@@ -50,10 +51,9 @@ const BulletinBoardItems = ({
         </div>
       )}
       {bulletinBoardContents.length > 0 && (
-        <Paginatation
-          contents={bulletinBoardContents}
+        <Pagination
           currentPage={currentPage}
-          numShowContents={numShowContents}
+          totalPages={totalPage}
           onPageChange={onPageChange}
         />
       )}

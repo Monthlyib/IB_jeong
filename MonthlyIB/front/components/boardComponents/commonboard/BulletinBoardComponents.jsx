@@ -1,6 +1,6 @@
 "use client";
 import styles from "../BoardCommon.module.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import BulletinBoardItems from "./BulletinBoardItems";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,16 +15,17 @@ const BulletinBoardComponents = () => {
   const [searching, setSeraching] = useState(false);
 
   const { userInfo } = useUserInfo();
-  const { boardList, getBoardList } = useBoardStore();
+  const { boardList, getBoardList, PageInfo } = useBoardStore();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
   useEffect(() => {
     const search =
       searchKeyword.current === undefined ? "" : searchKeyword.current;
     getBoardList(currentPage, search);
-  }, [searching]);
+  }, [searching,currentPage]);
 
   return (
     <>
@@ -52,6 +53,7 @@ const BulletinBoardComponents = () => {
             bulletinBoardContents={boardList}
             currentPage={currentPage}
             numShowContents={5}
+            totalPage={PageInfo.totalPages}
             onPageChange={handlePageChange}
           />
         </div>
