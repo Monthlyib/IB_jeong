@@ -26,8 +26,9 @@ const AdminUserAdminModal = ({
     tutoringCount: "",
     subscribeMonthPeriod: "",
     videoLessonsCount: "",
+    subscribeStatus: "WAIT",
   });
-  
+
   const [newSubscribe, setNewSubscribe] = useState({
     subscribeUserId: -1,
     subscribeId: -1,
@@ -36,6 +37,7 @@ const AdminUserAdminModal = ({
     tutoringCount: "",
     subscribeMonthPeriod: "",
     videoLessonsCount: "",
+    subscribeStatus: "WAIT",
   });
 
   const closeRef = useRef();
@@ -44,15 +46,16 @@ const AdminUserAdminModal = ({
     const selectedSubscription = Object.values(subscirbeDataList[newSubscribe.title]).find(
       (item) => item.subscriberId === Number(selectedId)
     );
-  
+
     if (selectedSubscription) {
       setNewSubscribe((prev) => ({
         ...prev,
-        subscribeId: selectedId,
+        subscribeId: Number(selectedId),
         questionCount: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.questionCount : prev.questionCount,
         tutoringCount: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.tutoringCount : prev.tutoringCount,
         subscribeMonthPeriod: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.subscribeMonthPeriod : prev.subscribeMonthPeriod,
         videoLessonsCount: originalSubscribe.subscribeUserId === -1 ? selectedSubscription.videoLessonsCount : prev.videoLessonsCount,
+        subscribeStatus: "ACTIVE",
       }));
     }
   };
@@ -62,7 +65,7 @@ const AdminUserAdminModal = ({
       const response = await subscribeActiveUserInfo(userDetailInfo?.userId, userInfo);
       const activeSubscription = response?.data;
 
-      console.log("activeSubscription",activeSubscription);
+      console.log(activeSubscription);
       if (activeSubscription) {
         setOriginalSubscribe({
           subscribeUserId: activeSubscription.subscribeUserId,
@@ -72,8 +75,9 @@ const AdminUserAdminModal = ({
           tutoringCount: activeSubscription.tutoringCount,
           subscribeMonthPeriod: activeSubscription.subscribeMonthPeriod,
           videoLessonsCount: activeSubscription.videoLessonsCount,
+          subscribeStatus: activeSubscription.subscribeStatus,
         });
-        
+
         setNewSubscribe({
           subscribeUserId: activeSubscription.subscribeUserId,
           subscribeId: activeSubscription.subscribeId,
@@ -82,6 +86,7 @@ const AdminUserAdminModal = ({
           tutoringCount: activeSubscription.tutoringCount,
           subscribeMonthPeriod: activeSubscription.subscribeMonthPeriod,
           videoLessonsCount: activeSubscription.videoLessonsCount,
+          subscribeStatus: activeSubscription.subscribeStatus,
         });
       } else {
         setOriginalSubscribe({
@@ -92,6 +97,7 @@ const AdminUserAdminModal = ({
           tutoringCount: "",
           subscribeMonthPeriod: "",
           videoLessonsCount: "",
+          subscribeStatus: "",
         });
 
         setNewSubscribe({
@@ -102,6 +108,7 @@ const AdminUserAdminModal = ({
           tutoringCount: "",
           subscribeMonthPeriod: "",
           videoLessonsCount: "",
+          subscribeStatus: "",
         });
       }
     };
@@ -132,6 +139,7 @@ const AdminUserAdminModal = ({
       getUserInfo(userDetailInfo.userId, userInfo);
     }
 
+
     // 구독 정보 업데이트 처리
     if (originalSubscribe.subscribeUserId === -1 && newSubscribe.subscribeId !== -1) {
       const res = await subscribePostUser(userDetailInfo.userId, newSubscribe.subscribeId, userInfo);
@@ -142,11 +150,12 @@ const AdminUserAdminModal = ({
         newSubscribe.subscribeMonthPeriod,
         newSubscribe.videoLessonsCount,
         [],
-        userInfo
+        userInfo,
+        newSubscribe.subscribeId,
+        newSubscribe.subscribeStatus
       );
-    } else if (originalSubscribe.subscribeUserId !== -1&& newSubscribe.subscribeId !== -1) {
+    } else if (originalSubscribe.subscribeUserId !== -1 && newSubscribe.subscribeId !== -1) {
       if (newSubscribe.subscribeId !== originalSubscribe.subscribeId) {
-        console.log("구독 변경",originalSubscribe.subscribeUserId,newSubscribe.subscribeId);
         subscribeReviseUser(
           originalSubscribe.subscribeUserId,
           newSubscribe.questionCount,
@@ -155,9 +164,11 @@ const AdminUserAdminModal = ({
           newSubscribe.videoLessonsCount,
           [],
           userInfo,
-          newSubscribe.subscribeId
+          newSubscribe.subscribeId,
+          newSubscribe.subscribeStatus
         );
       } else {
+        console.log("update",newSubscribe.subscribeStatus);
         subscribeReviseUser(
           originalSubscribe.subscribeUserId,
           newSubscribe.questionCount,
@@ -165,7 +176,9 @@ const AdminUserAdminModal = ({
           newSubscribe.subscribeMonthPeriod,
           newSubscribe.videoLessonsCount,
           [],
-          userInfo
+          userInfo,
+          newSubscribe.subscribeId,
+          newSubscribe.subscribeStatus
         );
       }
     } else if (
@@ -182,10 +195,12 @@ const AdminUserAdminModal = ({
         newSubscribe.subscribeMonthPeriod,
         newSubscribe.videoLessonsCount,
         [],
-        userInfo
+        userInfo,
+        res?.data[0]?.subscribeId,
+        newSubscribe.subscribeStatus
       );
     }
-    
+
     setAdminModal(false);
   };
 
@@ -276,6 +291,22 @@ const AdminUserAdminModal = ({
                     onChange={(e) => setNewSubscribe((prev) => ({ ...prev, videoLessonsCount: e.target.value }))}
                   />
                 </div>
+                {/* <div className={styles.subscribe_price_flex}>
+                  <span>구독 상태</span>
+                  <select
+                    value={newSubscribe.subscribeStatus}
+                    onChange={(e) =>
+                      setNewSubscribe((prev) => ({
+                        ...prev,
+                        subscribeStatus: e.target.value,
+                      }))
+                    }
+                  >
+                    <option value="WAIT">대기 (WAIT)</option>
+                    <option value="ACTIVE">결제 완료 (ACTIVE)</option>
+                  </select>
+                </div> */}
+
               </div>
               <button type="button" className={styles.md_btn} onClick={onSubmitChangeAuthority}>
                 확인
