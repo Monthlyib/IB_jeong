@@ -775,6 +775,85 @@ a.disabled {
   font-size: 32.5px;
 }
 
+
+@import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Gothic+A1&family=Nanum+Gothic&family=Nanum+Pen+Script&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Nanum_Gothic"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Nanum_Gothic"]::before {
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  content: "나눔 고딕" !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Roboto"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Roboto"]::before {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  content: "Roboto" !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="gothic_a1"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="gothic_a1"]::before {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  content: "고딕 A1" !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="nanum_pen_script"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="nanum_pen_script"]::before {
+  font-family: "Nanum Pen Script", serif;
+  font-weight: 500;
+  font-style: normal;
+  content: "나눔 필기체" !important;
+}
+
+.ql-snow .ql-picker.ql-font .ql-picker-label[data-value="bokor"]::before,
+.ql-snow .ql-picker.ql-font .ql-picker-item[data-value="bokor"]::before {
+  font-family: "Edu AU VIC WA NT Hand", cursive;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+  content: "bokor" !important;
+}
+
+
+.ql-font-nanum_pen_script {
+  font-family: "Nanum Pen Script", serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ql-font-Nanum_Gothic {
+  font-family: "Nanum Gothic", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.ql-font-bokor {
+  font-family: "Edu AU VIC WA NT Hand", cursive;
+  font-optical-sizing: auto;
+  font-weight: <weight>;
+  font-style: normal;
+}
+
+.ql-font-Roboto {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.ql-font-gothic_a1 {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+
 /* MO - 640 */
 @media screen and (max-width: 640px) {
   /**************

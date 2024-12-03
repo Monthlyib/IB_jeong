@@ -1,13 +1,25 @@
-/* eslint-disable react/no-direct-mutation-state */
 import { useMemo } from "react";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+
+
+var Font = Quill.import("formats/font");
+Font.whitelist = ["default","Roboto", "gothic_a1", "nanum_pen_script", "Nanum_Gothic", "bokor"];
+Quill.register(Font, true);
+
 const EditorComponents = ({ styleName, content, setContent }) => {
+
+  
   const modules = useMemo(
     () => ({
       toolbar: [
-        [{ header: "1" }, { header: "2" }, { font: [] }],
+        [
+          {
+            font: Font.whitelist
+          },
+        ],
+        [{ header: "1" }, { header: "2" }],
         [{ size: [] }],
         ["bold", "italic", "underline", "strike", "blockquote"],
         [
@@ -20,7 +32,6 @@ const EditorComponents = ({ styleName, content, setContent }) => {
         ["clean"],
       ],
       clipboard: {
-        // toggle to add extra line breaks when pasting HTML:
         matchVisual: false,
       },
     }),
@@ -28,8 +39,8 @@ const EditorComponents = ({ styleName, content, setContent }) => {
   );
 
   const formats = [
+    "font", // 폰트 선택 추가
     "header",
-    "font",
     "size",
     "bold",
     "italic",
