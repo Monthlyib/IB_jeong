@@ -64,7 +64,8 @@ export const subscribeReviseItem = async (//subscribe.js
   videoLessionsIdList,
   color,
   fontColor,
-  session
+  session,
+  premium
 ) => {
   try {
     const config = {
@@ -84,6 +85,7 @@ export const subscribeReviseItem = async (//subscribe.js
       videoLessionsIdList,
       color,
       fontColor,
+      premium
     };
     await tokenRequireApi.patch(
       `${SUBSCRIBE_API_URL}/${subscribeId}`,
@@ -106,7 +108,8 @@ export const subscribePostItem = async (//subscribe.js
   videoLessionsIdList,
   color,
   fontColor,
-  session
+  session,
+  premium
 ) => {
   try {
     const config = {
@@ -126,7 +129,9 @@ export const subscribePostItem = async (//subscribe.js
       videoLessionsIdList,
       color,
       fontColor,
+      premium
     };
+    console.log(data);
     await tokenRequireApi.post(`${SUBSCRIBE_API_URL}`, data, config);
   } catch (error) {
     console.error(error);

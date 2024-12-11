@@ -28,7 +28,8 @@ export const useSubscribeStore = create((set, get) => ({
     videoLessionsIdList,
     color,
     fontColor,
-    session
+    session,
+    premium
   ) => {
     try {
       await subscribeReviseItem(
@@ -43,7 +44,8 @@ export const useSubscribeStore = create((set, get) => ({
         videoLessionsIdList,
         color,
         fontColor,
-        session
+        session,
+        premium
       );
       get().getSubscribeList();
     } catch (error) {
@@ -61,8 +63,23 @@ export const useSubscribeStore = create((set, get) => ({
     videoLessionsIdList,
     color,
     fontColor,
-    session
+    session,
+    Premium
   ) => {
+    console.log(
+      title,
+      content,
+      price,
+      questionCount,
+      tutoringCount,
+      subscribeMonthPeriod,
+      videoLessonsCount,
+      videoLessionsIdList,
+      color,
+      fontColor,
+      session,
+      Premium
+    );
     try {
       await subscribePostItem(
         title,
@@ -75,7 +92,8 @@ export const useSubscribeStore = create((set, get) => ({
         videoLessionsIdList,
         color,
         fontColor,
-        session
+        session,
+        Premium
       );
       get().getSubscribeList();
     } catch (error) {

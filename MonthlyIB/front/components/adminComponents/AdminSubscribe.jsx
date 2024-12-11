@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./AdminStyle.module.css";
 
 import { faPlus, faPenAlt } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useSubscribeStore } from "@/store/subscribe";
 import shortid from "shortid";
 import { useUserInfo } from "@/store/user";
@@ -35,11 +35,12 @@ const AdminSubscribe = () => {
   const [subscriberIDList, setSubscribeIDList] = useState([]);
   const [subscribemonthPeriods, setSubscribeMonthPeriods] = useState([]);
   const [videoLessonsIDLists, setVideoLessonsIDLists] = useState([]);
+  const [isPremium, setIsPremium] = useState(false); // New state for premium toggle
 
   // 구독 상품 수정 제출 함수
   const onSubmitReviseSubscribeItem = (item) => {
     setEditModal(!editModal);
-    for (let i = 0; i <prices?.length; i++) {
+    for (let i = 0; i < prices?.length; i++) {
       editSubscribeItem(
         subscriberIDList[i],
         title,
@@ -52,7 +53,8 @@ const AdminSubscribe = () => {
         videoLessonsIDLists[i],
         color.hex,
         fontColor.hex,
-        userInfo
+        userInfo,
+        isPremium // Include premium flag
       );
     }
   };
@@ -73,10 +75,12 @@ const AdminSubscribe = () => {
         [],
         color.hex,
         fontColor.hex,
-        userInfo
+        userInfo,
+        isPremium // Include premium flag
       );
     }
   };
+
 
   // 구독 상품 추가 모달 열기 함수
   const onClickPostModal = () => {
@@ -89,6 +93,7 @@ const AdminSubscribe = () => {
     setFontColor("#000");
     setVideoLessonsCount("");
     setContent("");
+    setIsPremium(false); // Reset premium flag
   };
 
   // 가격 변경 처리 함수
@@ -112,32 +117,30 @@ const AdminSubscribe = () => {
 
   // 선택한 구독 상품의 정보를 수정 모달에 반영
   useEffect(() => {
-    const temp = [...prices];
-
     if (item !== "") {
-      const newPrices = Object.values(subscribeDataList[item] || {}).map(
-        (data) => data.price
-      );
-      const newIDs = Object.values(subscribeDataList[item] || {}).map(
-        (data) => data.subscriberId
-      );
-      const newPeriods = Object.values(subscribeDataList[item] || {}).map(
+      const tempItem = subscribeDataList[item] || {};
+      const newPrices = Object.values(tempItem).map((data) => data.price);
+      const newIDs = Object.values(tempItem).map((data) => data.subscriberId);
+      const newPeriods = Object.values(tempItem).map(
         (data) => data.subscribeMonthPeriod
       );
-      const newVideosIDs = Object.values(subscribeDataList[item] || {}).map(
+      const newVideosIDs = Object.values(tempItem).map(
         (data) => data.videoLessonsCount
       );
+
       setPrices(newPrices);
-      setTitle(item)
+      setTitle(item);
       setSubscribeIDList(newIDs);
       setSubscribeMonthPeriods(newPeriods);
-      setNumQuestions(subscribeDataList[item][0]?.questionCount);
-      setNumTutoring(subscribeDataList[item][0]?.tutoringCount);
-      setColor(subscribeDataList[item][0]?.color);
-      setFontColor(subscribeDataList[item][0]?.fontColor);
-      setVideoLessonsCount(subscribeDataList[item][0]?.videoLessonsCount);
+      setNumQuestions(tempItem[0]?.questionCount);
+      setNumTutoring(tempItem[0]?.tutoringCount);
+      setColor(tempItem[0]?.color);
+      setFontColor(tempItem[0]?.fontColor);
+      setVideoLessonsCount(tempItem[0]?.videoLessonsCount);
       setVideoLessonsIDLists(newVideosIDs);
-      setContent(subscribeDataList[item][0]?.content);
+      setContent(tempItem[0]?.content);
+      setIsPremium(tempItem[0]?.premium || false); // Set premium status
+      console.log(tempItem);
     }
   }, [item]);
 
@@ -211,6 +214,8 @@ const AdminSubscribe = () => {
             setFontColor={setFontColor}
             content={content}
             setContent={setContent}
+            isPremium={isPremium} // Pass premium status
+            setIsPremium={setIsPremium} // Pass premium setter
             onSubmit={onSubmitPostSubscribeItem}
           />
         )}
@@ -236,6 +241,8 @@ const AdminSubscribe = () => {
             setFontColor={setFontColor}
             content={content}
             setContent={setContent}
+            isPremium={isPremium} // Pass premium status
+            setIsPremium={setIsPremium} // Pass premium setter
             onSubmit={onSubmitReviseSubscribeItem}
             subscribeDataList={subscribeDataList}
           />

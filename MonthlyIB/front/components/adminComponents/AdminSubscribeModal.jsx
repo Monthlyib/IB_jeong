@@ -3,6 +3,7 @@ import styles from "./AdminStyle.module.css";
 import { ChromePicker } from "react-color";
 import { useUserInfo } from "@/store/user";
 import { useSubscribeStore } from "@/store/subscribe";
+import { last } from "lodash";
 
 const AdminSubscribeModal = ({
   mode,
@@ -25,11 +26,12 @@ const AdminSubscribeModal = ({
   setContent,
   onSubmit,
   subscribeDataList,
+  isPremium, // Add default value
+  setIsPremium, // Add handler for premium toggle
 }) => {
   const closeRef = useRef();
   const { userInfo } = useUserInfo();
   const { deleteSubscribeItem } = useSubscribeStore();
-
 
   const onClickDelete = () => {
     for (let i = 0; i < 4; i++)
@@ -144,6 +146,17 @@ const AdminSubscribeModal = ({
                   onChange={(e) => setVideoLessonsCount(e.target.value)}
                 />
               </div>
+              <div className={styles.subscribe_price_flex}>
+                <span>프리미엄 여부</span>
+                <label className={styles.toggle_switch}>
+                  <input
+                    type="checkbox"
+                    checked={isPremium} // 상태 값에 따라 체크 여부 설정
+                    onChange={(e) => setIsPremium(e.target.checked)} // 변경 이벤트에서 상태 업데이트
+                  />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
@@ -180,7 +193,7 @@ const AdminSubscribeModal = ({
               className={styles.md_btn}
               onClick={() => onSubmit(title)}
             >
-              수정
+              {mode === "edit" ? "수정" : "생성"}
             </button>
 
             {mode === "edit" && (
