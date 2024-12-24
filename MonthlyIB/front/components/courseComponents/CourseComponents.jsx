@@ -54,16 +54,16 @@ const CourseComponents = () => {
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
 
-  const { coursePosts, getCourseList, loading } = useCourseStore();
+  const { coursePosts, getCourseList, loading, PageInfo } = useCourseStore();
 
   const [firstCategoryId, setFirstCategoryId] = useState("");
   const [secondCategoryId, setSecondCategoryId] = useState("");
   const [thirdCategoryId, setThirdCategoryId] = useState("");
   const [status, setStatus] = useState("");
 
-  const { userDetailInfo} = useUserStore();
+  const { userDetailInfo } = useUserStore();
 
-    const { userInfo } = useUserInfo();
+  const { userInfo } = useUserInfo();
 
   const [group, setGroup] = useState("all");
   const [subject, setSubject] = useState("all");
@@ -85,13 +85,12 @@ const CourseComponents = () => {
       thirdCategoryId
     );
 
-
-    console.log("userinfo:",userInfo);
+    console.log("userinfo:", userInfo);
     if (userInfo?.authority === undefined) {
       setIsPopupOpen(true);
     }
 
-  }, [firstCategoryId, secondCategoryId, thirdCategoryId, searching, userInfo]);
+  }, [firstCategoryId, secondCategoryId, thirdCategoryId, searching, currentPage]);
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
@@ -103,6 +102,7 @@ const CourseComponents = () => {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
   const onChange = useCallback((e) => {
     searchKeyword.current = e.target.value;
   }, []);
@@ -135,6 +135,7 @@ const CourseComponents = () => {
     else if (e.target.value === "SL") setThirdCategoryId(25);
     else if (e.target.value === "HL") setThirdCategoryId(26);
   };
+  
 
   return (
     <>
@@ -263,7 +264,7 @@ const CourseComponents = () => {
           <CourseItems
             courseContents={coursePosts}
             currentPage={currentPage}
-            numShowContents={5}
+            totalPages={PageInfo.totalPages}
             onPageChange={handlePageChange}
           />
         </div>

@@ -1,6 +1,6 @@
 import styles from "./CourseComponents.module.css";
 import _ from "lodash";
-import Pagination from "../layoutComponents/Paginatation";
+import Pagination from "./Pagination";
 import Link from "next/link";
 import Image from "next/image";
 import shortid from "shortid";
@@ -8,18 +8,14 @@ import shortid from "shortid";
 const CourseItems = async ({
   courseContents,
   currentPage,
-  numShowContents,
+  totalPages,
   onPageChange,
 }) => {
-  const paginate = (items, pageNum) => {
-    const startIndex = (pageNum - 1) * numShowContents;
-    return _(items).slice(startIndex).take(numShowContents).value();
-  };
-  const paginatedPage = paginate(courseContents, currentPage);
+
   return (
     <>
       {courseContents.length > 0 ? (
-        paginatedPage.map((content) => (
+        courseContents.map((content) => (
           <div className={styles.course_item} key={shortid.generate()}>
             <Link href={`/course/${content.videoLessonsId}`}>
               <figure>
@@ -53,9 +49,8 @@ const CourseItems = async ({
       )}
       {courseContents.length > 0 && (
         <Pagination
-          contents={courseContents}
           currentPage={currentPage}
-          numShowContents={numShowContents}
+          totalPages={totalPages}
           onPageChange={onPageChange}
         />
       )}

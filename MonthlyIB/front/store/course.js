@@ -17,6 +17,7 @@ export const useCourseStore = create((set, get) => ({
   error: null,
   coursePosts: [],
   courseDetail: {},
+  PageInfo: {},
   getCourseList: async (
     currentPage,
     keyWord,
@@ -34,7 +35,7 @@ export const useCourseStore = create((set, get) => ({
         secondCategoryId,
         thirdCategoryId
       );
-      set({ coursePosts: res.data, loading: false, success: true });
+      set({ coursePosts: res.data, loading: false, success: true, PageInfo: res.pageInfo });
       console.log(res.data);
     } catch (error) {
       console.error(error);

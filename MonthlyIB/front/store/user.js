@@ -18,6 +18,7 @@ export const useUserInfo = create(
   persist(
     (set) => ({
       userInfo: {},
+      loading : false,
       signIn: async (username, password) => {
         try {
           const res = await openAPILogin(username, password);
