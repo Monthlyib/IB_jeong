@@ -35,6 +35,7 @@ export const useCourseStore = create((set, get) => ({
         thirdCategoryId
       );
       set({ coursePosts: res.data, loading: false, success: true });
+      console.log(res.data);
     } catch (error) {
       console.error(error);
     }

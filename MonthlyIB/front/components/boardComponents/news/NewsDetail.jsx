@@ -16,7 +16,6 @@ import { newsDeleteItem } from "@/apis/newsAPI";
 import { useUserStore } from "@/store/user";
 import { getCookie } from "@/apis/cookies";
 import Loading from "../../Loading";
-import { get } from "lodash";
 
 const NewsDetail = (pageId) => {
   const router = useRouter();

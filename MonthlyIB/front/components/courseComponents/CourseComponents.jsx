@@ -9,6 +9,8 @@ import { useCourseStore } from "@/store/course";
 import { courseGetCategory } from "@/apis/openAPI";
 import { useUserStore } from "@/store/user";
 import Loading from "../Loading";
+import { useRouter } from "next/navigation";
+import { useUserInfo } from "@/store/user";
 
 export const courseCategoryList = {
   all: [],
@@ -59,11 +61,17 @@ const CourseComponents = () => {
   const [thirdCategoryId, setThirdCategoryId] = useState("");
   const [status, setStatus] = useState("");
 
-  const { userDetailInfo } = useUserStore();
+  const { userDetailInfo} = useUserStore();
+
+    const { userInfo } = useUserInfo();
 
   const [group, setGroup] = useState("all");
   const [subject, setSubject] = useState("all");
   const [level, setLevel] = useState("all");
+
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // 팝업 상태
+  const router = useRouter(); // Router 추가
+
 
   useEffect(() => {
     const search =
@@ -76,9 +84,21 @@ const CourseComponents = () => {
       secondCategoryId,
       thirdCategoryId
     );
-  }, [firstCategoryId, secondCategoryId, thirdCategoryId, searching]);
 
-  if(loading) return <div>loading</div>;
+
+    console.log("userinfo:",userInfo);
+    if (userInfo?.authority === undefined) {
+      setIsPopupOpen(true);
+    }
+
+  }, [firstCategoryId, secondCategoryId, thirdCategoryId, searching, userInfo]);
+
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    router.push("/login"); // 로그인 페이지로 이동
+  };
+
+  if (loading) return <div>loading</div>;
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -119,6 +139,62 @@ const CourseComponents = () => {
   return (
     <>
       <main className="width_content">
+        {/* 로그인 팝업 */}
+        {isPopupOpen && (
+          <div
+            style={{
+              position: "fixed",
+              top: "0",
+              left: "0",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "16px",
+                padding: "30px",
+                textAlign: "center",
+                boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+                width: "400px",
+              }}
+            >
+              <h2
+                style={{
+                  marginBottom: "20px",
+                  fontSize: "20px",
+                  color: "#5a2d82",
+                }}
+              >
+                로그인 필요
+              </h2>
+              <p style={{ marginBottom: "30px", fontSize: "16px" }}>
+                로그인하시면 더 많은 정보를 확인하실 수 있습니다.
+              </p>
+              <button
+                onClick={handleClosePopup}
+                style={{
+                  padding: "12px 24px",
+                  backgroundColor: "#5a2d82",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        )}
         <div className="header_flex">
           <div className="header_tit_wrap">
             <h2>영상강의</h2>

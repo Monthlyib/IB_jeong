@@ -148,16 +148,6 @@ const MainBottom = () => {
           </div>
         </div>
       </section>
-      <section className={styles.bank_wrap}>
-        <h3>테스트뱅크 바로가기</h3>
-        <Link
-          href="https://agoran.kr/class"
-          target="_blank"
-          rel="noreferrer noopener"
-        >
-          바로가기
-        </Link>
-      </section>
     </>
   );
 };

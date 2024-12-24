@@ -8,69 +8,78 @@ import ArchiveFolderModal from "./ArchiveFolderModal";
 import ArchiveUpperButtons from "./ArchiveUpperButtons";
 import { useStoreStore } from "@/store/store";
 import { useUserInfo } from "@/store/user";
+import { useRouter } from "next/navigation"; // useRouter 추가
 
-// ArchiveComponents: 파일과 폴더를 관리하는 자료실 컴포넌트
 const ArchiveComponents = () => {
-  const file = useRef(""); // 업로드할 파일을 참조하는 ref
-  const closeRef = useRef(""); // 모달을 닫기 위한 ref
-  const [key, setKey] = useState(Date.now()); // 파일 input의 고유 key
-  const { userInfo } = useUserInfo(); // 사용자 정보 가져오기
-  const { mainFolders, subLists, getMainFolders, postFolder, getSubLists, postFile } = useStoreStore(); // 폴더, 파일 데이터와 관련된 스토어 함수들
-  const [currentPath, setCurrentPath] = useState("Home"); // 현재 경로를 저장
-  const [currentFolderId, setCurrentFolderId] = useState(0); // 현재 폴더 ID
-  const [prevFolderId, setPrevFolderId] = useState([]); // 이전 폴더 ID 저장
-  const [folderTitle, setFolderTitle] = useState(""); // 새 폴더 제목
-  const searchKeyword = useRef(); // 검색 키워드 ref
-  const [searching, setSeraching] = useState(false); // 검색 상태 관리
-  const [folderNameModal, setFolderNameModal] = useState(false); // 폴더 생성 모달 상태 관리
+  const file = useRef("");
+  const closeRef = useRef("");
+  const [key, setKey] = useState(Date.now());
+  const { userInfo } = useUserInfo();
+  const { mainFolders, subLists, getMainFolders, postFolder, getSubLists, postFile } = useStoreStore();
+  const [currentPath, setCurrentPath] = useState("Home");
+  const [currentFolderId, setCurrentFolderId] = useState(0);
+  const [prevFolderId, setPrevFolderId] = useState([]);
+  const [folderTitle, setFolderTitle] = useState("");
+  const searchKeyword = useRef();
+  const [searching, setSeraching] = useState(false);
+  const [folderNameModal, setFolderNameModal] = useState(false);
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // 팝업 상태
+  const router = useRouter(); // Router 추가
 
-  // 컴포넌트가 마운트될 때 폴더 리스트를 가져옵니다. 검색 중이면 검색 결과를 가져옴
+  // 컴포넌트가 마운트될 때 폴더 리스트를 가져옵니다.
   useEffect(() => {
     const search = searchKeyword.current === undefined ? "" : searchKeyword.current;
     if (searching) {
       getSubLists("", search);
     } else getMainFolders();
+
+    // 로그인 여부 확인 및 팝업 표시
+    // Show popup if user is not logged in
+    console.log(userInfo);
+    if (userInfo?.authority === undefined) {
+      setIsPopupOpen(true);
+    }
   }, [searching]);
 
-  // 폴더를 클릭해 하위 폴더나 파일 목록을 가져옵니다.
-  const onClickFolder = (id) => {
-    const temp = [...prevFolderId];
-    temp.push(currentFolderId); // 현재 폴더를 이전 폴더 목록에 추가
-    setPrevFolderId(temp);
-    setCurrentFolderId(id); // 선택한 폴더 ID로 업데이트
-    getSubLists(id, ""); // 선택한 폴더의 하위 목록 가져오기
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    router.push("/login"); // 로그인 페이지로 이동
   };
 
-  // 새 폴더 생성 모달을 토글합니다.
+  const onClickFolder = (id) => {
+    const temp = [...prevFolderId];
+    temp.push(currentFolderId);
+    setPrevFolderId(temp);
+    setCurrentFolderId(id);
+    getSubLists(id, "");
+  };
+
   const onClickCreateFolder = () => {
     setFolderNameModal((prev) => !prev);
   };
 
-  // 폴더 생성 후 스토어에 저장하고 제목을 초기화합니다.
   const onSubmitCreateFolder = (folderName) => {
-    if (currentFolderId === 0) postFolder(0, folderName, "MAIN", userInfo); // 루트 폴더인 경우
-    else postFolder(currentFolderId, folderName, "SUB", userInfo); // 서브 폴더인 경우
-    setFolderTitle(""); // 폴더 제목 초기화
+    if (currentFolderId === 0) postFolder(0, folderName, "MAIN", userInfo);
+    else postFolder(currentFolderId, folderName, "SUB", userInfo);
+    setFolderTitle("");
   };
 
-  // 파일을 선택하여 현재 폴더에 업로드합니다.
   const onSelectFile = (e) => {
     e.preventDefault();
     e.persist();
-    file.current = e.target.files[0]; // 선택한 파일 참조
-    postFile(currentFolderId, file.current, userInfo); // 파일 업로드
-    setKey(Date.now()); // 파일 input의 고유 key를 갱신해 파일 선택 초기화
+    file.current = e.target.files[0];
+    postFile(currentFolderId, file.current, userInfo);
+    setKey(Date.now());
   };
 
-  // 상위 폴더로 이동하여 경로를 업데이트합니다.
   const onClickUpFolder = () => {
     const temp = [...prevFolderId];
-    setCurrentFolderId(prevFolderId.at(-1)); // 상위 폴더 ID로 이동
+    setCurrentFolderId(prevFolderId.at(-1));
     const pos = currentPath.lastIndexOf("/");
-    const tempStr = currentPath.substring(0, pos); // 상위 경로 설정
+    const tempStr = currentPath.substring(0, pos);
     setCurrentPath(tempStr);
     if (temp.length > 1) {
-      getSubLists(temp.at(-1), ""); // 상위 폴더의 하위 목록 가져오기
+      getSubLists(temp.at(-1), "");
       temp.pop();
       setPrevFolderId(temp);
     }
@@ -79,6 +88,63 @@ const ArchiveComponents = () => {
   return (
     <>
       <main className="width_content archive">
+        {/* 팝업 모달 */}
+        {isPopupOpen && (
+          <div
+            style={{
+              position: "fixed",
+              top: "0",
+              left: "0",
+              width: "100%",
+              height: "100%",
+              backgroundColor: "rgba(0, 0, 0, 0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              style={{
+                backgroundColor: "white",
+                borderRadius: "16px",
+                padding: "30px",
+                textAlign: "center",
+                boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
+                width: "400px",
+              }}
+            >
+              <h2
+                style={{
+                  marginBottom: "20px",
+                  fontSize: "20px",
+                  color: "#5a2d82",
+                }}
+              >
+                로그인 필요
+              </h2>
+              <p style={{ marginBottom: "30px", fontSize: "16px" }}>
+                로그인하시면 더 많은 정보를 확인하실 수 있습니다.
+              </p>
+              <button
+                onClick={handleClosePopup}
+                style={{
+                  padding: "12px 24px",
+                  backgroundColor: "#5a2d82",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "8px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* 상단 검색 헤더 */}
         <BoardCommonHead
           searchKeyword={searchKeyword}
@@ -87,14 +153,12 @@ const ArchiveComponents = () => {
           placeholder="자료실 검색"
         />
 
-        {/* 현재 경로 표시 */}
         <div className={styles.path_nav}>
           <p>{currentPath}</p>
         </div>
 
-        {/* 상단 버튼 (상위 폴더 이동, 폴더 생성, 파일 업로드 등) */}
         <ArchiveUpperButtons
-          authority={userInfo.authority}
+          authority={userInfo?.authority}
           onClickUpFolder={onClickUpFolder}
           currentFolderId={currentFolderId}
           onClickCreateFolder={onClickCreateFolder}
@@ -103,7 +167,6 @@ const ArchiveComponents = () => {
           key={shortid.generate()}
         />
 
-        {/* 하위 폴더 및 파일 목록 표시 */}
         {currentFolderId !== 0 ? (
           subLists["folders"]?.length > 0 || subLists["files"]?.length > 0 ? (
             <div className={styles.ib_archive_wrap}>
@@ -123,7 +186,6 @@ const ArchiveComponents = () => {
               </div>
             </div>
           ) : (
-            // 폴더와 파일이 없을 때 표시
             <div className={styles.ib_archive_no}>
               <p>자료가 없습니다.</p>
             </div>
@@ -146,7 +208,6 @@ const ArchiveComponents = () => {
           </div>
         )}
 
-        {/* 폴더 생성 모달 */}
         {folderNameModal === true && (
           <ArchiveFolderModal
             closeRef={closeRef}
