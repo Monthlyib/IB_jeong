@@ -13,7 +13,7 @@ import { useQuestionStore } from "@/store/question";
 import { useUserInfo, useUserStore } from "@/store/user";
 
 const QuestionComponents = () => {
-  const { questionList, getUserQuestionList } = useQuestionStore();
+  const { questionList,getQuestionList, getUserQuestionList } = useQuestionStore();
   const [modal, setModal] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,10 +53,17 @@ const QuestionComponents = () => {
     const search =
       searchKeyword.current === undefined ? "" : searchKeyword.current;
     tempAccess.accessToken = getCookie("accessToken");
+
     if (tempAccess?.accessToken) {
-      getUserQuestionList("", currentPage - 1, search, tempAccess);
+      if (userInfo?.authority === "ADMIN") {
+        // ADMIN일 경우 모든 질문을 조회
+        getQuestionList(currentPage, search);
+      } else {
+        // 일반 사용자일 경우 자신의 질문만 조회
+        getUserQuestionList("", currentPage - 1, search, tempAccess);
+      }
     }
-  }, [searching,currentPage,modal]);
+  }, [searching, currentPage, modal]);
 
 
   return (
