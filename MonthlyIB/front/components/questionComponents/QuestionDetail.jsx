@@ -84,7 +84,7 @@ const QuestionDetail = (pageId) => {
 
   const onClickDelete = () => {
     questionDelete(pageId?.pageId, userInfo);
-    router.push("/question");
+    router.replace("/question");
   };
 
   const onClickSumitReviseAnswer = async (e) => {

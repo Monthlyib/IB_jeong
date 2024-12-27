@@ -74,18 +74,17 @@ const CourseComponents = () => {
 
 
   useEffect(() => {
-    const search =
-      searchKeyword.current === undefined ? "" : searchKeyword.current;
-    getCourseList(
-      currentPage,
-      search,
-      status,
-      firstCategoryId,
-      secondCategoryId,
-      thirdCategoryId
-    );
-
-    console.log("userinfo:", userInfo);
+    if (!loading) {
+      const search = searchKeyword.current ?? "";
+      getCourseList(
+        currentPage,
+        search,
+        status,
+        firstCategoryId,
+        secondCategoryId,
+        thirdCategoryId
+      );
+    }
     if (userInfo?.authority === undefined) {
       setIsPopupOpen(true);
     }
@@ -135,7 +134,7 @@ const CourseComponents = () => {
     else if (e.target.value === "SL") setThirdCategoryId(25);
     else if (e.target.value === "HL") setThirdCategoryId(26);
   };
-  
+
 
   return (
     <>

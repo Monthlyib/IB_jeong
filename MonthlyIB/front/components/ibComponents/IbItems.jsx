@@ -34,6 +34,7 @@ const IbItems = ({
   };
   const onClickPost = async (num) => {
     const res = await monthlyIBGetItem(num, userInfo);
+    console.log(res);
     const url = res?.data.pdfFiles[0].fileUrl;
     const newWindow = window.open(url, "_blank", "noopener,noreferrer");
     if (newWindow) newWindow.opener = null;

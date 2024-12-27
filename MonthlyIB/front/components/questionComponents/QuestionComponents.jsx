@@ -53,10 +53,11 @@ const QuestionComponents = () => {
     const search =
       searchKeyword.current === undefined ? "" : searchKeyword.current;
     tempAccess.accessToken = getCookie("accessToken");
-    if (tempAccess.accessToken) {
+    if (tempAccess?.accessToken) {
       getUserQuestionList("", currentPage - 1, search, tempAccess);
     }
-  }, [searching]);
+  }, [searching,currentPage,modal]);
+
 
   return (
     <>
@@ -89,8 +90,8 @@ const QuestionComponents = () => {
               <span>총 질문 수</span>
               <b>{questionList?.length}</b>
             </div>
-            {(userInfo?.authority === "ADMIN" ||
-              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT") && (
+            {(userInfo?.authority === "USER" ||
+              userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") && (
               <button
                 type="button"
                 className="btn_write"
@@ -102,8 +103,8 @@ const QuestionComponents = () => {
             )}
           </div>
           {modal === true &&
-            (userInfo?.authority === "ADMIN" ||
-              userSubscribeInfo?.[0]?.subscribeStatus === "WAIT") && (
+            (userInfo?.authority === "USER" ||
+              userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") && (
               <QuestionWrite
                 setModal={setModal}
                 currentPage={currentPage}
