@@ -17,6 +17,8 @@ const CoursePlayer = (pageId) => {
   const [modal, setModal] = useState(false);
   const { courseDetail, getCourseDetail } = useCourseStore();
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
+  
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
     if (localUser)
@@ -26,6 +28,8 @@ const CoursePlayer = (pageId) => {
         localUser.state.userInfo
       );
   }, []);
+
+
   useEffect(() => {
     if (userSubscribeInfo?.[0]?.subscribeStatus !== "ACTIVE") {
       alert("잘못된 접근입니다.");

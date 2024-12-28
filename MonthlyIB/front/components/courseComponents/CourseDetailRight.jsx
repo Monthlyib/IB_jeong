@@ -7,7 +7,6 @@ import {
   faVideo,
   faChalkboardUser,
 } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect } from "react";
 import { coursePostUser } from "@/apis/courseAPI";
@@ -17,11 +16,9 @@ import { useUserInfo, useUserStore } from "@/store/user";
 
 const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
   const router = useRouter();
-
   const accessToken = getCookie("accessToken");
   const { userInfo } = useUserInfo();
   const { deleteCourseItem } = useCourseStore();
-
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
@@ -43,10 +40,25 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
     router.push(`/course`);
   }, []);
 
-  const onClickTakeCourse = () => {
-    if (userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE")
-      coursePostUser(parseInt(pageId), { accessToken });
-  };
+  const onClickTakeCourse = async (e) => {
+    e.preventDefault(); // 링크 기본 동작 방지
+    try {
+        if (userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") {
+            const response = await coursePostUser(parseInt(pageId), { accessToken });
+            console.log("수강 신청 결과:", response);
+
+            if (response?.status === 200 || response?.status === 201) {
+                router.push(`/course/player/${pageId}`); // 성공 시 페이지 이동
+            }
+        }
+    } catch (error) {
+        if (error.response?.status === 403) {
+            console.error("구독 활성화가 필요합니다. 상태 코드:", error.response?.status);
+        } else {
+            console.error("수강 신청 중 오류 발생:", error);
+        }
+    }
+};
 
   return (
     <div className={styles.course_right}>
@@ -82,13 +94,10 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
             </ul>
           </div>
         </div>
-        <div className={styles.center_btn_wrap} onClick={onClickTakeCourse}>
-          <Link
-            href={
-              userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE"
-                ? `/course/player/${pageId}`
-                : "#"
-            }
+        <div className={styles.center_btn_wrap}>
+          <a
+            href="#"
+            onClick={onClickTakeCourse}
             className={
               userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE"
                 ? ""
@@ -96,7 +105,7 @@ const CourseDetailRight = ({ courseDetail, reviewAvgPoint, pageId }) => {
             }
           >
             수강하기
-          </Link>
+          </a>
         </div>
 
         {userInfo?.authority === "ADMIN" && (
