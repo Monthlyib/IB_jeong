@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 import styles from "./IbComponents.module.css";
@@ -24,6 +24,7 @@ const IBPost = () => {
   const { ibDetail, getIBItem, reviseItem } = useIBStore();
   const searchParams = useSearchParams();
   const monthlyIbId = parseInt(searchParams.get("monthlyIbId"));
+
 
   useEffect(() => {
     if (monthlyIbId) {
@@ -85,6 +86,7 @@ const IBPost = () => {
     const fileExtention = file.name.split(".")[1];
     const oldFileName = file.name.split(".")[0];
     const date = new Date();
+
     var hours = ("0" + date.getHours()).slice(-2);
     var minutes = ("0" + date.getMinutes()).slice(-2);
     var seconds = ("0" + date.getSeconds()).slice(-2);

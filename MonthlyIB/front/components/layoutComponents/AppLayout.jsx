@@ -56,6 +56,9 @@ const AppLayout = ({ children, disable }) => {
             <nav onMouseOver={onMouseOverMenu} onMouseLeave={onMouseLeaveMenu}>
               <ul style={{ listStyle: "none" }}>
                 <li>
+                  <Link href="/aitools">AI Tools</Link>
+                </li>
+                <li>
                   <Link href="/ib">월간 IB</Link>
                 </li>
                 <li>
@@ -90,6 +93,8 @@ const AppLayout = ({ children, disable }) => {
                 <li>
                   <Link href="/learningtest">학습유형 테스트</Link>
                 </li>
+                {/* AI Tools 메인페이지 네비게이션 추가 */}
+
                 <li>
                   <Link
                     href="http://monthlyib.co.kr/contact"
@@ -124,8 +129,8 @@ const AppLayout = ({ children, disable }) => {
           mouseOverMenu
             ? { display: "block" }
             : asideModal
-            ? { display: "block" }
-            : { display: "none" }
+              ? { display: "block" }
+              : { display: "none" }
         }
         onClick={() => {
           setAsideModal(false);

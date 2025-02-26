@@ -15,6 +15,11 @@ const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const { ibPosts, getIBList } = useIBStore();
+
+  useEffect(() => {
+    console.log("ibPosts", ibPosts);
+  }, [ibPosts]);
+    
   const [windowSize, setWindowSize] = useState(0);
 
   const searchKeyword = useRef();

@@ -382,6 +382,7 @@ header nav > ul > li:hover > a {
 
 main {
   padding-top: 8rem;
+  min-height: calc(100vh - 10rem - 10rem); /* 8rem 헤더, 6rem footer 가정 */
 }
 
 section {
@@ -712,6 +713,111 @@ a.disabled {
   cursor: pointer;
 }
 
+/* ========== AI Tools Main Page Styles ========== */
+
+/* 메인 헤더/배너 영역 */
+.aiToolsMainBanner {
+  background-color: #f5f0fa; /* 연한 보라색 배경 */
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-top: 3rem;  /* 헤더와 겹치지 않도록 추가된 여백 */
+  margin-bottom: 3rem;
+  border-radius: 8px;
+}
+
+.aiToolsMainBanner h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary01); /* 포인트 컬러 */
+  margin-bottom: 2rem;
+}
+
+.aiToolsMainBanner p {
+  font-size: 1.6rem;
+  color: #333;
+  margin-bottom: 2rem;
+}
+
+/* "지금 시작하기" 버튼 */
+.aiToolsMainBanner .startButton {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background-color: var(--primary01);
+  color: #fff;
+  border-radius: 4px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.aiToolsMainBanner .startButton:hover {
+  background-color: var(--primary03); /* hover 시 조금 더 진한 보라 */
+}
+
+/* 카드들을 감싸는 컨테이너 */
+.aiToolsCardContainer {
+  width: 110rem; /* 프로젝트 전체 폭에 맞춰 조정 */
+  max-width: 100%;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 기본: 4열 (1행 4열) */
+  gap: 2rem;
+}
+
+/* 반응형: 화면 폭이 1024px 이하일 때 2열 (2행 2열) */
+@media screen and (max-width: 1024px) {
+  .aiToolsCardContainer {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 반응형: 화면 폭이 640px 이하일 때 1열 (4행 1열) */
+@media screen and (max-width: 640px) {
+  .aiToolsCardContainer {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 개별 카드 */
+.aiToolsCard {
+  background-color: #fff;
+  border: 1px solid #d5d5d5;
+  border-radius: 8px;
+  padding: 2rem;
+  text-align: center;
+  color: #333;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aiToolsCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #fafafa;
+}
+
+/* 카드 아이콘 (FontAwesome 등) */
+.aiToolsCardIcon {
+  font-size: 3rem;
+  color: var(--primary01); /* 포인트 컬러 */
+  margin-bottom: 1rem;
+}
+
+/* 카드 제목 */
+.aiToolsCardTitle {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+}
+
+/* 카드 설명 */
+.aiToolsCardDesc {
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: #666;
+  line-height: 1.4;
+}
 /*  TB, MO - 1024 */
 @media screen and (max-width: 1024px) {
   /**************

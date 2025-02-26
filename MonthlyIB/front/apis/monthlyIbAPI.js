@@ -30,6 +30,7 @@ export const monthlyIBPostPDFFile = async (monthlyIbId, file, accessToken) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
+    console.log(formData);
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
