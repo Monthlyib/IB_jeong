@@ -1,0 +1,91 @@
+/* AIChapterTest.module.css */
+
+.container {
+    width: 110rem; /* 프로젝트 전체 폭에 맞춰 조정 */
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  
+  .introSection {
+    text-align: center;
+    margin-bottom: 2rem; /* 첫 번째 섹션과 두 번째 섹션 간격 조정 */
+  }
+  
+  /* 제목 (예: AI Chapter Test) */
+  .title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary01); /* 보라색 포인트 컬러 */
+    margin-bottom: 2rem;
+  }
+  
+  /* 간단 소개 문구 */
+  .description {
+    font-size: 1.6rem;
+    color: #333;
+  }
+  
+  /* 드롭다운 + 버튼 컨테이너 */
+  .formSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 600px; /* 전체 폼의 최대 너비를 600px로 확장 */
+    margin: 0 auto;   /* 화면 중앙 정렬 */
+  }
+  
+  /* 드롭다운 감싸는 래퍼 */
+  .selectWrapper {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+  
+  .selectWrapper label {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+    color: #444;
+  }
+  
+/* AIChapterTest.module.css */
+
+/* 드롭다운 */
+.selectWrapper select {
+    width: 100%;
+    font-size: 1.4rem;
+    line-height: 1.6;            /* 줄 높이를 넉넉히 설정 */
+    padding: 1.2rem 1.6rem;     /* 좌우 패딩도 살짝 늘림 */
+    border: 1px solid #d5d5d5;
+    border-radius: 10px;
+    background: #fff;
+    color: #333;
+    box-sizing: border-box;      /* 패딩 포함한 크기 계산 */
+    -webkit-appearance: none;    /* 일부 브라우저 기본 화살표 제거 */
+    -moz-appearance: none;
+    appearance: none;
+  }
+  
+  /* 테스트 시작 버튼 */
+  .startButton {
+    display: inline-block;
+    width: 100%;              /* 버튼도 폭을 넓혀서 중앙 정렬 시키기 편하도록 */
+    max-width: 300px;         /* 필요에 따라 조정 가능 */
+    padding: 1.2rem 2rem;
+    background-color: var(--primary01);
+    color: #fff;
+    border-radius: 20px;      /* 버튼도 크게 둥글게 */
+    font-size: 1.6rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    margin-top: 1rem;         /* 드롭다운과의 간격 */
+  }
+  
+  .startButton:hover {
+    background-color: var(--primary03); /* hover 시 조금 더 진한 보라 */
+  }

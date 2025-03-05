@@ -14,15 +14,15 @@ const AIToolsMain = () => {
     <main>
       {/* 배너 영역 */}
       <section className="aiToolsMainBanner">
-        <h1>IB 학생들을 위한 AI 학습 도구</h1>
-        <Link href="/ai-tools/chapter-test" className="startButton">
-          지금 시작하기
-        </Link>
+        <h1>IB 학습, 이제 AI로 더 효율적으로!</h1>
+        <Link href="/aitools/chapter-test" className="startButton">
+          AI 학습 도구 사용하기
+        </Link> 
       </section>
 
       {/* AI 기능 카드 영역 */}
       <section className="aiToolsCardContainer">
-        <Link href="/ai-tools/chapter-test" className="aiToolsCard">
+        <Link href="/aitools/chapter-test" className="aiToolsCard">
           <div className="aiToolsCardIcon">
             <FontAwesomeIcon icon={faClipboardList} size="2x" />
           </div>
@@ -32,7 +32,7 @@ const AIToolsMain = () => {
           </p>
         </Link>
 
-        <Link href="/ai-tools/essay" className="aiToolsCard">
+        <Link href="/aitools/essay" className="aiToolsCard">
           <div className="aiToolsCardIcon">
             <FontAwesomeIcon icon={faAlignLeft} size="2x" />
           </div>
@@ -42,7 +42,7 @@ const AIToolsMain = () => {
           </p>
         </Link>
 
-        <Link href="/ai-tools/coaching" className="aiToolsCard">
+        <Link href="/aitools/coaching" className="aiToolsCard">
           <div className="aiToolsCardIcon">
             <FontAwesomeIcon icon={faChalkboardTeacher} size="2x" />
           </div>
@@ -52,7 +52,7 @@ const AIToolsMain = () => {
           </p>
         </Link>
 
-        <Link href="/ai-tools/io-practice" className="aiToolsCard">
+        <Link href="/aitools/io-practice" className="aiToolsCard">
           <div className="aiToolsCardIcon">
             <FontAwesomeIcon icon={faMicrophoneAlt} size="2x" />
           </div>
