@@ -1,0 +1,151 @@
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  /* 1) 인트로 섹션 */
+  .introSection {
+    text-align: center;
+  }
+  
+  .title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--primary01);
+  }
+  
+  .description {
+    font-size: 1.4rem;
+    color: #333;
+  }
+  
+  /* 2) 정보영역 */
+  .infoSection {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.6rem;
+    background-color: #f9f9f9;
+  }
+  
+  .infoTitle {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .infoRow {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+    font-size: 1.4rem;
+    color: #333;
+  }
+  
+  .infoRow span {
+    font-weight: 400;
+    color: #555;
+  }
+  
+  .infoRow strong {
+    font-weight: 600;
+  }
+  
+  /* 3) 녹음 인터페이스 */
+  .recordSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+    border: 1px solid var(--primary01);
+    border-radius: 8px;
+    padding: 1.6rem;
+  }
+  
+  .timer {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary01);
+  }
+  
+  /* 버튼 공통 */
+  .recordButton,
+  .stopButton,
+  .feedbackButton,
+  .tutorButton {
+    display: inline-block;
+    padding: 1rem 1.6rem;
+    font-size: 1.4rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin: 0.4rem;
+  }
+  
+  .icon {
+    margin-right: 0.6rem;
+  }
+  
+  /* 녹음 시작 버튼 */
+  .recordButton {
+    background-color: var(--primary01);
+    color: #fff;
+  }
+  .recordButton:hover {
+    background-color: var(--primary03);
+  }
+  
+  /* 녹음 중단 버튼 */
+  .stopButton {
+    background-color: #e60000;
+    color: #fff;
+  }
+  .stopButton:hover {
+    background-color: #cc0000;
+  }
+  
+  /* 피드백 받기 버튼 */
+  .feedbackButton {
+    background-color: #5a2d82;
+    color: #fff;
+  }
+  .feedbackButton:hover {
+    background-color: #4a226b;
+  }
+  
+  /* 4) 피드백 섹션 */
+  .feedbackSection {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1.6rem;
+    background-color: #fff;
+  }
+  
+  .feedbackTitle {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .feedbackContent {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  /* 튜터에게 보내기 버튼 */
+  .tutorButton {
+    background-color: #ffbd2f;
+    color: #333;
+  }
+  .tutorButton:hover {
+    background-color: #ffa800;
+  }

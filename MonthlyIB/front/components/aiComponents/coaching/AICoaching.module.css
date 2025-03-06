@@ -1,0 +1,86 @@
+.container {
+    width: 110rem; /* 프로젝트 전체 폭에 맞춰 조정 */
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  
+  .introSection {
+    text-align: center;
+    margin-bottom: 3rem;
+  }
+  
+  .title {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary01); /* 보라색 포인트 컬러 */
+    margin-bottom: 2rem;
+  }
+  
+  .description {
+    font-size: 1.6rem;
+    color: #333;
+  }
+  
+  /* IA/EE 카드 컨테이너 */
+  .cardContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 1000px; /* 적절한 최대 너비 */
+    margin: 0 auto;
+  }
+  
+  /* 개별 카드 */
+  .card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* 연한 노란색 배경 예시 (필요 시 사용)
+       background-color: #fff9e6;
+    */
+  }
+  
+  /* 카드 hover 효과 */
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 카드 제목 */
+  .cardTitle {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #333;
+  }
+  
+  /* 카드 설명 */
+  .cardDesc {
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #666;
+    margin-bottom: 2rem;
+    line-height: 1.4;
+  }
+  
+  /* 카드 버튼 */
+  .cardButton {
+    display: inline-block;
+    padding: 1rem 2rem;
+    background-color: var(--primary01);
+    color: #fff;
+    border-radius: 6px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cardButton:hover {
+    background-color: var(--primary03); /* hover 시 조금 더 진한 보라 */
+  }
