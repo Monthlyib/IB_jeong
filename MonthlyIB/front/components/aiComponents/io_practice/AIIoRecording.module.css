@@ -56,6 +56,72 @@
     font-weight: 600;
   }
   
+  /* 대본 보기 버튼 */
+  .viewScriptButton {
+    margin-top: 1rem;
+    padding: 0.8rem 1.6rem;
+    font-size: 1.4rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #5a2d82;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .viewScriptButton:hover {
+    background-color: #4a226b;
+  }
+  
+  /* 5) 대본 미리보기 영역 */
+  .previewSection {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 600px;  /* 미리보기 영역 높이 확대 */
+    overflow-y: auto;
+  }
+  
+  .previewTitle {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .previewContainer {
+    width: 100%;
+  }
+  
+  /* PDF 미리보기 */
+  .embedPdf {
+    width: 100%;
+    height: 700px;  /* PDF 미리보기 높이 조정 */
+  }
+  
+  /* TXT 미리보기 */
+  .previewText {
+    white-space: pre-wrap;
+    font-size: 1.4rem;
+    line-height: 1.6;
+    color: #333;
+    font-family: "Noto Sans KR", sans-serif;
+  }
+  
+  /* 다운로드 링크 스타일 */
+  .downloadLink {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary01);
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  .downloadLink:hover {
+    background-color: var(--primary03);
+  }
+  
   /* 3) 녹음 인터페이스 */
   .recordSection {
     display: flex;
@@ -73,7 +139,7 @@
     color: var(--primary01);
   }
   
-  /* 버튼 공통 */
+  /* 버튼 공통 스타일 */
   .recordButton,
   .stopButton,
   .feedbackButton,
@@ -111,7 +177,7 @@
     background-color: #cc0000;
   }
   
-  /* 피드백 받기 버튼 */
+  /* 피드백 버튼 */
   .feedbackButton {
     background-color: #5a2d82;
     color: #fff;
@@ -148,4 +214,23 @@
   }
   .tutorButton:hover {
     background-color: #ffa800;
+  }
+  
+  /* 6) 오디오 재생 영역 */
+  .audioSection {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .audioTitle {
+    font-size: 1.6rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+  }
+  
+  .audioPlayer {
+    width: 100%;
+    max-width: 400px;
   }

@@ -23,8 +23,18 @@ const AIIoPractice = () => {
   } = useIOStore();
 
   const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      setScriptFileLocal(e.target.files[0]);
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      // 파일 확장자 검사 (소문자 변환 후 검사)
+      const allowedExtensions = [".pdf", ".txt", ".doc", ".docx"];
+      const fileName = file.name.toLowerCase();
+      const isAllowed = allowedExtensions.some(ext => fileName.endsWith(ext));
+      if (!isAllowed) {
+        alert("업로드 가능한 파일 형식은 PDF, TXT, DOC, DOCX 입니다.");
+        e.target.value = "";
+        return;
+      }
+      setScriptFileLocal(file);
     }
   };
 
