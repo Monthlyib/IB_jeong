@@ -18,8 +18,8 @@ const AIIoRecording = () => {
 
     // 녹음 관련 상태
     const [mediaRecorder, setMediaRecorder] = useState(null);
-    const [audioChunks, setAudioChunks] = useState([]);
     const [audioBlob, setAudioBlob] = useState(null);
+    const [isFinished, setIsFinished] = useState(false);
 
     const audioRef = useRef(null); // 녹음 파일 재생을 위한 ref
 
@@ -29,20 +29,23 @@ const AIIoRecording = () => {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder = new MediaRecorder(stream);
             setMediaRecorder(recorder);
-            setAudioChunks([]);
+            let chunks = [];
 
             recorder.ondataavailable = (e) => {
                 if (e.data && e.data.size > 0) {
-                    setAudioChunks((prev) => [...prev, e.data]);
+                    chunks.push(e.data);
                 }
             };
 
             recorder.onstop = () => {
-                const blob = new Blob(audioChunks, { type: "audio/webm" });
+                const blob = new Blob(chunks, { type: "audio/webm" });
                 setAudioBlob(blob);
-                // 재생을 위해 URL 생성
+                // 재생을 위해 URL 생성 및 audio 태그 업데이트
                 if (audioRef.current) {
-                    audioRef.current.src = URL.createObjectURL(blob);
+                    const url = URL.createObjectURL(blob);
+                    console.log(url);
+                    audioRef.current.src = url;
+                    audioRef.current.load();
                 }
             };
 
@@ -59,6 +62,7 @@ const AIIoRecording = () => {
         if (mediaRecorder && mediaRecorder.state !== "inactive") {
             mediaRecorder.stop();
             setIsRecording(false);
+            setIsFinished(true);
         }
     };
 
@@ -126,6 +130,15 @@ const AIIoRecording = () => {
         return () => clearInterval(timerId);
     }, [isRecording, timeLeft]);
 
+    // audioBlob 상태 변화에 따라 audio 태그 업데이트
+    useEffect(() => {
+        if (audioBlob && audioRef.current) {
+            const url = URL.createObjectURL(audioBlob);
+            audioRef.current.src = url;
+            audioRef.current.load();
+        }
+    }, [audioBlob,audioRef]);
+
     // 시간 포맷팅
     const formatTime = (seconds) => {
         const min = Math.floor(seconds / 60);
@@ -178,14 +191,35 @@ const AIIoRecording = () => {
             {/* 3) 녹음 인터페이스 */}
             <section className={styles.recordSection}>
                 <div className={styles.timer}>{formatTime(timeLeft)}</div>
-                {!isRecording ? (
+                {!isRecording && !isFinished && (
                     <button className={styles.recordButton} onClick={handleStartRecording}>
                         <FontAwesomeIcon icon={faMicrophone} className={styles.icon} />
                         녹음 시작
                     </button>
-                ) : (
+                )}
+
+                {isRecording && (
                     <button className={styles.stopButton} onClick={handleStopRecording}>
                         녹음 중단
+                    </button>
+                )}
+
+                {!isRecording && isFinished && (
+                    <button
+                        className={styles.recordButton}
+                        onClick={() => {
+                            // Clear previous recording and reset timer
+                            setAudioBlob(null);
+                            setTimeLeft(600);
+                            if (audioRef.current) {
+                                audioRef.current.src = "";
+                            }
+                            setIsFinished(false);
+                            handleStartRecording();
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faMicrophone} className={styles.icon} />
+                        재녹음
                     </button>
                 )}
                 <button className={styles.feedbackButton} onClick={handleGetFeedback}>
