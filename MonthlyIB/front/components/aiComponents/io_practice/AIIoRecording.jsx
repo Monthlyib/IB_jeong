@@ -6,15 +6,18 @@ import { useIOStore } from "@/store/AIIostore";
 import styles from "./AIIoRecording.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
+import { useUserInfo } from "@/store/user";
+
 
 const AIIoRecording = () => {
     const router = useRouter();
-    const { iocTopic, workTitle, author, scriptFile } = useIOStore();
+    const { iocTopic, workTitle, author, scriptFile, sendFeedbackRequest } = useIOStore();
 
     const [isRecording, setIsRecording] = useState(false);
     const [timeLeft, setTimeLeft] = useState(600); // 10분 타이머
     const [feedback, setFeedback] = useState("");
     const [preview, setPreview] = useState(null); // 대본 미리보기 콘텐츠
+    const { userInfo } = useUserInfo();
 
     // 녹음 관련 상태
     const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -67,10 +70,17 @@ const AIIoRecording = () => {
     };
 
     // 피드백 받기
-    const handleGetFeedback = () => {
-        setFeedback("AI가 분석한 피드백 내용이 표시됩니다. 문장별 개선점, 표현 방법 제안 등...");
+    // 피드백 받기
+    const handleGetFeedback = async () => {
+        try {
+            const feedbackResult = await sendFeedbackRequest(iocTopic, workTitle, author, scriptFile, audioBlob, userInfo);
+            // 반환된 JSON 구조에서 feedbackContent만 추출하여 상태에 저장
+            setFeedback(feedbackResult.data.feedbackContent);
+        } catch (error) {
+            console.error("Feedback request error:", error);
+            setFeedback("피드백 요청 중 오류가 발생했습니다.");
+        }
     };
-
     // 대본 미리보기 토글 함수
     const toggleScriptPreview = () => {
         if (!scriptFile) {
@@ -137,7 +147,7 @@ const AIIoRecording = () => {
             audioRef.current.src = url;
             audioRef.current.load();
         }
-    }, [audioBlob,audioRef]);
+    }, [audioBlob, audioRef]);
 
     // 시간 포맷팅
     const formatTime = (seconds) => {
