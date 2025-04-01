@@ -18,6 +18,7 @@ const AIIoRecording = () => {
     const [feedback, setFeedback] = useState("");
     const [preview, setPreview] = useState(null); // 대본 미리보기 콘텐츠
     const { userInfo } = useUserInfo();
+    const [loading, setLoading] = useState(false);
 
     // 녹음 관련 상태
     const [mediaRecorder, setMediaRecorder] = useState(null);
@@ -73,9 +74,11 @@ const AIIoRecording = () => {
     // 피드백 받기
     const handleGetFeedback = async () => {
         try {
+            setLoading(true);
             const feedbackResult = await sendFeedbackRequest(iocTopic, workTitle, author, scriptFile, audioBlob, userInfo);
             // 반환된 JSON 구조에서 feedbackContent만 추출하여 상태에 저장
             setFeedback(feedbackResult.data.feedbackContent);
+            setLoading(false);
         } catch (error) {
             console.error("Feedback request error:", error);
             setFeedback("피드백 요청 중 오류가 발생했습니다.");
@@ -246,14 +249,21 @@ const AIIoRecording = () => {
             )}
 
             {/* 4) 피드백 섹션 */}
-            {feedback && (
+            {loading ? (
                 <section className={styles.feedbackSection}>
                     <h2 className={styles.feedbackTitle}>피드백 요약</h2>
-                    <p className={styles.feedbackContent}>{feedback}</p>
-                    <button className={styles.tutorButton} onClick={() => alert("튜터에게 전송")}>
-                        튜터에게 보내고 레슨 잡기
-                    </button>
+                    <p className={styles.feedbackContent}>로딩 중...</p>
                 </section>
+            ) : (
+                feedback && (
+                    <section className={styles.feedbackSection}>
+                        <h2 className={styles.feedbackTitle}>피드백 요약</h2>
+                        <p className={styles.feedbackContent}>{feedback}</p>
+                        <button className={styles.tutorButton} onClick={() => alert("튜터에게 전송")}>
+                            튜터에게 보내고 레슨 잡기
+                        </button>
+                    </section>
+                )
             )}
         </main>
     );

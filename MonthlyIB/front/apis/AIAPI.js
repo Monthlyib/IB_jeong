@@ -12,7 +12,7 @@ export const sendFeedbackRequest = async (formData, session) => {
         Authorization: session?.accessToken,
       },
     };
-    const res = await tokenRequireApi.post(AI_API_URL, formData, config);
+    const res = await tokenRequireApi.post(`${AI_API_URL}`, formData, config);
     return res.data;
   } catch (error) {
     console.error("Feedback request error:", error);

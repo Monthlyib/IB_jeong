@@ -7,6 +7,7 @@ export const useIOStore = create((set, get) => ({
   author: "",
   scriptFile: null,
   audioBlob: null, // 녹음 파일도 함께 관리
+  
 
   setIocTopic: (iocTopic) => set({ iocTopic }),
   setWorkTitle: (workTitle) => set({ workTitle }),
