@@ -1,0 +1,66 @@
+.container {
+  max-width: 900px;
+  margin: 40px auto;
+  font-family: 'Sans Serif', sans-serif;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #888;
+  margin-bottom: 20px;
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.textarea, .input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+
+.fileInput {
+  font-size: 14px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.cancelBtn, .submitBtn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.cancelBtn {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.submitBtn {
+  background: var(--primary01);
+  color: #fff;
+}
+
+.submitBtn:hover {
+  background: var(--primary03);
+}

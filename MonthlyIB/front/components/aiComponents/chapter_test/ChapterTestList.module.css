@@ -1,0 +1,125 @@
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  font-family: Arial, sans-serif;
+}
+
+/* Title */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Question list */
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 0 0;
+}
+
+.item {
+  position: relative;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.question {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #111;
+}
+
+.choices {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 12px;
+}
+
+.choices li {
+  font-size: 17px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.answer {
+  font-size: 17px;
+  font-weight: bold;
+  color: #2a8f3c;
+  margin-top: 14px;
+}
+
+/* Filter row section */
+.filterRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  margin: 6rem 0 2rem 0;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.filterRow label {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #555;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.filterRow select {
+  margin-top: 0.5rem;
+  padding: 12px 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #fafafa;
+  min-width: 160px;
+  color: #333;
+  vertical-align: middle;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  gap: 10px;
+}
+
+.editButton,
+.deleteButton {
+  font-size: 14px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: center;
+  min-width: 60px;
+}
+
+.editButton {
+  background-color: #e6f4ea;
+  color: #2e7d32;
+  border-color: #2e7d32;
+  text-decoration: none;
+}
+
+.deleteButton {
+  background-color: #fcebea;
+  color: #c62828;
+  border-color: #c62828;
+}

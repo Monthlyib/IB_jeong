@@ -89,3 +89,23 @@
   .startButton:hover {
     background-color: var(--primary03); /* hover 시 조금 더 진한 보라 */
   }
+
+  .right_btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 0 0.8rem;
+  }
+
+  .btn_write {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 14rem;
+    height: 3.6rem;
+    font-size: 1.4rem;
+    border: 1px solid #d5d5d5;
+    border-radius: 0.5rem;
+    padding: 0 1.4rem;
+  }
+  

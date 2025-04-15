@@ -1,0 +1,14 @@
+.ql-editor {
+  font-family: 'Nanum Gothic', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  min-height: 120px;
+}
+
+.editor-question {
+  min-height: 300px;
+}
+
+.editor-answer {
+  min-height: 300px;
+}

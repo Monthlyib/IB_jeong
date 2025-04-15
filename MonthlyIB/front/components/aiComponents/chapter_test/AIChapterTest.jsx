@@ -3,11 +3,16 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./AIChapterTest.module.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useUserInfo } from "@/store/user";
+import Link from "next/link";
+import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 
 const AIChapterTest = () => {
   const router = useRouter();
   const [subject, setSubject] = useState("");
   const [chapter, setChapter] = useState("");
+  const { userInfo } = useUserInfo();
 
   const handleStartTest = () => {
     // 예시: 실제 테스트 페이지로 이동
@@ -28,9 +33,31 @@ const AIChapterTest = () => {
           과목과 챕터를 선택하고 테스트를 시작해 보세요!
         </p>
       </section>
-
+      {userInfo?.authority === "ADMIN" && (
+        <div className={styles.right_btn}>
+          <Link
+            href={`/aitools/chapter-test/admin-input`}
+            className={styles.btn_write}
+          >
+            <FontAwesomeIcon icon={faPenAlt} />
+            <span>문제 입력</span>
+          </Link>
+        </div>
+      )}
+      {userInfo?.authority === "ADMIN" && (
+        <div className={styles.right_btn}>
+          <Link
+            href={`/aitools/chapter-test/list`}
+            className={styles.btn_write}
+          >
+            <FontAwesomeIcon icon={faPenAlt} />
+            <span>문제 목록 보기</span>
+          </Link>
+        </div>
+      )}
       {/* 드롭다운 + 버튼 영역 */}
       <section className={styles.formSection}>
+
         <div className={styles.selectWrapper}>
           <label htmlFor="subjectSelect">과목 선택</label>
           <select
