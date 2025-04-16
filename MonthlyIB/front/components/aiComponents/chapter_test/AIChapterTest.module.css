@@ -108,4 +108,64 @@
     border-radius: 0.5rem;
     padding: 0 1.4rem;
   }
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modalContent {
+  background: #fff;
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modalButtons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.continueButton,
+.resetButton,
+.cancelButton {
+  padding: 1rem;
+  font-size: 1.4rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.continueButton {
+  background-color: #4caf50;
+  color: white;
+}
+
+.resetButton {
+  background-color: #f44336;
+  color: white;
+}
+
+.cancelButton {
+  background-color: #ccc;
+  color: #333;
+}
+
+.notice {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #666;
+}
   

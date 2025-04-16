@@ -7,21 +7,69 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useUserInfo } from "@/store/user";
 import Link from "next/link";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
+import { getActiveQuizSession } from "@/apis/AiChapterTestAPI";
+import { useChapterTestStore } from "@/store/chaptertest";
 
 const AIChapterTest = () => {
   const router = useRouter();
   const [subject, setSubject] = useState("");
   const [chapter, setChapter] = useState("");
   const { userInfo } = useUserInfo();
+  const [pendingSessionId, setPendingSessionId] = useState(null);
+  const [questionCount, setQuestionCount] = useState(5);
+  const [durationMinutes, setDurationMinutes] = useState(20);
+  const [showResumeModal, setShowResumeModal] = useState(false);
 
-  const handleStartTest = () => {
-    // 예시: 실제 테스트 페이지로 이동
-    // 선택한 subject, chapter 값을 쿼리 파라미터로 넘길 수도 있음
+  const { fetchAndSetQuizSession } = useChapterTestStore();
+
+  const handleStartTest = async () => {
     if (!subject || !chapter) {
       alert("과목과 챕터를 모두 선택하세요.");
       return;
     }
-    router.push(`/aitools/chapter-test/exam?subject=${subject}&chapter=${chapter}`);
+
+    try {
+      const result = await getActiveQuizSession({ subject, chapter }, userInfo);
+      console.log("result", result);
+      if (result?.data?.quizSessionId) {
+        setPendingSessionId(result.data.quizSessionId);
+        setShowResumeModal(true);
+      } else {
+        const sessionData = await fetchAndSetQuizSession(
+          { subject, chapter, questionCount, durationMinutes },
+          userInfo
+        );
+        router.push(`/aitools/chapter-test/exam?sessionId=${sessionData.quizSessionId}`);
+      }
+    } catch (err) {
+      console.error("시험 시작 실패:", err?.response?.data?.code);  
+      if (err?.response?.data?.code === 14034) {
+        alert("문제 수가 부족하여 시험을 시작할 수 없습니다.");
+      } else {
+        console.error("시험 시작 실패:", err);
+        alert("시험 세션을 시작할 수 없습니다.");
+      }
+    }
+  };
+
+  const handleContinueTest = () => {
+    router.push(`/aitools/chapter-test/exam?sessionId=${pendingSessionId}`);
+  };
+
+  const handleForceNewTest = async () => {
+    const confirmed = confirm("이전에 완료되지 않은 시험 기록이 삭제됩니다. 새로 시작하시겠습니까?");
+    if (!confirmed) return;
+
+    try {
+      const sessionData = await fetchAndSetQuizSession(
+        { subject, chapter, questionCount, durationMinutes },
+        userInfo
+      );
+      router.push(`/aitools/chapter-test/exam?sessionId=${sessionData.quizSessionId}`);
+    } catch (err) {
+      console.error("시험 세션 새로 시작 실패:", err);
+      alert("시험 세션을 새로 시작할 수 없습니다.");
+    }
   };
 
   return (
@@ -92,9 +140,61 @@ const AIChapterTest = () => {
           </select>
         </div>
 
+        <div className={styles.selectWrapper}>
+          <label htmlFor="questionCount">문제 개수 선택</label>
+          <select
+            id="questionCount"
+            value={questionCount}
+            onChange={(e) => setQuestionCount(parseInt(e.target.value))}
+            className={styles.input}
+          >
+            {[...Array(20)].map((_, i) => (
+              <option key={i + 1} value={i + 1}>
+                {i + 1}문제
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.selectWrapper}>
+          <label htmlFor="durationMinutes">시험 시간 선택</label>
+          <select
+            id="durationMinutes"
+            value={durationMinutes}
+            onChange={(e) => setDurationMinutes(parseInt(e.target.value))}
+            className={styles.input}
+          >
+            {[10, 15, 20, 25, 30].map((min) => (
+              <option key={min} value={min}>
+                {min}분
+              </option>
+            ))}
+          </select>
+        </div>
+
         <button className={styles.startButton} onClick={handleStartTest}>
           테스트 시작
         </button>
+
+        {pendingSessionId && showResumeModal && (
+          <div className={styles.modalOverlay}>
+            <div className={styles.modalContent}>
+              <p>진행 중인 시험이 있습니다. 어떻게 하시겠습니까?</p>
+              <div className={styles.modalButtons}>
+                <button className={styles.continueButton} onClick={handleContinueTest}>
+                  시험 이어보기
+                </button>
+                <button className={styles.resetButton} onClick={handleForceNewTest}>
+                  시험 새로보기
+                </button>
+                <button className={styles.cancelButton} onClick={() => setShowResumeModal(false)}>
+                  취소
+                </button>
+              </div>
+              <p className={styles.notice}>※ 새로 시작하면 이전 시험 기록은 삭제됩니다.</p>
+            </div>
+          </div>
+        )}
       </section>
     </main>
   );
