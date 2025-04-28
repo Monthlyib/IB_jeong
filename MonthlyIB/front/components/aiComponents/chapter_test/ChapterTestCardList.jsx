@@ -10,7 +10,14 @@ const ChapterTestCardList = ({ questions }) => {
         <ul className={styles.list}>
             {questions.map((q) => (
                 <li key={q.id} className={styles.item}>
-                    <div className={styles.question} dangerouslySetInnerHTML={{ __html: q.question }} />
+                    <div className={styles.content}>
+                        <div className={styles.question} dangerouslySetInnerHTML={{ __html: q.question }} />
+                        {q.imagePath && (
+                          <div className={styles.imageWrapper}>
+                            <img src={q.imagePath} alt="Question Image" className={styles.questionImage} />
+                          </div>
+                        )}
+                    </div>
                     <ul className={styles.choices}>
                         <li className={styles.choice}>A. <span dangerouslySetInnerHTML={{ __html: q.choiceA }} /></li>
                         <li className={styles.choice}>B. <span dangerouslySetInnerHTML={{ __html: q.choiceB }} /></li>

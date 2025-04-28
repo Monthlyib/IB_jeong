@@ -123,3 +123,16 @@
   color: #c62828;
   border-color: #c62828;
 }
+
+.imageWrapper {
+  margin-top: 5rem;
+  margin-bottom: 2rem; /* Added bottom margin */
+  text-align: center;
+}
+
+.questionImage {
+  max-width: 70%;
+  height: auto;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
