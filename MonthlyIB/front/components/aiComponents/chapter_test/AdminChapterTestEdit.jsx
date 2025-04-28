@@ -12,6 +12,103 @@ import {
     uploadAiChapterImage,
 } from "../../../apis/AiChapterTestAPI";
 
+// Chapter options for each subject
+const chapterOptions = {
+  Econ: [
+    "Introduction to Economics",
+    "Microeconomics: Demand and Supply",
+    "Elasticities",
+    "Government Intervention",
+    "Market Failure",
+    "Theory of the Firm",
+    "Market Structures",
+    "Macroeconomics: Introduction",
+    "Aggregate Demand and Supply",
+    "Macroeconomic Objectives",
+    "Fiscal Policy",
+    "Monetary Policy",
+    "Supply-side Policies",
+    "International Economics: Free Trade and Protectionism",
+    "Exchange Rates",
+    "Balance of Payments",
+    "Economic Development",
+    "Measuring Development",
+    "Barriers to Economic Growth and Development",
+    "Trade and Development",
+    "Foreign Direct Investment (FDI)",
+    "Aid and Debt",
+    "Sustainability and the Environment"
+  ],
+  English: [
+    "Literature Analysis",
+    "Poetry",
+    "Prose",
+    "Drama",
+    "Unseen Texts",
+    "Comparative Essays",
+    "World Literature",
+    "Language and Context",
+    "Paper 1 Techniques",
+    "Paper 2 Techniques"
+  ],
+  Business: [
+    "Business Organization and Environment",
+    "Human Resource Management",
+    "Finance and Accounts",
+    "Marketing",
+    "Operations Management",
+    "Business Strategy",
+    "Growth and Evolution",
+    "Change Management"
+  ],
+  Psychology: [
+    "Biological Approach",
+    "Cognitive Approach",
+    "Sociocultural Approach",
+    "Research Methods",
+    "Abnormal Psychology",
+    "Developmental Psychology",
+    "Health Psychology",
+    "Human Relationships"
+  ],
+  Chemistry: [
+    "Stoichiometric Relationships",
+    "Atomic Structure",
+    "Periodicity",
+    "Chemical Bonding and Structure",
+    "Energetics/Thermochemistry",
+    "Chemical Kinetics",
+    "Equilibrium",
+    "Acids and Bases",
+    "Redox Processes",
+    "Organic Chemistry",
+    "Measurement and Data Processing"
+  ],
+  Biology: [
+    "Cell Biology",
+    "Molecular Biology",
+    "Genetics",
+    "Ecology",
+    "Evolution and Biodiversity",
+    "Human Physiology",
+    "Nucleic Acids",
+    "Metabolism, Cell Respiration and Photosynthesis",
+    "Plant Biology",
+    "Genetics and Evolution",
+    "Animal Physiology"
+  ],
+  Physics: [
+    "Measurements and Uncertainties",
+    "Mechanics",
+    "Thermal Physics",
+    "Waves",
+    "Electricity and Magnetism",
+    "Circular Motion and Gravitation",
+    "Atomic, Nuclear and Particle Physics",
+    "Energy Production"
+  ]
+};
+
 const DynamicEditor = dynamic(
     () => import("@/components/aiComponents/chapter_test/EditorComponents"),
     {
@@ -84,25 +181,36 @@ const AdminChapterTestEdit = () => {
             <form onSubmit={handleSubmit}>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>Subject:</label>
-                    <select className={styles.input} value={subject} onChange={(e) => setSubject(e.target.value)}>
+                    <select
+                        className={styles.input}
+                        value={subject}
+                        onChange={(e) => {
+                            setSubject(e.target.value);
+                            setChapter(""); // reset chapter when subject changes
+                        }}
+                    >
                         <option value="">과목을 선택하세요</option>
-                        <option value="Econ">Economics</option>
-                        <option value="English">English</option>
-                        <option value="Business">Business</option>
-                        <option value="Psychology">Psychology</option>
-                        <option value="Chemistry">Chemistry</option>
-                        <option value="Biology">Biology</option>
-                        <option value="Physics">Physics</option>
-                        <option value="MathAA">Math AA</option>
+                        {Object.keys(chapterOptions).map((subj) => (
+                            <option key={subj} value={subj}>
+                                {subj}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>Chapter:</label>
-                    <select className={styles.input} value={chapter} onChange={(e) => setChapter(e.target.value)}>
+                    <select
+                        className={styles.input}
+                        value={chapter}
+                        onChange={(e) => setChapter(e.target.value)}
+                    >
                         <option value="">챕터를 선택하세요</option>
-                        <option value="Chapter1">Chapter 1</option>
-                        <option value="Chapter2">Chapter 2</option>
-                        <option value="Chapter3">Chapter 3</option>
+                        {subject &&
+                            chapterOptions[subject]?.map((chap) => (
+                                <option key={chap} value={chap}>
+                                    {chap}
+                                </option>
+                            ))}
                     </select>
                 </div>
                 <div className={styles.formGroup}>
