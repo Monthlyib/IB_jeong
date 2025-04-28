@@ -11,102 +11,103 @@ import {
     updateAiChapterTest,
     uploadAiChapterImage,
 } from "../../../apis/AiChapterTestAPI";
+import { deleteAiChapterImage } from "../../../apis/AiChapterTestAPI";
 
 // Chapter options for each subject
 const chapterOptions = {
-  Econ: [
-    "Introduction to Economics",
-    "Microeconomics: Demand and Supply",
-    "Elasticities",
-    "Government Intervention",
-    "Market Failure",
-    "Theory of the Firm",
-    "Market Structures",
-    "Macroeconomics: Introduction",
-    "Aggregate Demand and Supply",
-    "Macroeconomic Objectives",
-    "Fiscal Policy",
-    "Monetary Policy",
-    "Supply-side Policies",
-    "International Economics: Free Trade and Protectionism",
-    "Exchange Rates",
-    "Balance of Payments",
-    "Economic Development",
-    "Measuring Development",
-    "Barriers to Economic Growth and Development",
-    "Trade and Development",
-    "Foreign Direct Investment (FDI)",
-    "Aid and Debt",
-    "Sustainability and the Environment"
-  ],
-  English: [
-    "Literature Analysis",
-    "Poetry",
-    "Prose",
-    "Drama",
-    "Unseen Texts",
-    "Comparative Essays",
-    "World Literature",
-    "Language and Context",
-    "Paper 1 Techniques",
-    "Paper 2 Techniques"
-  ],
-  Business: [
-    "Business Organization and Environment",
-    "Human Resource Management",
-    "Finance and Accounts",
-    "Marketing",
-    "Operations Management",
-    "Business Strategy",
-    "Growth and Evolution",
-    "Change Management"
-  ],
-  Psychology: [
-    "Biological Approach",
-    "Cognitive Approach",
-    "Sociocultural Approach",
-    "Research Methods",
-    "Abnormal Psychology",
-    "Developmental Psychology",
-    "Health Psychology",
-    "Human Relationships"
-  ],
-  Chemistry: [
-    "Stoichiometric Relationships",
-    "Atomic Structure",
-    "Periodicity",
-    "Chemical Bonding and Structure",
-    "Energetics/Thermochemistry",
-    "Chemical Kinetics",
-    "Equilibrium",
-    "Acids and Bases",
-    "Redox Processes",
-    "Organic Chemistry",
-    "Measurement and Data Processing"
-  ],
-  Biology: [
-    "Cell Biology",
-    "Molecular Biology",
-    "Genetics",
-    "Ecology",
-    "Evolution and Biodiversity",
-    "Human Physiology",
-    "Nucleic Acids",
-    "Metabolism, Cell Respiration and Photosynthesis",
-    "Plant Biology",
-    "Genetics and Evolution",
-    "Animal Physiology"
-  ],
-  Physics: [
-    "Measurements and Uncertainties",
-    "Mechanics",
-    "Thermal Physics",
-    "Waves",
-    "Electricity and Magnetism",
-    "Circular Motion and Gravitation",
-    "Atomic, Nuclear and Particle Physics",
-    "Energy Production"
-  ]
+    Econ: [
+        "Introduction to Economics",
+        "Microeconomics: Demand and Supply",
+        "Elasticities",
+        "Government Intervention",
+        "Market Failure",
+        "Theory of the Firm",
+        "Market Structures",
+        "Macroeconomics: Introduction",
+        "Aggregate Demand and Supply",
+        "Macroeconomic Objectives",
+        "Fiscal Policy",
+        "Monetary Policy",
+        "Supply-side Policies",
+        "International Economics: Free Trade and Protectionism",
+        "Exchange Rates",
+        "Balance of Payments",
+        "Economic Development",
+        "Measuring Development",
+        "Barriers to Economic Growth and Development",
+        "Trade and Development",
+        "Foreign Direct Investment (FDI)",
+        "Aid and Debt",
+        "Sustainability and the Environment"
+    ],
+    English: [
+        "Literature Analysis",
+        "Poetry",
+        "Prose",
+        "Drama",
+        "Unseen Texts",
+        "Comparative Essays",
+        "World Literature",
+        "Language and Context",
+        "Paper 1 Techniques",
+        "Paper 2 Techniques"
+    ],
+    Business: [
+        "Business Organization and Environment",
+        "Human Resource Management",
+        "Finance and Accounts",
+        "Marketing",
+        "Operations Management",
+        "Business Strategy",
+        "Growth and Evolution",
+        "Change Management"
+    ],
+    Psychology: [
+        "Biological Approach",
+        "Cognitive Approach",
+        "Sociocultural Approach",
+        "Research Methods",
+        "Abnormal Psychology",
+        "Developmental Psychology",
+        "Health Psychology",
+        "Human Relationships"
+    ],
+    Chemistry: [
+        "Stoichiometric Relationships",
+        "Atomic Structure",
+        "Periodicity",
+        "Chemical Bonding and Structure",
+        "Energetics/Thermochemistry",
+        "Chemical Kinetics",
+        "Equilibrium",
+        "Acids and Bases",
+        "Redox Processes",
+        "Organic Chemistry",
+        "Measurement and Data Processing"
+    ],
+    Biology: [
+        "Cell Biology",
+        "Molecular Biology",
+        "Genetics",
+        "Ecology",
+        "Evolution and Biodiversity",
+        "Human Physiology",
+        "Nucleic Acids",
+        "Metabolism, Cell Respiration and Photosynthesis",
+        "Plant Biology",
+        "Genetics and Evolution",
+        "Animal Physiology"
+    ],
+    Physics: [
+        "Measurements and Uncertainties",
+        "Mechanics",
+        "Thermal Physics",
+        "Waves",
+        "Electricity and Magnetism",
+        "Circular Motion and Gravitation",
+        "Atomic, Nuclear and Particle Physics",
+        "Energy Production"
+    ]
 };
 
 const DynamicEditor = dynamic(
@@ -119,6 +120,7 @@ const DynamicEditor = dynamic(
 const AdminChapterTestEdit = () => {
     const [question, setQuestion] = useState("");
     const [image, setImage] = useState(null);
+    const [imagePath, setImagePath] = useState("");
     const [choices, setChoices] = useState({ A: "", B: "", C: "", D: "" });
     const [answer, setAnswer] = useState("");
     const [subject, setSubject] = useState("");
@@ -141,6 +143,7 @@ const AdminChapterTestEdit = () => {
             setAnswer(data.answer);
             setSubject(data.subject);
             setChapter(data.chapter);
+            setImagePath(data.imagePath || "");
         };
         fetchData();
     }, [params.id, userInfo]);
@@ -219,7 +222,45 @@ const AdminChapterTestEdit = () => {
                 </div>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>Image:</label>
-                    <input className={styles.fileInput} type="file" onChange={(e) => setImage(e.target.files[0])} />
+                    <div className={styles.fileInputWrapper}>
+                        <input className={styles.fileInput} type="file" onChange={(e) => setImage(e.target.files[0])} />
+                    </div>
+                    {imagePath && (
+                        <div style={{ marginTop: "1rem", textAlign: "center" }}>
+                            <img src={imagePath} alt="미리보기" style={{ maxWidth: "400px", height: "auto", borderRadius: "8px" }} />
+                            <div>
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        const id = typeof params.id === "string" ? parseInt(params.id) : params.id;
+                                        if (window.confirm("정말로 그림을 삭제하시겠습니까?")) {
+                                            try {
+                                                await deleteAiChapterImage(id, userInfo);
+                                                setImage(null);
+                                                setImagePath("");
+                                                alert("이미지가 삭제되었습니다.");
+                                            } catch (error) {
+                                                console.error(error);
+                                                alert("이미지 삭제에 실패했습니다.");
+                                            }
+                                        }
+                                    }}
+                                    style={{
+                                        marginTop: "0.5rem",
+                                        padding: "6px 12px",
+                                        backgroundColor: "#e74c3c",
+                                        color: "#fff",
+                                        border: "none",
+                                        borderRadius: "6px",
+                                        cursor: "pointer",
+                                        fontSize: "14px"
+                                    }}
+                                >
+                                    그림 삭제하기
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <div className={styles.formGroup}>
                     <label className={styles.label}>Choice A:</label>

@@ -18,19 +18,22 @@
 .main {
   display: flex;
   flex-direction: row;
-  gap: 2rem;
   align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  width: 100%;
 }
 
 .question {
-  flex: 2;
+  flex: 1;
   background: #ffffff;
-  border: 1px solid #ddd;
-  padding: 1.25rem;
-  border-radius: 10px;
-  font-size: 1.1rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  font-family: 'Arial', sans-serif;
   line-height: 1.6;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  width: 90%;
+  margin-top: 1rem;
 }
 
 .choices {
@@ -38,6 +41,8 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-width: 45%;
+  height: 100%;
 }
 
 .choice {
@@ -47,7 +52,7 @@
   padding: 0.85rem 1.2rem;
   border-radius: 8px;
   text-align: left;
-  font-size: 1rem;
+  font-size: 1.5rem;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
@@ -79,4 +84,27 @@
 
 .nextButton:hover {
   background-color: #4a148c;
+}
+
+
+.imageContainer {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.questionImage {
+  width: 90%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1rem auto 0;
+  display: block;
+}
+.questionArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #ddd;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
 }

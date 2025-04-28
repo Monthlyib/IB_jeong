@@ -79,7 +79,14 @@ const ChapterTestExam = () => {
     <div className={styles.container}>
       <div className={styles.timer}>남은 시간: {formatTime(timeLeft)}</div>
       <div className={styles.main}>
-        <div className={styles.question} dangerouslySetInnerHTML={{ __html: currentQuestion?.question }} />
+        <div className={styles.questionArea}>
+          <div className={styles.question} dangerouslySetInnerHTML={{ __html: currentQuestion?.question }} />
+          {currentQuestion?.imagePath && (
+            <div className={styles.imageContainer}>
+              <img src={currentQuestion.imagePath} alt="Question Image" className={styles.questionImage} />
+            </div>
+          )}
+        </div>
         <div className={styles.choices}>
           {["A", "B", "C", "D"].map((opt) => (
             <button

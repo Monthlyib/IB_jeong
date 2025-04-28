@@ -45,10 +45,24 @@ export const uploadAiChapterImage = async (id, image, session) => {
         Authorization: session?.accessToken,
       },
     });
-
     return res.data;
   } catch (error) {
     console.error("uploadAiChapterImage error:", error);
+    throw error;
+  }
+};
+
+// 이미지 삭제 요청
+export const deleteAiChapterImage = async (id, session) => {
+  try {
+    const res = await tokenRequireApi.delete(`${CHAPTER_TEST_API}/image/${id}`, {
+      headers: {
+        Authorization: session?.accessToken,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("deleteAiChapterImage error:", error);
     throw error;
   }
 };
@@ -62,7 +76,7 @@ export const getChapterTests = async ({ subject, chapter, page }, session) => {
         Authorization: session?.accessToken,
       },
     });
-    
+
     return res.data;
   } catch (error) {
     console.error("getChapterTests error:", error);
