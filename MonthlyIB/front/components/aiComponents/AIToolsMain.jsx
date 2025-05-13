@@ -32,7 +32,7 @@ const AIToolsMain = () => {
           </p>
         </Link>
 
-        <Link href="/aitools/essay" className="aiToolsCard">
+        <Link href="/aitools/descriptive" className="aiToolsCard">
           <div className="aiToolsCardIcon">
             <FontAwesomeIcon icon={faAlignLeft} size="2x" />
           </div>
