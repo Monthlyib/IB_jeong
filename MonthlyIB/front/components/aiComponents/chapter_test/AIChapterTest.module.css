@@ -22,7 +22,8 @@
   
   /* 간단 소개 문구 */
   .description {
-    font-size: 1.6rem;
+    font-size: 2rem;
+    font-weight: 700;      /* 굵게 */
     color: #333;
   }
   
