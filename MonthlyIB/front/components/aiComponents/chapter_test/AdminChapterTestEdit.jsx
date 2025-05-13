@@ -12,6 +12,7 @@ import {
     uploadAiChapterImage,
 } from "../../../apis/AiChapterTestAPI";
 import { deleteAiChapterImage } from "../../../apis/AiChapterTestAPI";
+import { chapterOptions } from "../chapterOptions";
 
 // Chapter options for each subject
 const chapterOptions = {
