@@ -4,11 +4,16 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./descriptive_test.module.css";
 import { chapterOptions } from "../chapterOptions";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
+import Link from "next/link";
+import { useUserInfo } from "@/store/user";
 
 const DescriptiveTestMain = () => {
   const router = useRouter();
   const [subject, setSubject] = useState("");
   const [chapter, setChapter] = useState("");
+  const { userInfo } = useUserInfo();
 
   const handleStart = () => {
     if (!subject || !chapter) {
@@ -16,7 +21,7 @@ const DescriptiveTestMain = () => {
       return;
     }
     router.push(
-      `/aitools/descriptive-test/write?subject=${encodeURIComponent(
+      `/aitools/descriptive/write?subject=${encodeURIComponent(
         subject
       )}&chapter=${encodeURIComponent(chapter)}`
     );
@@ -30,6 +35,29 @@ const DescriptiveTestMain = () => {
           과목과 챕터를 선택하고 &lsquo;문제&nbsp;불러오기&rsquo; 버튼을 눌러 보세요!
         </p>
       </section>
+
+      {userInfo?.authority === "ADMIN" && (
+        <div className={styles.right_btn}>
+          <Link
+            href={`/aitools/descriptive/admin-input`}
+            className={styles.btn_write}
+          >
+            <FontAwesomeIcon icon={faPenAlt} />
+            <span>문제 입력</span>
+          </Link>
+        </div>
+      )}
+      {userInfo?.authority === "ADMIN" && (
+        <div className={styles.right_btn}>
+          <Link
+            href={`/aitools/descriptive/list`}
+            className={styles.btn_write}
+          >
+            <FontAwesomeIcon icon={faPenAlt} />
+            <span>문제 목록 보기</span>
+          </Link>
+        </div>
+      )}
 
       <section className={styles.formSection}>
         <div className={styles.selectWrapper}>

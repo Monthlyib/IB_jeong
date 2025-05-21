@@ -49,7 +49,7 @@ const ChapterTestList = () => {
           },
           userInfo
         );
-        console.log(response);
+
         setQuestions(response.data);
         setTotalPages(response.pageInfo.totalPages);
       } catch (error) {

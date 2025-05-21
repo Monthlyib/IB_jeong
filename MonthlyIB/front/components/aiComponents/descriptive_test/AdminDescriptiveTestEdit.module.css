@@ -1,0 +1,105 @@
+
+
+
+.container {
+  width: 100%;
+  max-width: 110rem;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+.title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--primary01);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.formGroup {
+  margin-bottom: 2.5rem;
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.8rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.input {
+  width: 100%;
+  padding: 1rem 1.4rem;
+  font-size: 1.4rem;
+  border: 1px solid #ccc;
+  border-radius: 0.6rem;
+  box-sizing: border-box;
+}
+
+.fileInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.fileInput {
+  font-size: 1.4rem;
+}
+
+.editor {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 0.6rem;
+  min-height: 12rem;
+  background-color: #fff;
+}
+
+.buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.cancelBtn {
+  background-color: #ccc;
+  color: #333;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.submitBtn {
+  background-color: var(--primary01);
+  color: #fff;
+  padding: 1rem 2.5rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.imagePreview {
+  max-width: 400px;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 1rem auto;
+}
+
+.deleteButton {
+  margin-top: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.4rem;
+}
