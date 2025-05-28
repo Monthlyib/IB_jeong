@@ -96,17 +96,11 @@ export const chapterOptions = {
     "Novel",
     "Poem",
     "Play",
-    "Article",
-    "Opinion Column",
-    "Speech",
+    "Article/Opinion Column/Essay",
+    "Speech/Interview",
     "Advertisement",
-    "Essay",
-    "Graphic Novel",
-    "Cartoon",
-    "Advertisement",
-    "Film",
-    "Illustration",
-    "Photograph"
+    "Graphic Novel/Cartoon/Illustration",
+    "Film/Photograph"
   ],
   Econ: [
     "What is economics?",
