@@ -33,6 +33,7 @@ const AdminDescriptiveTestEdit = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [imageUploading, setImageUploading] = useState(false);
+    const [maxScore, setMaxScore] = useState("");
     const { userInfo } = useUserInfo();
 
     useEffect(() => {
@@ -44,6 +45,7 @@ const AdminDescriptiveTestEdit = () => {
                 setSubject(data.subject);
                 setChapter(data.chapter);
                 setImagePath(data.imagePath || "");
+                setMaxScore(data.maxScore);
             } catch (err) {
                 setError("Failed to fetch test data.");
             }
@@ -83,7 +85,7 @@ const AdminDescriptiveTestEdit = () => {
         setLoading(true);
         setError("");
         try {
-            const data = { question, subject, chapter };
+            const data = { question, subject, chapter, maxScore };
             await updateDescriptiveTest(id, data, userInfo);
             alert("문제가 성공적으로 수정되었습니다.");
             router.push("/aitools/descriptive");
@@ -134,6 +136,21 @@ const AdminDescriptiveTestEdit = () => {
                                     {chap}
                                 </option>
                             ))}
+                    </select>
+                </div>
+                <div className={styles.formGroup}>
+                    <label className={styles.label}>Max Score:</label>
+                    <select
+                        value={maxScore}
+                        onChange={(e) => setMaxScore(parseInt(e.target.value))}
+                        required
+                        className={styles.input}
+                    >
+                        {Array.from({ length: 21 }, (_, i) => i).map((score) => (
+                            <option key={score} value={score}>
+                                {score}
+                            </option>
+                        ))}
                     </select>
                 </div>
                 <div className={styles.formGroup}>

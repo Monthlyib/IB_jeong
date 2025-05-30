@@ -1,5 +1,3 @@
-
-
 "use client";
 import React, { useState } from "react";
 import styles from "./AdminDescriptiveTest.module.css";
@@ -19,6 +17,7 @@ const AdminDescriptiveTest = () => {
   const [image, setImage] = useState(null);
   const [subject, setSubject] = useState("");
   const [chapter, setChapter] = useState("");
+  const [maxScore, setMaxScore] = useState("");
   const { userInfo } = useUserInfo();
   const router = useRouter();
 
@@ -29,6 +28,7 @@ const AdminDescriptiveTest = () => {
         question,
         subject,
         chapter,
+        maxScore,
       };
 
       const res = await createAiDescriptiveTest(data, userInfo);
@@ -66,6 +66,21 @@ const AdminDescriptiveTest = () => {
             <option value="">챕터를 선택하세요</option>
             {chapterOptions[subject]?.map((ch, idx) => (
               <option key={idx} value={ch}>{ch}</option>
+            ))}
+          </select>
+        </div>
+        <div className={styles.formGroup}>
+          <label className={styles.label}>Max Score:</label>
+          <select
+            value={maxScore}
+            onChange={(e) => setMaxScore(parseInt(e.target.value))}
+            required
+            className={styles.input}
+          >
+            {Array.from({ length: 21 }, (_, i) => i).map((score) => (
+              <option key={score} value={score}>
+                {score}
+              </option>
             ))}
           </select>
         </div>

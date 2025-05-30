@@ -162,3 +162,59 @@ export const getActiveDescriptiveSession = async ({ subject, chapter }, session)
     throw error;
   }
 };
+// 서술형 문제 한 문제 불러오기 (학생용)
+export const getDescriptiveQuestion = async (subject, chapter, session) => {
+  try {
+    const url = `${DESCRIPTIVE_TEST_API}/start?subject=${encodeURIComponent(subject)}&chapter=${encodeURIComponent(chapter)}`;
+    const res = await tokenRequireApi.get(url, {
+      headers: {
+        Authorization: session?.accessToken,
+      },
+    });
+    return res.data?.data;
+  } catch (error) {
+    console.error("getDescriptiveQuestion error:", error);
+    throw error;
+  }
+};
+
+// 서술형 문제 답안 제출
+export const submitDescriptiveAnswer = async ({ subject, chapter, questionId, answer }, session) => {
+  try {
+    const res = await tokenRequireApi.post(
+      `${DESCRIPTIVE_TEST_API}/submit`,
+      {
+        subject,
+        chapter,
+        questionId,
+        answer,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: session?.accessToken,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    console.error("submitDescriptiveAnswer error:", error);
+    throw error;
+  }
+};
+
+// 서술형 문제 답안 결과 조회
+export const getDescriptiveAnswerResult = async (answerId, session) => {
+  try {
+    const res = await tokenRequireApi.get(`${DESCRIPTIVE_TEST_API}/result/${answerId}`, {
+      headers: {
+        Authorization: session?.accessToken,
+      },
+    });
+    console.log("getDescriptiveAnswerResult", res);
+    return res.data?.data;
+  } catch (error) {
+    console.error("getDescriptiveAnswerResult error:", error);
+    throw error;
+  }
+};
