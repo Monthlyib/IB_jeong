@@ -1,20 +1,22 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import styles from "./DescriptiveTestResult.module.css";
-import { getDescriptiveAnswerResult } from "@/apis/AiDescriptiveTestAPI";
+import { getDescriptiveAnswerResult, generateFeedback } from "@/apis/AiDescriptiveTestAPI";
 import { useUserInfo } from "@/store/user";
 
 const DescriptiveTestResult = () => {
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
   const params = useParams();
-  const answerId = params.id    || params.answerId;
+  const answerId = params.id || params.answerId;
 
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showFeedback, setShowFeedback] = useState(false);
   const [feedbackLanguage, setFeedbackLanguage] = useState("korean");
   const { userInfo } = useUserInfo();
+  const router = useRouter();
 
   useEffect(() => {
 
@@ -32,6 +34,28 @@ const DescriptiveTestResult = () => {
 
     fetchResult();
   }, [answerId, userInfo]);
+
+  const handleFeedbackClick = async () => {
+    setFeedbackLoading(true);
+    console.log("Generating feedback for answerId:", answerId);
+    try {
+      const updated = await generateFeedback(answerId, userInfo);
+      console.log("Feedback generated:", updated);
+      setResult(updated.data);
+      setShowFeedback(true);
+    } catch (err) {
+      console.error("피드백 생성 실패:", err);
+      alert("피드백 생성에 실패했습니다.");
+    } finally {
+      setFeedbackLoading(false);
+    }
+  };
+
+  const handleMoreQuestionClick = () => {
+    if (!result) return;
+    const url = `/aitools/descriptive/write?subject=${encodeURIComponent(result.subject)}&chapter=${encodeURIComponent(result.chapter)}`;
+    router.push(url);
+  };
 
   if (loading) return <div>Loading...</div>;
   if (!result) return <div>결과를 불러올 수 없습니다.</div>;
@@ -62,29 +86,21 @@ const DescriptiveTestResult = () => {
       </div>
 
       <div className={styles.feedbackButtonContainer}>
-        <button
-          className={`${styles.feedbackToggleButton} ${showFeedback ? styles.active : ""}`}
-          onClick={() => setShowFeedback((prev) => !prev)}
-        >
-          {showFeedback ? "피드백 숨기기" : "피드백 보기"}
-        </button>
-
-        {showFeedback && (
-          <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
-            <label className={styles.toggleSwitch}>
-              <input
-                type="checkbox"
-                checked={feedbackLanguage === "english"}
-                onChange={() =>
-                  setFeedbackLanguage((prev) => (prev === "korean" ? "english" : "korean"))
-                }
-              />
-              <span className={styles.slider}></span>
-            </label>
-            <div style={{ marginTop: "0.5rem", fontSize: "1.4rem", color: "#444" }}>
-              {feedbackLanguage === "korean" ? "한글 피드백" : "영어 피드백"}
-            </div>
-          </div>
+        {!showFeedback && (
+          <button
+            className={styles.feedbackToggleButton}
+            onClick={handleFeedbackClick}
+            disabled={feedbackLoading}
+          >
+            {feedbackLoading ? (
+              <>
+                <div className={styles.spinner}></div>
+                피드백 생성 중...
+              </>
+            ) : (
+              "피드백 생성하기"
+            )}
+          </button>
         )}
       </div>
 
@@ -103,7 +119,24 @@ const DescriptiveTestResult = () => {
             <div className={styles.resultContent}>{result.modelAnswer || "없음"}</div>
           </div>
           <div className={styles.resultRow}>
-            <div className={styles.resultLabel}>피드백 ({feedbackLanguage === "korean" ? "한글" : "영어"})</div>
+            <div className={styles.feedbackToggleWrapper}>
+              <div className={styles.resultLabel}>
+                피드백 ({feedbackLanguage === "korean" ? "한글" : "영어"})
+              </div>
+              <label className={styles.toggleSwitch}>
+                <input
+                  type="checkbox"
+                  checked={feedbackLanguage === "english"}
+                  onChange={() =>
+                    setFeedbackLanguage((prev) =>
+                      prev === "korean" ? "english" : "korean"
+                    )
+                  }
+                />
+                <span className={styles.slider}></span>
+              </label>
+            </div>
+
             <div className={styles.resultContent}>
               {feedbackLanguage === "korean"
                 ? result.feedbackKorean || "없음"
@@ -111,8 +144,19 @@ const DescriptiveTestResult = () => {
             </div>
           </div>
         </div>
+      )
+      }
+      {showFeedback && (
+        <div className={styles.moreQuestionButtonWrapper}>
+          <button
+            onClick={handleMoreQuestionClick}
+            className={styles.moreQuestionButton}
+          >
+            문제 더 풀기
+          </button>
+        </div>
       )}
-    </main>
+    </main >
   );
 };
 

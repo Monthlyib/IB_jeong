@@ -218,3 +218,18 @@ export const getDescriptiveAnswerResult = async (answerId, session) => {
     throw error;
   }
 };
+
+// 서술형 문제 답안 수정
+export const generateFeedback = async (answerId, session) => {
+  try {
+    const res = await tokenRequireApi.get(`${DESCRIPTIVE_TEST_API}/answer-feedback/${answerId}`, {
+      headers: {
+        Authorization: session?.accessToken,
+      },
+    });
+    return res.data;
+  } catch (error) {
+    console.error("answer feedback generating error:", error);
+    throw error;
+  }
+};

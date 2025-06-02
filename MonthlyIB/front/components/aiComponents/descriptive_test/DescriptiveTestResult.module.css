@@ -98,16 +98,18 @@
 .resultLabel {
   flex: 0 0 12rem;
   font-size: 1.6rem;
-  font-weight: 600;
+  font-weight: 800;
   color: #444;
 }
 
 .resultContent {
   flex: 1;
-  font-size: 1.6rem;
+  font-size: 1.7rem;
   color: #222;
   white-space: pre-wrap;
   word-break: break-word;
+  line-height: 1.8;
+  letter-spacing: 0.02em;
 }
 
 .feedbackButtonContainer {
@@ -124,6 +126,10 @@
   font-size: 1.6rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
 }
 
 .feedbackToggleButton:hover {
@@ -133,9 +139,13 @@
 .toggleSwitch {
   position: relative;
   display: inline-block;
-  width: 70px;
-  height: 38px;
+  width: 50px;
+  height: 26px;
   margin: 0 auto;
+}
+
+.resultRow .toggleSwitch {
+  margin-top: 0.2rem;
 }
 
 .toggleSwitch input {
@@ -160,10 +170,10 @@
 .slider:before {
   position: absolute;
   content: "";
-  height: 30px;
-  width: 30px;
-  left: 4px;
-  bottom: 4px;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
   background-color: white;
   transition: 0.4s;
   border-radius: 50%;
@@ -175,5 +185,56 @@
 }
 
 .toggleSwitch input:checked + .slider:before {
-  transform: translateX(32px);
+  transform: translateX(24px);
+}
+
+.spinner {
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 2px solid #fff;
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.feedbackToggleWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.1rem;
+  margin-bottom: 0.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.moreQuestionButtonWrapper {
+  margin-top: 3rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.moreQuestionButton {
+  background-color: var(--primary01);
+  color: white;
+  padding: 1rem 2rem;
+  border: none;
+  border-radius: 0.6rem;
+  font-size: 1.6rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.moreQuestionButton:hover {
+  background-color: #004a99;
 }
