@@ -1,0 +1,12 @@
+{
+    "feedback" :
+    {
+        "title": "Feedback",
+        "description": "Please provide your feedback on the Monthly IB application.",
+        "strengths": "What do you like about the application?",
+        "improvements": "What improvements would you suggest?",
+        "usability": "How would you rate the usability of the application?",
+        "features": "Are there any features you would like to see added?",
+        "overall": "Overall, how satisfied are you with the application?",
+    }
+}
