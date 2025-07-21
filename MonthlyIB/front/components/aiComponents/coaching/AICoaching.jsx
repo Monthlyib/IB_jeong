@@ -14,7 +14,7 @@ const AICoaching = () => {
     useEffect(() => {
         const intro = {
             sender: "bot",
-            text: "안녕하세요! 저는 IA/EE 주제를 도와드리는 AI 코치입니다. 우선 과목을 선택해 주세요.",
+            text: "안녕하세요! 저는 IA를 도와드리는 AI 코치입니다. 우선 과목을 선택해 주세요.",
         };
         const subjectOptions = {
             sender: "bot",
@@ -24,6 +24,19 @@ const AICoaching = () => {
     }, []);
 
     const handleOptionSelect = (option) => {
+        if (option === "🔁 다시 선택하기") {
+            setSelectedSubject(null);
+            const intro = {
+                sender: "bot",
+                text: "새로운 과목을 다시 선택해 주세요!",
+            };
+            const subjectOptions = {
+                sender: "bot",
+                options: Object.keys(chapterOptions),
+            };
+            setMessages(prev => [...prev, intro, subjectOptions]);
+            return;
+        }
         if (!selectedSubject && chapterOptions[option]) {
             // Subject selected
             setMessages(prev => [
@@ -47,6 +60,10 @@ const AICoaching = () => {
                 {
                     sender: "bot",
                     text: `"${selectedSubject}" 과목의 "${option}" 챕터를 선택하셨습니다.`,
+                },
+                {
+                    sender: "bot",
+                    options: ["🔁 다시 선택하기", "✨ 주제 추천받기", "✍️ 바로 입력하기"]
                 }
             ]);
         }
