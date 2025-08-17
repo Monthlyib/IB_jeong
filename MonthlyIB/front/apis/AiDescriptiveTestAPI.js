@@ -21,6 +21,7 @@ export const createAiDescriptiveTest = async (data, session) => {
 // 서술형 문제 단건 조회 요청
 export const getDescriptiveTest = async (subject, chapter, session) => {
   try {
+    console.log(session)
     const url = `${DESCRIPTIVE_TEST_API}?subject=${encodeURIComponent(subject)}&chapter=${encodeURIComponent(chapter)}`;
     const res = await tokenRequireApi.get(url, {
       headers: {

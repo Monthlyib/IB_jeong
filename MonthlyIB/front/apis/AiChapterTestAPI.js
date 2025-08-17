@@ -5,6 +5,7 @@ const CHAPTER_TEST_API = "api/chapter-test";
 // 문제 등록 요청
 export const createAiChapterTest = async (data, session) => {
   try {
+
     const res = await tokenRequireApi.post(CHAPTER_TEST_API, data, {
       headers: {
         "Content-Type": "application/json",
