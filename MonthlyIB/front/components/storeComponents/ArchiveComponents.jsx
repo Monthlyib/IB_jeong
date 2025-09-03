@@ -34,11 +34,12 @@ const ArchiveComponents = () => {
 
   // Breadcrumb helpers (names from currentPath, ids from prevFolderId + currentFolderId)
   const breadcrumbNames = currentPath.split(" / ");
-  const breadcrumbIds = [0, ...prevFolderId, currentFolderId];
+  const breadcrumbIds = [...prevFolderId, currentFolderId];
 
   const onClickBreadcrumb = (index) => {
     // index-th crumb was clicked
     const targetId = breadcrumbIds[index] ?? 0;
+    console.debug("[Breadcrumb] click", { index, names: breadcrumbNames, ids: breadcrumbIds, targetId });
     const nextNames = breadcrumbNames.slice(0, index + 1);
 
     // Rebuild prev stack to match the target depth (everything before target becomes prev)
@@ -173,7 +174,7 @@ const ArchiveComponents = () => {
                 <button
                   type="button"
                   onClick={() => onClickBreadcrumb(idx)}
-                  className={`${styles.breadcrumbBtn} ${idx === breadcrumbNames.length - 1 ? styles.isActive : ""}`}
+                  className={`${styles.breadcrumbBtn} ${idx === breadcrumbNames.length - 1 ? "is-active" : ""}`}
                   disabled={idx === breadcrumbNames.length - 1}
                 >
                   {name}
