@@ -456,6 +456,7 @@ export const storageGetList = async (parentsFolderId, keyWord) => {
       parentsFolderId === ""
         ? `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/storage/detail?keyWord=${keyWord}`
         : `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/storage/detail?parentsFolderId=${parentsFolderId}&keyWord=${keyWord}`;
+    console.log(url)
     const res = await fetch(url, {
       method: "GET",
       headers: {

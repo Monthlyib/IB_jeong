@@ -1,5 +1,5 @@
 "use client";
-import styles from "@/components/boardComponents/BoardCommon.module.css";
+import styles from "@/components/storeComponents/Archive.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import BoardCommonHead from "@/components/boardComponents/BoardCommonHead";
 import shortid from "shortid";
@@ -15,10 +15,46 @@ const ArchiveComponents = () => {
   const closeRef = useRef("");
   const [key, setKey] = useState(Date.now());
   const { userInfo } = useUserInfo();
-  const { mainFolders, subLists, getMainFolders, postFolder, getSubLists, postFile } = useStoreStore();
+  const {
+    mainFolders,
+    subLists,
+    getMainFolders,
+    postFolder,
+    getSubLists,
+    postFile,
+    fileUploading,
+    fileUploadPct,
+    fileUploadName,
+    fileUploadError,
+    cancelUpload,
+  } = useStoreStore();
   const [currentPath, setCurrentPath] = useState("Home");
   const [currentFolderId, setCurrentFolderId] = useState(0);
   const [prevFolderId, setPrevFolderId] = useState([]);
+
+  // Breadcrumb helpers (names from currentPath, ids from prevFolderId + currentFolderId)
+  const breadcrumbNames = currentPath.split(" / ");
+  const breadcrumbIds = [0, ...prevFolderId, currentFolderId];
+
+  const onClickBreadcrumb = (index) => {
+    // index-th crumb was clicked
+    const targetId = breadcrumbIds[index] ?? 0;
+    const nextNames = breadcrumbNames.slice(0, index + 1);
+
+    // Rebuild prev stack to match the target depth (everything before target becomes prev)
+    const nextPrev = breadcrumbIds.slice(0, index); // excludes current at index
+
+    setPrevFolderId(nextPrev);
+    setCurrentFolderId(targetId);
+    setCurrentPath(nextNames.join(" / "));
+
+    if (targetId === 0) {
+      getMainFolders();
+    } else {
+      getSubLists(targetId, "");
+    }
+  };
+
   const [folderTitle, setFolderTitle] = useState("");
   const searchKeyword = useRef();
   const [searching, setSeraching] = useState(false);
@@ -90,57 +126,34 @@ const ArchiveComponents = () => {
       <main className="width_content archive">
         {/* 팝업 모달 */}
         {isPopupOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: "0",
-              left: "0",
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                borderRadius: "16px",
-                padding: "30px",
-                textAlign: "center",
-                boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
-                width: "400px",
-              }}
-            >
-              <h2
-                style={{
-                  marginBottom: "20px",
-                  fontSize: "20px",
-                  color: "#5a2d82",
-                }}
-              >
-                로그인 필요
-              </h2>
-              <p style={{ marginBottom: "30px", fontSize: "16px" }}>
-                로그인하시면 더 많은 정보를 확인하실 수 있습니다.
-              </p>
-              <button
-                onClick={handleClosePopup}
-                style={{
-                  padding: "12px 24px",
-                  backgroundColor: "#5a2d82",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                }}
-              >
-                확인
-              </button>
+          <div className="popupOverlay">
+            <div className="popupCard">
+              <h2 className="popupTitle">로그인 필요</h2>
+              <p className="popupText">로그인하시면 더 많은 정보를 확인하실 수 있습니다.</p>
+              <button onClick={handleClosePopup} className="popupConfirmBtn">확인</button>
+            </div>
+          </div>
+        )}
+
+        {/* 업로드 진행 다이얼로그 */}
+        {fileUploading && (
+          <div className="uploadOverlay">
+            <div className="uploadDialog">
+              <h3 className="uploadTitle">파일 업로드 중…</h3>
+              <p className="uploadFileName">{fileUploadName || "파일"}</p>
+              <div className="progressBar">
+                <div
+                  className="progressFill"
+                  style={{ width: `${Math.min(100, Math.max(0, fileUploadPct || 0))}%` }}
+                />
+              </div>
+              <div className="uploadFooter">
+                <span className="uploadPercent">{fileUploadPct || 0}%</span>
+                <button onClick={cancelUpload} className="uploadCancelBtn">취소</button>
+              </div>
+              {fileUploadError && (
+                <p className="uploadError">업로드 실패: {String(fileUploadError)}</p>
+              )}
             </div>
           </div>
         )}
@@ -154,7 +167,21 @@ const ArchiveComponents = () => {
         />
 
         <div className={styles.path_nav}>
-          <p>{currentPath}</p>
+          <nav aria-label="breadcrumb" className={styles.breadcrumbNav}>
+            {breadcrumbNames.map((name, idx) => (
+              <span key={`crumb-${idx}`} className={styles.breadcrumbItem}>
+                <button
+                  type="button"
+                  onClick={() => onClickBreadcrumb(idx)}
+                  className={`${styles.breadcrumbBtn} ${idx === breadcrumbNames.length - 1 ? styles.isActive : ""}`}
+                  disabled={idx === breadcrumbNames.length - 1}
+                >
+                  {name}
+                </button>
+                {idx !== breadcrumbNames.length - 1 && <span className={styles.breadcrumbSep}>/</span>}
+              </span>
+            ))}
+          </nav>
         </div>
 
         <ArchiveUpperButtons

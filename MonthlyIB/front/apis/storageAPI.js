@@ -76,26 +76,31 @@ export const storagePostFolder = async (
   }
 };
 
-export const storagePostFile = async (parentsFolderId, file, session) => {
-  try {
-    const formData = new FormData(); // formData 생성
-    formData.append("file", file);
-    const config = {
+export const storagePostFile = async (parentsFolderId, file, session, onProgress) => {
+  const formData = new FormData();
+  // backend expects @RequestParam("file")
+  formData.append("file", file);
+
+  const controller = new AbortController();
+
+  const res = await tokenRequireApi.post(
+    `${STORAGE_API_URL}/file/${parentsFolderId}`,
+    formData,
+    {
       headers: {
-        "Content-Type": "multipart/form-data",
         Authorization: session?.accessToken,
       },
-    };
-    const res = await tokenRequireApi.post(
-      `${STORAGE_API_URL}/file/${parentsFolderId}`,
-      formData,
-      config
-    );
-
-    if (res.ok) {
-      console.log("success");
+      signal: controller.signal,
+      onUploadProgress: (evt) => {
+        const total = evt?.total || file?.size || 0;
+        const loaded = evt?.loaded || 0;
+        const pct = total > 0 ? Math.min(100, Math.round((loaded * 100) / total)) : 0;
+        if (onProgress) onProgress(pct);
+      },
+      timeout: 0,
     }
-  } catch (error) {
-    console.error(error);
-  }
+  );
+
+  const cancel = (reason) => controller.abort(reason);
+  return { res, cancel };
 };

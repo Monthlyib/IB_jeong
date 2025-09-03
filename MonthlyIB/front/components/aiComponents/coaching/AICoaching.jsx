@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 // import { chapterOptions } from "@/components/aiComponents/chapterOptions";
 const subjects = ["Science", "Math", "Langauge A English", "Psychology", "Business", "History", "Geography", "Economics"];
-import {fetchRecommendedTopics} from "@/apis/AiIAAPI"; // Adjust the import path as necessary
+import { fetchRecommendedTopics, createGuide } from "@/apis/AiIAAPI"; // Adjust the import path as necessary
 import styles from "./AICoaching.module.css";
 import ChatOption from "./ChatOption";
 import { useUserInfo } from "@/store/user";
@@ -49,23 +49,39 @@ const AICoaching = () => {
     const toggleExpand = (idx) => {
         setExpandedTopics((prev) => ({ ...prev, [idx]: !prev[idx] }));
     };
-    const onPickTopic = (title) => {
-        const picked = iaTopics.find(t => t.title === title);
+    // 주제 전체 객체를 받아 { title, description }을 백엔드에 전달
+    const onPickTopic = async (topic) => {
+        const picked = topic || null;
         if (!picked) return;
-        setPendingTopicTitle(title);
+        setPendingTopicTitle(picked.title);
+        // 사용자 액션 표시 및 생성 안내
         setMessages(prev => [
             ...prev,
-            { sender: "user", text: title },
-            {
-                sender: "bot",
-                text: `선택한 주제의 상세 설명입니다:\n\n${picked.description}`
-            },
-            {
-                sender: "bot",
-                text: "이 주제로 진행할까요?",
-                options: ["✅ 이 주제로 진행", "🔁 토픽 다시 고르기"]
-            }
+            { sender: "user", text: picked.title },
+            { sender: "bot", text: "가이드를 생성하고 있습니다..." }
         ]);
+        try {
+            const { guideId } = await createGuide({
+                subject: selectedSubject,
+                topic: { title: picked.title, description: picked.description },
+                session: userInfo,
+            });
+            if (!guideId) {
+                setMessages(prev => [
+                    ...prev,
+                    { sender: "bot", text: "가이드 ID를 받지 못했습니다. 잠시 후 다시 시도해 주세요." }
+                ]);
+                return;
+            }
+            // 새 페이지로 이동하여 서버에서 가이드 데이터를 가져와 렌더
+            router.push(`/aitools/coaching/guide/${guideId}`);
+        } catch (e) {
+            console.error("가이드 생성 실패:", e);
+            setMessages(prev => [
+                ...prev,
+                { sender: "bot", text: "가이드 생성에 실패했습니다. 다시 시도해 주세요." }
+            ]);
+        }
     };
     // const [selectedChapter, setSelectedChapter] = useState(null);
     const chatBoxRef = useRef(null);
@@ -309,7 +325,7 @@ const AICoaching = () => {
                                             <button
                                                 type="button"
                                                 className={styles.topicTitleBtn}
-                                                onClick={() => onPickTopic(t.title)}
+                                                onClick={() => onPickTopic(t)}
                                             >
                                                 {t.title}
                                             </button>

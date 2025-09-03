@@ -25,6 +25,7 @@ const ArchiveItems = ({
 
   // 컴포넌트 마운트 시 사용자 구독 정보를 로드합니다.
   useEffect(() => {
+    console.log(folders)
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
     if (localUser)
       getUserSubscribeInfo(
@@ -64,7 +65,8 @@ const ArchiveItems = ({
 
   // 파일 클릭 시 URL을 새 창으로 엽니다. 구독 상태가 "ACTIVE"일 때만 파일을 열 수 있습니다.
   const onClickFile = (fileUrl) => {
-    if (userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") {
+    console.log(userSubscribeInfo?.[0])
+    if (userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE"||userSubscribeInfo?.[0]?.userId == 1) {
       const newWindow = window.open(fileUrl, "_blank", "noopener,noreferrer");
       if (newWindow) newWindow.opener = null;
     }

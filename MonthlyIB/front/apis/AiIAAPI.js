@@ -24,3 +24,26 @@ export const fetchRecommendedTopics = async (subject, interest, session) => {
     throw error;
   }
 };
+
+// 가이드 생성 요청
+export const createGuide = async (subject, title, session) => {
+  try {
+    const url = `/api/ai/IA/topic-guide`;
+    const res = await tokenRequireApi.post(
+      url,
+      { subject, title },
+      {
+        headers: {
+          Authorization: session?.accessToken,
+        },
+      }
+    );
+    console.log("가이드 생성 결과:", res);
+    // ResponseDto 래핑 가정: res.data.data = { guideId, ... }
+    return res.data.data || null;
+  } catch (error) {
+    console.error("createGuide error:", error);
+    throw error;
+  }
+};
+
