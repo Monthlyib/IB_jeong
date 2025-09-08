@@ -49,7 +49,7 @@ const AICoaching = () => {
     const toggleExpand = (idx) => {
         setExpandedTopics((prev) => ({ ...prev, [idx]: !prev[idx] }));
     };
-    // 주제 전체 객체를 받아 { title, description }을 백엔드에 전달
+    // 주제 전체 객체(ia_topic)를 그대로 백엔드에 전달
     const onPickTopic = async (topic) => {
         const picked = topic || null;
         if (!picked) return;
@@ -63,7 +63,8 @@ const AICoaching = () => {
         try {
             const { guideId } = await createGuide({
                 subject: selectedSubject,
-                topic: { title: picked.title, description: picked.description },
+                interest_topic: lastInterest,
+                topic: picked, // ia_topic 전체 객체를 그대로 전송
                 session: userInfo,
             });
             if (!guideId) {
@@ -289,6 +290,22 @@ const AICoaching = () => {
         if (e.key === "Enter") handleSendMessage();
     };
 
+    // 문자열 안의 URL을 자동으로 링크 처리
+    const renderWithLinks = (str) => {
+        if (typeof str !== "string") return String(str);
+        const parts = str.split(/(https?:\/\/\S+)/g);
+        return parts.map((part, i) => {
+            if (/^https?:\/\/\S+/.test(part)) {
+                return (
+                    <a key={`url-${i}`} href={part} target="_blank" rel="noreferrer">
+                        {part}
+                    </a>
+                );
+            }
+            return <span key={`txt-${i}`}>{part}</span>;
+        });
+    };
+
     return (
         <main className={styles.container}>
             <section className={styles.introSection}>
@@ -338,7 +355,33 @@ const AICoaching = () => {
                                             </button>
                                             {expandedTopics[idx] && (
                                                 <div className={styles.topicDesc}>
-                                                    {t.description}
+                                                    {/* 1) description 우선 표시 */}
+                                                    {t.description && (
+                                                        <div className={styles.topicMeta}>
+                                                            {typeof t.description === "string"
+                                                                ? t.description
+                                                                : JSON.stringify(t.description)}
+                                                        </div>
+                                                    )}
+                                                    {/* 2) 과목별로 달라지는 나머지 필드를 전부 표시 (title/description 제외) */}
+                                                    <div className={styles.topicMeta}>
+                                                        {Object.entries(t)
+                                                            .filter(([k]) => k && k.toLowerCase() !== "title" && k.toLowerCase() !== "description")
+                                                            .map(([k, v], metaIdx) => (
+                                                                <div key={`meta-${idx}-${metaIdx}`} className={styles.topicMetaRow}>
+                                                                    <div className={styles.topicMetaKey}>{k}</div>
+                                                                    <div className={styles.topicMetaValue}>
+                                                                        {typeof v === "string"
+                                                                            ? renderWithLinks(v)
+                                                                            : Array.isArray(v)
+                                                                            ? v.map((item, ii) => (
+                                                                                  <div key={`val-${ii}`}>{typeof item === "string" ? renderWithLinks(item) : JSON.stringify(item)}</div>
+                                                                              ))
+                                                                            : JSON.stringify(v)}
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
