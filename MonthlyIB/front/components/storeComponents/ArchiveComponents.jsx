@@ -1,5 +1,5 @@
 "use client";
-import styles from "@/components/storeComponents/Archive.module.css";
+import styles from "@/components/storeComponents/ArchiveComponents.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import BoardCommonHead from "@/components/boardComponents/BoardCommonHead";
 import shortid from "shortid";
@@ -127,33 +127,33 @@ const ArchiveComponents = () => {
       <main className="width_content archive">
         {/* 팝업 모달 */}
         {isPopupOpen && (
-          <div className="popupOverlay">
-            <div className="popupCard">
-              <h2 className="popupTitle">로그인 필요</h2>
-              <p className="popupText">로그인하시면 더 많은 정보를 확인하실 수 있습니다.</p>
-              <button onClick={handleClosePopup} className="popupConfirmBtn">확인</button>
+          <div className={styles.popupOverlay}>
+            <div className={styles.popupCard}>
+              <h2 className={styles.popupTitle}>로그인 필요</h2>
+              <p className={styles.popupText}>로그인하시면 더 많은 정보를 확인하실 수 있습니다.</p>
+              <button onClick={handleClosePopup} className={styles.popupConfirmBtn}>확인</button>
             </div>
           </div>
         )}
 
         {/* 업로드 진행 다이얼로그 */}
         {fileUploading && (
-          <div className="uploadOverlay">
-            <div className="uploadDialog">
-              <h3 className="uploadTitle">파일 업로드 중…</h3>
-              <p className="uploadFileName">{fileUploadName || "파일"}</p>
-              <div className="progressBar">
+          <div className={styles.uploadOverlay}>
+            <div className={styles.uploadDialog}>
+              <h3 className={styles.uploadTitle}>파일 업로드 중…</h3>
+              <p className={styles.uploadFileName}>{fileUploadName || "파일"}</p>
+              <div className={styles.progressBar}>
                 <div
-                  className="progressFill"
+                  className={styles.progressFill}
                   style={{ width: `${Math.min(100, Math.max(0, fileUploadPct || 0))}%` }}
                 />
               </div>
-              <div className="uploadFooter">
-                <span className="uploadPercent">{fileUploadPct || 0}%</span>
-                <button onClick={cancelUpload} className="uploadCancelBtn">취소</button>
+              <div className={styles.uploadFooter}>
+                <span className={styles.uploadPercent}>{fileUploadPct || 0}%</span>
+                <button onClick={cancelUpload} className={styles.uploadCancelBtn}>취소</button>
               </div>
               {fileUploadError && (
-                <p className="uploadError">업로드 실패: {String(fileUploadError)}</p>
+                <p className={styles.uploadError}>업로드 실패: {String(fileUploadError)}</p>
               )}
             </div>
           </div>
@@ -174,7 +174,7 @@ const ArchiveComponents = () => {
                 <button
                   type="button"
                   onClick={() => onClickBreadcrumb(idx)}
-                  className={`${styles.breadcrumbBtn} ${idx === breadcrumbNames.length - 1 ? "is-active" : ""}`}
+                  className={`${styles.breadcrumbBtn} ${idx === breadcrumbNames.length - 1 ? styles.isActive : ""}`}
                   disabled={idx === breadcrumbNames.length - 1}
                 >
                   {name}

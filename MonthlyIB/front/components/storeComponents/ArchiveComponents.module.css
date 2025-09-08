@@ -1464,3 +1464,126 @@ select#recommendSchools:selected {
   .path_nav .breadcrumbBtn { font-size: 1.4rem; }
   .path_nav .breadcrumbSep { margin: 0 0.4rem; }
 }
+
+/* =============================
+   Upload Progress Dialog
+   ============================= */
+.uploadOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.uploadDialog {
+  width: 92%;
+  max-width: 520px;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  padding: 2.0rem 2.4rem;
+}
+
+.uploadTitle {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+
+.uploadFileName {
+  font-size: 1.4rem;
+  color: #666;
+  word-break: break-all;
+  margin-bottom: 1.6rem;
+}
+
+.progressBar {
+  position: relative;
+  width: 100%;
+  height: 10px;
+  background: #eee;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progressFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 0%; /* controlled inline via style={{ width: `${percent}%` }} */
+  background: var(--primary01);
+  transition: width 0.15s ease;
+}
+
+.uploadFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.0rem;
+}
+
+.uploadPercent {
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.uploadCancelBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 3.2rem;
+  padding: 0 1.2rem;
+  border-radius: 0.6rem;
+  background: #f3f3f3;
+  border: 1px solid #ddd;
+  font-size: 1.3rem;
+  color: #333;
+  cursor: pointer;
+}
+
+.uploadCancelBtn:hover {
+  background: #e9e9e9;
+}
+
+.uploadError {
+  margin-top: 1.2rem;
+  font-size: 1.3rem;
+  color: #c62828; /* error red */
+}
+
+/* =============================
+   Breadcrumb (re-affirm)
+   ============================= */
+/* Keep path_nav width but ensure strong styles for interactive crumbs */
+.path_nav { width: calc(100% - 20rem); }
+.path_nav .breadcrumbNav { display: flex; align-items: center; flex-wrap: wrap; }
+.path_nav .breadcrumbItem { display: inline-flex; align-items: center; }
+.path_nav .breadcrumbBtn {
+  display: inline-flex;
+  align-items: center;
+  font-size: 1.6rem; /* enlarged */
+  line-height: 1.4;
+  background: transparent;
+  border: 0;
+  padding: 0.2rem 0.6rem;
+  margin: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  border-radius: 0.4rem;
+  transition: background-color 0.15s ease-in-out;
+}
+.path_nav .breadcrumbBtn:hover { background-color: #f0f0f0; }
+.path_nav .breadcrumbBtn:focus-visible { outline: 2px solid var(--primary01); outline-offset: 2px; }
+.path_nav .breadcrumbBtn.is-active,
+.path_nav .breadcrumbBtn.isActive { font-weight: 700; cursor: default; pointer-events: none; }
+.path_nav .breadcrumbSep { display: inline-block; margin: 0 0.6rem; opacity: 0.5; user-select: none; }
+
+@media screen and (max-width: 640px) {
+  .path_nav .breadcrumbBtn { font-size: 1.4rem; }
+  .path_nav .breadcrumbSep { margin: 0 0.4rem; }
+}
