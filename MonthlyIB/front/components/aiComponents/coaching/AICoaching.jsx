@@ -19,6 +19,13 @@ const AICoaching = () => {
     const [lastInterest, setLastInterest] = useState("");
     const [resetKey, setResetKey] = useState(0);
 
+    const chatBoxRef = useRef(null);
+    const latestInterestRef = useRef("");
+    const bottomRef = useRef(null);
+    const isInitialRender = useRef(true);
+    const router = useRouter();
+    const { userInfo } = useUserInfo();
+
     const initConversation = () => {
         const intro = {
             sender: "bot",
@@ -35,6 +42,7 @@ const AICoaching = () => {
         setExpandedTopics({});
         setLastInterest("");
         setMessage("");
+        latestInterestRef.current = "";
         // scroll to top
         if (chatBoxRef.current) chatBoxRef.current.scrollTop = 0;
     };
@@ -61,21 +69,35 @@ const AICoaching = () => {
             { sender: "bot", text: "가이드를 생성하고 있습니다..." }
         ]);
         try {
-            const { guideId } = await createGuide({
+            const interestForGuide = latestInterestRef.current || lastInterest || "";
+            // createGuide는 이제 가이드 "객체 전체"를 반환한다고 가정
+            const guideData = await createGuide({
                 subject: selectedSubject,
-                interest_topic: lastInterest,
-                topic: picked, // ia_topic 전체 객체를 그대로 전송
+                interestTopic: interestForGuide,   // camelCase for some backends
+                interest_topic: interestForGuide,  // snake_case for others
+                topic: picked,                     // send entire ia_topic object
                 session: userInfo,
             });
-            if (!guideId) {
+
+            if (!guideData || typeof guideData !== "object") {
                 setMessages(prev => [
                     ...prev,
-                    { sender: "bot", text: "가이드 ID를 받지 못했습니다. 잠시 후 다시 시도해 주세요." }
+                    { sender: "bot", text: "가이드 데이터를 받지 못했습니다. 잠시 후 다시 시도해 주세요." }
                 ]);
                 return;
             }
-            // 새 페이지로 이동하여 서버에서 가이드 데이터를 가져와 렌더
-            router.push(`/aitools/coaching/guide/${guideId}`);
+
+            // 세션 스토리지에 동적 가이드 데이터 저장 후 뷰 페이지로 이동
+            try {
+                if (typeof window !== "undefined" && window.sessionStorage) {
+                    window.sessionStorage.setItem("ai_coaching_guide_payload", JSON.stringify(guideData));
+                }
+            } catch (ssErr) {
+                console.warn("sessionStorage 저장 실패:", ssErr);
+            }
+
+            // 동적 가이드 뷰 페이지로 이동 (해당 페이지에서 sessionStorage 데이터를 읽어 렌더링)
+            router.push(`/aitools/coaching/form`);
         } catch (e) {
             console.error("가이드 생성 실패:", e);
             setMessages(prev => [
@@ -84,12 +106,6 @@ const AICoaching = () => {
             ]);
         }
     };
-    // const [selectedChapter, setSelectedChapter] = useState(null);
-    const chatBoxRef = useRef(null);
-    const bottomRef = useRef(null);
-    const isInitialRender = useRef(true);
-    const router = useRouter();
-    const { userInfo } = useUserInfo();
 
     const handleRefetchTopics = async () => {
         if (!selectedSubject || !lastInterest) return;
@@ -230,6 +246,7 @@ const AICoaching = () => {
         if (message.trim() === "") return;
         const userInput = message;
         setLastInterest(userInput);
+        latestInterestRef.current = userInput;
         setMessages(prev => [
             ...prev,
             { text: userInput, sender: "user" },

@@ -20,7 +20,7 @@ export const fetchRecommendedTopics = async (subject, interest, session) => {
     // 백엔드가 ResponseDto로 감싸는 구조 가정: { result, data: { ia_topics: [...] } }
     const topics = res?.data?.data?.ia_topics || res?.data?.ia_topics || res?.data?.data || [];
     console.log("ia_topics(normalized):", topics);
-    return topics;
+    return res?.data?.data;
   } catch (error) {
     console.error("fetchRecommendedTopics error:", error);
     throw error;

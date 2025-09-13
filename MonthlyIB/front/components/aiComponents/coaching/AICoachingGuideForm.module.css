@@ -1,0 +1,221 @@
+/* === IA Coaching Guide — CSS Module ===
+   Note: This file styles the classes emitted by AICoachingGuideForm.jsx
+   Keep selectors class-based; no global resets. */
+
+/* Layout */
+.guide-container, .guideContainer {
+  width: 110rem;
+  max-width: 100%;
+  margin: 0 auto;
+  /* If there's a fixed/sticky global header, reserve space here. */
+  margin-top: var(--appHeaderHeight, 7.2rem);
+  padding: 4rem 2rem;
+  /* Prevent first-child margin from collapsing and accidentally overlapping header */
+  box-sizing: border-box;
+  position: relative;
+  z-index: 0;
+  overflow: visible;
+}
+
+.guide-header, .guideHeader { margin: 12px 0 ; }
+.guide-header-row, .guideHeaderRow { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* Ensure header scrolls with content (no sticky/fixed behavior) */
+.guide-header, .guideHeader,
+.guide-header-row, .guideHeaderRow {
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  background: transparent;
+  box-shadow: none;
+}
+.guide-title, .guideTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  margin-top: 2rem;
+  margin-right: 0;
+  margin-left: 0;
+}
+.guide-subtitle, .guideSubtitle {
+  color: #333;
+  margin: 6px 0 0;
+  font-size: 1.6rem;
+}
+
+/* Actions */
+.guide-actions, .guideActions { display: flex; align-items: center; gap: 8px; }
+.guide-btn, .guideBtn { border: 1px solid #ddd; background: #fff; padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease; }
+.guide-btn:hover, .guideBtn:hover { background: #f9f9f9; border-color: #cfcfcf; }
+.guide-btn:active, .guideBtn:active { background: #f1f1f1; }
+.guide-btn-secondary, .guideBtnSecondary { color: #333; }
+
+/* States */
+.guide-error, .guideError { background: #ffecec; color: #a40000; border: 1px solid #f4bebe; padding: 12px 14px; border-radius: 8px; margin: 8px 0 16px; }
+.guide-loading, .guideLoading { color: #666; padding: 12px 0; }
+
+/* Body */
+.guide-body, .guideBody {
+  /* Add spacing from header/intro and avoid margin-collapse with first child */
+  padding: 0.8rem 0;
+}
+
+/* Sections & Rows */
+.guide-section, .guideSection {
+  margin: 1rem 0;
+  border: 1px solid #ddd;
+  border-radius: 1rem;
+  background-color: #fafafa;
+  padding: 1.6rem;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  box-sizing: border-box;
+}
+.guide-row, .guideRow {
+  display: grid;
+  grid-template-columns: 26rem 1fr;
+  gap: 1.2rem;
+  align-items: start;
+  padding: 1.2rem 1.4rem;
+  border-radius: 1rem;
+  transition: background 0.12s ease, border-color 0.12s ease;
+  border: 1px solid #e2e2e2;
+  background-color: #fff;
+  font-size: 1.6rem;
+  line-height: 1.5;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+}
+.guide-row:hover, .guideRow:hover {
+  background: #f0f4f8;
+  border-color: #bbb;
+}
+
+/* Rows that only have a value/list should span full width (no key column) */
+.guide-row > .guide-leaf:only-child,
+.guideRow > .guideLeaf:only-child,
+.guide-row > .guide-list:only-child,
+.guideRow > .guideList:only-child,
+.guide-row > .guide-list-item:only-child,
+.guideRow > .guideListItem:only-child {
+  grid-column: 1 / -1; /* take both columns */
+}
+
+/* If a row contains no explicit key element, let the grid collapse to one column */
+.guide-row:has(> .guide-leaf:only-child),
+.guideRow:has(> .guideLeaf:only-child),
+.guide-row:has(> .guide-list:only-child),
+.guideRow:has(> .guideList:only-child) {
+  grid-template-columns: 1fr;
+}
+
+/* Keys / Values */
+.guide-key, .guideKey {
+  font-weight: 700;
+  color: #2d2d2d;
+  word-break: break-word;
+  font-size: 1.6rem;
+}
+.guide-leaf, .guideLeaf {
+  color: #111;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.55;
+  font-size: 1.6rem;
+  overflow-wrap: anywhere; /* allow long segments to break only when necessary */
+}
+/* Utility: opt-in to preserving line breaks when needed */
+.guide-preserve, .guidePreserve { white-space: pre-wrap; }
+.guide-empty, .guideEmpty { color: #888; padding: 6px 8px; font-style: italic; }
+
+/* Headings per depth */
+.guide-heading, .guideHeading {
+  margin: 0.8rem 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+/* Depth-based indentation */
+.guide-depth-0 { padding-left: 0; }
+.guide-depth-1 { padding-left: 12px; }
+.guide-depth-2 { padding-left: 24px; }
+.guide-depth-3 { padding-left: 36px; }
+.guide-depth-4 { padding-left: 48px; }
+.guide-depth-5 { padding-left: 60px; }
+
+/* === Depth visuals: shrink grey card horizontally AND indent its inner content === */
+/* Base padding kept small so the grey card keeps rounded corners nicely */
+.guide-section, .guideSection { padding-left: 1.6rem; padding-right: 1.6rem; }
+
+/* Per-depth variables controlling: 1) horizontal inset of the grey card, 2) inner content indent */
+.guide-section[data-depth], .guideSection[data-depth] { --indent: 0rem; --cardInset: 0rem; }
+.guide-section[data-depth="0"], .guideSection[data-depth="0"] { --indent: 0rem;   --cardInset: 0rem; }
+.guide-section[data-depth="1"], .guideSection[data-depth="1"] { --indent: 1.2rem; --cardInset: 1rem; }
+.guide-section[data-depth="2"], .guideSection[data-depth="2"] { --indent: 2.4rem; --cardInset: 2rem; }
+.guide-section[data-depth="3"], .guideSection[data-depth="3"] { --indent: 3.6rem; --cardInset: 3rem; }
+.guide-section[data-depth="4"], .guideSection[data-depth="4"] { --indent: 4.8rem; --cardInset: 4rem; }
+.guide-section[data-depth="5"], .guideSection[data-depth="5"] { --indent: 6.0rem; --cardInset: 6rem; }
+
+/* Apply horizontal inset to the grey card itself so deeper levels are visually narrower
+   Use width calc so both left and right shrink evenly, independent of parent padding. */
+.guide-section[data-depth], .guideSection[data-depth] {
+  display: block;
+  box-sizing: border-box;
+  margin-left: var(--cardInset);
+  /* Keep a small right margin so the visual gap equals the left gap when parent paddings differ */
+  margin-right: var(--cardInset);
+  width: calc(100% - (var(--cardInset) * 2));
+}
+
+/* Apply indent only to inner content (white rows & headings) */
+.guide-section[data-depth] .guide-heading,
+.guide-section[data-depth] .guideHeading,
+.guide-section[data-depth] .guide-row,
+.guide-section[data-depth] .guideRow {
+  margin-left: var(--indent);
+}
+
+/* Typography by depth */
+.guide-section[data-depth="0"] .guide-heading, .guideSection[data-depth="0"] .guideHeading { font-size: 2.2rem; font-weight: 800; }
+.guide-section[data-depth="1"] .guide-heading, .guideSection[data-depth="1"] .guideHeading { font-size: 2rem; font-weight: 800; }
+.guide-section[data-depth="2"] .guide-heading, .guideSection[data-depth="2"] .guideHeading { font-size: 1.8rem; font-weight: 700; }
+.guide-section[data-depth="3"] .guide-heading, .guideSection[data-depth="3"] .guideHeading { font-size: 1.6rem; font-weight: 700; }
+.guide-section[data-depth="4"] .guide-heading, .guideSection[data-depth="4"] .guideHeading { font-size: 1.5rem; font-weight: 700; }
+
+.guide-section[data-depth="0"].guide-row .guide-key, .guideSection[data-depth="0"].guideRow .guideKey { font-size: 1.8rem; }
+.guide-section[data-depth="1"].guide-row .guide-key, .guideSection[data-depth="1"].guideRow .guideKey { font-size: 1.6rem; }
+.guide-section[data-depth="2"].guide-row .guide-key, .guideSection[data-depth="2"].guideRow .guideKey { font-size: 1.5rem; }
+.guide-section[data-depth="3"].guide-row .guide-key, .guideSection[data-depth="3"].guideRow .guideKey { font-size: 1.4rem; }
+
+/* Lists */
+.guide-list, .guideList { margin: 6px 0; padding-left: 0; list-style: none; }
+.guide-list-item, .guideListItem { margin: 4px 0; }
+
+/* Code-ish blocks, if needed */
+code.guide-inline, code.guideInline { background: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 2px 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; font-size: 90%; }
+
+/* Break long URLs */
+.guide-leaf a, .guideLeaf a { color: #0d47a1; text-decoration: underline; word-break: break-all; }
+
+/* Responsive tweaks */
+@media (max-width: 860px) {
+  .guide-row, .guideRow { grid-template-columns: 1fr; }
+  .guide-title, .guideTitle { font-size: 2.4rem; }
+}
+
+@media (max-width: 520px) {
+  .guide-container, .guideContainer { padding: 1.2rem 1.4rem 3.6rem; }
+  .guide-title, .guideTitle { font-size: 2.1rem; }
+}
+
+/* Print-friendly */
+@media print {
+  .guide-btn, .guide-actions, .guideBtn, .guideActions { display: none !important; }
+  .guide-container, .guideContainer { max-width: none; padding: 0; }
+  .guide-row:hover, .guideRow:hover { background: transparent; }
+}
+
+/* Optional helper: add extra safe area when the global navbar is taller on mobile */
+.guide-safe-top { margin-top: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem); }
+
+@media (max-width: 520px) {
+  .guide-container, .guideContainer { margin-top: var(--appHeaderHeight, 8.4rem); }
+}
