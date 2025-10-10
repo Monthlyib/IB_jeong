@@ -53,3 +53,33 @@ export const createGuide = async ({ subject, topic, interest_topic, session }) =
     throw error;
   }
 };
+
+export const postEnglishChatMessage = async ({
+  prompt,
+  subject,
+  textType,        // 'literature' | 'language'
+  responseMode,    // 'generative' | 'evaluative'
+  session,
+}) => {
+  try {
+    const url = `/api/ai/IA/english-chat`;
+    const body = {
+      subject: "Langauge A English",
+      prompt,
+      textType,
+      responseMode,
+    };
+    console.log(body)
+    const res = await tokenRequireApi.post(url, body, {
+      headers: {
+        Authorization: session?.accessToken,
+      },
+    });
+    console.log("영어 채팅 응답:", res?.data);
+    // ResponseDto 래핑 가정: { result, data: { reply: string, ... } } 또는 { reply: string }
+    return res?.data?.data ?? res?.data ?? null;
+  } catch (error) {
+    console.error("postEnglishChatMessage error:", error);
+    throw error;
+  }
+};

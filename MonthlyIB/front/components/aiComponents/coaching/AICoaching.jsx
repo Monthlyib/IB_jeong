@@ -4,7 +4,14 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 // import { chapterOptions } from "@/components/aiComponents/chapterOptions";
 const subjects = ["Science", "Math", "Langauge A English", "Psychology", "Business", "History", "Geography", "Economics"];
-import { fetchRecommendedTopics, createGuide } from "@/apis/AiIAAPI"; // Adjust the import path as necessary
+const ENGLISH_SUBJECT = "Langauge A English";
+const ENGLISH_TEXT_TYPES = ["Literature", "Language"]; // step 2 for English
+const ENGLISH_MODES = [
+    { key: "generative", label: "✨ 새로운 질문 생성하기 (Generative)" },
+    { key: "evaluative", label: "📝 작성한 질문 평가받기 (Evaluative)" }
+];
+import { fetchRecommendedTopics, createGuide, postEnglishChatMessage } from "@/apis/AiIAAPI"; // Adjust the import path as necessary
+import EnglishLanguageGenerativeResult from "./EnglishLanguageGenerativeResult";
 import styles from "./AICoaching.module.css";
 import ChatOption from "./ChatOption";
 import { useUserInfo } from "@/store/user";
@@ -18,6 +25,10 @@ const AICoaching = () => {
     const [expandedTopics, setExpandedTopics] = useState({}); // { [index]: boolean }
     const [lastInterest, setLastInterest] = useState("");
     const [resetKey, setResetKey] = useState(0);
+    const [englishTextType, setEnglishTextType] = useState(null); // "Literature" | "Language"
+    const [englishMode, setEnglishMode] = useState(null); // "generative" | "evaluative"
+    const [englishGenData, setEnglishGenData] = useState(null);
+    const [englishLoading, setEnglishLoading] = useState(false);
 
     const chatBoxRef = useRef(null);
     const latestInterestRef = useRef("");
@@ -41,8 +52,11 @@ const AICoaching = () => {
         setPendingTopicTitle(null);
         setExpandedTopics({});
         setLastInterest("");
+        setEnglishTextType(null);
+        setEnglishMode(null);
         setMessage("");
         latestInterestRef.current = "";
+        setEnglishGenData(null);
         // scroll to top
         if (chatBoxRef.current) chatBoxRef.current.scrollTop = 0;
     };
@@ -51,6 +65,7 @@ const AICoaching = () => {
         const confirmed = typeof window !== "undefined" ? window.confirm("정말 대화를 초기화하시겠습니까?") : true;
         if (!confirmed) return;
         initConversation();
+        setEnglishGenData(null);
         setResetKey((k) => k + 1); // 강제 리렌더링으로 상태 완전 초기화
     };
 
@@ -176,7 +191,7 @@ const AICoaching = () => {
     }, [messages, resetKey]);
 
     const handleOptionSelect = (option) => {
-        // IA 토픽 확정/재선택 처리
+        // IA 토픽 확정/재선택 처리 (공통)
         if (option === "✅ 이 주제로 진행") {
             const chosen = iaTopics.find(t => t.title === pendingTopicTitle);
             setMessages(prev => [
@@ -191,7 +206,6 @@ const AICoaching = () => {
             return;
         }
         if (option === "🔁 토픽 다시 고르기") {
-            // 동일한 리스트 다시 표시
             setMessages(prev => [
                 ...prev,
                 { sender: "user", text: option },
@@ -204,9 +218,10 @@ const AICoaching = () => {
             setPendingTopicTitle(null);
             return;
         }
-
         if (option === "🔁 다시 선택하기") {
             setSelectedSubject(null);
+            setEnglishTextType(null);
+            setEnglishMode(null);
             const intro = {
                 sender: "bot",
                 text: "새로운 과목을 다시 선택해 주세요!",
@@ -225,26 +240,136 @@ const AICoaching = () => {
             return;
         }
 
+        // 1) 과목 선택
         if (!selectedSubject && subjects.includes(option)) {
+            setSelectedSubject(option);
+            if (option === ENGLISH_SUBJECT) {
+                // 영어 과목 전용: Step 2로 텍스트 유형 선택
+                setIaTopics([]);
+                setExpandedTopics({});
+                setPendingTopicTitle(null);
+                setEnglishTextType(null);
+                setEnglishMode(null);
+                setMessages(prev => [
+                    ...prev,
+                    { text: option, sender: "user" },
+                    {
+                        sender: "bot",
+                        text: `좋아요! ${option} 과목을 선택하셨습니다. 어떤 텍스트 유형으로 작업하시나요?`,
+                    },
+                    {
+                        sender: "bot",
+                        options: ENGLISH_TEXT_TYPES,
+                    }
+                ]);
+            } else {
+                // 다른 과목: 기존 플로우 유지
+                setMessages(prev => [
+                    ...prev,
+                    { text: option, sender: "user" },
+                    {
+                        sender: "bot",
+                        text: `${option} 과목을 선택하셨군요!`,
+                    },
+                    {
+                        sender: "bot",
+                        text: "이제 관심 있는 주제를 입력해 주세요!"
+                    }
+                ]);
+            }
+            return;
+        }
+
+        // 2) (English 전용) 텍스트 유형 선택
+        if (selectedSubject === ENGLISH_SUBJECT && !englishTextType && ENGLISH_TEXT_TYPES.includes(option)) {
+            setEnglishTextType(option);
             setMessages(prev => [
                 ...prev,
-                { text: option, sender: "user" },
+                { sender: "user", text: option },
                 {
                     sender: "bot",
-                    text: `${option} 과목을 선택하셨군요!`,
+                    text: "어떤 도움이 필요하신가요?",
                 },
                 {
                     sender: "bot",
-                    text: "이제 관심 있는 주제를 입력해 주세요!"
+                    options: ENGLISH_MODES.map(m => m.label),
                 }
             ]);
-            setSelectedSubject(option);
+            return;
+        }
+
+        // 3) (English 전용) 모드 선택
+        if (selectedSubject === ENGLISH_SUBJECT && englishTextType && !englishMode) {
+            const pickedMode = ENGLISH_MODES.find(m => m.label === option);
+            if (pickedMode) {
+                setEnglishMode(pickedMode.key);
+                setMessages(prev => [
+                    ...prev,
+                    { sender: "user", text: option },
+                    {
+                        sender: "bot",
+                        text: pickedMode.key === "generative"
+                            ? "분석하고 싶은 텍스트와 주제를 입력해 주세요 (예: Hamlet의 도덕적 갈등)."
+                            : "평가받고 싶은 연구 질문을 그대로 입력해 주세요 (예: How does Shakespeare use language in Hamlet?)."
+                    }
+                ]);
+                return;
+            }
         }
     };
 
     const handleSendMessage = async () => {
         if (message.trim() === "") return;
         const userInput = message;
+        // === English subject dedicated chat flow ===
+        if (selectedSubject === ENGLISH_SUBJECT) {
+            if (!englishTextType) {
+                setMessages(prev => [...prev, { sender: "bot", text: "먼저 텍스트 유형(Literature/Language)을 선택해 주세요." }]);
+                return;
+            }
+            if (!englishMode) {
+                setMessages(prev => [...prev, { sender: "bot", text: "먼저 모드(Generative/Evaluative)를 선택해 주세요." }]);
+                return;
+            }
+            setMessages(prev => [
+                ...prev,
+                { sender: "user", text: userInput }
+            ]);
+            setMessage("");
+            setEnglishLoading(true);
+            try {
+                const data = await postEnglishChatMessage({
+                    prompt: userInput,
+                    subject: ENGLISH_SUBJECT,
+                    textType: englishTextType,
+                    responseMode: englishMode,
+                    session: userInfo
+                });
+                if (data && data.response_mode === "generative") {
+                    setEnglishGenData(data);
+                    setMessages(prev => [
+                        ...prev,
+                        { sender: "bot", text: "생성된 가이드를 아래 카드로 표시합니다." }
+                    ]);
+                    setEnglishLoading(false);
+                } else {
+                    const reply = data?.reply || data?.message || "응답을 해석할 수 없습니다.";
+                    setMessages(prev => [
+                        ...prev,
+                        { sender: "bot", text: reply }
+                    ]);
+                    setEnglishLoading(false);
+                }
+            } catch (err) {
+                console.error("English chat error:", err);
+                setMessages(prev => [
+                    ...prev,
+                    { sender: "bot", text: "영어 과목 전용 채팅 생성에 실패했습니다. 잠시 후 다시 시도해 주세요." }
+                ]);
+                setEnglishLoading(false);
+            }
+            return;
+        }
         setLastInterest(userInput);
         latestInterestRef.current = userInput;
         setMessages(prev => [
@@ -419,7 +544,13 @@ const AICoaching = () => {
                             )}
                         </div>
                     ))}
+                    {englishLoading && (<div className={styles.chatMessageBot}>⏳ 영어 응답을 생성 중입니다...</div>)}
                     <div ref={bottomRef} />
+                    {englishGenData ? (
+                        <div className={styles.topicList} key="english-generative-result">
+                            <EnglishLanguageGenerativeResult data={englishGenData} />
+                        </div>
+                    ) : null}
                 </div>
                 <div className={styles.inputArea}>
                     <input

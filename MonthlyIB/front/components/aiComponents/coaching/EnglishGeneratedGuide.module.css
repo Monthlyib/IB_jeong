@@ -1,0 +1,348 @@
+/* ===== Wrapper ===== */
+.guide-container {
+  width: 100%;
+  /* max-width: 110rem; */
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.guide-container * {
+  /* box-sizing: border-box; */
+  min-width: 0; /* prevent children from forcing overflow */
+}
+/* Prevent horizontal overflow */
+ .guide-container {
+   /* box-sizing: border-box; */
+   overflow-x: hidden;
+   overflow-y: visible;
+}
+
+/* 상위 레이아웃과 충돌하지 않도록 내부 폭 보정 */
+.guide-body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* 긴 텍스트나 그리드가 있을 때 자연스럽게 스크롤 */
+  box-sizing: border-box;
+}
+
+/* Prevent grid children from causing horizontal overflow */
+.steps-list,
+.concepts-grid,
+.topics-list,
+.step-card,
+.concept-card,
+.topic-card,
+.step-row,
+.topic-row,
+.section,
+.card,
+.step-body,
+.topic-body {
+  min-width: 0;
+}
+
+.step-val,
+.topic-val,
+.paragraph,
+.concept-item {
+  white-space: normal;
+  min-width: 0;
+  overflow-wrap: anywhere; /* break long English strings/URLs */
+  word-break: break-word;   /* legacy fallback */
+}
+
+/* ===== Header ===== */
+.guide-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.2rem;
+}
+
+.guide-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+  margin: 0;
+}
+
+/* ===== Chat Bubble (전체를 감싸는 말풍선) ===== */
+.guide-body {
+  position: relative;
+  background: #ffffff;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 1.6rem;
+  box-shadow: 0 0.2rem 0.6rem rgba(0,0,0,0.06);
+  padding: 2rem;
+}
+
+/* 말풍선 꼬리 (좌측 상단) */
+.guide-body::before {
+  content: "";
+  position: absolute;
+  top: -0.8rem;
+  left: 2.4rem;
+  width: 1.6rem;
+  height: 1.6rem;
+  background: #ffffff;
+  border-left: 0.1rem solid #e5e7eb;
+  border-top: 0.1rem solid #e5e7eb;
+  transform: rotate(45deg);
+}
+
+/* ===== Sections ===== */
+.section {
+  background: #fafafa;
+  border: 0.1rem solid #ececec;
+  border-radius: 1rem;
+  padding: 1.6rem;
+  width: 100%;
+}
+
+.section + .section {
+  margin-top: 1.2rem;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 1rem 0;
+}
+
+/* ===== Common UI Blocks ===== */
+.pill {
+  display: inline-block;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--primary01);
+  background: #eef2ff;
+  border: 0.1rem solid #c7d2fe;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999rem;
+}
+
+.card {
+  background: #ffffff;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+}
+
+.paragraph {
+  font-size: 1.5rem;
+  line-height: 1.7;
+  color: #374151;
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere; /* break long English strings/URLs */
+  word-break: break-word;   /* legacy fallback */
+}
+
+/* ===== Building Steps ===== */
+.steps-list {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.step-card {
+  background: #ffffff;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.step-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.step-badge {
+  min-width: 2.4rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  border: 0.1rem solid #bfdbfe;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0.6rem;
+}
+
+.step-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.step-body {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.step-row {
+  display: grid;
+  grid-template-columns: minmax(10rem,14rem) minmax(0,1fr);
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.step-key {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.step-val {
+  font-size: 1.45rem;
+  line-height: 1.6;
+  color: #374151;
+  min-width: 0;
+  overflow-wrap: anywhere; /* break long English strings/URLs */
+  word-break: break-word;   /* legacy fallback */
+}
+
+/* ===== Core Concepts ===== */
+.concepts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.concept-card {
+  background: #ffffff;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.concept-head {
+  margin-bottom: 0.4rem;
+}
+
+.concept-chip {
+  display: inline-block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--primary01);
+  background: #eef2ff;
+  border: 0.1rem solid #c7d2fe;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999rem;
+}
+
+.concept-list {
+  margin: 0.6rem 0 0 1.6rem;
+  padding: 0;
+}
+
+.concept-item {
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: #374151;
+  margin: 0.3rem 0;
+  min-width: 0;
+  overflow-wrap: anywhere; /* break long English strings/URLs */
+  word-break: break-word;   /* legacy fallback */
+}
+
+/* ===== Suggested Topics ===== */
+.topics-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.2rem;
+  width: 100%;
+}
+
+.topic-card {
+  background: #ffffff;
+  border: 0.1rem solid #e5e7eb;
+  border-radius: 0.8rem;
+  padding: 1.2rem;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.topic-head {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.topic-question {
+  flex: 1;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.topic-body {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.topic-row {
+  display: grid;
+  grid-template-columns: 14rem 1fr;
+  gap: 0.8rem;
+}
+
+.topic-key {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.topic-val {
+  font-size: 1.45rem;
+  line-height: 1.6;
+  color: #374151;
+  min-width: 0;
+  overflow-wrap: anywhere; /* break long English strings/URLs */
+  word-break: break-word;   /* legacy fallback */
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 64rem) { /* 1024px */
+  .guide-container {
+    padding: 1.6rem;
+  }
+  .guide-body {
+    padding: 1.6rem;
+  }
+  .steps-list {
+    grid-template-columns: 1fr;
+  }
+  .concepts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 40rem) { /* 640px */
+  .step-row,
+  .topic-row {
+    grid-template-columns: 1fr;
+  }
+  .section {
+    padding: 1.2rem;
+  }
+  .guide-body::before {
+    left: 1.6rem;
+  }
+}
