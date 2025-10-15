@@ -3,7 +3,7 @@
 import React from "react";
 import styles from "./EnglishGeneratedGuide.module.css";
 
-export default function EnglishLanguageGenerativeResult({ data, onReset, onEnterTopic }) {
+export default function EnglishLiteratureGenerativeResult({ data, onReset, onEnterTopic }) {
   if (!data) return null;
 
   const {
@@ -103,7 +103,7 @@ export default function EnglishLanguageGenerativeResult({ data, onReset, onEnter
               className={styles["primaryBtn"]}
               onClick={onEnterTopic}
               disabled={!onEnterTopic}
-              aria-label="Enter a new topic for English · Language · Generative"
+              aria-label="Enter a new topic for English · Literature · Generative"
             >
               ✍️ 주제 입력하기
             </button>

@@ -8,10 +8,13 @@ const ENGLISH_SUBJECT = "Langauge A English";
 const ENGLISH_TEXT_TYPES = ["Literature", "Language"]; // step 2 for English
 const ENGLISH_MODES = [
     { key: "generative", label: "✨ 새로운 질문 생성하기 (Generative)" },
-    { key: "evaluative", label: "📝 작성한 질문 평가받기 (Evaluative)" }
+    { key: "evaluate", label: "📝 작성한 질문 평가받기 (evaluate)" }
 ];
 import { fetchRecommendedTopics, createGuide, postEnglishChatMessage } from "@/apis/AiIAAPI"; // Adjust the import path as necessary
 import EnglishLanguageGenerativeResult from "./EnglishLanguageGenerativeResult";
+import EnglishLiteratureGenerativeResult from "./EnglishLiteratureGenerativeResult";
+import EnglishLanguageEvaluateResult from "./EnglishLanguageEvaluateResult";
+import EnglishLiteratureEvaluateResult from "./EnglishLiteratureEvaluateResult";
 import styles from "./AICoaching.module.css";
 import ChatOption from "./ChatOption";
 import { useUserInfo } from "@/store/user";
@@ -29,6 +32,8 @@ const AICoaching = () => {
     const [englishMode, setEnglishMode] = useState(null); // "generative" | "evaluative"
     const [englishGenData, setEnglishGenData] = useState(null);
     const [englishLoading, setEnglishLoading] = useState(false);
+    const [awaitingFinalTopic, setAwaitingFinalTopic] = useState(false); // 최종 주제 확정 입력 대기
+    const [isComposing, setIsComposing] = useState(false);
 
     const chatBoxRef = useRef(null);
     const latestInterestRef = useRef("");
@@ -36,6 +41,33 @@ const AICoaching = () => {
     const isInitialRender = useRef(true);
     const router = useRouter();
     const { userInfo } = useUserInfo();
+
+    // === Callbacks for restarting English flows (Language track) ===
+    const restartEnglishWith = (modeKey /* "generative" | "evaluative" */) => {
+        // Fix subject and text type for English flow
+        setSelectedSubject(ENGLISH_SUBJECT);
+        setEnglishTextType("Language");
+        setEnglishMode(modeKey);
+
+        // Reset states related to results/topics/inputs
+        setEnglishGenData(null);
+        setIaTopics([]);
+        setExpandedTopics({});
+        setPendingTopicTitle(null);
+        setMessage("");
+
+        // Compose guide message by mode
+        const guideMsg =
+            modeKey === "generative"
+                ? "분석하고 싶은 텍스트와 주제를 입력해 주세요 (예: Hamlet의 도덕적 갈등)."
+                : "평가받고 싶은 연구 질문을 그대로 입력해 주세요 (예: How does… / To what extent…).";
+
+        // Reset chat messages to minimal prompts for the chosen mode
+        setMessages([
+            { sender: "bot", text: "Langauge A English · Language 모드로 다시 시작합니다." },
+            { sender: "bot", text: guideMsg },
+        ]);
+    };
 
     const initConversation = () => {
         const intro = {
@@ -321,6 +353,38 @@ const AICoaching = () => {
     const handleSendMessage = async () => {
         if (message.trim() === "") return;
         const userInput = message;
+        // 최종 주제 확정 단계: 입력 즉시 드래프트 페이지로 이동
+        if (
+            selectedSubject === ENGLISH_SUBJECT &&
+            englishTextType === "Language" &&
+            englishMode === "generative" &&
+            awaitingFinalTopic
+        ) {
+            setMessages(prev => [
+                ...prev,
+                { sender: "user", text: userInput },
+                { sender: "bot", text: "확정 주제를 확인했습니다. 드래프트 페이지로 이동합니다..." }
+            ]);
+
+            try {
+                if (typeof window !== "undefined" && window.sessionStorage) {
+                    window.sessionStorage.setItem("ai_coaching_final_topic", userInput);
+                    window.sessionStorage.setItem("ai_coaching_final_context", JSON.stringify({
+                        subject: ENGLISH_SUBJECT,
+                        textType: "Language",
+                        mode: "generative"
+                    }));
+                }
+            } catch (e) {
+                console.warn("final topic sessionStorage 저장 실패:", e);
+            }
+
+            setMessage("");
+            setAwaitingFinalTopic(false);
+
+            router.push(`/aitools/coaching/form`);
+            return;
+        }
         // === English subject dedicated chat flow ===
         if (selectedSubject === ENGLISH_SUBJECT) {
             if (!englishTextType) {
@@ -345,21 +409,45 @@ const AICoaching = () => {
                     responseMode: englishMode,
                     session: userInfo
                 });
-                if (data && data.response_mode === "generative") {
-                    setEnglishGenData(data);
+                if (!data) {
                     setMessages(prev => [
                         ...prev,
-                        { sender: "bot", text: "생성된 가이드를 아래 카드로 표시합니다." }
+                        { sender: "bot", text: "응답을 받지 못했습니다. 잠시 후 다시 시도해 주세요." }
                     ]);
                     setEnglishLoading(false);
-                } else {
-                    const reply = data?.reply || data?.message || "응답을 해석할 수 없습니다.";
-                    setMessages(prev => [
-                        ...prev,
-                        { sender: "bot", text: reply }
-                    ]);
-                    setEnglishLoading(false);
+                    return;
                 }
+
+                if (data.response_mode === "generative") {
+                    // 텍스트 유형에 따라 다른 컴포넌트로 렌더링
+                    const guideType = englishTextType === "Literature" ? "english_lit_guide" : "english_lang_guide";
+                    setMessages(prev => [
+                        ...prev,
+                        { type: guideType, payload: data }
+                    ]);
+                    setEnglishGenData(null);
+                    setEnglishLoading(false);
+                    return;
+                }
+
+                if (data.response_mode === "evaluative_feedback") {
+                    // Evaluate 렌더링 (Language / Literature 분기)
+                    const evalType = englishTextType === "Literature" ? "english_lit_eval" : "english_lang_eval";
+                    setMessages(prev => [
+                        ...prev,
+                        { type: evalType, payload: data }
+                    ]);
+                    setEnglishLoading(false);
+                    return;
+                }
+
+                // Fallback 텍스트 응답
+                const reply = data?.reply || data?.message || "응답을 해석할 수 없습니다.";
+                setMessages(prev => [
+                    ...prev,
+                    { sender: "bot", text: reply }
+                ]);
+                setEnglishLoading(false);
             } catch (err) {
                 console.error("English chat error:", err);
                 setMessages(prev => [
@@ -386,7 +474,7 @@ const AICoaching = () => {
 
             const data = await fetchRecommendedTopics(
                 selectedSubject,
-                userInput, 
+                userInput,
                 userInfo
             );
             console.log("토픽 추천 결과:", data);
@@ -429,7 +517,12 @@ const AICoaching = () => {
     };
 
     const handleKeyPress = (e) => {
-        if (e.key === "Enter") handleSendMessage();
+        // Ignore Enter key while IME (e.g., Korean) composition is ongoing
+        const composing = isComposing || e.nativeEvent.isComposing || e.keyCode === 229;
+        if (e.key === "Enter" && !composing) {
+            e.preventDefault();
+            handleSendMessage();
+        }
     };
 
     // 문자열 안의 URL을 자동으로 링크 처리
@@ -459,98 +552,186 @@ const AICoaching = () => {
 
             <section className={styles.chatSection}>
                 <div className={styles.chatBox} ref={chatBoxRef}>
-                    {messages.map((msg, index) => (
-                        <div
-                            key={index}
-                            className={
-                                msg.sender === "user"
-                                    ? styles.chatMessageUser
-                                    : styles.chatMessageBot
-                            }
-                        >
-                            {msg.text}
-                            {msg.options && (
-                                <ChatOption
-                                    key={`chatopts-${resetKey}-${index}`}
-                                    options={msg.options}
-                                    onSelect={handleOptionSelect}
-                                />
-                            )}
-                            {msg.topicList && Array.isArray(msg.topicList) && (
-                                <>
-                                <div className={styles.topicList} key={`topics-${resetKey}`}>
-                                    {msg.topicList.map((t, idx) => (
-                                        <div key={idx} className={styles.topicItem}>
-                                            <button
-                                                type="button"
-                                                className={styles.topicTitleBtn}
-                                                onClick={() => onPickTopic(t)}
-                                            >
-                                                {t.title}
-                                            </button>
-                                            <button
-                                                type="button"
-                                                className={styles.expandBtn}
-                                                onClick={() => toggleExpand(idx)}
-                                            >
-                                                {expandedTopics[idx] ? "접기" : "펼치기"}
-                                            </button>
-                                            {expandedTopics[idx] && (
-                                                <div className={styles.topicDesc}>
-                                                    {/* 1) description 우선 표시 */}
-                                                    {t.description && (
-                                                        <div className={styles.topicMeta}>
-                                                            {typeof t.description === "string"
-                                                                ? t.description
-                                                                : JSON.stringify(t.description)}
+                    {messages.map((msg, index) => {
+                        // 영어 가이드 카드 렌더링 (Language / Literature 분기)
+                        if ((msg.type === "english_lang_guide" || msg.type === "english_lit_guide") && msg.payload) {
+                            const isLiterature = msg.type === "english_lit_guide";
+                            const GuideComponent = isLiterature ? EnglishLiteratureGenerativeResult : EnglishLanguageGenerativeResult;
+                            return (
+                                <div className={styles.topicList} key={`guide-${resetKey}-${index}`}>
+                                    <GuideComponent
+                                        data={msg.payload}
+                                        onReset={resetConversation}
+                                        onEnterTopic={() => {
+                                            // 가이드 '바로 아래'에 안내 문구 두 줄을 이어붙이기
+                                            setAwaitingFinalTopic(true);
+                                            setMessages(prev => ([
+                                                ...prev,
+                                                { sender: "bot", text: "가이드를 바탕으로 ✅ 최종 주제를 확정해 주세요." },
+                                                { sender: "bot", text: "확정한 주제를 입력하면 드래프트 작성 페이지로 이동합니다." }
+                                            ]));
+                                            setMessage("");
+                                        }}
+                                    />
+                                </div>
+                            );
+                        }
+
+                        // Render English Language · Evaluate result
+                        if (msg.type === "english_lang_eval" && msg.payload) {
+                            return (
+                                <div className={styles.topicList} key={`eval-${resetKey}-${index}`}>
+                                    <EnglishLanguageEvaluateResult
+                                        data={msg.payload}
+                                        onReset={resetConversation}
+                                        onCreateDraft={() => {
+                                            const finalTopic = msg.payload?.student_question || "";
+                                            setMessages(prev => [
+                                              ...prev,
+                                              { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." },
+                                              { sender: "bot", text: "잠시만 기다려 주세요. Draft 페이지로 이동합니다." }
+                                            ]);
+                                            try {
+                                              if (typeof window !== "undefined" && window.sessionStorage) {
+                                                window.sessionStorage.setItem("ai_coaching_final_topic", finalTopic);
+                                                window.sessionStorage.setItem("ai_coaching_final_context", JSON.stringify({
+                                                  subject: ENGLISH_SUBJECT,
+                                                  textType: englishTextType,
+                                                  mode: "evaluate"
+                                                }));
+                                              }
+                                            } catch (e) {
+                                              console.warn("final topic sessionStorage 저장 실패:", e);
+                                            }
+                                            router.push(`/aitools/coaching/form`);
+                                        }}
+                                    />
+                                </div>
+                            );
+                        }
+
+                        // Render English Literature · Evaluate result
+                        if (msg.type === "english_lit_eval" && msg.payload) {
+                            return (
+                                <div className={styles.topicList} key={`eval-lit-${resetKey}-${index}`}>
+                                    <EnglishLiteratureEvaluateResult
+                                        data={msg.payload}
+                                        onReset={resetConversation}
+                                        onCreateDraft={() => {
+                                            const finalTopic = msg.payload?.student_question || "";
+                                            setMessages(prev => [
+                                              ...prev,
+                                              { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." },
+                                              { sender: "bot", text: "잠시만 기다려 주세요. Draft 페이지로 이동합니다." }
+                                            ]);
+                                            try {
+                                              if (typeof window !== "undefined" && window.sessionStorage) {
+                                                window.sessionStorage.setItem("ai_coaching_final_topic", finalTopic);
+                                                window.sessionStorage.setItem("ai_coaching_final_context", JSON.stringify({
+                                                  subject: ENGLISH_SUBJECT,
+                                                  textType: englishTextType,
+                                                  mode: "evaluate"
+                                                }));
+                                              }
+                                            } catch (e) {
+                                              console.warn("final topic sessionStorage 저장 실패:", e);
+                                            }
+                                            router.push(`/aitools/coaching/form`);
+                                        }}
+                                    />
+                                </div>
+                            );
+                        }
+
+                        // ➋ 기본 말풍선 렌더 (기존 로직 유지)
+                        return (
+                            <div
+                                key={index}
+                                className={msg.sender === "user" ? styles.chatMessageUser : styles.chatMessageBot}
+                            >
+                                {msg.text}
+
+                                {msg.options && (
+                                    <ChatOption
+                                        key={`chatopts-${resetKey}-${index}`}
+                                        options={msg.options}
+                                        onSelect={handleOptionSelect}
+                                    />
+                                )}
+
+                                {msg.topicList && Array.isArray(msg.topicList) && (
+                                    <>
+                                        <div className={styles.topicList} key={`topics-${resetKey}`}>
+                                            {msg.topicList.map((t, idx) => (
+                                                <div key={idx} className={styles.topicItem}>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.topicTitleBtn}
+                                                        onClick={() => onPickTopic(t)}
+                                                    >
+                                                        {t.title}
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        className={styles.expandBtn}
+                                                        onClick={() => toggleExpand(idx)}
+                                                    >
+                                                        {expandedTopics[idx] ? "접기" : "펼치기"}
+                                                    </button>
+
+                                                    {expandedTopics[idx] && (
+                                                        <div className={styles.topicDesc}>
+                                                            {t.description && (
+                                                                <div className={styles.topicMeta}>
+                                                                    {typeof t.description === "string"
+                                                                        ? t.description
+                                                                        : JSON.stringify(t.description)}
+                                                                </div>
+                                                            )}
+                                                            <div className={styles.topicMeta}>
+                                                                {Object.entries(t)
+                                                                    .filter(([k]) => k && k.toLowerCase() !== "title" && k.toLowerCase() !== "description")
+                                                                    .map(([k, v], metaIdx) => (
+                                                                        <div key={`meta-${idx}-${metaIdx}`} className={styles.topicMetaRow}>
+                                                                            <div className={styles.topicMetaKey}>{k}</div>
+                                                                            <div className={styles.topicMetaValue}>
+                                                                                {typeof v === "string"
+                                                                                    ? renderWithLinks(v)
+                                                                                    : Array.isArray(v)
+                                                                                        ? v.map((item, ii) => (
+                                                                                            <div key={`val-${ii}`}>
+                                                                                                {typeof item === "string" ? renderWithLinks(item) : JSON.stringify(item)}
+                                                                                            </div>
+                                                                                        ))
+                                                                                        : JSON.stringify(v)}
+                                                                            </div>
+                                                                        </div>
+                                                                    ))}
+                                                            </div>
                                                         </div>
                                                     )}
-                                                    {/* 2) 과목별로 달라지는 나머지 필드를 전부 표시 (title/description 제외) */}
-                                                    <div className={styles.topicMeta}>
-                                                        {Object.entries(t)
-                                                            .filter(([k]) => k && k.toLowerCase() !== "title" && k.toLowerCase() !== "description")
-                                                            .map(([k, v], metaIdx) => (
-                                                                <div key={`meta-${idx}-${metaIdx}`} className={styles.topicMetaRow}>
-                                                                    <div className={styles.topicMetaKey}>{k}</div>
-                                                                    <div className={styles.topicMetaValue}>
-                                                                        {typeof v === "string"
-                                                                            ? renderWithLinks(v)
-                                                                            : Array.isArray(v)
-                                                                            ? v.map((item, ii) => (
-                                                                                  <div key={`val-${ii}`}>{typeof item === "string" ? renderWithLinks(item) : JSON.stringify(item)}</div>
-                                                                              ))
-                                                                            : JSON.stringify(v)}
-                                                                    </div>
-                                                                </div>
-                                                            ))}
-                                                    </div>
                                                 </div>
-                                            )}
+                                            ))}
                                         </div>
-                                    ))}
-                                </div>
-                                <div className={styles.topicListActions}>
-                                    <button
-                                        type="button"
-                                        className={styles.refreshBtn}
-                                        onClick={handleRefetchTopics}
-                                        disabled={!selectedSubject || !lastInterest}
-                                        title={!selectedSubject || !lastInterest ? "과목과 관심 주제를 먼저 입력하세요" : "같은 조건으로 새로운 추천 받기"}
-                                    >
-                                        🔄 새로 추천받기
-                                    </button>
-                                </div>
-                                </>
-                            )}
-                        </div>
-                    ))}
+
+                                        <div className={styles.topicListActions}>
+                                            <button
+                                                type="button"
+                                                className={styles.refreshBtn}
+                                                onClick={handleRefetchTopics}
+                                                disabled={!selectedSubject || !lastInterest}
+                                                title={!selectedSubject || !lastInterest ? "과목과 관심 주제를 먼저 입력하세요" : "같은 조건으로 새로운 추천 받기"}
+                                            >
+                                                🔄 새로 추천받기
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        );
+                    })}
                     {englishLoading && (<div className={styles.chatMessageBot}>⏳ 영어 응답을 생성 중입니다...</div>)}
                     <div ref={bottomRef} />
-                    {englishGenData ? (
-                        <div className={styles.topicList} key="english-generative-result">
-                            <EnglishLanguageGenerativeResult data={englishGenData} />
-                        </div>
-                    ) : null}
                 </div>
                 <div className={styles.inputArea}>
                     <input
@@ -560,6 +741,8 @@ const AICoaching = () => {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         onKeyDown={handleKeyPress}
+                        onCompositionStart={() => setIsComposing(true)}
+                        onCompositionEnd={() => setIsComposing(false)}
                     />
                     <button className={styles.sendButton} onClick={handleSendMessage}>전송</button>
                     <div className={styles.resetRow}>
