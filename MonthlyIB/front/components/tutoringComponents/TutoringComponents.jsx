@@ -35,6 +35,10 @@ const TutoringComponents = () => {
   const [date, setDate] = useState(""); // 예약 날짜
   const [timeTable, setTimeTable] = useState(TIME_TABLE_OBJECT); // 시간표 상태
   const { userInfo } = useUserInfo(); // 사용자 정보 가져오기
+
+  // 다중 선택된 시간 목록: [{ id, date, hour, minute }]
+  const [selectedSlots, setSelectedSlots] = useState([]);
+
   const { tutoringDateSimpleList, getTutoringDateSimpleList, postTutoring } =
     useTutoringStore(); // 예약 관련 Store 가져오기
   const [hour, setHour] = useState(0); // 선택한 시간의 시간 부분
@@ -55,15 +59,44 @@ const TutoringComponents = () => {
 
   // 시간표에서 특정 시간을 클릭하여 선택할 때 호출되는 함수
   const onClickTime = (h, m) => {
-    // 모든 시간을 비활성화하고 클릭한 시간만 활성화
-    const temp = { ...timeTable };
-    Object.keys(temp).forEach((k) =>
-      Object.keys(temp[k]).forEach((v) => (temp[k][v]["select"] = false))
+    if (!date) return; // 날짜가 선택되어야 함
+
+    // 이미 선택됐는지 확인 (같은 날짜+시간 중복 방지)
+    const existsIdx = selectedSlots.findIndex(
+      (s) => s.date === date && s.hour === parseInt(h) && s.minute === parseInt(m)
     );
-    temp[h][m]["select"] = true; // 선택한 시간 활성화
-    setTimeTable(temp);
-    setHour(parseInt(h));
-    setMinute(parseInt(m));
+
+    const temp = { ...timeTable };
+
+    if (existsIdx > -1) {
+      // 이미 선택된 항목이면 토글 해제
+      temp[h][m]["select"] = false;
+      setTimeTable(temp);
+      const next = [...selectedSlots];
+      next.splice(existsIdx, 1);
+      setSelectedSlots(next);
+    } else {
+      // 최대 3개 제한
+      if (selectedSlots.length >= 3) return;
+
+      // 선택 불가(이미 3명 예약된 슬롯)라면 무시
+      if (temp[h][m]["counts"] >= 3) return;
+
+      temp[h][m]["select"] = true;
+      setTimeTable(temp);
+
+      const newItem = {
+        id: `${date}-${h}-${m}`,
+        date,
+        hour: parseInt(h),
+        minute: parseInt(m),
+      };
+      setSelectedSlots((prev) => [...prev, newItem]);
+
+      // 기존 단일 state도 유지(호환 목적)
+      setHour(parseInt(h));
+      setMinute(parseInt(m));
+    }
   };
 
   // 상세 설명 입력 시 상태 업데이트
@@ -71,31 +104,45 @@ const TutoringComponents = () => {
     detail.current = e.target.value;
   };
 
+  const removeSlot = (idToRemove) => {
+    const found = selectedSlots.find((s) => s.id === idToRemove);
+    if (found && found.date === date && timeTable[found.hour] && timeTable[found.hour][found.minute] !== undefined) {
+      const temp = { ...timeTable };
+      temp[found.hour][found.minute]["select"] = false;
+      setTimeTable(temp);
+    }
+    setSelectedSlots((prev) => prev.filter((s) => s.id !== idToRemove));
+  };
+
   // 예약을 제출하는 함수
   const onSubmit = () => {
-    // 조건 확인 후, 사용자의 예약이 가능한 경우 예약을 진행
     if (
       userSubscribeInfo?.[0]?.tutoringCount > 0 &&
-      userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE"
+      userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" &&
+      selectedSlots.length > 0
     ) {
-      postTutoring(
-        userInfo?.userId,
-        date,
-        hour,
-        minute,
-        detail.current,
-        userInfo
-      );
-      // 예약 완료 후 필드 초기화
+      // 선택된 슬롯 각각에 대해 예약 요청
+      selectedSlots.forEach((slot) => {
+        postTutoring(
+          userInfo?.userId,
+          slot.date,
+          slot.hour,
+          slot.minute,
+          detail.current,
+          userInfo
+        );
+      });
+
+      // 예약 완료 후 필드 및 상태 초기화
       detail.current = "";
       setDate("");
 
-      // 시간표에서 선택된 시간 초기화
       const temp = { ...timeTable };
       Object.keys(temp).forEach((k) =>
         Object.keys(temp[k]).forEach((v) => (temp[k][v]["select"] = false))
       );
       setTimeTable(temp);
+      setSelectedSlots([]);
     }
   };
 
@@ -103,7 +150,10 @@ const TutoringComponents = () => {
   const handleResetState = () => {
     const temp = { ...timeTable };
     Object.keys(temp).forEach((k) =>
-      Object.keys(temp[k]).forEach((v) => (temp[k][v]["counts"] = 0))
+      Object.keys(temp[k]).forEach((v) => {
+        temp[k][v]["counts"] = 0;
+        temp[k][v]["select"] = false; // 날짜 변경 시 화면 선택 초기화
+      })
     );
     setTimeTable(temp);
   };
@@ -144,6 +194,17 @@ const TutoringComponents = () => {
   useEffect(() => {
     if (date) {
       getTutoringDateSimpleList(date, userInfo);
+    }
+  }, [date]);
+
+  // 날짜 변경 시 현재 날짜 그리드의 선택만 리셋 (선택 목록은 유지)
+  useEffect(() => {
+    if (date) {
+      const temp = { ...timeTable };
+      Object.keys(temp).forEach((k) =>
+        Object.keys(temp[k]).forEach((v) => (temp[k][v]["select"] = false))
+      );
+      setTimeTable(temp);
     }
   }, [date]);
 
@@ -192,7 +253,7 @@ const TutoringComponents = () => {
               <div className={styles.sc_time_wrap}>
                 <h6>시간 선택 (KST)</h6>
                 <div className={styles.sc_time_select}>
-                  <ul style={{ listStyle: "none" }}>
+                  <ul className={styles.timeList}>
                     {/* 시간표에서 예약 가능 여부에 따라 버튼 상태를 결정 */}
                     {Object.entries(timeTable).map(([k, v]) =>
                       Object.keys(v).map((m) => (
@@ -239,6 +300,35 @@ const TutoringComponents = () => {
                     <span>선택</span>
                   </div>
                 </div>
+
+                {/* 선택된 날짜/시간 목록 표시 (최대 3개) */}
+                <div className={`${styles.calendar_info} ${styles.selectedSlotsWrap}`}>
+                  {selectedSlots.length === 0 ? (
+                    <div className={styles.calendar_item}>
+                      <span>선택된 시간 없음 (최대 3개까지 선택 가능)</span>
+                    </div>
+                  ) : (
+                    selectedSlots.map((slot) => (
+                      <div
+                        key={slot.id}
+                        className={styles.slotChip}
+                      >
+                        <span>
+                          {slot.date} {String(slot.hour).padStart(2, "0")}:
+                          {String(slot.minute).padStart(2, "0")}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => removeSlot(slot.id)}
+                          aria-label="remove selected slot"
+                          className={styles.chipRemoveBtn}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
 
               {/* 예약 상세 설명 입력 폼 */}
@@ -262,8 +352,7 @@ const TutoringComponents = () => {
                   <button
                     type="submit"
                     disabled={
-                      date == "" ||
-                      hour == 0 ||
+                      selectedSlots.length === 0 ||
                       userSubscribeInfo?.[0]?.tutoringCount === 0 ||
                       userSubscribeInfo?.[0]?.subscribeStatus !== "ACTIVE"
                     }

@@ -354,36 +354,66 @@ const AICoaching = () => {
         if (message.trim() === "") return;
         const userInput = message;
         // 최종 주제 확정 단계: 입력 즉시 드래프트 페이지로 이동
-        if (
-            selectedSubject === ENGLISH_SUBJECT &&
-            englishTextType === "Language" &&
-            englishMode === "generative" &&
-            awaitingFinalTopic
-        ) {
-            setMessages(prev => [
-                ...prev,
-                { sender: "user", text: userInput },
-                { sender: "bot", text: "확정 주제를 확인했습니다. 드래프트 페이지로 이동합니다..." }
-            ]);
+        if (awaitingFinalTopic && selectedSubject === ENGLISH_SUBJECT && englishTextType) {
+            const finalInput = userInput;
 
-            try {
-                if (typeof window !== "undefined" && window.sessionStorage) {
-                    window.sessionStorage.setItem("ai_coaching_final_topic", userInput);
-                    window.sessionStorage.setItem("ai_coaching_final_context", JSON.stringify({
+            // Path A: Generative → Evaluate the user's final topic and render result (no navigation yet)
+            if (englishMode === "generative") {
+                setMessages(prev => [
+                    ...prev,
+                    { sender: "user", text: finalInput },
+                    { sender: "bot", text: "입력하신 주제를 Evaluate 모드로 평가 중입니다..." }
+                ]);
+                setMessage("");
+                setEnglishLoading(true);
+                try {
+                    const evalData = await postEnglishChatMessage({
+                        prompt: finalInput,
                         subject: ENGLISH_SUBJECT,
-                        textType: "Language",
-                        mode: "generative"
-                    }));
+                        textType: englishTextType,
+                        responseMode: "evaluate",
+                        session: userInfo
+                    });
+                    if (evalData && evalData.response_mode === "evaluative_feedback") {
+                        const evalType = englishTextType === "Literature" ? "english_lit_eval" : "english_lang_eval";
+                        setMessages(prev => [
+                            ...prev,
+                            { type: evalType, payload: evalData }
+                        ]);
+                        // 이제 다음 입력은 드래프트 생성 트리거
+                        setEnglishMode("evaluate");
+                        setAwaitingFinalTopic(true);
+                        setMessages(prev => ([
+                            ...prev,
+                            { sender: "bot", text: "이 평가를 반영해 최종 주제를 확정해 주세요." },
+                            { sender: "bot", text: "확정한 주제를 입력하시면 드래프트를 생성합니다." }
+                        ]));
+                    } else {
+                        const reply = evalData?.reply || "평가 결과를 해석할 수 없습니다.";
+                        setMessages(prev => [...prev, { sender: "bot", text: reply }]);
+                        setAwaitingFinalTopic(false);
+                    }
+                } catch (err) {
+                    console.error("Evaluate 호출 실패:", err);
+                    setMessages(prev => [
+                        ...prev,
+                        { sender: "bot", text: "평가 생성에 실패했습니다. 잠시 후 다시 시도해 주세요." }
+                    ]);
+                    setAwaitingFinalTopic(false);
+                } finally {
+                    setEnglishLoading(false);
                 }
-            } catch (e) {
-                console.warn("final topic sessionStorage 저장 실패:", e);
+                return;
             }
 
-            setMessage("");
-            setAwaitingFinalTopic(false);
-
-            router.push(`/aitools/coaching/form`);
-            return;
+            // Path B: Evaluate 모드에서 최종 입력 → 가이드(드래프트) 생성(onPickTopic 재사용)
+            if (englishMode === "evaluate") {
+                setMessage("");
+                setAwaitingFinalTopic(false);
+                // onPickTopic은 ia_topic 객체를 기대하므로 최소 구조로 래핑
+                onPickTopic({ title: finalInput, description: "" });
+                return;
+            }
         }
         // === English subject dedicated chat flow ===
         if (selectedSubject === ENGLISH_SUBJECT) {
@@ -563,12 +593,12 @@ const AICoaching = () => {
                                         data={msg.payload}
                                         onReset={resetConversation}
                                         onEnterTopic={() => {
-                                            // 가이드 '바로 아래'에 안내 문구 두 줄을 이어붙이기
+                                            // Generative → 사용자 입력을 Evaluate 모드로 평가하도록 유도
                                             setAwaitingFinalTopic(true);
                                             setMessages(prev => ([
                                                 ...prev,
-                                                { sender: "bot", text: "가이드를 바탕으로 ✅ 최종 주제를 확정해 주세요." },
-                                                { sender: "bot", text: "확정한 주제를 입력하면 드래프트 작성 페이지로 이동합니다." }
+                                                { sender: "bot", text: "가이드를 바탕으로 ✅ 최종 주제를 한 줄로 입력해 주세요." },
+                                                { sender: "bot", text: "입력하시면 Evaluate 모드로 바로 평가 결과를 보여드릴게요." }
                                             ]));
                                             setMessage("");
                                         }}
@@ -586,24 +616,19 @@ const AICoaching = () => {
                                         onReset={resetConversation}
                                         onCreateDraft={() => {
                                             const finalTopic = msg.payload?.student_question || "";
-                                            setMessages(prev => [
-                                              ...prev,
-                                              { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." },
-                                              { sender: "bot", text: "잠시만 기다려 주세요. Draft 페이지로 이동합니다." }
-                                            ]);
-                                            try {
-                                              if (typeof window !== "undefined" && window.sessionStorage) {
-                                                window.sessionStorage.setItem("ai_coaching_final_topic", finalTopic);
-                                                window.sessionStorage.setItem("ai_coaching_final_context", JSON.stringify({
-                                                  subject: ENGLISH_SUBJECT,
-                                                  textType: englishTextType,
-                                                  mode: "evaluate"
-                                                }));
-                                              }
-                                            } catch (e) {
-                                              console.warn("final topic sessionStorage 저장 실패:", e);
+                                            if (!finalTopic) {
+                                                setMessages(prev => [
+                                                    ...prev,
+                                                    { sender: "bot", text: "최종 질문을 확인할 수 없습니다. 다시 시도해 주세요." }
+                                                ]);
+                                                return;
                                             }
-                                            router.push(`/aitools/coaching/form`);
+                                            setMessages(prev => [
+                                                ...prev,
+                                                { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." }
+                                            ]);
+                                            setAwaitingFinalTopic(false);
+                                            onPickTopic({ title: finalTopic, description: "" });
                                         }}
                                     />
                                 </div>
@@ -619,24 +644,19 @@ const AICoaching = () => {
                                         onReset={resetConversation}
                                         onCreateDraft={() => {
                                             const finalTopic = msg.payload?.student_question || "";
-                                            setMessages(prev => [
-                                              ...prev,
-                                              { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." },
-                                              { sender: "bot", text: "잠시만 기다려 주세요. Draft 페이지로 이동합니다." }
-                                            ]);
-                                            try {
-                                              if (typeof window !== "undefined" && window.sessionStorage) {
-                                                window.sessionStorage.setItem("ai_coaching_final_topic", finalTopic);
-                                                window.sessionStorage.setItem("ai_coaching_final_context", JSON.stringify({
-                                                  subject: ENGLISH_SUBJECT,
-                                                  textType: englishTextType,
-                                                  mode: "evaluate"
-                                                }));
-                                              }
-                                            } catch (e) {
-                                              console.warn("final topic sessionStorage 저장 실패:", e);
+                                            if (!finalTopic) {
+                                                setMessages(prev => [
+                                                    ...prev,
+                                                    { sender: "bot", text: "최종 질문을 확인할 수 없습니다. 다시 시도해 주세요." }
+                                                ]);
+                                                return;
                                             }
-                                            router.push(`/aitools/coaching/form`);
+                                            setMessages(prev => [
+                                                ...prev,
+                                                { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." }
+                                            ]);
+                                            setAwaitingFinalTopic(false);
+                                            onPickTopic({ title: finalTopic, description: "" });
                                         }}
                                     />
                                 </div>
