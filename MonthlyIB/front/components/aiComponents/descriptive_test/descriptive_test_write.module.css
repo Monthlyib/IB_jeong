@@ -1,10 +1,11 @@
 .container {
   width: min(100%, 110rem);
   margin: 0 auto;
-  padding: 4.8rem 2rem 7.2rem;
+  padding: 10.8rem 2rem 7.2rem;
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+  box-sizing: border-box;
 }
 
 .heroCard,
@@ -19,7 +20,10 @@
 }
 
 .heroCard {
+  width: 100%;
+  max-width: 100%;
   padding: 3.2rem;
+  box-sizing: border-box;
 }
 
 .heroTopRow {
@@ -27,6 +31,10 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 2rem;
+}
+
+.heroTopRow > div {
+  min-width: 0;
 }
 
 .eyebrow,
@@ -116,7 +124,10 @@
 }
 
 .guideCard {
+  width: 100%;
+  max-width: 100%;
   padding: 2.8rem 3.2rem;
+  box-sizing: border-box;
 }
 
 .guideHeader {
@@ -161,11 +172,15 @@
   display: grid;
   grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
   gap: 2.4rem;
+  align-items: stretch;
 }
 
 .contentCard {
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
   padding: 3rem;
+  box-sizing: border-box;
 }
 
 .cardHeader {
@@ -174,6 +189,12 @@
   justify-content: space-between;
   gap: 1.6rem;
   margin-bottom: 2.2rem;
+  min-width: 0;
+}
+
+.cardHeader > div {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .cardTitle {
@@ -205,10 +226,15 @@
 }
 
 .questionText {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   font-size: 1.8rem;
   line-height: 1.9;
   color: #2e2740;
   word-break: break-word;
+  overflow-wrap: anywhere;
+  box-sizing: border-box;
 }
 
 .questionText p:first-child {
@@ -225,6 +251,8 @@
   gap: 0.8rem;
   flex-wrap: wrap;
   justify-content: flex-end;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .answerStats span {
@@ -265,9 +293,11 @@
   align-items: center;
   justify-content: space-between;
   gap: 1.6rem;
+  min-width: 0;
 }
 
 .helperText {
+  min-width: 0;
   font-size: 1.45rem;
   line-height: 1.7;
   color: #736a87;
@@ -291,7 +321,10 @@
 }
 
 .noteCard {
+  width: 100%;
+  max-width: 100%;
   padding: 2.4rem 3rem;
+  box-sizing: border-box;
 }
 
 .noteBody {
@@ -320,7 +353,7 @@
 
 @media (max-width: 720px) {
   .container {
-    padding: 3.2rem 1.6rem 5.6rem;
+    padding: 9.2rem 1.6rem 5.6rem;
   }
 
   .heroCard,
