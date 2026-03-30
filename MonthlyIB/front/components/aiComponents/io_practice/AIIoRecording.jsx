@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
 import { useIOStore } from "@/store/AIIostore";
 import styles from "./AIIoRecording.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,50 +9,114 @@ import { useUserInfo } from "@/store/user";
 
 
 const AIIoRecording = () => {
-    const router = useRouter();
+    const RECOMMENDED_DURATION_SECONDS = 600;
     const { iocTopic, workTitle, author, scriptFile, sendFeedbackRequest } = useIOStore();
 
     const [isRecording, setIsRecording] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(600); // 10분 타이머
+    const [recordingSeconds, setRecordingSeconds] = useState(0);
     const [feedback, setFeedback] = useState("");
     const [preview, setPreview] = useState(null); // 대본 미리보기 콘텐츠
     const { userInfo } = useUserInfo();
     const [loading, setLoading] = useState(false);
 
     // 녹음 관련 상태
-    const [mediaRecorder, setMediaRecorder] = useState(null);
     const [audioBlob, setAudioBlob] = useState(null);
     const [isFinished, setIsFinished] = useState(false);
 
     const audioRef = useRef(null); // 녹음 파일 재생을 위한 ref
+    const mediaRecorderRef = useRef(null);
+    const streamRef = useRef(null);
+    const audioChunksRef = useRef([]);
+    const audioUrlRef = useRef(null);
+
+    const revokeAudioPreviewUrl = () => {
+        if (audioUrlRef.current) {
+            URL.revokeObjectURL(audioUrlRef.current);
+            audioUrlRef.current = null;
+        }
+    };
+
+    const stopMicrophoneTracks = () => {
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+            streamRef.current = null;
+        }
+    };
+
+    const syncAudioPreview = (blob) => {
+        if (!blob || !audioRef.current) return;
+        revokeAudioPreviewUrl();
+        const url = URL.createObjectURL(blob);
+        audioUrlRef.current = url;
+        audioRef.current.src = url;
+        audioRef.current.load();
+    };
+
+    const finalizeRecording = () => {
+        if (audioChunksRef.current.length === 0) {
+            setAudioBlob(null);
+            setIsFinished(false);
+            return;
+        }
+
+        const mimeType = audioChunksRef.current[0]?.type || "audio/webm";
+        const blob = new Blob(audioChunksRef.current, { type: mimeType });
+        setAudioBlob(blob);
+        setIsFinished(true);
+        syncAudioPreview(blob);
+    };
 
     // 녹음 시작: 사용자 권한 요청 및 MediaRecorder 초기화
     const handleStartRecording = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const recorder = new MediaRecorder(stream);
-            setMediaRecorder(recorder);
-            let chunks = [];
+            revokeAudioPreviewUrl();
+            setAudioBlob(null);
+            setFeedback("");
+            setIsFinished(false);
+            setRecordingSeconds(0);
+            audioChunksRef.current = [];
+
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                },
+            });
+
+            const recorderOptions = {};
+            if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+                recorderOptions.mimeType = "audio/webm;codecs=opus";
+            } else if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm")) {
+                recorderOptions.mimeType = "audio/webm";
+            }
+
+            const recorder = new MediaRecorder(stream, recorderOptions);
+            streamRef.current = stream;
+            mediaRecorderRef.current = recorder;
 
             recorder.ondataavailable = (e) => {
                 if (e.data && e.data.size > 0) {
-                    chunks.push(e.data);
+                    audioChunksRef.current.push(e.data);
                 }
             };
 
             recorder.onstop = () => {
-                const blob = new Blob(chunks, { type: "audio/webm" });
-                setAudioBlob(blob);
-                // 재생을 위해 URL 생성 및 audio 태그 업데이트
-                if (audioRef.current) {
-                    const url = URL.createObjectURL(blob);
-                    console.log(url);
-                    audioRef.current.src = url;
-                    audioRef.current.load();
-                }
+                finalizeRecording();
+                stopMicrophoneTracks();
+                mediaRecorderRef.current = null;
+                setIsRecording(false);
             };
 
-            recorder.start();
+            recorder.onerror = (event) => {
+                console.error("녹음 오류:", event.error);
+                alert("녹음 중 오류가 발생했습니다. 다시 시도해 주세요.");
+                stopMicrophoneTracks();
+                mediaRecorderRef.current = null;
+                setIsRecording(false);
+            };
+
+            recorder.start(1000);
             setIsRecording(true);
         } catch (err) {
             alert("마이크 접근 권한이 필요합니다.");
@@ -63,11 +126,14 @@ const AIIoRecording = () => {
 
     // 녹음 중단: MediaRecorder 종료
     const handleStopRecording = () => {
-        if (mediaRecorder && mediaRecorder.state !== "inactive") {
-            mediaRecorder.stop();
-            setIsRecording(false);
-            setIsFinished(true);
+        const recorder = mediaRecorderRef.current;
+        if (recorder && recorder.state !== "inactive") {
+            recorder.stop();
+            return;
         }
+
+        stopMicrophoneTracks();
+        setIsRecording(false);
     };
 
     // 피드백 받기
@@ -140,22 +206,24 @@ const AIIoRecording = () => {
     // 타이머 로직
     useEffect(() => {
         let timerId;
-        if (isRecording && timeLeft > 0) {
+        if (isRecording) {
             timerId = setInterval(() => {
-                setTimeLeft((prev) => prev - 1);
+                setRecordingSeconds((prev) => prev + 1);
             }, 1000);
         }
         return () => clearInterval(timerId);
-    }, [isRecording, timeLeft]);
+    }, [isRecording]);
 
-    // audioBlob 상태 변화에 따라 audio 태그 업데이트
     useEffect(() => {
-        if (audioBlob && audioRef.current) {
-            const url = URL.createObjectURL(audioBlob);
-            audioRef.current.src = url;
-            audioRef.current.load();
-        }
-    }, [audioBlob, audioRef]);
+        return () => {
+            const recorder = mediaRecorderRef.current;
+            if (recorder && recorder.state !== "inactive") {
+                recorder.stop();
+            }
+            stopMicrophoneTracks();
+            revokeAudioPreviewUrl();
+        };
+    }, []);
 
     // 시간 포맷팅
     const formatTime = (seconds) => {
@@ -164,13 +232,15 @@ const AIIoRecording = () => {
         return `${String(min).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
     };
 
+    const isOverRecommendedDuration = recordingSeconds > RECOMMENDED_DURATION_SECONDS;
+
     return (
         <main className={styles.container}>
             {/* 1) 인트로 섹션 */}
             <section className={styles.introSection}>
                 <h1 className={styles.title}>AI IO 말하기 연습 / 녹음</h1>
                 <p className={styles.description}>
-                    마이크 아이콘을 눌러 녹음을 시작하고, 타이머가 0이 되기 전에 녹음을 종료하세요.
+                    마이크 아이콘을 눌러 녹음을 시작하세요. 권장 발표 시간은 10분이며, 그 이후에도 녹음은 계속 유지됩니다.
                 </p>
             </section>
 
@@ -208,7 +278,13 @@ const AIIoRecording = () => {
 
             {/* 3) 녹음 인터페이스 */}
             <section className={styles.recordSection}>
-                <div className={styles.timer}>{formatTime(timeLeft)}</div>
+                <div className={`${styles.timer} ${isOverRecommendedDuration ? styles.timerOver : ""}`}>
+                    {formatTime(recordingSeconds)}
+                </div>
+                <p className={styles.timerHint}>
+                    권장 시간 10:00
+                    {isOverRecommendedDuration ? "를 넘겨 계속 녹음 중입니다." : "까지 녹음할 수 있습니다."}
+                </p>
                 {!isRecording && !isFinished && (
                     <button className={styles.recordButton} onClick={handleStartRecording}>
                         <FontAwesomeIcon icon={faMicrophone} className={styles.icon} />
@@ -227,8 +303,9 @@ const AIIoRecording = () => {
                         className={styles.recordButton}
                         onClick={() => {
                             // Clear previous recording and reset timer
+                            revokeAudioPreviewUrl();
                             setAudioBlob(null);
-                            setTimeLeft(600);
+                            setRecordingSeconds(0);
                             if (audioRef.current) {
                                 audioRef.current.src = "";
                             }
@@ -240,7 +317,11 @@ const AIIoRecording = () => {
                         재녹음
                     </button>
                 )}
-                <button className={styles.feedbackButton} onClick={handleGetFeedback}>
+                <button
+                    className={styles.feedbackButton}
+                    onClick={handleGetFeedback}
+                    disabled={!audioBlob || isRecording || loading}
+                >
                     피드백 받기
                 </button>
             </section>
