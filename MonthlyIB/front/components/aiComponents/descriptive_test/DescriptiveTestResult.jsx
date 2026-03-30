@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import styles from "./DescriptiveTestResult.module.css";
 import { getDescriptiveAnswerResult, generateFeedback } from "@/apis/AiDescriptiveTestAPI";
@@ -19,6 +19,10 @@ const DescriptiveTestResult = () => {
   const router = useRouter();
 
   useEffect(() => {
+    if (!answerId || answerId === "undefined") {
+      setLoading(false);
+      return;
+    }
 
     const fetchResult = async () => {
       try {
@@ -36,6 +40,10 @@ const DescriptiveTestResult = () => {
   }, [answerId, userInfo]);
 
   const handleFeedbackClick = async () => {
+    if (!answerId || answerId === "undefined") {
+      alert("답안 ID를 확인할 수 없습니다. 다시 제출해 주세요.");
+      return;
+    }
     setFeedbackLoading(true);
     console.log("Generating feedback for answerId:", answerId);
     try {
@@ -62,7 +70,7 @@ const DescriptiveTestResult = () => {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (!result) return <div>결과를 불러올 수 없습니다.</div>;
+  if (!result) return <div>결과를 불러올 수 없습니다. 답안을 다시 제출해 주세요.</div>;
 
   return (
     <main className={styles.container}>

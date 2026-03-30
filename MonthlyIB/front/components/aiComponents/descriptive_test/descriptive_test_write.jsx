@@ -45,7 +45,10 @@ const DescriptiveTestWrite = () => {
         questionId: questionData?.id,
         answer,
       }, userInfo);
-      const answerId = response.data.answerId;
+      const answerId = response?.data?.answerId ?? response?.data?.id;
+      if (!answerId) {
+        throw new Error("제출된 답안 ID를 확인할 수 없습니다.");
+      }
       alert("답안이 제출되었습니다!");
       console.log("제출된 답안 ID:", answerId);
       router.push(`/aitools/descriptive/result/${answerId}`);
