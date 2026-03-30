@@ -1,10 +1,11 @@
 .container {
   width: min(100%, 110rem);
   margin: 0 auto;
-  padding: 4.8rem 2rem 7.2rem;
+  padding: 10.8rem 2rem 7.2rem;
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+  box-sizing: border-box;
 }
 
 .heroCard,
@@ -19,7 +20,10 @@
 }
 
 .heroCard {
+  width: 100%;
+  max-width: 100%;
   padding: 3.2rem;
+  box-sizing: border-box;
 }
 
 .heroTopRow {
@@ -27,6 +31,10 @@
   align-items: flex-start;
   justify-content: space-between;
   gap: 2rem;
+}
+
+.heroTopRow > div {
+  min-width: 0;
 }
 
 .eyebrow,
@@ -119,11 +127,15 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 2.4rem;
+  align-items: stretch;
 }
 
 .contentCard {
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
   padding: 3rem;
+  box-sizing: border-box;
 }
 
 .cardHeader {
@@ -132,6 +144,12 @@
   justify-content: space-between;
   gap: 1.6rem;
   margin-bottom: 2rem;
+  min-width: 0;
+}
+
+.cardHeader > div {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .cardTitle {
@@ -154,11 +172,16 @@
 .questionText,
 .answerText,
 .resultContent {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
   font-size: 1.75rem;
   line-height: 1.9;
   color: #2d2640;
   word-break: break-word;
+  overflow-wrap: anywhere;
   white-space: pre-wrap;
+  box-sizing: border-box;
 }
 
 .questionText p:first-child {
@@ -181,11 +204,18 @@
 }
 
 .feedbackCard {
+  width: 100%;
+  max-width: 100%;
   padding: 2.8rem 3rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 2rem;
+  box-sizing: border-box;
+}
+
+.feedbackCard > div {
+  min-width: 0;
 }
 
 .feedbackToggleButton,
@@ -219,7 +249,10 @@
 }
 
 .resultPanel {
+  width: 100%;
+  max-width: 100%;
   padding: 3rem;
+  box-sizing: border-box;
 }
 
 .summaryGrid {
@@ -237,10 +270,13 @@
 
 .resultRow {
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.86);
   border-radius: 2.2rem;
   border: 1px solid rgba(84, 58, 125, 0.1);
+  box-sizing: border-box;
 }
 
 .resultLabel {
@@ -333,7 +369,7 @@
 
 @media (max-width: 720px) {
   .container {
-    padding: 3.2rem 1.6rem 5.6rem;
+    padding: 9.2rem 1.6rem 5.6rem;
   }
 
   .heroCard,
