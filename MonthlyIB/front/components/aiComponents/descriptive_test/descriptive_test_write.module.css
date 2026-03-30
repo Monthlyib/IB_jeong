@@ -1,79 +1,371 @@
 .container {
-  width: 100%;
-  max-width: 110rem;
+  width: min(100%, 110rem);
   margin: 0 auto;
-  padding: 4rem 2rem;
+  padding: 4.8rem 2rem 7.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.heroCard,
+.guideCard,
+.contentCard,
+.noteCard {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 247, 255, 0.98));
+  border: 1px solid rgba(84, 58, 125, 0.14);
+  border-radius: 3rem;
+  box-shadow: 0 2.4rem 5rem rgba(61, 37, 92, 0.08);
+}
+
+.heroCard {
+  padding: 3.2rem;
+}
+
+.heroTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.eyebrow,
+.cardEyebrow,
+.metaLabel,
+.noteTitle {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.eyebrow,
+.cardEyebrow,
+.noteTitle {
+  color: var(--primary01);
 }
 
 .title {
-  font-size: 3.6rem;
+  margin-top: 1rem;
+  font-size: clamp(3.6rem, 4.8vw, 5.6rem);
+  line-height: 1.05;
+  font-weight: 800;
+  color: #231d33;
+}
+
+.subtitle {
+  max-width: 72rem;
+  margin-top: 1.4rem;
+  font-size: 1.75rem;
+  line-height: 1.75;
+  color: #675c7d;
+}
+
+.ghostButton,
+.submitButton {
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.ghostButton {
+  flex-shrink: 0;
+  padding: 1.2rem 2rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--primary01);
-  margin-bottom: 2rem;
-  text-align: center;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(84, 58, 125, 0.16);
+}
+
+.ghostButton:hover,
+.submitButton:hover {
+  transform: translateY(-0.1rem);
+}
+
+.metaGrid {
+  margin-top: 2.4rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+
+.metaCard {
+  min-width: 0;
+  padding: 1.8rem 2rem;
+  border-radius: 2rem;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(84, 58, 125, 0.12);
+}
+
+.metaLabel {
+  color: #7f7397;
+}
+
+.metaValue {
+  display: block;
+  margin-top: 1rem;
+  font-size: 2rem;
+  line-height: 1.4;
+  color: #271f3a;
+  word-break: break-word;
+}
+
+.guideCard {
+  padding: 2.8rem 3.2rem;
+}
+
+.guideHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.6rem;
+}
+
+.sectionTitle {
+  font-size: 2.8rem;
+  line-height: 1.15;
+  color: #251d36;
+}
+
+.sectionDescription {
+  margin-top: 0.8rem;
+  font-size: 1.6rem;
+  line-height: 1.75;
+  color: #6f6682;
+}
+
+.guideList {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+
+.guideItem {
+  min-width: 0;
+  padding: 1.6rem 1.8rem;
+  border-radius: 2rem;
+  background: rgba(246, 242, 252, 0.92);
+  color: #3f3455;
+  font-size: 1.5rem;
+  line-height: 1.65;
+  border: 1px solid rgba(84, 58, 125, 0.1);
 }
 
 .grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  margin-top: 2rem;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 2.4rem;
 }
 
-.questionSection,
-.answerSection {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 2rem;
-  border-radius: 0.8rem;
+.contentCard {
+  min-width: 0;
+  padding: 3rem;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.6rem;
+  margin-bottom: 2.2rem;
+}
+
+.cardTitle {
+  margin-top: 0.8rem;
+  font-size: 3rem;
+  line-height: 1.1;
+  color: #241d34;
+}
+
+.loadingChip {
+  flex-shrink: 0;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  background: rgba(84, 58, 125, 0.08);
+  color: var(--primary01);
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .image {
+  display: block;
+  width: 100%;
   max-width: 100%;
   height: auto;
-  margin: 1rem 0;
-  border-radius: 0.6rem;
-  border: 1px solid #ccc;
+  margin-bottom: 2rem;
+  border-radius: 2rem;
+  border: 1px solid rgba(84, 58, 125, 0.14);
+  object-fit: cover;
+}
+
+.questionText {
+  font-size: 1.8rem;
+  line-height: 1.9;
+  color: #2e2740;
+  word-break: break-word;
+}
+
+.questionText p:first-child {
+  margin-top: 0;
+}
+
+.questionText p:last-child {
+  margin-bottom: 0;
+}
+
+.answerStats {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.answerStats span {
+  padding: 0.8rem 1.1rem;
+  border-radius: 999px;
+  background: rgba(84, 58, 125, 0.07);
+  color: #615676;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .textarea {
   width: 100%;
-  min-height: 15rem;
-  padding: 1.2rem;
-  font-size: 1.8rem;
-  border: 1px solid #ccc;
-  border-radius: 0.6rem;
-  box-sizing: border-box;
+  min-height: 44rem;
+  padding: 2rem;
+  border-radius: 2.4rem;
+  border: 1px solid rgba(84, 58, 125, 0.16);
+  background: rgba(255, 255, 255, 0.96);
+  font-size: 1.65rem;
+  line-height: 1.8;
+  color: #2a233b;
   resize: vertical;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.textarea:focus {
+  border-color: rgba(84, 58, 125, 0.34);
+  box-shadow: 0 0 0 0.4rem rgba(84, 58, 125, 0.08);
+}
+
+.answerFooter {
+  margin-top: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.6rem;
+}
+
+.helperText {
+  font-size: 1.45rem;
+  line-height: 1.7;
+  color: #736a87;
 }
 
 .submitButton {
-  margin-top: 1.5rem;
-  background-color: var(--primary01);
+  flex-shrink: 0;
+  padding: 1.35rem 2.4rem;
+  background: var(--primary01);
   color: #fff;
-  padding: 1rem 2rem;
-  font-size: 1.7rem;
-  border: none;
-  border-radius: 0.6rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 1.55rem;
+  font-weight: 700;
+  box-shadow: 0 1.6rem 3rem rgba(84, 58, 125, 0.18);
 }
 
-.submitButton:hover {
-  background-color: #0056b3;
+.submitButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  transform: none;
+  box-shadow: none;
 }
 
-.metaText {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-  color: #333;
+.noteCard {
+  padding: 2.4rem 3rem;
 }
 
-.questionText {
-  font-size: 2rem;
-  font-weight: 500;
-  margin-top: 1.5rem;
-  line-height: 1.6;
-  color: #222;
+.noteBody {
+  margin-top: 1.2rem;
+  padding-left: 1.6rem;
+  border-left: 0.4rem solid rgba(84, 58, 125, 0.28);
+}
+
+.noteBody p {
+  font-size: 1.55rem;
+  line-height: 1.8;
+  color: #544c66;
+}
+
+@media (max-width: 1080px) {
+  .metaGrid,
+  .guideList,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .textarea {
+    min-height: 32rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .container {
+    padding: 3.2rem 1.6rem 5.6rem;
+  }
+
+  .heroCard,
+  .guideCard,
+  .contentCard,
+  .noteCard {
+    border-radius: 2.4rem;
+  }
+
+  .heroCard,
+  .guideCard,
+  .contentCard {
+    padding: 2.2rem;
+  }
+
+  .noteCard {
+    padding: 2.2rem;
+  }
+
+  .heroTopRow,
+  .cardHeader,
+  .answerFooter {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .ghostButton,
+  .submitButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .answerStats {
+    justify-content: flex-start;
+  }
+
+  .title {
+    font-size: 4.2rem;
+  }
+
+  .cardTitle {
+    font-size: 2.6rem;
+  }
+
+  .questionText {
+    font-size: 1.7rem;
+  }
 }
