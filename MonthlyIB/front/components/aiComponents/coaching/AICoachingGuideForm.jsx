@@ -45,10 +45,6 @@ export default function AICoachingGuideForm() {
             <div className={styles.headerMain}>
               <p className={styles.headerEyebrow}>IB Individual Assessment Planning Notes</p>
               <h1 className={styles.guideTitle}>{documentData.title}</h1>
-              <p className={styles.headerMetaLine}>
-                <span className={styles.headerMetaLabel}>Prepared</span>
-                <span className={styles.headerMetaValue}>{documentData.createdAt}</span>
-              </p>
             </div>
 
             <button
@@ -173,7 +169,6 @@ function normalizeGuideDocument(raw) {
     subject: firstNonEmpty(meta.subject, "IB Subject"),
     interestTopic: firstNonEmpty(meta.interestTopic, "Not specified"),
     topicTitle: firstNonEmpty(meta.topicTitle, guide.title, "Selected topic"),
-    createdAt: formatCreatedAt(meta.createdAt),
     overview: stringifyText(guide.overview),
     researchQuestions: listify(guide.researchQuestions),
     keyPoints: listify(guide.keyPoints),
@@ -289,17 +284,6 @@ function stringifyText(value) {
   } catch {
     return String(value);
   }
-}
-
-function formatCreatedAt(value) {
-  if (!value) return "Just now";
-  const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return "Just now";
-  return new Intl.DateTimeFormat("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(parsed);
 }
 
 function prettifyKey(key) {

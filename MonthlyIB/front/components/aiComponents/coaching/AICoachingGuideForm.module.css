@@ -1,12 +1,13 @@
 .guideContainer {
-  --paper: #f7f1e3;
-  --paper-shadow: rgba(53, 39, 24, 0.12);
-  --ink: #1f2a37;
-  --muted: #6e6254;
-  --accent: #9f3d2c;
-  --accent-soft: rgba(159, 61, 44, 0.12);
-  --line: rgba(81, 61, 43, 0.14);
-  --card: rgba(255, 252, 247, 0.9);
+  --paper: #f6f2fb;
+  --paper-shadow: rgba(57, 31, 82, 0.12);
+  --ink: #221b2f;
+  --muted: #6b6076;
+  --accent: var(--primary01);
+  --accent-strong: var(--primary02);
+  --accent-soft: rgba(81, 52, 108, 0.12);
+  --line: rgba(81, 52, 108, 0.14);
+  --card: #ffffff;
   width: min(112rem, calc(100% - 4rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) auto 4rem;
   color: var(--ink);
@@ -14,8 +15,9 @@
 }
 
 .guideHeader {
-  margin-bottom: 2.4rem;
+  margin-bottom: 3.2rem;
   position: static;
+  isolation: isolate;
 }
 
 .guideBtn {
@@ -24,9 +26,9 @@
   justify-content: center;
   flex-shrink: 0;
   align-self: flex-start;
-  border: 1px solid rgba(81, 61, 43, 0.24);
-  background: rgba(255, 252, 247, 0.85);
-  color: var(--ink);
+  border: 1px solid rgba(81, 52, 108, 0.18);
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--accent-strong);
   padding: 1rem 1.4rem;
   border-radius: 999px;
   cursor: pointer;
@@ -37,18 +39,18 @@
 
 .guideBtn:hover {
   transform: translateY(-1px);
-  border-color: rgba(159, 61, 44, 0.35);
-  background: rgba(255, 252, 247, 1);
+  border-color: rgba(81, 52, 108, 0.3);
+  background: #ffffff;
 }
 
 .headerCard {
   position: relative;
   padding: 3.2rem 3.2rem 3rem;
-  border: 1px solid rgba(81, 61, 43, 0.18);
+  border: 1px solid rgba(81, 52, 108, 0.12);
   border-radius: 2.8rem;
   background:
-    radial-gradient(circle at top right, rgba(159, 61, 44, 0.12), transparent 28%),
-    linear-gradient(180deg, rgba(255, 254, 250, 0.98), rgba(244, 236, 220, 0.96));
+    radial-gradient(circle at top right, rgba(107, 77, 135, 0.16), transparent 30%),
+    linear-gradient(180deg, #fffefe, #f6f0fb);
   box-shadow: 0 24px 60px var(--paper-shadow);
 }
 
@@ -56,7 +58,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(81, 61, 43, 0.045) 1px, transparent 1px);
+  background-image: linear-gradient(rgba(81, 52, 108, 0.04) 1px, transparent 1px);
   background-size: 100% 3.2rem;
   opacity: 0.5;
   pointer-events: none;
@@ -72,7 +74,8 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 1.6rem;
+  gap: 2rem;
+  margin-bottom: 2rem;
 }
 
 .headerMain {
@@ -95,48 +98,28 @@
   margin: 0;
   max-width: 100%;
   font-size: clamp(2.8rem, 3.7vw, 4.9rem);
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -0.03em;
   overflow-wrap: anywhere;
   word-break: keep-all;
   text-wrap: balance;
 }
 
-.headerMetaLine {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  align-items: center;
-  margin: 1.4rem 0 0;
-  color: var(--muted);
-  font-size: 1.4rem;
-  line-height: 1.6;
-}
-
-.headerMetaLabel {
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.headerMetaValue {
-  font-weight: 600;
-}
-
 .metaGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.2rem;
-  margin-top: 2.2rem;
+  margin-top: 0;
 }
 
 .metaCard {
   min-height: 10.8rem;
   padding: 1.5rem 1.6rem;
   border-radius: 1.8rem;
-  border: 1px solid rgba(81, 61, 43, 0.14);
-  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  background: #ffffff;
   backdrop-filter: blur(6px);
+  box-shadow: 0 10px 24px rgba(81, 52, 108, 0.05);
 }
 
 .metaLabel {
@@ -178,12 +161,14 @@
 
 .guideSheet {
   padding: 3rem;
-  border: 1px solid rgba(81, 61, 43, 0.16);
+  position: relative;
+  z-index: 0;
+  border: 1px solid rgba(81, 52, 108, 0.12);
   border-radius: 3rem;
   background:
-    linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(247, 241, 227, 0.95)),
+    linear-gradient(180deg, #fffefe, #f6f2fb),
     var(--paper);
-  box-shadow: 0 24px 54px rgba(53, 39, 24, 0.08);
+  box-shadow: 0 24px 54px rgba(57, 31, 82, 0.07);
 }
 
 .heroSection,
@@ -242,7 +227,7 @@
   padding: 2.2rem;
   border: 1px solid var(--line);
   border-radius: 2.4rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(251, 247, 240, 0.92));
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 244, 252, 0.96));
 }
 
 .listCardHeader {
