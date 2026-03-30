@@ -32,6 +32,7 @@ const AICoaching = () => {
     const [englishMode, setEnglishMode] = useState(null); // "generative" | "evaluative"
     const [englishGenData, setEnglishGenData] = useState(null);
     const [englishLoading, setEnglishLoading] = useState(false);
+    const [botTyping, setBotTyping] = useState(false);
     const [awaitingFinalTopic, setAwaitingFinalTopic] = useState(false); // 최종 주제 확정 입력 대기
     const [isComposing, setIsComposing] = useState(false);
 
@@ -92,6 +93,7 @@ const AICoaching = () => {
         setMessage("");
         latestInterestRef.current = "";
         setEnglishGenData(null);
+        setBotTyping(false);
         // scroll to top
         if (chatBoxRef.current) chatBoxRef.current.scrollTop = 0;
     };
@@ -118,6 +120,7 @@ const AICoaching = () => {
             { sender: "user", text: picked.title },
             { sender: "bot", text: "가이드를 생성하고 있습니다..." }
         ]);
+        setBotTyping(true);
         try {
             const interestForGuide = latestInterestRef.current || lastInterest || "";
             // createGuide는 이제 가이드 "객체 전체"를 반환한다고 가정
@@ -165,6 +168,8 @@ const AICoaching = () => {
                 ...prev,
                 { sender: "bot", text: getErrorMessage(e, "가이드 생성에 실패했습니다. 다시 시도해 주세요.") }
             ]);
+        } finally {
+            setBotTyping(false);
         }
     };
 
@@ -179,6 +184,7 @@ const AICoaching = () => {
                 text: `같은 subject(${selectedSubject})와 관심 주제("${lastInterest}")로 새 추천을 생성 중...`
             }
         ]);
+        setBotTyping(true);
         try {
             const data = await fetchRecommendedTopics(selectedSubject, lastInterest, userInfo);
             const topicsArray = data?.ia_topics;
@@ -213,6 +219,8 @@ const AICoaching = () => {
                 ...prev,
                 { sender: "bot", text: getErrorMessage(err, "새 추천을 가져오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.") }
             ]);
+        } finally {
+            setBotTyping(false);
         }
     };
 
@@ -380,6 +388,7 @@ const AICoaching = () => {
                 ]);
                 setMessage("");
                 setEnglishLoading(true);
+                setBotTyping(true);
                 try {
                     const evalData = await postEnglishChatMessage({
                         prompt: finalInput,
@@ -416,6 +425,7 @@ const AICoaching = () => {
                     setAwaitingFinalTopic(false);
                 } finally {
                     setEnglishLoading(false);
+                    setBotTyping(false);
                 }
                 return;
             }
@@ -445,6 +455,7 @@ const AICoaching = () => {
             ]);
             setMessage("");
             setEnglishLoading(true);
+            setBotTyping(true);
             try {
                 const data = await postEnglishChatMessage({
                     prompt: userInput,
@@ -459,6 +470,7 @@ const AICoaching = () => {
                         { sender: "bot", text: "응답을 받지 못했습니다. 잠시 후 다시 시도해 주세요." }
                     ]);
                     setEnglishLoading(false);
+                    setBotTyping(false);
                     return;
                 }
 
@@ -471,6 +483,7 @@ const AICoaching = () => {
                     ]);
                     setEnglishGenData(null);
                     setEnglishLoading(false);
+                    setBotTyping(false);
                     return;
                 }
 
@@ -482,6 +495,7 @@ const AICoaching = () => {
                         { type: evalType, payload: data }
                     ]);
                     setEnglishLoading(false);
+                    setBotTyping(false);
                     return;
                 }
 
@@ -492,6 +506,7 @@ const AICoaching = () => {
                     { sender: "bot", text: reply }
                 ]);
                 setEnglishLoading(false);
+                setBotTyping(false);
             } catch (err) {
                 console.error("English chat error:", err);
                 setMessages(prev => [
@@ -499,6 +514,7 @@ const AICoaching = () => {
                     { sender: "bot", text: getErrorMessage(err, "영어 과목 전용 채팅 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.") }
                 ]);
                 setEnglishLoading(false);
+                setBotTyping(false);
             }
             return;
         }
@@ -513,6 +529,7 @@ const AICoaching = () => {
             }
         ]);
         setMessage("");
+        setBotTyping(true);
 
         try {
 
@@ -557,6 +574,8 @@ const AICoaching = () => {
                 ...prev,
                 { sender: "bot", text: getErrorMessage(error, "토픽을 생성하는 데 실패했습니다. 다시 시도해 주세요.") }
             ]);
+        } finally {
+            setBotTyping(false);
         }
     };
 
@@ -585,6 +604,8 @@ const AICoaching = () => {
         });
     };
 
+    const showTypingIndicator = botTyping || englishLoading;
+
     return (
         <main className={styles.container}>
             <section className={styles.introSection}>
@@ -602,21 +623,25 @@ const AICoaching = () => {
                             const isLiterature = msg.type === "english_lit_guide";
                             const GuideComponent = isLiterature ? EnglishLiteratureGenerativeResult : EnglishLanguageGenerativeResult;
                             return (
-                                <div className={styles.topicList} key={`guide-${resetKey}-${index}`}>
-                                    <GuideComponent
-                                        data={msg.payload}
-                                        onReset={resetConversation}
-                                        onEnterTopic={() => {
-                                            // Generative → 사용자 입력을 Evaluate 모드로 평가하도록 유도
-                                            setAwaitingFinalTopic(true);
-                                            setMessages(prev => ([
-                                                ...prev,
-                                                { sender: "bot", text: "가이드를 바탕으로 ✅ 최종 주제를 한 줄로 입력해 주세요." },
-                                                { sender: "bot", text: "입력하시면 Evaluate 모드로 바로 평가 결과를 보여드릴게요." }
-                                            ]));
-                                            setMessage("");
-                                        }}
-                                    />
+                                <div className={styles.messageRowBot} key={`guide-${resetKey}-${index}`}>
+                                    <div className={styles.richMessageCard}>
+                                        <div className={styles.topicList}>
+                                            <GuideComponent
+                                                data={msg.payload}
+                                                onReset={resetConversation}
+                                                onEnterTopic={() => {
+                                                    // Generative → 사용자 입력을 Evaluate 모드로 평가하도록 유도
+                                                    setAwaitingFinalTopic(true);
+                                                    setMessages(prev => ([
+                                                        ...prev,
+                                                        { sender: "bot", text: "가이드를 바탕으로 ✅ 최종 주제를 한 줄로 입력해 주세요." },
+                                                        { sender: "bot", text: "입력하시면 Evaluate 모드로 바로 평가 결과를 보여드릴게요." }
+                                                    ]));
+                                                    setMessage("");
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             );
                         }
@@ -624,27 +649,31 @@ const AICoaching = () => {
                         // Render English Language · Evaluate result
                         if (msg.type === "english_lang_eval" && msg.payload) {
                             return (
-                                <div className={styles.topicList} key={`eval-${resetKey}-${index}`}>
-                                    <EnglishLanguageEvaluateResult
-                                        data={msg.payload}
-                                        onReset={resetConversation}
-                                        onCreateDraft={() => {
-                                            const finalTopic = msg.payload?.student_question || "";
-                                            if (!finalTopic) {
-                                                setMessages(prev => [
-                                                    ...prev,
-                                                    { sender: "bot", text: "최종 질문을 확인할 수 없습니다. 다시 시도해 주세요." }
-                                                ]);
-                                                return;
-                                            }
-                                            setMessages(prev => [
-                                                ...prev,
-                                                { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." }
-                                            ]);
-                                            setAwaitingFinalTopic(false);
-                                            onPickTopic({ title: finalTopic, description: "" });
-                                        }}
-                                    />
+                                <div className={styles.messageRowBot} key={`eval-${resetKey}-${index}`}>
+                                    <div className={styles.richMessageCard}>
+                                        <div className={styles.topicList}>
+                                            <EnglishLanguageEvaluateResult
+                                                data={msg.payload}
+                                                onReset={resetConversation}
+                                                onCreateDraft={() => {
+                                                    const finalTopic = msg.payload?.student_question || "";
+                                                    if (!finalTopic) {
+                                                        setMessages(prev => [
+                                                            ...prev,
+                                                            { sender: "bot", text: "최종 질문을 확인할 수 없습니다. 다시 시도해 주세요." }
+                                                        ]);
+                                                        return;
+                                                    }
+                                                    setMessages(prev => [
+                                                        ...prev,
+                                                        { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." }
+                                                    ]);
+                                                    setAwaitingFinalTopic(false);
+                                                    onPickTopic({ title: finalTopic, description: "" });
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             );
                         }
@@ -652,27 +681,31 @@ const AICoaching = () => {
                         // Render English Literature · Evaluate result
                         if (msg.type === "english_lit_eval" && msg.payload) {
                             return (
-                                <div className={styles.topicList} key={`eval-lit-${resetKey}-${index}`}>
-                                    <EnglishLiteratureEvaluateResult
-                                        data={msg.payload}
-                                        onReset={resetConversation}
-                                        onCreateDraft={() => {
-                                            const finalTopic = msg.payload?.student_question || "";
-                                            if (!finalTopic) {
-                                                setMessages(prev => [
-                                                    ...prev,
-                                                    { sender: "bot", text: "최종 질문을 확인할 수 없습니다. 다시 시도해 주세요." }
-                                                ]);
-                                                return;
-                                            }
-                                            setMessages(prev => [
-                                                ...prev,
-                                                { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." }
-                                            ]);
-                                            setAwaitingFinalTopic(false);
-                                            onPickTopic({ title: finalTopic, description: "" });
-                                        }}
-                                    />
+                                <div className={styles.messageRowBot} key={`eval-lit-${resetKey}-${index}`}>
+                                    <div className={styles.richMessageCard}>
+                                        <div className={styles.topicList}>
+                                            <EnglishLiteratureEvaluateResult
+                                                data={msg.payload}
+                                                onReset={resetConversation}
+                                                onCreateDraft={() => {
+                                                    const finalTopic = msg.payload?.student_question || "";
+                                                    if (!finalTopic) {
+                                                        setMessages(prev => [
+                                                            ...prev,
+                                                            { sender: "bot", text: "최종 질문을 확인할 수 없습니다. 다시 시도해 주세요." }
+                                                        ]);
+                                                        return;
+                                                    }
+                                                    setMessages(prev => [
+                                                        ...prev,
+                                                        { sender: "bot", text: "해당 질문으로 Draft 생성을 시작합니다." }
+                                                    ]);
+                                                    setAwaitingFinalTopic(false);
+                                                    onPickTopic({ title: finalTopic, description: "" });
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
                                 </div>
                             );
                         }
@@ -681,90 +714,103 @@ const AICoaching = () => {
                         return (
                             <div
                                 key={index}
-                                className={msg.sender === "user" ? styles.chatMessageUser : styles.chatMessageBot}
+                                className={msg.sender === "user" ? styles.messageRowUser : styles.messageRowBot}
                             >
-                                {msg.text}
+                                <div className={msg.sender === "user" ? styles.chatMessageUser : styles.chatMessageBot}>
+                                    {msg.text}
 
-                                {msg.options && (
-                                    <ChatOption
-                                        key={`chatopts-${resetKey}-${index}`}
-                                        options={msg.options}
-                                        onSelect={handleOptionSelect}
-                                    />
-                                )}
+                                    {msg.options && (
+                                        <ChatOption
+                                            key={`chatopts-${resetKey}-${index}`}
+                                            options={msg.options}
+                                            onSelect={handleOptionSelect}
+                                        />
+                                    )}
 
-                                {msg.topicList && Array.isArray(msg.topicList) && (
-                                    <>
-                                        <div className={styles.topicList} key={`topics-${resetKey}`}>
-                                            {msg.topicList.map((t, idx) => (
-                                                <div key={idx} className={styles.topicItem}>
-                                                    <button
-                                                        type="button"
-                                                        className={styles.topicTitleBtn}
-                                                        onClick={() => onPickTopic(t)}
-                                                    >
-                                                        {t.title}
-                                                    </button>
-                                                    <button
-                                                        type="button"
-                                                        className={styles.expandBtn}
-                                                        onClick={() => toggleExpand(idx)}
-                                                    >
-                                                        {expandedTopics[idx] ? "접기" : "펼치기"}
-                                                    </button>
+                                    {msg.topicList && Array.isArray(msg.topicList) && (
+                                        <>
+                                            <div className={styles.topicList} key={`topics-${resetKey}`}>
+                                                {msg.topicList.map((t, idx) => (
+                                                    <div key={idx} className={styles.topicItem}>
+                                                        <button
+                                                            type="button"
+                                                            className={styles.topicTitleBtn}
+                                                            onClick={() => onPickTopic(t)}
+                                                        >
+                                                            {t.title}
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            className={styles.expandBtn}
+                                                            onClick={() => toggleExpand(idx)}
+                                                        >
+                                                            {expandedTopics[idx] ? "접기" : "펼치기"}
+                                                        </button>
 
-                                                    {expandedTopics[idx] && (
-                                                        <div className={styles.topicDesc}>
-                                                            {t.description && (
+                                                        {expandedTopics[idx] && (
+                                                            <div className={styles.topicDesc}>
+                                                                {t.description && (
+                                                                    <div className={styles.topicMeta}>
+                                                                        {typeof t.description === "string"
+                                                                            ? t.description
+                                                                            : JSON.stringify(t.description)}
+                                                                    </div>
+                                                                )}
                                                                 <div className={styles.topicMeta}>
-                                                                    {typeof t.description === "string"
-                                                                        ? t.description
-                                                                        : JSON.stringify(t.description)}
-                                                                </div>
-                                                            )}
-                                                            <div className={styles.topicMeta}>
-                                                                {Object.entries(t)
-                                                                    .filter(([k]) => k && k.toLowerCase() !== "title" && k.toLowerCase() !== "description")
-                                                                    .map(([k, v], metaIdx) => (
-                                                                        <div key={`meta-${idx}-${metaIdx}`} className={styles.topicMetaRow}>
-                                                                            <div className={styles.topicMetaKey}>{k}</div>
-                                                                            <div className={styles.topicMetaValue}>
-                                                                                {typeof v === "string"
-                                                                                    ? renderWithLinks(v)
-                                                                                    : Array.isArray(v)
-                                                                                        ? v.map((item, ii) => (
-                                                                                            <div key={`val-${ii}`}>
-                                                                                                {typeof item === "string" ? renderWithLinks(item) : JSON.stringify(item)}
-                                                                                            </div>
-                                                                                        ))
-                                                                                        : JSON.stringify(v)}
+                                                                    {Object.entries(t)
+                                                                        .filter(([k]) => k && k.toLowerCase() !== "title" && k.toLowerCase() !== "description")
+                                                                        .map(([k, v], metaIdx) => (
+                                                                            <div key={`meta-${idx}-${metaIdx}`} className={styles.topicMetaRow}>
+                                                                                <div className={styles.topicMetaKey}>{k}</div>
+                                                                                <div className={styles.topicMetaValue}>
+                                                                                    {typeof v === "string"
+                                                                                        ? renderWithLinks(v)
+                                                                                        : Array.isArray(v)
+                                                                                            ? v.map((item, ii) => (
+                                                                                                <div key={`val-${ii}`}>
+                                                                                                    {typeof item === "string" ? renderWithLinks(item) : JSON.stringify(item)}
+                                                                                                </div>
+                                                                                            ))
+                                                                                            : JSON.stringify(v)}
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
-                                                                    ))}
+                                                                        ))}
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                            </div>
 
-                                        <div className={styles.topicListActions}>
-                                            <button
-                                                type="button"
-                                                className={styles.refreshBtn}
-                                                onClick={handleRefetchTopics}
-                                                disabled={!selectedSubject || !lastInterest}
-                                                title={!selectedSubject || !lastInterest ? "과목과 관심 주제를 먼저 입력하세요" : "같은 조건으로 새로운 추천 받기"}
-                                            >
-                                                🔄 새로 추천받기
-                                            </button>
-                                        </div>
-                                    </>
-                                )}
+                                            <div className={styles.topicListActions}>
+                                                <button
+                                                    type="button"
+                                                    className={styles.refreshBtn}
+                                                    onClick={handleRefetchTopics}
+                                                    disabled={!selectedSubject || !lastInterest}
+                                                    title={!selectedSubject || !lastInterest ? "과목과 관심 주제를 먼저 입력하세요" : "같은 조건으로 새로운 추천 받기"}
+                                                >
+                                                    🔄 새로 추천받기
+                                                </button>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         );
                     })}
-                    {englishLoading && (<div className={styles.chatMessageBot}>⏳ 영어 응답을 생성 중입니다...</div>)}
+                    {showTypingIndicator && (
+                        <div className={styles.messageRowBot}>
+                            <div className={styles.typingBubble}>
+                                <span className={styles.typingLabel}>AI Coach is typing</span>
+                                <span className={styles.typingDots} aria-hidden="true">
+                                    <span className={styles.typingDot} />
+                                    <span className={styles.typingDot} />
+                                    <span className={styles.typingDot} />
+                                </span>
+                            </div>
+                        </div>
+                    )}
                     <div ref={bottomRef} />
                 </div>
                 <div className={styles.inputArea}>
@@ -777,8 +823,9 @@ const AICoaching = () => {
                         onKeyDown={handleKeyPress}
                         onCompositionStart={() => setIsComposing(true)}
                         onCompositionEnd={() => setIsComposing(false)}
+                        disabled={showTypingIndicator}
                     />
-                    <button className={styles.sendButton} onClick={handleSendMessage}>전송</button>
+                    <button className={styles.sendButton} onClick={handleSendMessage} disabled={showTypingIndicator}>전송</button>
                     <div className={styles.resetRow}>
                         <button
                             type="button"
