@@ -5,12 +5,14 @@ import styles from "./AppLayout.module.css";
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useUserInfo, useUserStore } from "@/store/user";
 
 const MobileAppLayout = ({ asideModal, setAsideModal }) => {
+  const router = useRouter();
   const [menuModal, setMenuModal] = useState(1);
-  const { userInfo } = useUserInfo();
-  const { getUserInfo, userDetailInfo, signOut } = useUserStore();
+  const { userInfo, signOut } = useUserInfo();
+  const { getUserInfo, userDetailInfo } = useUserStore();
 
   useEffect(() => {
     if (userInfo?.userId) getUserInfo(userInfo.userId, userInfo);
@@ -18,8 +20,15 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
 
   const onLoggedOut = useCallback(() => {
     signOut();
-    localStorage.removeItem("userInfo");
-  }, []);
+    setAsideModal(false);
+    router.push("/login");
+  }, [router, setAsideModal, signOut]);
+
+  const handleLoginRedirect = useCallback(() => {
+    signOut();
+    setAsideModal(false);
+    router.push("/login");
+  }, [router, setAsideModal, signOut]);
 
   const mbModal = {
     1: (
@@ -186,9 +195,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
                   <Link
                     href="/login"
                     className={styles.util_login}
-                    onClick={() => {
-                      setAsideModal(false);
-                    }}
+                    onClick={handleLoginRedirect}
                   >
                     로그인을 해주세요
                   </Link>
@@ -204,9 +211,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
               <div className={styles.util_sub}>
                 <Link
                   href="/login"
-                  onClick={() => {
-                    setAsideModal(false);
-                  }}
+                  onClick={handleLoginRedirect}
                 >
                   로그인
                 </Link>

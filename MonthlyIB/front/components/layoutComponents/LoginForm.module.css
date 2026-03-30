@@ -3,18 +3,29 @@ header .util {
     align-items: center;
 }
 
-header .util a {
+header .util a,
+header .util button {
     display: block;
     font-size: 1.5rem;
     font-weight: 600;
 }
 
-header .util a:first-child:hover {
+header .util button {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+
+header .util a:first-child:hover,
+header .util button:first-child:hover {
     text-decoration: underline;
     text-underline-offset: 4;
 }
 
-header .util a:last-child {
+header .util a:last-child,
+header .util button:last-child {
     width: 116px;
     height: 40px;
     border-radius: 5px;

@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useUserInfo } from "@/store/user";
 import { adjustWindowSize } from "@/utils/utils";
+import { getCookie } from "@/apis/cookies";
 
 const AppLayout = ({ children, disable }) => {
   const pathName = usePathname();
@@ -23,7 +24,7 @@ const AppLayout = ({ children, disable }) => {
     width: undefined,
   });
 
-  const { userInfo } = useUserInfo();
+  const { userInfo, signOut } = useUserInfo();
 
   const onMouseOverMenu = useCallback(() => {
     setMouseOverMenu(true);
@@ -36,6 +37,13 @@ const AppLayout = ({ children, disable }) => {
   useEffect(() => {
     adjustWindowSize(setWindowSize);
   }, []);
+
+  useEffect(() => {
+    const token = getCookie("accessToken");
+    if (!token && userInfo?.userStatus === "ACTIVE") {
+      signOut();
+    }
+  }, [signOut, userInfo]);
 
   return (
     <>
