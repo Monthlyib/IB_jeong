@@ -140,7 +140,18 @@ const AICoaching = () => {
             // 세션 스토리지에 동적 가이드 데이터 저장 후 뷰 페이지로 이동
             try {
                 if (typeof window !== "undefined" && window.sessionStorage) {
-                    window.sessionStorage.setItem("ai_coaching_guide_payload", JSON.stringify(guideData));
+                    window.sessionStorage.setItem(
+                        "ai_coaching_guide_payload",
+                        JSON.stringify({
+                            ...guideData,
+                            __meta: {
+                                subject: selectedSubject,
+                                interestTopic: interestForGuide,
+                                topicTitle: picked.title,
+                                createdAt: new Date().toISOString(),
+                            },
+                        })
+                    );
                 }
             } catch (ssErr) {
                 console.warn("sessionStorage 저장 실패:", ssErr);

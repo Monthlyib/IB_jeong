@@ -1,19 +1,20 @@
-
-
 /* eslint-disable react/prop-types */
 "use client";
+
 import React, { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./AICoachingGuideForm.module.css";
 
-/**
- * AICoachingGuideForm (Next.js Client Component)
- * - Reads dynamic guide JSON from sessionStorage key: "ai_coaching_guide_payload"
- * - Recursively renders nested structure with depth-based classes
- * - Uses next/navigation router for basic navigation patterns
- */
-
 const KEY = "ai_coaching_guide_payload";
+
+const KNOWN_FIELDS = new Set([
+  "title",
+  "overview",
+  "researchQuestions",
+  "keyPoints",
+  "structure",
+  "tips",
+]);
 
 export default function AICoachingGuideForm() {
   const router = useRouter();
@@ -22,38 +23,52 @@ export default function AICoachingGuideForm() {
 
   useEffect(() => {
     try {
-      const s = window?.sessionStorage?.getItem(KEY);
-      if (!s) {
+      const stored = window?.sessionStorage?.getItem(KEY);
+      if (!stored) {
         setError("가이드 데이터를 찾을 수 없습니다. 이전 화면에서 가이드를 생성해 주세요.");
         return;
       }
-      setRaw(JSON.parse(s));
+      setRaw(JSON.parse(stored));
     } catch (e) {
       console.error("Guide parse error:", e);
       setError("가이드 데이터를 해석하는 중 오류가 발생했습니다.");
     }
   }, []);
 
-  const content = useMemo(() => raw, [raw]);
+  const documentData = useMemo(() => normalizeGuideDocument(raw), [raw]);
 
   return (
     <div className={styles.guideContainer} role="document" aria-label="IA Guide">
       <header className={styles.guideHeader}>
-        <div className={styles.guideHeaderRow}>
-          <h1 className={styles.guideTitle}>IA Topic Guide</h1>
-          <div className={styles.guideActions}>
-            <button
-              type="button"
-              className={`${styles.guideBtn} ${styles.guideBtnSecondary}`}
-              onClick={() => router.back()}
-            >
-              돌아가기
-            </button>
+        <div className={styles.headerTopline}>
+          <span className={styles.headerBadge}>Teacher Prepared Guide</span>
+          <button
+            type="button"
+            className={styles.guideBtn}
+            onClick={() => router.back()}
+          >
+            돌아가기
+          </button>
+        </div>
+
+        <div className={styles.headerCard}>
+          <div className={styles.headerMain}>
+            <p className={styles.headerEyebrow}>IB Individual Assessment Planning Notes</p>
+            <h1 className={styles.guideTitle}>{documentData.title}</h1>
+            <p className={styles.headerLead}>
+              학생이 바로 초안에 들어갈 수 있도록, 주제 방향과 조사 포인트를 선생님 메모 형식으로 정리한 가이드입니다.
+            </p>
+          </div>
+
+          <div className={styles.metaGrid}>
+            <MetaCard label="Subject" value={documentData.subject} />
+            <MetaCard label="Interest Area" value={documentData.interestTopic} />
+            <MetaCard label="Selected Topic" value={documentData.topicTitle} />
+            <MetaCard label="Prepared" value={documentData.createdAt} />
           </div>
         </div>
       </header>
 
-      {/* Main content strictly lives under the header */}
       <main className={styles.guideMain} role="main">
         {error && (
           <div className={styles.guideError} role="alert">
@@ -61,13 +76,88 @@ export default function AICoachingGuideForm() {
           </div>
         )}
 
-        {!error && !content && (
+        {!error && !raw && (
           <div className={styles.guideLoading}>가이드 데이터를 불러오는 중...</div>
         )}
 
-        {!error && content && (
-          <div className={styles.guideBody}>
-            <RecursiveNode label={null} value={content} depth={0} />
+        {!error && raw && (
+          <div className={styles.guideSheet}>
+            <section className={styles.heroSection}>
+              <div className={styles.sectionLabel}>Teacher Overview</div>
+              <p className={styles.overviewText}>
+                {documentData.overview || "개요가 아직 생성되지 않았습니다."}
+              </p>
+            </section>
+
+            <section className={styles.dualGrid}>
+              <GuideListCard
+                title="Recommended Research Questions"
+                subtitle="글의 논지를 선명하게 만들 핵심 질문"
+                items={documentData.researchQuestions}
+                variant="question"
+                emptyText="연구 질문이 아직 없습니다."
+              />
+              <GuideListCard
+                title="Key Talking Points"
+                subtitle="본문에서 반드시 다뤄야 할 포인트"
+                items={documentData.keyPoints}
+                variant="point"
+                emptyText="핵심 포인트가 아직 없습니다."
+              />
+            </section>
+
+            <section className={styles.structureSection}>
+              <div className={styles.sectionLabel}>Suggested Essay Structure</div>
+              <div className={styles.structureGrid}>
+                <StructureCard
+                  stage="Introduction"
+                  body={documentData.structure.introduction}
+                />
+                <StructureCard
+                  stage="Body"
+                  body={documentData.structure.body}
+                />
+                <StructureCard
+                  stage="Conclusion"
+                  body={documentData.structure.conclusion}
+                />
+              </div>
+            </section>
+
+            <section className={styles.tipsSection}>
+              <div className={styles.sectionLabel}>Teacher's Margin Notes</div>
+              <div className={styles.tipStack}>
+                {documentData.tips.length > 0 ? (
+                  documentData.tips.map((tip, index) => (
+                    <article key={`${tip}-${index}`} className={styles.tipCard}>
+                      <span className={styles.tipIndex}>
+                        Tip {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <p className={styles.tipText}>{tip}</p>
+                    </article>
+                  ))
+                ) : (
+                  <article className={styles.tipCard}>
+                    <span className={styles.tipIndex}>Tip 01</span>
+                    <p className={styles.tipText}>추가 팁이 아직 생성되지 않았습니다.</p>
+                  </article>
+                )}
+              </div>
+            </section>
+
+            {documentData.extraEntries.length > 0 && (
+              <section className={styles.extraSection}>
+                <div className={styles.sectionLabel}>Additional Notes</div>
+                <div className={styles.extraStack}>
+                  {documentData.extraEntries.map(([key, value]) => (
+                    <div key={key} className={styles.extraCard}>
+                      <h2 className={styles.extraHeading}>{prettifyKey(key)}</h2>
+                      <RecursiveNode value={value} />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
         )}
       </main>
@@ -75,66 +165,151 @@ export default function AICoachingGuideForm() {
   );
 }
 
-/**
- * Recursive renderer for any JSON structure
- */
-function RecursiveNode({ label, value, depth }) {
-  const isArray = Array.isArray(value);
-  const isObject = !isArray && typeof value === "object" && value !== null;
-  const isPrimitive = !isArray && !isObject;
+function normalizeGuideDocument(raw) {
+  const meta = raw?.__meta ?? {};
+  const guide = raw?.guide && typeof raw.guide === "object" ? raw.guide : raw ?? {};
 
-  const depthClass = styles[`guide-depth-${depth}`] || "";
-  const rowClass = `${styles.guideRow} ${depthClass}`;
+  return {
+    title: firstNonEmpty(guide.title, meta.topicTitle, "IA Topic Guide"),
+    subject: firstNonEmpty(meta.subject, "IB Subject"),
+    interestTopic: firstNonEmpty(meta.interestTopic, "Not specified"),
+    topicTitle: firstNonEmpty(meta.topicTitle, guide.title, "Selected topic"),
+    createdAt: formatCreatedAt(meta.createdAt),
+    overview: stringifyText(guide.overview),
+    researchQuestions: listify(guide.researchQuestions),
+    keyPoints: listify(guide.keyPoints),
+    structure: {
+      introduction: stringifyText(guide?.structure?.introduction),
+      body: stringifyText(guide?.structure?.body),
+      conclusion: stringifyText(guide?.structure?.conclusion),
+    },
+    tips: listify(guide.tips),
+    extraEntries: Object.entries(guide).filter(([key]) => !KNOWN_FIELDS.has(key)),
+  };
+}
 
-  if (isPrimitive) {
-    return (
-      <div className={rowClass} data-depth={depth}>
-        {label != null && (
-          <div className={styles.guideKey} title={String(label)}>
-            {String(label)}
-          </div>
+function MetaCard({ label, value }) {
+  return (
+    <div className={styles.metaCard}>
+      <span className={styles.metaLabel}>{label}</span>
+      <strong className={styles.metaValue}>{value}</strong>
+    </div>
+  );
+}
+
+function GuideListCard({ title, subtitle, items, variant, emptyText }) {
+  return (
+    <article className={styles.listCard}>
+      <div className={styles.listCardHeader}>
+        <h2 className={styles.listCardTitle}>{title}</h2>
+        <p className={styles.listCardSubtitle}>{subtitle}</p>
+      </div>
+      <ol className={styles.listItems}>
+        {items.length > 0 ? (
+          items.map((item, index) => (
+            <li key={`${item}-${index}`} className={styles.listItem}>
+              <span className={styles[`listMarker${capitalize(variant)}`]}>
+                {variant === "question" ? `Q${index + 1}` : `${index + 1}`}
+              </span>
+              <p className={styles.listItemText}>{item}</p>
+            </li>
+          ))
+        ) : (
+          <li className={styles.listItem}>
+            <span className={styles.listMarkerPoint}>-</span>
+            <p className={styles.listItemText}>{emptyText}</p>
+          </li>
         )}
-        <div className={styles.guideLeaf}>{String(value)}</div>
+      </ol>
+    </article>
+  );
+}
+
+function StructureCard({ stage, body }) {
+  return (
+    <article className={styles.structureCard}>
+      <div className={styles.structureStage}>{stage}</div>
+      <p className={styles.structureText}>
+        {body || "구조 안내가 아직 생성되지 않았습니다."}
+      </p>
+    </article>
+  );
+}
+
+function RecursiveNode({ value }) {
+  if (Array.isArray(value)) {
+    return (
+      <ul className={styles.fallbackList}>
+        {value.map((item, index) => (
+          <li key={index} className={styles.fallbackListItem}>
+            <RecursiveNode value={item} />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (value && typeof value === "object") {
+    return (
+      <div className={styles.fallbackObject}>
+        {Object.entries(value).map(([key, nestedValue]) => (
+          <div key={key} className={styles.fallbackRow}>
+            <div className={styles.fallbackKey}>{prettifyKey(key)}</div>
+            <div className={styles.fallbackValue}>
+              <RecursiveNode value={nestedValue} />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
 
-  if (isArray) {
-    return (
-      <section className={`${styles.guideSection} ${depthClass}`} data-depth={depth}>
-        {label != null && (
-          <h2 className={styles.guideHeading} data-depth={depth}>
-            {String(label)}
-          </h2>
-        )}
-        <ul className={styles.guideList}>
-          {value.map((v, idx) => (
-            <li key={idx} className={styles.guideListItem}>
-              <RecursiveNode label={null} value={v} depth={depth + 1} />
-            </li>
-          ))}
-        </ul>
-      </section>
-    );
-  }
+  return <p className={styles.fallbackText}>{stringifyText(value)}</p>;
+}
 
-  const entries = Object.entries(value || {});
-  return (
-    <section className={`${styles.guideSection} ${depthClass}`} data-depth={depth}>
-      {label != null && (
-        <h2 className={styles.guideHeading} data-depth={depth}>
-          {String(label)}
-        </h2>
-      )}
-      {entries.length === 0 ? (
-        <div className={styles.guideEmpty}>(empty)</div>
-      ) : (
-        entries.map(([k, v]) => (
-          <div key={k} className={styles.guideBranch}>
-            <RecursiveNode label={k} value={v} depth={depth + 1} />
-          </div>
-        ))
-      )}
-    </section>
-  );
+function firstNonEmpty(...values) {
+  return values.find((value) => typeof value === "string" && value.trim()) || values.find(Boolean) || "";
+}
+
+function listify(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => stringifyText(item))
+      .filter(Boolean);
+  }
+  return [stringifyText(value)].filter(Boolean);
+}
+
+function stringifyText(value) {
+  if (value == null) return "";
+  if (typeof value === "string") return value.trim();
+  if (typeof value === "number" || typeof value === "boolean") return String(value);
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return String(value);
+  }
+}
+
+function formatCreatedAt(value) {
+  if (!value) return "Just now";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "Just now";
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(parsed);
+}
+
+function prettifyKey(key) {
+  return String(key)
+    .replace(/_/g, " ")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
