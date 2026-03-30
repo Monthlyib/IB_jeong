@@ -9,7 +9,6 @@ import {
   faClipboardCheck,
   faClipboardList,
   faMicrophoneAlt,
-  faPenNib,
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./AIToolsMain.module.css";
 
@@ -45,14 +44,6 @@ const toolCards = [
     description: "스크립트와 녹음을 바탕으로 말하기 흐름과 전달력을 연습하고 피드백을 받습니다.",
     badge: "Speaking",
     meta: "실전 리허설",
-  },
-  {
-    href: "/aitools/essay",
-    icon: faPenNib,
-    title: "AI Essay",
-    description: "에세이 구조를 빠르게 잡고 핵심 논점과 전개 흐름을 정리하는 데 활용합니다.",
-    badge: "Writing",
-    meta: "구조 설계",
   },
 ];
 
