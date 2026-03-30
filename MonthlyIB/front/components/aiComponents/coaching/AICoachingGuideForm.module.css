@@ -7,20 +7,23 @@
   --accent-soft: rgba(159, 61, 44, 0.12);
   --line: rgba(81, 61, 43, 0.14);
   --card: rgba(255, 252, 247, 0.9);
-  width: min(112rem, calc(100% - 3.2rem));
-  margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 4rem;
+  width: min(112rem, calc(100% - 4rem));
+  margin: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) auto 4rem;
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
 }
 
 .guideHeader {
   margin-bottom: 2.4rem;
+  position: static;
 }
 
 .guideBtn {
-  position: absolute;
-  top: 2.4rem;
-  right: 2.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: flex-start;
   border: 1px solid rgba(81, 61, 43, 0.24);
   background: rgba(255, 252, 247, 0.85);
   color: var(--ink);
@@ -40,7 +43,6 @@
 
 .headerCard {
   position: relative;
-  overflow: hidden;
   padding: 3.2rem 3.2rem 3rem;
   border: 1px solid rgba(81, 61, 43, 0.18);
   border-radius: 2.8rem;
@@ -60,16 +62,27 @@
   pointer-events: none;
 }
 
-.headerMain,
+.headerTopRow,
 .metaGrid {
   position: relative;
   z-index: 1;
 }
 
+.headerTopRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.6rem;
+}
+
+.headerMain {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .headerEyebrow {
   display: block;
   margin: 0 0 1.2rem;
-  padding-right: 12rem;
   color: var(--accent);
   font-size: 1.3rem;
   font-weight: 700;
@@ -89,9 +102,30 @@
   text-wrap: balance;
 }
 
+.headerMetaLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: center;
+  margin: 1.4rem 0 0;
+  color: var(--muted);
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.headerMetaLabel {
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.headerMetaValue {
+  font-weight: 600;
+}
+
 .metaGrid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.2rem;
   margin-top: 2.2rem;
 }
@@ -405,12 +439,20 @@
   .structureGrid {
     grid-template-columns: 1fr 1fr;
   }
+
+  .headerTopRow {
+    flex-direction: column;
+  }
+
+  .guideBtn {
+    align-self: flex-start;
+  }
 }
 
 @media (max-width: 760px) {
   .guideContainer {
     width: min(100%, calc(100% - 1.8rem));
-    margin-top: calc(var(--appHeaderHeight, 7.2rem) + 1rem);
+    margin-top: calc(var(--appHeaderHeight, 7.2rem) + 0.8rem);
   }
 
   .headerCard,
@@ -430,8 +472,8 @@
   }
 
   .guideBtn {
-    position: static;
-    margin-bottom: 1.6rem;
+    width: 100%;
+    justify-content: center;
   }
 
   .overviewText {

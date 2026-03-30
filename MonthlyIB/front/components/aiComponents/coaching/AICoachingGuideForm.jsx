@@ -41,24 +41,29 @@ export default function AICoachingGuideForm() {
     <div className={styles.guideContainer} role="document" aria-label="IA Guide">
       <header className={styles.guideHeader}>
         <div className={styles.headerCard}>
-          <button
-            type="button"
-            className={styles.guideBtn}
-            onClick={() => router.back()}
-          >
-            돌아가기
-          </button>
+          <div className={styles.headerTopRow}>
+            <div className={styles.headerMain}>
+              <p className={styles.headerEyebrow}>IB Individual Assessment Planning Notes</p>
+              <h1 className={styles.guideTitle}>{documentData.title}</h1>
+              <p className={styles.headerMetaLine}>
+                <span className={styles.headerMetaLabel}>Prepared</span>
+                <span className={styles.headerMetaValue}>{documentData.createdAt}</span>
+              </p>
+            </div>
 
-          <div className={styles.headerMain}>
-            <p className={styles.headerEyebrow}>IB Individual Assessment Planning Notes</p>
-            <h1 className={styles.guideTitle}>{documentData.title}</h1>
+            <button
+              type="button"
+              className={styles.guideBtn}
+              onClick={() => router.back()}
+            >
+              돌아가기
+            </button>
           </div>
 
           <div className={styles.metaGrid}>
             <MetaCard label="Subject" value={documentData.subject} />
             <MetaCard label="Interest Area" value={documentData.interestTopic} />
             <MetaCard label="Selected Topic" value={documentData.topicTitle} />
-            <MetaCard label="Prepared" value={documentData.createdAt} />
           </div>
         </div>
       </header>
