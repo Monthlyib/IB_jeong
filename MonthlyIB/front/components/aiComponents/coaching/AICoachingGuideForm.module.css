@@ -8,7 +8,8 @@
   --accent-soft: rgba(81, 52, 108, 0.12);
   --line: rgba(81, 52, 108, 0.14);
   --card: #ffffff;
-  width: min(112rem, calc(100% - 4rem));
+  width: min(110rem, calc(100% - 4rem));
+  max-width: 100%;
   margin: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) auto 4rem;
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
@@ -143,11 +144,16 @@
 
 .guideMain {
   min-height: 24rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .guideError,
 .guideLoading {
   padding: 1.6rem 1.8rem;
+  margin-left: 1.8rem;
+  margin-right: 1.8rem;
   border-radius: 1.6rem;
   border: 1px solid rgba(159, 61, 44, 0.2);
   background: #fff8f5;
@@ -160,6 +166,9 @@
 }
 
 .guideSheet {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 3rem;
   position: relative;
   z-index: 0;
@@ -175,6 +184,9 @@
 .structureSection,
 .tipsSection,
 .extraSection {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   margin-top: 2.4rem;
   padding: 2.4rem;
   border: 1px solid var(--line);
@@ -221,10 +233,25 @@
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.8rem;
   margin-top: 2.4rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.dualGrid > *,
+.metaGrid > *,
+.structureGrid > *,
+.tipStack > *,
+.extraStack > * {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .listCard {
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
   padding: 2.2rem;
   border: 1px solid var(--line);
   border-radius: 2.4rem;
@@ -303,6 +330,9 @@
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.6rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .structureCard {
@@ -339,6 +369,9 @@
 .tipStack {
   display: grid;
   gap: 1.2rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .tipCard {
@@ -380,6 +413,9 @@
 .extraStack {
   display: grid;
   gap: 1.4rem;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .extraCard {
