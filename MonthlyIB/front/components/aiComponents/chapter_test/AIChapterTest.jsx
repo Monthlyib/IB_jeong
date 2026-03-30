@@ -77,37 +77,41 @@ const AIChapterTest = () => {
 
   return (
     <main className={styles.container}>
-      {/* 상단 영역: 제목 + 간단 소개 문구 */}
       <section className={styles.introSection}>
+        <span className={styles.eyebrow}>AI Chapter Test Studio</span>
         <h1 className={styles.title}>AI Chapter Test</h1>
         <p className={styles.description}>
           과목과 챕터를 선택하고 테스트를 시작해 보세요!
         </p>
       </section>
+
       {userInfo?.authority === "ADMIN" && (
-        <div className={styles.right_btn}>
+        <div className={styles.adminActions}>
           <Link
             href={`/aitools/chapter-test/admin-input`}
-            className={styles.btn_write}
+            className={styles.adminButton}
           >
             <FontAwesomeIcon icon={faPenAlt} />
             <span>문제 입력</span>
           </Link>
-        </div>
-      )}
-      {userInfo?.authority === "ADMIN" && (
-        <div className={styles.right_btn}>
           <Link
             href={`/aitools/chapter-test/list`}
-            className={styles.btn_write}
+            className={styles.adminButton}
           >
             <FontAwesomeIcon icon={faPenAlt} />
             <span>문제 목록 보기</span>
           </Link>
         </div>
       )}
-      {/* 드롭다운 + 버튼 영역 */}
+
       <section className={styles.formSection}>
+        <div className={styles.noticeCard}>
+          <h2 className={styles.noticeTitle}>테스트 구성</h2>
+          <p className={styles.noticeText}>
+            과목, 챕터, 문제 수, 시험 시간을 선택하면 바로 세션이 생성됩니다.
+            진행 중인 시험이 있으면 이어서 보거나 새로 시작할 수 있습니다.
+          </p>
+        </div>
 
         <div className={styles.selectWrapper}>
           <label htmlFor="subjectSelect">과목 선택</label>

@@ -1,172 +1,225 @@
-/* AIChapterTest.module.css */
-
 .container {
-    width: 110rem; /* 프로젝트 전체 폭에 맞춰 조정 */
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-  }
-  
-  .introSection {
-    text-align: center;
-    margin-bottom: 2rem; /* 첫 번째 섹션과 두 번째 섹션 간격 조정 */
-  }
-  
-  /* 제목 (예: AI Chapter Test) */
-  .title {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--primary01); /* 보라색 포인트 컬러 */
-    margin-bottom: 2rem;
-  }
-  
-  /* 간단 소개 문구 */
-  .description {
-    font-size: 2rem;
-    font-weight: 700;      /* 굵게 */
-    color: #333;
-  }
-  
-  /* 드롭다운 + 버튼 컨테이너 */
-  .formSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 600px; /* 전체 폼의 최대 너비를 600px로 확장 */
-    margin: 0 auto;   /* 화면 중앙 정렬 */
-  }
-  
-  /* 드롭다운 감싸는 래퍼 */
-  .selectWrapper {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 2rem;
-    width: 100%;
-  }
-  
-  .selectWrapper label {
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
-    color: #444;
-  }
-  
-/* AIChapterTest.module.css */
-
-/* 드롭다운 */
-.selectWrapper select {
-    width: 100%;
-    font-size: 1.4rem;
-    line-height: 1.6;            /* 줄 높이를 넉넉히 설정 */
-    padding: 1.2rem 1.6rem;     /* 좌우 패딩도 살짝 늘림 */
-    border: 1px solid #d5d5d5;
-    border-radius: 10px;
-    background: #fff;
-    color: #333;
-    box-sizing: border-box;      /* 패딩 포함한 크기 계산 */
-    -webkit-appearance: none;    /* 일부 브라우저 기본 화살표 제거 */
-    -moz-appearance: none;
-    appearance: none;
-  }
-  
-  /* 테스트 시작 버튼 */
-  .startButton {
-    display: inline-block;
-    width: 100%;              /* 버튼도 폭을 넓혀서 중앙 정렬 시키기 편하도록 */
-    max-width: 300px;         /* 필요에 따라 조정 가능 */
-    padding: 1.2rem 2rem;
-    background-color: var(--primary01);
-    color: #fff;
-    border-radius: 20px;      /* 버튼도 크게 둥글게 */
-    font-size: 1.6rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    text-align: center;
-    margin-top: 1rem;         /* 드롭다운과의 간격 */
-  }
-  
-  .startButton:hover {
-    background-color: var(--primary03); /* hover 시 조금 더 진한 보라 */
-  }
-
-  .right_btn {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 0 0 0.8rem;
-  }
-
-  .btn_write {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 14rem;
-    height: 3.6rem;
-    font-size: 1.4rem;
-    border: 1px solid #d5d5d5;
-    border-radius: 0.5rem;
-    padding: 0 1.4rem;
-  }
-
-.modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  width: 110rem;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 4rem 2rem 5rem;
 }
 
-.modalContent {
-  background: #fff;
-  padding: 2rem 3rem;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 400px;
+.introSection {
+  max-width: 74rem;
+  margin: 0 auto 2.4rem;
   text-align: center;
 }
 
-.modalButtons {
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 999px;
+  background: #f7f2fb;
+  color: var(--primary01);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 1.6rem 0 1.2rem;
+  font-size: clamp(3rem, 4vw, 4.2rem);
+  font-weight: 700;
+  color: var(--primary01);
+}
+
+.description {
+  margin: 0;
+  font-size: 1.8rem;
+  line-height: 1.7;
+  color: #4c4557;
+}
+
+.adminActions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto 1.6rem;
+}
+
+.adminButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.4rem;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 1.4rem;
+  background: #fff;
+  color: var(--primary01);
+  font-size: 1.4rem;
+  font-weight: 700;
+  box-shadow: 0 12px 22px rgba(57, 31, 82, 0.05);
+}
+
+.formSection {
   display: flex;
   flex-direction: column;
+  gap: 1.6rem;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.noticeCard,
+.selectWrapper {
+  width: 100%;
+  padding: 2rem 2.2rem;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 2.2rem;
+  background: #fff;
+  box-shadow: 0 16px 34px rgba(57, 31, 82, 0.05);
+}
+
+.noticeTitle {
+  margin: 0 0 0.8rem;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--primary02);
+}
+
+.noticeText {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.75;
+  color: #5f566b;
+}
+
+.selectWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.selectWrapper label {
+  margin-bottom: 0.8rem;
+  color: #554d61;
+  font-size: 1.45rem;
+  font-weight: 600;
+}
+
+.selectWrapper select {
+  width: 100%;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid rgba(81, 52, 108, 0.14);
+  border-radius: 1.4rem;
+  background: #fcfbfe;
+  color: #2a2234;
+  box-sizing: border-box;
+  appearance: none;
+}
+
+.startButton {
+  align-self: flex-end;
+  min-width: 20rem;
+  padding: 1.2rem 2.2rem;
+  border: none;
+  border-radius: 1.6rem;
+  background: var(--primary01);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 14px 24px rgba(81, 52, 108, 0.18);
+  transition: background-color 0.25s ease, transform 0.2s ease;
+}
+
+.startButton:hover {
+  background: var(--primary03);
+  transform: translateY(-1px);
+}
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background-color: rgba(17, 10, 30, 0.45);
+  z-index: 1000;
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 42rem;
+  padding: 2.4rem;
+  border-radius: 2rem;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 24px 50px rgba(17, 10, 30, 0.18);
+}
+
+.modalButtons {
+  display: grid;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 1.8rem;
 }
 
 .continueButton,
 .resetButton,
 .cancelButton {
-  padding: 1rem;
-  font-size: 1.4rem;
+  padding: 1rem 1.2rem;
+  font-size: 1.45rem;
+  font-weight: 700;
   border: none;
-  border-radius: 8px;
+  border-radius: 1.2rem;
   cursor: pointer;
 }
 
 .continueButton {
-  background-color: #4caf50;
+  background-color: var(--primary01);
   color: white;
 }
 
 .resetButton {
-  background-color: #f44336;
-  color: white;
+  background-color: #fbe4e4;
+  color: #b42318;
 }
 
 .cancelButton {
-  background-color: #ccc;
-  color: #333;
+  background-color: #efedf2;
+  color: #4f475d;
 }
 
 .notice {
-  margin-top: 1rem;
-  font-size: 1.2rem;
-  color: #666;
+  margin-top: 1.2rem;
+  font-size: 1.25rem;
+  color: #6d6579;
 }
-  
+
+@media (max-width: 768px) {
+  .container {
+    padding: 3rem 1.4rem 4rem;
+  }
+
+  .noticeCard,
+  .selectWrapper,
+  .modalContent {
+    padding: 1.6rem;
+    border-radius: 1.8rem;
+  }
+
+  .adminActions {
+    justify-content: stretch;
+  }
+
+  .adminButton,
+  .startButton {
+    width: 100%;
+    justify-content: center;
+  }
+}

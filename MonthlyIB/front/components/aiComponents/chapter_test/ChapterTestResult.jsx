@@ -25,21 +25,47 @@ const ChapterTestResult = () => {
     if (sessionId) fetchResult();
   }, [sessionId]);
 
-  if (!result) return <div>결과를 불러오는 중...</div>;
+  if (!result) {
+    return (
+      <main className={styles.container}>
+        <section className={styles.loadingCard}>
+          <span className={styles.eyebrow}>AI Chapter Test</span>
+          <h1 className={styles.heading}>결과를 불러오는 중입니다</h1>
+          <p className={styles.summaryText}>채점 결과와 문제별 분석을 준비하고 있습니다.</p>
+        </section>
+      </main>
+    );
+  }
 
   return (
-    <div className={styles.container}>
-      <h2 className={styles.heading}>시험 결과</h2>
-      <p className={styles.text}>과목: {result.subject}</p>
-      <p className={styles.text}>챕터: {result.chapter}</p>
-      <p className={styles.text}>총 문제 수: {result.totalQuestions}</p>
-      <p className={styles.text}>맞은 개수: {result.correctAnswers}</p>
-      <p className={styles.text}>
-        총 소요 시간: {Math.floor(result.totalTimeSeconds / 60)}분 {result.totalTimeSeconds % 60}초
-      </p>
+    <main className={styles.container}>
+      <section className={styles.summaryCard}>
+        <span className={styles.eyebrow}>Result Summary</span>
+        <h1 className={styles.heading}>시험 결과</h1>
+        <p className={styles.summaryText}>
+          {result.subject} · {result.chapter}
+        </p>
+        <div className={styles.statGrid}>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>총 문제 수</span>
+            <strong className={styles.statValue}>{result.totalQuestions}</strong>
+          </div>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>정답 수</span>
+            <strong className={styles.statValue}>{result.correctAnswers}</strong>
+          </div>
+          <div className={styles.statCard}>
+            <span className={styles.statLabel}>소요 시간</span>
+            <strong className={styles.statValue}>
+              {Math.floor(result.totalTimeSeconds / 60)}분 {result.totalTimeSeconds % 60}초
+            </strong>
+          </div>
+        </div>
+      </section>
 
-      <h3 className={styles.subheading}>문제별 상세</h3>
-      <ul className={styles.questionList}>
+      <section className={styles.detailSection}>
+        <h2 className={styles.subheading}>문제별 상세</h2>
+        <ul className={styles.questionList}>
         {result.questionDetails.map((q, idx) => (
           <li
             key={q.questionId}
@@ -47,7 +73,7 @@ const ChapterTestResult = () => {
           >
             <div className={styles.questionRow}>
               <div className={styles.questionBox}>
-                <div className={`${styles.questionTitle} ${styles.questionTitle}`}>
+                <div className={styles.questionTitle}>
                   <span dangerouslySetInnerHTML={{ __html: `${idx + 1}. ${q.question}` }} />
                 </div>
               </div>
@@ -65,8 +91,9 @@ const ChapterTestResult = () => {
             </div>
           </li>
         ))}
-      </ul>
-    </div>
+        </ul>
+      </section>
+    </main>
   );
 };
 
