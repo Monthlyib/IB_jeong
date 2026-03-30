@@ -238,6 +238,7 @@ const AIIoRecording = () => {
         <main className={styles.container}>
             {/* 1) 인트로 섹션 */}
             <section className={styles.introSection}>
+                <span className={styles.eyebrow}>AI Oral Recording Studio</span>
                 <h1 className={styles.title}>AI IO 말하기 연습 / 녹음</h1>
                 <p className={styles.description}>
                     마이크 아이콘을 눌러 녹음을 시작하세요. 권장 발표 시간은 10분이며, 그 이후에도 녹음은 계속 유지됩니다.
@@ -285,45 +286,47 @@ const AIIoRecording = () => {
                     권장 시간 10:00
                     {isOverRecommendedDuration ? "를 넘겨 계속 녹음 중입니다." : "까지 녹음할 수 있습니다."}
                 </p>
-                {!isRecording && !isFinished && (
-                    <button className={styles.recordButton} onClick={handleStartRecording}>
-                        <FontAwesomeIcon icon={faMicrophone} className={styles.icon} />
-                        녹음 시작
-                    </button>
-                )}
+                <div className={styles.actionRow}>
+                    {!isRecording && !isFinished && (
+                        <button className={styles.recordButton} onClick={handleStartRecording}>
+                            <FontAwesomeIcon icon={faMicrophone} className={styles.icon} />
+                            녹음 시작
+                        </button>
+                    )}
 
-                {isRecording && (
-                    <button className={styles.stopButton} onClick={handleStopRecording}>
-                        녹음 중단
-                    </button>
-                )}
+                    {isRecording && (
+                        <button className={styles.stopButton} onClick={handleStopRecording}>
+                            녹음 중단
+                        </button>
+                    )}
 
-                {!isRecording && isFinished && (
+                    {!isRecording && isFinished && (
+                        <button
+                            className={styles.recordButton}
+                            onClick={() => {
+                                // Clear previous recording and reset timer
+                                revokeAudioPreviewUrl();
+                                setAudioBlob(null);
+                                setRecordingSeconds(0);
+                                if (audioRef.current) {
+                                    audioRef.current.src = "";
+                                }
+                                setIsFinished(false);
+                                handleStartRecording();
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faMicrophone} className={styles.icon} />
+                            재녹음
+                        </button>
+                    )}
                     <button
-                        className={styles.recordButton}
-                        onClick={() => {
-                            // Clear previous recording and reset timer
-                            revokeAudioPreviewUrl();
-                            setAudioBlob(null);
-                            setRecordingSeconds(0);
-                            if (audioRef.current) {
-                                audioRef.current.src = "";
-                            }
-                            setIsFinished(false);
-                            handleStartRecording();
-                        }}
+                        className={styles.feedbackButton}
+                        onClick={handleGetFeedback}
+                        disabled={!audioBlob || isRecording || loading}
                     >
-                        <FontAwesomeIcon icon={faMicrophone} className={styles.icon} />
-                        재녹음
+                        피드백 받기
                     </button>
-                )}
-                <button
-                    className={styles.feedbackButton}
-                    onClick={handleGetFeedback}
-                    disabled={!audioBlob || isRecording || loading}
-                >
-                    피드백 받기
-                </button>
+                </div>
             </section>
 
             {/* 오디오 미리보기 (녹음된 파일 재생) */}

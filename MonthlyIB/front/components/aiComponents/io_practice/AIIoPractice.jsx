@@ -58,6 +58,7 @@ const AIIoPractice = () => {
   return (
     <main className={styles.container}>
       <section className={styles.introSection}>
+        <span className={styles.eyebrow}>AI Oral Individual Practice</span>
         <h1 className={styles.title}>AI IO 연습 코치</h1>
         <p className={styles.description}>
           IO 연습 코치와 함께 대본을 작성하고 Oral 연습을 해보세요!
@@ -65,6 +66,15 @@ const AIIoPractice = () => {
       </section>
 
       <section className={styles.formSection}>
+        <div className={styles.noticeCard}>
+          <p className={styles.noticeTitle}>시작 전에 준비해 주세요</p>
+          <ul className={styles.noticeList}>
+            <li>IOC 주제와 작품 정보를 먼저 입력합니다.</li>
+            <li>대본 파일은 `PDF`, `TXT`만 업로드할 수 있습니다.</li>
+            <li>다음 단계에서 바로 녹음을 시작하고 피드백을 받을 수 있습니다.</li>
+          </ul>
+        </div>
+
         <div className={styles.formGroup}>
           <label htmlFor="iocTopic" className={styles.mainLabel}>
             IOC 주제
@@ -106,12 +116,16 @@ const AIIoPractice = () => {
                 [대본 파일(스크립트) 업로드] (필수)
               </label>
               <input id="scriptFile" type="file" onChange={handleFileChange} />
+              <p className={styles.fileHint}>지원 형식: PDF, TXT</p>
+              {scriptFile && (
+                <p className={styles.fileStatus}>선택된 파일: {scriptFile.name}</p>
+              )}
             </div>
           </div>
         </div>
 
         <button className={styles.nextButton} onClick={handleNext}>
-          다음
+          녹음 단계로 이동
         </button>
       </section>
     </main>

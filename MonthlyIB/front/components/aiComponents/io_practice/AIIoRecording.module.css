@@ -1,254 +1,292 @@
 .container {
-    width: 100%;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
+  width: 110rem;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 4rem 2rem 5rem;
+  display: grid;
+  gap: 2rem;
+}
+
+.introSection {
+  max-width: 78rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 999px;
+  background: #f7f2fb;
+  color: var(--primary01);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 1.6rem 0 1rem;
+  font-size: clamp(2.8rem, 3.8vw, 4rem);
+  font-weight: 700;
+  color: var(--primary01);
+}
+
+.description {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.75;
+  color: #4d4658;
+}
+
+.infoSection,
+.previewSection,
+.recordSection,
+.feedbackSection,
+.audioSection {
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 2.4rem;
+  background: #fff;
+  box-shadow: 0 16px 34px rgba(57, 31, 82, 0.05);
+}
+
+.infoSection,
+.recordSection,
+.feedbackSection,
+.audioSection {
+  padding: 2rem 2.2rem;
+}
+
+.previewSection {
+  padding: 1.6rem;
+  max-height: 60rem;
+  overflow-y: auto;
+}
+
+.infoTitle,
+.previewTitle,
+.feedbackTitle,
+.audioTitle {
+  margin: 0 0 1.4rem;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--primary02);
+}
+
+.infoRow {
+  display: grid;
+  grid-template-columns: 12rem 1fr;
+  gap: 1rem;
+  align-items: start;
+  margin-bottom: 1rem;
+  font-size: 1.45rem;
+  line-height: 1.6;
+  color: #413a4d;
+}
+
+.infoRow:last-of-type {
+  margin-bottom: 0;
+}
+
+.infoRow span {
+  color: #6d6579;
+}
+
+.infoRow strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.viewScriptButton,
+.recordButton,
+.stopButton,
+.feedbackButton,
+.tutorButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 1.6rem;
+  border: none;
+  border-radius: 1.4rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease, opacity 0.2s ease;
+}
+
+.viewScriptButton,
+.recordButton,
+.feedbackButton {
+  background: var(--primary01);
+  color: #fff;
+  box-shadow: 0 12px 20px rgba(81, 52, 108, 0.15);
+}
+
+.viewScriptButton {
+  margin-top: 1.4rem;
+}
+
+.viewScriptButton:hover,
+.recordButton:hover,
+.feedbackButton:hover {
+  background: var(--primary03);
+  transform: translateY(-1px);
+}
+
+.stopButton {
+  background: #b42318;
+  color: #fff;
+}
+
+.stopButton:hover {
+  background: #981b12;
+  transform: translateY(-1px);
+}
+
+.tutorButton {
+  background: #f9f5ff;
+  color: var(--primary01);
+  border: 1px solid rgba(81, 52, 108, 0.16);
+}
+
+.tutorButton:hover {
+  background: #efe6fb;
+  transform: translateY(-1px);
+}
+
+.feedbackButton:disabled,
+.recordButton:disabled,
+.stopButton:disabled,
+.tutorButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.previewContainer {
+  width: 100%;
+}
+
+.embedPdf {
+  width: 100%;
+  min-height: 70rem;
+  border: none;
+  border-radius: 1.6rem;
+}
+
+.previewText {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 1.45rem;
+  line-height: 1.75;
+  color: #3f3949;
+  font-family: "Noto Sans KR", sans-serif;
+}
+
+.downloadLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 1rem;
+  background: var(--primary01);
+  color: #fff;
+  text-decoration: none;
+}
+
+.downloadLink:hover {
+  background: var(--primary03);
+}
+
+.recordSection {
+  align-items: center;
+  text-align: center;
+}
+
+.timer {
+  font-size: clamp(4.2rem, 7vw, 6.2rem);
+  font-weight: 700;
+  color: var(--primary01);
+  letter-spacing: -0.04em;
+}
+
+.timerOver {
+  color: #c2410c;
+}
+
+.timerHint {
+  margin: 0.6rem 0 0;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  color: #655d72;
+}
+
+.actionRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.6rem;
+}
+
+.icon {
+  margin-right: 0.6rem;
+}
+
+.feedbackContent {
+  margin: 0 0 1.4rem;
+  font-size: 1.5rem;
+  line-height: 1.8;
+  color: #3f3949;
+  white-space: pre-wrap;
+}
+
+.audioSection {
+  text-align: center;
+}
+
+.audioPlayer {
+  width: 100%;
+  max-width: 46rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 3rem 1.4rem 4rem;
   }
-  
-  /* 1) 인트로 섹션 */
-  .introSection {
-    text-align: center;
-  }
-  
-  .title {
-    font-size: 2.4rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    color: var(--primary01);
-  }
-  
-  .description {
-    font-size: 1.4rem;
-    color: #333;
-  }
-  
-  /* 2) 정보영역 */
-  .infoSection {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1.6rem;
-    background-color: #f9f9f9;
-  }
-  
-  .infoTitle {
-    font-size: 1.8rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  
-  .infoRow {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.8rem;
-    font-size: 1.4rem;
-    color: #333;
-  }
-  
-  .infoRow span {
-    font-weight: 400;
-    color: #555;
-  }
-  
-  .infoRow strong {
-    font-weight: 600;
-  }
-  
-  /* 대본 보기 버튼 */
-  .viewScriptButton {
-    margin-top: 1rem;
-    padding: 0.8rem 1.6rem;
-    font-size: 1.4rem;
-    border: none;
-    border-radius: 8px;
-    background-color: #5a2d82;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .viewScriptButton:hover {
-    background-color: #4a226b;
-  }
-  
-  /* 5) 대본 미리보기 영역 */
+
+  .infoSection,
+  .recordSection,
+  .feedbackSection,
+  .audioSection,
   .previewSection {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
-    max-height: 600px;  /* 미리보기 영역 높이 확대 */
-    overflow-y: auto;
-  }
-  
-  .previewTitle {
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  
-  .previewContainer {
-    width: 100%;
-  }
-  
-  /* PDF 미리보기 */
-  .embedPdf {
-    width: 100%;
-    height: 700px;  /* PDF 미리보기 높이 조정 */
-  }
-  
-  /* TXT 미리보기 */
-  .previewText {
-    white-space: pre-wrap;
-    font-size: 1.4rem;
-    line-height: 1.6;
-    color: #333;
-    font-family: "Noto Sans KR", sans-serif;
-  }
-  
-  /* 다운로드 링크 스타일 */
-  .downloadLink {
-    display: inline-block;
-    margin-top: 1rem;
-    padding: 0.5rem 1rem;
-    background-color: var(--primary01);
-    color: #fff;
-    text-decoration: none;
-    border-radius: 4px;
-  }
-  .downloadLink:hover {
-    background-color: var(--primary03);
-  }
-  
-  /* 3) 녹음 인터페이스 */
-  .recordSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2rem;
-    border: 1px solid var(--primary01);
-    border-radius: 8px;
     padding: 1.6rem;
-  }
-  
-  .timer {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--primary01);
+    border-radius: 2rem;
   }
 
-  .timerOver {
-    color: #c2410c;
+  .infoRow {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
   }
 
-  .timerHint {
-    margin: 0;
-    font-size: 1.4rem;
-    color: #5b5570;
+  .embedPdf {
+    min-height: 52rem;
   }
-  
-  /* 버튼 공통 스타일 */
+
+  .actionRow {
+    flex-direction: column;
+  }
+
+  .viewScriptButton,
   .recordButton,
   .stopButton,
   .feedbackButton,
   .tutorButton {
-    display: inline-block;
-    padding: 1rem 1.6rem;
-    font-size: 1.4rem;
-    font-weight: 600;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin: 0.4rem;
-  }
-
-  .feedbackButton:disabled,
-  .recordButton:disabled,
-  .stopButton:disabled,
-  .tutorButton:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  .icon {
-    margin-right: 0.6rem;
-  }
-  
-  /* 녹음 시작 버튼 */
-  .recordButton {
-    background-color: var(--primary01);
-    color: #fff;
-  }
-  .recordButton:hover {
-    background-color: var(--primary03);
-  }
-  
-  /* 녹음 중단 버튼 */
-  .stopButton {
-    background-color: #e60000;
-    color: #fff;
-  }
-  .stopButton:hover {
-    background-color: #cc0000;
-  }
-  
-  /* 피드백 버튼 */
-  .feedbackButton {
-    background-color: #5a2d82;
-    color: #fff;
-  }
-  .feedbackButton:hover {
-    background-color: #4a226b;
-  }
-  
-  /* 4) 피드백 섹션 */
-  .feedbackSection {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1.6rem;
-    background-color: #fff;
-  }
-  
-  .feedbackTitle {
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  
-  .feedbackContent {
-    font-size: 1.4rem;
-    line-height: 1.6;
-    color: #333;
-    margin-bottom: 1rem;
-  }
-  
-  /* 튜터에게 보내기 버튼 */
-  .tutorButton {
-    background-color: #ffbd2f;
-    color: #333;
-  }
-  .tutorButton:hover {
-    background-color: #ffa800;
-  }
-  
-  /* 6) 오디오 재생 영역 */
-  .audioSection {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: center;
-  }
-  
-  .audioTitle {
-    font-size: 1.6rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-  }
-  
-  .audioPlayer {
     width: 100%;
-    max-width: 400px;
   }
+}

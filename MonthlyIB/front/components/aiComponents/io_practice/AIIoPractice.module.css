@@ -1,100 +1,197 @@
 .container {
-    width: 110rem; /* 프로젝트 전체 폭 */
-    max-width: 100%;
-    margin: 0 auto;
-    padding: 4rem 2rem;
+  width: 110rem;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 4rem 2rem 5rem;
+}
+
+.introSection {
+  max-width: 72rem;
+  margin: 0 auto 2.8rem;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 999px;
+  background: #f7f2fb;
+  color: var(--primary01);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.title {
+  margin: 1.6rem 0 1.2rem;
+  font-size: clamp(3rem, 4vw, 4.2rem);
+  font-weight: 700;
+  color: var(--primary01);
+}
+
+.description {
+  margin: 0;
+  font-size: 1.7rem;
+  line-height: 1.7;
+  color: #4b4457;
+}
+
+.formSection {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  max-width: 72rem;
+  margin: 0 auto;
+}
+
+.noticeCard,
+.formGroup {
+  width: 100%;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 2.4rem;
+  background: #fff;
+  box-shadow: 0 16px 34px rgba(57, 31, 82, 0.05);
+}
+
+.noticeCard {
+  padding: 2rem 2.2rem;
+}
+
+.noticeTitle {
+  margin: 0 0 1rem;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--primary02);
+}
+
+.noticeList {
+  margin: 0;
+  padding-left: 1.8rem;
+  color: #594f66;
+  font-size: 1.45rem;
+  line-height: 1.75;
+}
+
+.formGroup {
+  padding: 2rem 2.2rem;
+}
+
+.mainLabel {
+  display: block;
+  margin-bottom: 1rem;
+  color: var(--primary02);
+  font-size: 1.55rem;
+  font-weight: 700;
+}
+
+.formGroup label {
+  font-size: 1.4rem;
+  color: #554d61;
+}
+
+.formGroup input[type="text"],
+.inputRow input[type="text"],
+.inputRow input[type="file"] {
+  width: 100%;
+  padding: 1.2rem 1.4rem;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  border: 1px solid rgba(81, 52, 108, 0.14);
+  border-radius: 1.4rem;
+  background: #fcfbfe;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.formGroup input[type="text"]:focus,
+.inputRow input[type="text"]:focus,
+.inputRow input[type="file"]:focus {
+  outline: none;
+  border-color: rgba(81, 52, 108, 0.28);
+  box-shadow: 0 0 0 0.4rem rgba(81, 52, 108, 0.08);
+  background: #fff;
+}
+
+.subGroup {
+  display: grid;
+  gap: 1.4rem;
+  padding: 1.8rem;
+  border: 1px solid rgba(81, 52, 108, 0.08);
+  border-radius: 1.8rem;
+  background: #f9f7fc;
+}
+
+.inputRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.inputRow label {
+  font-size: 1.3rem;
+  color: #6a6177;
+}
+
+.fileHint,
+.fileStatus {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.6;
+}
+
+.fileHint {
+  color: #776f83;
+}
+
+.fileStatus {
+  color: var(--primary01);
+  font-weight: 600;
+}
+
+.nextButton {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 19rem;
+  padding: 1.2rem 2.2rem;
+  border: none;
+  border-radius: 1.6rem;
+  background: var(--primary01);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 14px 24px rgba(81, 52, 108, 0.18);
+}
+
+.nextButton:hover {
+  background: var(--primary03);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 3rem 1.4rem 4rem;
   }
-  
-  .introSection {
-    text-align: center;
-  }
-  
-  .title {
-    font-size: 3rem;
-    font-weight: 700;
-    color: var(--primary01); /* 보라색 포인트 컬러 */
-    margin-bottom: 2rem;
-  }
-  
-  .description {
-    font-size: 1.6rem;
-    color: #333;
-  }
-  
-  /* 폼 전체 컨테이너 */
-  .formSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  /* 폼 그룹 */
-  .formGroup {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 2rem;
-  }
-  
-  .formGroup label {
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
-    color: #444;
-  }
-  
-  /* 기본 텍스트 입력 */
-  .formGroup input[type="text"] {
-    padding: 1rem;
-    font-size: 1.4rem;
-    line-height: 1.6;
-    border: 1px solid #d5d5d5;
-    border-radius: 8px;
-  }
-  
-  /* 문학작품 영역의 박스 */
-  .subGroup {
-    background-color: #f9f9f9;
+
+  .formGroup,
+  .noticeCard {
     padding: 1.6rem;
-    border-radius: 8px;
+    border-radius: 2rem;
   }
-  
-  .inputRow {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1.2rem;
+
+  .subGroup {
+    padding: 1.4rem;
   }
-  
-  .inputRow label {
-    font-size: 1.2rem;
-    margin-bottom: 0.4rem;
-    color: #666;
-  }
-  
-  .inputRow input[type="text"],
-  .inputRow input[type="file"] {
-    font-size: 1.4rem;
-    padding: 0.8rem;
-    border: 1px solid #d5d5d5;
-    border-radius: 6px;
-  }
-  
-  /* 다음 버튼 */
+
   .nextButton {
-    display: inline-block;
-    padding: 1rem 2rem;
-    background-color: var(--primary01);
-    color: #fff;
-    border-radius: 10px;
-    font-size: 1.6rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    width: 100%;
+    align-self: stretch;
   }
-  
-  .nextButton:hover {
-    background-color: var(--primary03); /* hover 시 조금 더 진한 보라 */
-  }
+}
