@@ -42,6 +42,9 @@ const AICoaching = () => {
     const router = useRouter();
     const { userInfo } = useUserInfo();
 
+    const getErrorMessage = (error, fallbackMessage) =>
+        error?.response?.data?.message || error?.message || fallbackMessage;
+
     // === Callbacks for restarting English flows (Language track) ===
     const restartEnglishWith = (modeKey /* "generative" | "evaluative" */) => {
         // Fix subject and text type for English flow
@@ -149,7 +152,7 @@ const AICoaching = () => {
             console.error("가이드 생성 실패:", e);
             setMessages(prev => [
                 ...prev,
-                { sender: "bot", text: "가이드 생성에 실패했습니다. 다시 시도해 주세요." }
+                { sender: "bot", text: getErrorMessage(e, "가이드 생성에 실패했습니다. 다시 시도해 주세요.") }
             ]);
         }
     };
@@ -197,7 +200,7 @@ const AICoaching = () => {
             console.error("재추천 요청 실패:", err);
             setMessages(prev => [
                 ...prev,
-                { sender: "bot", text: "새 추천을 가져오는 데 실패했습니다. 잠시 후 다시 시도해 주세요." }
+                { sender: "bot", text: getErrorMessage(err, "새 추천을 가져오는 데 실패했습니다. 잠시 후 다시 시도해 주세요.") }
             ]);
         }
     };
@@ -397,7 +400,7 @@ const AICoaching = () => {
                     console.error("Evaluate 호출 실패:", err);
                     setMessages(prev => [
                         ...prev,
-                        { sender: "bot", text: "평가 생성에 실패했습니다. 잠시 후 다시 시도해 주세요." }
+                        { sender: "bot", text: getErrorMessage(err, "평가 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.") }
                     ]);
                     setAwaitingFinalTopic(false);
                 } finally {
@@ -482,7 +485,7 @@ const AICoaching = () => {
                 console.error("English chat error:", err);
                 setMessages(prev => [
                     ...prev,
-                    { sender: "bot", text: "영어 과목 전용 채팅 생성에 실패했습니다. 잠시 후 다시 시도해 주세요." }
+                    { sender: "bot", text: getErrorMessage(err, "영어 과목 전용 채팅 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.") }
                 ]);
                 setEnglishLoading(false);
             }
@@ -541,7 +544,7 @@ const AICoaching = () => {
             console.error("토픽 요청 실패:", error);
             setMessages(prev => [
                 ...prev,
-                { sender: "bot", text: "토픽을 생성하는 데 실패했습니다. 다시 시도해 주세요." }
+                { sender: "bot", text: getErrorMessage(error, "토픽을 생성하는 데 실패했습니다. 다시 시도해 주세요.") }
             ]);
         }
     };

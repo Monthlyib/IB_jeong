@@ -123,18 +123,20 @@ export const openAPIReissueToken = async (userId) => {
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/reissue-token/${userId}`,
       {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
 
-    if (res.ok) {
-      console.log("succes");
-      return res.json();
+    if (!res.ok) {
+      return null;
     }
+    return res.json();
   } catch (error) {
     console.error(error);
+    return null;
   }
 };
 
@@ -173,8 +175,14 @@ export const openAPILogin = async (username, password) => {
       config
     );
 
-    setCookie("accessToken", res.data.data.accessToken, { path: "/" });
-    setCookie("authority", res.data.data.authority, { path: "/" });
+    setCookie("accessToken", res.data.data.accessToken, {
+      path: "/",
+      sameSite: "lax",
+    });
+    setCookie("authority", res.data.data.authority, {
+      path: "/",
+      sameSite: "lax",
+    });
 
     return res.data;
   } catch (error) {
@@ -188,6 +196,7 @@ export const openAPISocialLoginCheck = async (oauthAccessToken, loginType) => {
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/social`,
       {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -202,8 +211,14 @@ export const openAPISocialLoginCheck = async (oauthAccessToken, loginType) => {
     }
     const json = await res.json();
     if (json.data.userStatus === "ACTIVE") {
-      setCookie("accessToken", json.data.accessToken, { path: "/" });
-      setCookie("authority", json.data.authority, { path: "/" });
+      setCookie("accessToken", json.data.accessToken, {
+        path: "/",
+        sameSite: "lax",
+      });
+      setCookie("authority", json.data.authority, {
+        path: "/",
+        sameSite: "lax",
+      });
     }
 
     return json;
@@ -218,6 +233,7 @@ export const openAPINaverLogin = async (authorizationCode, state) => {
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/naver`,
       {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
@@ -235,8 +251,14 @@ export const openAPINaverLogin = async (authorizationCode, state) => {
     }
     const json = await res.json();
     if (json.data.userStatus === "ACTIVE") {
-      setCookie("accessToken", json.data.accessToken, { path: "/" });
-      setCookie("authority", json.data.authority, { path: "/" });
+      setCookie("accessToken", json.data.accessToken, {
+        path: "/",
+        sameSite: "lax",
+      });
+      setCookie("authority", json.data.authority, {
+        path: "/",
+        sameSite: "lax",
+      });
     }
     return json;
   } catch (error) {

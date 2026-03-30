@@ -45,7 +45,11 @@ const DescriptiveTestResult = () => {
       setShowFeedback(true);
     } catch (err) {
       console.error("피드백 생성 실패:", err);
-      alert("피드백 생성에 실패했습니다.");
+      alert(
+        err?.response?.data?.message ||
+        err?.message ||
+        "피드백 생성에 실패했습니다."
+      );
     } finally {
       setFeedbackLoading(false);
     }

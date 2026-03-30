@@ -14,23 +14,32 @@ tokenRequireApi.interceptors.response.use(
     return response;
   },
   async (error) => {
+    const errorStatus = error?.response?.data?.status;
+    const errorMessage = error?.response?.data?.message;
     if (
-      error.response.data.status === 403 &&
-      error.response.data.message === "Expired Access Token"
+      errorStatus === 403 &&
+      errorMessage === "Expired Access Token"
     ) {
       const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+      if (!userInfo?.state?.userInfo?.userId) {
+        return Promise.reject(error);
+      }
       const originRequest = error.config;
       const res = await openAPIReissueToken(userInfo.state.userInfo.userId);
-      if (res.result.status === 200) {
+      if (res?.result?.status === 200) {
         const newToken = res.data.accessToken;
-        setCookie("accessToken", newToken, { path: "/" });
-        setCookie("authority", res.data.authority, { path: "/" });
+        setCookie("accessToken", newToken, { path: "/", sameSite: "lax" });
+        setCookie("authority", res.data.authority, {
+          path: "/",
+          sameSite: "lax",
+        });
         userInfo.state.userInfo.accessToken = newToken;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
         useUserInfo.getState().updateUserInfo(userInfo.state.userInfo);
         originRequest.headers.Authorization = newToken;
         return axios(originRequest);
       } else {
+        useUserInfo.getState().signOut();
         alert("다시 로그인 해주세요.");
         window.location.replace("/login");
       }

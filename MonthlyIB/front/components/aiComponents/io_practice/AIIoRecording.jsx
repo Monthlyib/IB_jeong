@@ -81,7 +81,12 @@ const AIIoRecording = () => {
             setLoading(false);
         } catch (error) {
             console.error("Feedback request error:", error);
-            setFeedback("피드백 요청 중 오류가 발생했습니다.");
+            setFeedback(
+                error?.response?.data?.message ||
+                error?.message ||
+                "피드백 요청 중 오류가 발생했습니다."
+            );
+            setLoading(false);
         }
     };
     // 대본 미리보기 토글 함수
