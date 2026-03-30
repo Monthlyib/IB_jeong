@@ -17,28 +17,10 @@
   margin-bottom: 2.4rem;
 }
 
-.headerTopline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.2rem;
-  margin-bottom: 1.2rem;
-}
-
-.headerBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.7rem 1.2rem;
-  border-radius: 999px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
 .guideBtn {
+  position: absolute;
+  top: 2.4rem;
+  right: 2.4rem;
   border: 1px solid rgba(81, 61, 43, 0.24);
   background: rgba(255, 252, 247, 0.85);
   color: var(--ink);
@@ -59,7 +41,7 @@
 .headerCard {
   position: relative;
   overflow: hidden;
-  padding: 3.2rem;
+  padding: 3.2rem 3.2rem 3rem;
   border: 1px solid rgba(81, 61, 43, 0.18);
   border-radius: 2.8rem;
   background:
@@ -85,27 +67,26 @@
 }
 
 .headerEyebrow {
-  margin: 0 0 1rem;
+  display: block;
+  margin: 0 0 1.2rem;
+  padding-right: 12rem;
   color: var(--accent);
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+  line-height: 1.5;
 }
 
 .guideTitle {
   margin: 0;
-  font-size: clamp(3rem, 4vw, 5rem);
-  line-height: 1.04;
+  max-width: 100%;
+  font-size: clamp(2.8rem, 3.7vw, 4.9rem);
+  line-height: 1.08;
   letter-spacing: -0.03em;
-}
-
-.headerLead {
-  max-width: 72rem;
-  margin: 1.6rem 0 0;
-  color: var(--muted);
-  font-size: 1.8rem;
-  line-height: 1.7;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+  text-wrap: balance;
 }
 
 .metaGrid {
@@ -139,6 +120,8 @@
   font-size: 1.8rem;
   line-height: 1.45;
   font-weight: 700;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
 }
 
 .guideMain {
@@ -430,11 +413,6 @@
     margin-top: calc(var(--appHeaderHeight, 7.2rem) + 1rem);
   }
 
-  .headerTopline {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .headerCard,
   .guideSheet,
   .heroSection,
@@ -449,6 +427,11 @@
   .dualGrid,
   .structureGrid {
     grid-template-columns: 1fr;
+  }
+
+  .guideBtn {
+    position: static;
+    margin-bottom: 1.6rem;
   }
 
   .overviewText {

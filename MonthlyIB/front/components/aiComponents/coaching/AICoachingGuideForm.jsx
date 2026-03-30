@@ -40,8 +40,7 @@ export default function AICoachingGuideForm() {
   return (
     <div className={styles.guideContainer} role="document" aria-label="IA Guide">
       <header className={styles.guideHeader}>
-        <div className={styles.headerTopline}>
-          <span className={styles.headerBadge}>Teacher Prepared Guide</span>
+        <div className={styles.headerCard}>
           <button
             type="button"
             className={styles.guideBtn}
@@ -49,15 +48,10 @@ export default function AICoachingGuideForm() {
           >
             돌아가기
           </button>
-        </div>
 
-        <div className={styles.headerCard}>
           <div className={styles.headerMain}>
             <p className={styles.headerEyebrow}>IB Individual Assessment Planning Notes</p>
             <h1 className={styles.guideTitle}>{documentData.title}</h1>
-            <p className={styles.headerLead}>
-              학생이 바로 초안에 들어갈 수 있도록, 주제 방향과 조사 포인트를 선생님 메모 형식으로 정리한 가이드입니다.
-            </p>
           </div>
 
           <div className={styles.metaGrid}>
