@@ -39,6 +39,7 @@ const CourseItems = async ({
                   }}
                 ></span>
               </div>
+              <div className={styles.courseCta}>보러가기</div>
             </Link>
           </div>
         ))

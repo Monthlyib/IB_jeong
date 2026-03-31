@@ -6,9 +6,6 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCourseStore } from "@/store/course";
-import { courseGetCategory } from "@/apis/openAPI";
-import { useUserStore } from "@/store/user";
-import Loading from "../Loading";
 import { useRouter } from "next/navigation";
 import { useUserInfo } from "@/store/user";
 
@@ -61,8 +58,6 @@ const CourseComponents = () => {
   const [thirdCategoryId, setThirdCategoryId] = useState("");
   const [status, setStatus] = useState("");
 
-  const { userDetailInfo } = useUserStore();
-
   const { userInfo } = useUserInfo();
 
   const [group, setGroup] = useState("all");
@@ -70,8 +65,8 @@ const CourseComponents = () => {
   const [level, setLevel] = useState("all");
 
   const [isPopupOpen, setIsPopupOpen] = useState(false); // 팝업 상태
+  const [authResolved, setAuthResolved] = useState(false);
   const router = useRouter(); // Router 추가
-
 
   useEffect(() => {
     if (!loading) {
@@ -85,11 +80,14 @@ const CourseComponents = () => {
         thirdCategoryId
       );
     }
-    if (userInfo?.authority === undefined) {
-      setIsPopupOpen(true);
-    }
-
   }, [firstCategoryId, secondCategoryId, thirdCategoryId, searching, currentPage]);
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    const persistedUser = localUser?.state?.userInfo;
+    setIsPopupOpen(!persistedUser?.authority);
+    setAuthResolved(true);
+  }, []);
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
@@ -140,56 +138,14 @@ const CourseComponents = () => {
     <>
       <main className="width_content">
         {/* 로그인 팝업 */}
-        {isPopupOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: "0",
-              left: "0",
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                borderRadius: "16px",
-                padding: "30px",
-                textAlign: "center",
-                boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
-                width: "400px",
-              }}
-            >
-              <h2
-                style={{
-                  marginBottom: "20px",
-                  fontSize: "20px",
-                  color: "#5a2d82",
-                }}
-              >
-                로그인 필요
-              </h2>
-              <p style={{ marginBottom: "30px", fontSize: "16px" }}>
+        {authResolved && isPopupOpen && (
+          <div className={styles.popupOverlay}>
+            <div className={styles.popupCard}>
+              <h2 className={styles.popupTitle}>로그인 필요</h2>
+              <p className={styles.popupText}>
                 로그인하시면 더 많은 정보를 확인하실 수 있습니다.
               </p>
-              <button
-                onClick={handleClosePopup}
-                style={{
-                  padding: "12px 24px",
-                  backgroundColor: "#5a2d82",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                }}
-              >
+              <button onClick={handleClosePopup} className={styles.popupConfirmBtn}>
                 확인
               </button>
             </div>
@@ -201,10 +157,23 @@ const CourseComponents = () => {
           </div>
         </div>
 
-        <div className={styles.course_box_wrap}>
+        <section className={styles.courseHero}>
+          <div className={styles.courseHeroHeader}>
+            <div className={styles.courseHeroCopy}>
+              <span className={styles.courseEyebrow}>Monthly IB Courses</span>
+              <h3>영상강의</h3>
+            </div>
+            {userInfo?.authority === "ADMIN" && (
+              <Link href="/course/write" className={styles.btn_write}>
+                <FontAwesomeIcon icon={faPenAlt} />
+                <span>강의 등록</span>
+              </Link>
+            )}
+          </div>
+
           <div className={styles.filter_header}>
             <div className={styles.ft_select}>
-              <select onChange={handleGroupChange}>
+              <select onChange={handleGroupChange} value={group}>
                 <option value="all">All</option>
                 <option value="Group1">Group 1</option>
                 <option value="Group2">Group 2</option>
@@ -216,8 +185,7 @@ const CourseComponents = () => {
 
               <select
                 onChange={handleSubjectChange}
-                key={subject}
-                defaultValue={subject}
+                value={subject}
               >
                 <option value="all">All</option>
                 {courseCategoryList[group].map((v, i) => (
@@ -227,7 +195,7 @@ const CourseComponents = () => {
                 ))}
               </select>
 
-              <select onChange={handleLevelChange}>
+              <select onChange={handleLevelChange} value={level}>
                 <option value="all">All</option>
                 <option value="SL">SL</option>
                 <option value="HL">HL</option>
@@ -249,16 +217,22 @@ const CourseComponents = () => {
               <button onClick={onClickSearchButton}>검색</button>
             </div>
           </div>
-
-          {userDetailInfo?.authority === "ADMIN" && (
-            <div className={styles.right_btn}>
-              <Link href="/course/write" className={styles.btn_write}>
-                <FontAwesomeIcon icon={faPenAlt} />
-                <span>글쓰기</span>
-              </Link>
+          <div className={styles.courseStats}>
+            <div className={styles.courseStatCard}>
+              <span>현재 강의</span>
+              <strong>{coursePosts?.length ?? 0}</strong>
             </div>
-          )}
-        </div>
+            <div className={styles.courseStatCard}>
+              <span>선택 필터</span>
+              <strong>
+                {[group !== "all" ? group : null, subject !== "all" ? subject : null, level !== "all" ? level : null]
+                  .filter(Boolean)
+                  .join(" / ") || "전체"}
+              </strong>
+            </div>
+          </div>
+        </section>
+
         <div className={styles.course_wrap}>
           <CourseItems
             courseContents={coursePosts}
