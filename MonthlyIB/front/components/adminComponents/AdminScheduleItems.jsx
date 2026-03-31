@@ -1,4 +1,3 @@
-import _ from "lodash";
 import styles from "./AdminStyle.module.css";
 import Paginatation from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,34 +5,42 @@ import { faPen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useUserInfo } from "@/store/user";
 import { useTutoringStore } from "@/store/tutoring";
-import shortid from "shortid";
 import { mailPost } from "@/apis/mail";
 import AdminScheduleModal from "./AdminSchedulemodal";
 
+const formatTime = (hour, minute) => {
+  const normalizedHour = String(hour ?? 0).padStart(2, "0");
+  const normalizedMinute = String(minute ?? 0).padStart(2, "0");
+  return `${normalizedHour}:${normalizedMinute}`;
+};
+
 const AdminScheduleItems = ({
   tutoringDateList,
+  allTutoringDateList,
   currentPage,
   numShowContents,
   onPageChange,
 }) => {
   const [modal, setModal] = useState(false);
   const [mailModal, setMailModal] = useState(false);
-  const [ind, setInd] = useState();
+  const [selectedTutoring, setSelectedTutoring] = useState(null);
   const [detail, setDetail] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("WAIT");
 
   const { userInfo } = useUserInfo();
   const { reviseTutoring, deleteTutoring } = useTutoringStore();
 
   useEffect(() => {
-    setDetail(paginatedPage[ind]?.detail);
-    setStatus(paginatedPage[ind]?.tutoringStatus);
-  }, [ind]);
+    if (!selectedTutoring) return;
+    setDetail(selectedTutoring.detail ?? "");
+    setStatus(selectedTutoring.tutoringStatus ?? "WAIT");
+  }, [selectedTutoring]);
 
   const onSubmitChangeTutoring = () => {
+    if (!selectedTutoring) return;
     setModal(false);
     reviseTutoring(
-      paginatedPage[ind]?.tutoringId,
+      selectedTutoring.tutoringId,
       detail,
       status,
       userInfo,
@@ -42,57 +49,69 @@ const AdminScheduleItems = ({
   };
 
   const onSubmitMail = () => {
+    if (!selectedTutoring) return;
     setMailModal(false);
-    mailPost(paginatedPage[ind]?.requestUserId, detail, userInfo);
+    mailPost(selectedTutoring.requestUserId, detail, userInfo);
   };
 
   const onSubmitDeleteTutoring = () => {
+    if (!selectedTutoring) return;
     setModal(false);
-    deleteTutoring(paginatedPage[ind]?.tutoringId, userInfo, currentPage);
+    deleteTutoring(selectedTutoring.tutoringId, userInfo, currentPage);
   };
 
-  const onClickEdit = (index) => {
-    setModal(!modal);
-    setInd(index);
+  const onClickEdit = (tutoring) => {
+    setSelectedTutoring(tutoring);
+    setModal(true);
   };
 
-  const onClickMail = (index) => {
-    setMailModal(!mailModal);
-    setInd(index);
+  const onClickMail = (tutoring) => {
+    setSelectedTutoring(tutoring);
+    setDetail("");
+    setMailModal(true);
   };
-
-  const paginate = (items, pageNum) => {
-    const startIndex = (pageNum - 1) * numShowContents;
-    return _(items).slice(startIndex).take(numShowContents).value();
-  };
-  const paginatedPage = paginate(tutoringDateList, currentPage);
 
   return (
     <>
-      {paginatedPage.map((t, i) => (
-        <div key={shortid.generate()}>
-          <hr />
-          <div className={styles.schedule}>
-            {t.requestUsername}
-            <div>{t.requestUserNickName}</div>
-            <span>
-              {t.date} {t.hour}:{t.minute === 0 ? t.minute + "0" : t.minute}
-            </span>
-            <span>{t.tutoringStatus === "WAIT" ? "대기" : "확정"}</span>
-            <span>
-              <FontAwesomeIcon icon={faPen} onClick={() => onClickEdit(i)} />
-              <FontAwesomeIcon
-                icon={faEnvelope}
-                onClick={() => onClickMail(i)}
-              />
-            </span>
+      <div className={styles.scheduleBody}>
+        {tutoringDateList?.length > 0 ? (
+          tutoringDateList.map((tutoring) => (
+            <div key={tutoring.tutoringId} className={styles.scheduleRowWrap}>
+              <div className={`${styles.schedule} ${styles.scheduleGrid}`}>
+                <div className={styles.scheduleCell}>{tutoring.requestUsername}</div>
+                <div className={styles.scheduleCell}>
+                  {tutoring.requestUserNickName}
+                </div>
+                <div className={styles.scheduleCell}>{tutoring.date}</div>
+                <div className={styles.scheduleCell}>
+                  {formatTime(tutoring.hour, tutoring.minute)}
+                </div>
+                <div className={styles.scheduleCell}>
+                  {tutoring.tutoringStatus === "WAIT" ? "대기" : "확정"}
+                </div>
+                <div className={`${styles.scheduleCell} ${styles.scheduleTools}`}>
+                  <FontAwesomeIcon
+                    icon={faPen}
+                    onClick={() => onClickEdit(tutoring)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faEnvelope}
+                    onClick={() => onClickMail(tutoring)}
+                  />
+                </div>
+              </div>
+            </div>
+          ))
+        ) : (
+          <div className={styles.emptyTableState}>
+            표시할 스케줄 데이터가 없습니다.
           </div>
-          <hr />
-        </div>
-      ))}
-      {tutoringDateList?.length > 0 && (
+        )}
+      </div>
+
+      {allTutoringDateList?.length > 0 && (
         <Paginatation
-          contents={tutoringDateList}
+          contents={allTutoringDateList}
           currentPage={currentPage}
           numShowContents={numShowContents}
           onPageChange={onPageChange}
@@ -103,8 +122,8 @@ const AdminScheduleItems = ({
         modal={modal}
         setModal={setModal}
         status={status}
-        title={"스케쥴 요청"}
-        requestUsername={paginatedPage[ind]?.requestUsername}
+        title={"스케줄 요청"}
+        requestUsername={selectedTutoring?.requestUsername}
         detail={detail}
         setDetail={setDetail}
         setStatus={setStatus}
@@ -117,7 +136,7 @@ const AdminScheduleItems = ({
         setModal={setMailModal}
         title={"메일 보내기"}
         status={null}
-        requestUsername={paginatedPage[ind]?.requestUsername}
+        requestUsername={selectedTutoring?.requestUsername}
         detail={detail}
         setDetail={setDetail}
         setStatus={null}

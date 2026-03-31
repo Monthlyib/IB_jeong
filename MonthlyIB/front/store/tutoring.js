@@ -44,7 +44,7 @@ export const useTutoringStore = create((set, get) => ({
   reviseTutoring: async (tutoringId, detail, tutoringStatus, session, page) => {
     try {
       await TutoringReviseItem(tutoringId, detail, tutoringStatus, session);
-      get().getTutoringDateList("", "", page - 1, session);
+      get().getTutoringDateList("", "", Math.max(page - 1, 0), session);
     } catch (error) {
       console.error(error);
     }
@@ -53,7 +53,7 @@ export const useTutoringStore = create((set, get) => ({
   deleteTutoring: async (tutoringId, session, page) => {
     try {
       await TutoringDeleteItem(tutoringId, session);
-      get().getTutoringDateList("", "", page, session);
+      get().getTutoringDateList("", "", Math.max(page - 1, 0), session);
     } catch (error) {
       console.error(error);
     }

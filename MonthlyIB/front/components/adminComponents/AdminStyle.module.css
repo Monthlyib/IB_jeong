@@ -1,5 +1,5 @@
 .adminPage {
-  width: min(118rem, calc(100% - 4rem));
+  width: min(128rem, calc(100% - 4rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
 }
 
@@ -118,6 +118,11 @@
   gap: 1.8rem;
 }
 
+.dashboard_mid_wrapWide {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.18fr);
+  align-items: start;
+}
+
 .dashboard_top {
   border: 1px solid #e8def2;
   border-radius: 2rem;
@@ -185,7 +190,7 @@
   border-radius: 2.4rem;
   background: #fff;
   box-shadow: 0 16px 42px rgba(34, 23, 50, 0.05);
-  overflow: auto;
+  overflow: hidden;
 }
 
 .dashboard_mid_card .title {
@@ -239,7 +244,7 @@
 }
 
 .dashboard_mid_card .users span,
-.schedule span {
+.dashboard_mid_card .scheduleCell {
   line-height: 1.4;
 }
 
@@ -260,8 +265,7 @@
 
 .dashboard_mid_card .schedule_subtitle {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.9fr) auto;
-  gap: 1rem;
+  gap: 1.2rem;
 }
 
 .dashboard_mid_card .question_subtitle {
@@ -309,13 +313,129 @@
 }
 
 .dashboard_mid_card .schedule {
-  padding: 0.4rem 0;
+  padding: 1.4rem 0;
   font-size: 1.5rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 0.9fr) minmax(0, 0.9fr) auto;
-  gap: 1rem;
+  gap: 1.2rem;
   align-items: center;
   color: var(--primary01);
+}
+
+.tableToolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.6rem;
+  margin-top: 1.8rem;
+  margin-bottom: 1.4rem;
+}
+
+.tableMeta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  color: #6f6483;
+  font-size: 1.45rem;
+}
+
+.tableMeta strong {
+  color: #241b34;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.rowsPerPage {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: #6f6483;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.rowsPerPage select {
+  min-width: 12.6rem;
+  height: 4.2rem;
+  padding: 0 1.4rem;
+  border: 1px solid #ddd2ec;
+  border-radius: 1.2rem;
+  background: #fff;
+  color: #241b34;
+  font-size: 1.4rem;
+}
+
+.scheduleGrid {
+  grid-template-columns:
+    minmax(0, 1.15fr)
+    minmax(0, 1fr)
+    minmax(10rem, 1fr)
+    minmax(7rem, 0.75fr)
+    minmax(8rem, 0.75fr)
+    minmax(7rem, 0.7fr);
+}
+
+.tableHeaderButton,
+.tableHeaderStatic {
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #8a809d;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+.tableHeaderButton {
+  cursor: pointer;
+}
+
+.tableHeaderButton:hover {
+  color: var(--primary01);
+}
+
+.tableHeaderStatic:last-child,
+.scheduleTools {
+  justify-self: end;
+  text-align: right;
+}
+
+.scheduleBody {
+  flex: 1;
+}
+
+.scheduleRowWrap {
+  border-bottom: 1px solid #eee7f7;
+}
+
+.scheduleRowWrap:last-child {
+  border-bottom: 0;
+}
+
+.scheduleCell {
+  min-width: 0;
+  color: var(--primary01);
+  font-size: 1.55rem;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+}
+
+.scheduleTools {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.emptyTableState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24rem;
+  color: #877b99;
+  font-size: 1.55rem;
+  text-align: center;
 }
 
 .md {
@@ -609,7 +729,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .dashboard_mid_wrap {
+  .dashboard_mid_wrap,
+  .dashboard_mid_wrapWide {
     grid-template-columns: 1fr;
   }
 }
@@ -631,6 +752,35 @@
   .adminHeroMeta,
   .dashboard_top_wrap {
     grid-template-columns: 1fr;
+  }
+
+  .tableToolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rowsPerPage {
+    justify-content: space-between;
+  }
+
+  .scheduleGrid {
+    grid-template-columns: minmax(10rem, 1fr) minmax(9rem, 1fr) minmax(9rem, 1fr);
+  }
+
+  .dashboard_mid_card .schedule_subtitle {
+    display: none;
+  }
+
+  .dashboard_mid_card .schedule {
+    gap: 0.8rem 1.2rem;
+  }
+
+  .scheduleCell {
+    font-size: 1.4rem;
+  }
+
+  .scheduleTools {
+    justify-self: start;
   }
 
   .sectionHeader h2 {
