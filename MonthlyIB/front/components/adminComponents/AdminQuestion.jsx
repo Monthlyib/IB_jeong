@@ -19,9 +19,9 @@ const AdminQuestion = () => {
           <div>ID</div>
           <div>Name</div>
           <div>Date</div>
-          <div style={{ position: "relative", left: "1rem" }}>Subject</div>
-          <div style={{ position: "relative", left: "2rem" }}>Status</div>
-          <div style={{ position: "relative", left: "5rem" }}>Tools</div>
+          <div>Subject</div>
+          <div>Status</div>
+          <div>Tools</div>
         </div>
 
         {questionList.length > 0 && (

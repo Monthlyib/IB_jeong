@@ -21,24 +21,9 @@ const AdminSchedule = () => {
           <div className={styles.schedule_username}>ID</div>
           <div className={styles.schedule_nickname}>Name</div>
           <div className={styles.schedule_nickname}>Date</div>
-          <div
-            className={styles.schedule_nickname}
-            style={{ position: "relative", left: "3rem" }}
-          >
-            Time
-          </div>
-          <div
-            className={styles.schedule_nickname}
-            style={{ position: "relative", left: "2rem" }}
-          >
-            Status
-          </div>
-          <div
-            className={styles.schedule_functions}
-            style={{ position: "relative", left: "2rem" }}
-          >
-            Tools
-          </div>
+          <div className={styles.schedule_nickname}>Time</div>
+          <div className={styles.schedule_nickname}>Status</div>
+          <div className={styles.schedule_functions}>Tools</div>
         </div>
 
         <AdminScheduleItems

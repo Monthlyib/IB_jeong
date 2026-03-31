@@ -152,17 +152,11 @@ const AdminSubscribe = () => {
   return (
     <>
       <div className={styles.dashboard_mid_card}>
-        <div className={styles.title} style={{ position: "relative" }}>
+        <div className={styles.title}>
           구독상품 관리
           <FontAwesomeIcon
             icon={faPlus}
-            style={{
-              position: "absolute",
-              right: "4rem",
-              top: "1.8rem",
-              fontSize: "2.5rem",
-              color: "#51346c",
-            }}
+            className={styles.titleAction}
             onClick={onClickPostModal}
           />
         </div>
