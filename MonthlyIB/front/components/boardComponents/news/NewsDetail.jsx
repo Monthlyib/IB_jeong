@@ -107,130 +107,128 @@ const NewsDetail = (pageId) => {
 
   return (
     <main className={`width_content ${styles.newsDetailPage}`}>
-      <section className={styles.newsDetailShell}>
-        <div className={styles.newsDetailMain}>
-          <section className={styles.boardHero}>
-            <div className={styles.boardHeroCopy}>
-              <span className={styles.boardEyebrow}>Monthly IB Newsroom</span>
-              <h2>IB 입시뉴스</h2>
-              <p>
-                IB 입시뉴스의 상세 기사와 첨부 자료를 문서형 화면으로 확인할 수
-                있습니다.
-              </p>
+      <div className={styles.newsDetailMain}>
+        <section className={styles.boardHero}>
+          <div className={styles.boardHeroCopy}>
+            <span className={styles.boardEyebrow}>Monthly IB Newsroom</span>
+            <h2>IB 입시뉴스</h2>
+            <p>
+              IB 입시뉴스의 상세 기사와 첨부 자료를 문서형 화면으로 확인할 수
+              있습니다.
+            </p>
+          </div>
+
+          <div className={styles.boardHeroAside}>
+            <div className={styles.boardStatCard}>
+              <span>현재 게시글</span>
+              <strong>{PageInfo?.totalElements ?? newsList.length ?? 0}</strong>
             </div>
+            <Link href="/board" className={styles.boardBackLink}>
+              <FontAwesomeIcon icon={faArrowLeft} />
+              <span>목록으로</span>
+            </Link>
+          </div>
+        </section>
 
-            <div className={styles.boardHeroAside}>
-              <div className={styles.boardStatCard}>
-                <span>현재 게시글</span>
-                <strong>{PageInfo?.totalElements ?? newsList.length ?? 0}</strong>
-              </div>
-              <Link href="/board" className={styles.boardBackLink}>
-                <FontAwesomeIcon icon={faArrowLeft} />
-                <span>목록으로</span>
-              </Link>
-            </div>
-          </section>
+        <BoardCommon modal={0} />
 
-          <BoardCommon modal={0} />
-
-          <article className={styles.newsDetailArticle}>
-            {attachments.length > 0 && (
-              <section className={styles.newsDetailAttachments}>
-                <div className={styles.newsDetailSectionTop}>
-                  <div>
-                    <span className={styles.newsDetailMiniLabel}>Attachments</span>
-                    <h3>첨부 자료</h3>
-                  </div>
-                  <p>다운로드 가능한 파일을 한 번에 확인할 수 있습니다.</p>
-                </div>
-                <ul>
-                  {attachments.map((file) => (
-                    <li key={`${file.fileUrl}-${file.fileName}`}>
-                      <a href={file.fileUrl} download>
-                        <FontAwesomeIcon icon={faFile} />
-                        <span>{file.fileName}</span>
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            )}
-
-            <section className={styles.newsDetailContent}>
-              <div className={styles.newsDetailContentHeader}>
-                <span className={styles.newsDetailMiniLabel}>기사 제목</span>
-                <h1>{newsDetail.title}</h1>
-                <div className={styles.newsDetailMeta}>
-                  <span>{newsDetail.authorUsername}</span>
-                  <b>·</b>
-                  <span>{newsDetail.createAt}</span>
-                  <b>·</b>
-                  <span>조회수 {newsDetail.viewCount}</span>
-                </div>
-              </div>
-              <div className={styles.newsDetailContentDivider} />
+        <article className={styles.newsDetailArticle}>
+          {attachments.length > 0 && (
+            <section className={styles.newsDetailAttachments}>
               <div className={styles.newsDetailSectionTop}>
                 <div>
-                  <span className={styles.newsDetailMiniLabel}>기사 본문</span>
-                  <h3>기사 본문</h3>
+                  <span className={styles.newsDetailMiniLabel}>Attachments</span>
+                  <h3>첨부 자료</h3>
                 </div>
+                <p>다운로드 가능한 파일을 한 번에 확인할 수 있습니다.</p>
               </div>
-              <div
-                className={styles.newsDetailBody}
-                dangerouslySetInnerHTML={{
-                  __html: newsDetail.content,
-                }}
-              />
+              <ul>
+                {attachments.map((file) => (
+                  <li key={`${file.fileUrl}-${file.fileName}`}>
+                    <a href={file.fileUrl} download>
+                      <FontAwesomeIcon icon={faFile} />
+                      <span>{file.fileName}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </section>
+          )}
 
-            <div className={styles.newsNavArea}>
-              <button
-                type="button"
-                onClick={moveToPrev}
-                className={styles.newsNavButton}
-                disabled={prevDisabled}
-              >
-                <FontAwesomeIcon icon={faChevronLeft} />
-                <span>이전 글</span>
-              </button>
-              <button
-                type="button"
-                onClick={moveToNext}
-                className={styles.newsNavButton}
-                disabled={nextDisabled}
-              >
-                <span>다음 글</span>
-                <FontAwesomeIcon icon={faChevronRight} />
-              </button>
+          <section className={styles.newsDetailContent}>
+            <div className={styles.newsDetailContentHeader}>
+              <span className={styles.newsDetailMiniLabel}>기사 제목</span>
+              <h1>{newsDetail.title}</h1>
+              <div className={styles.newsDetailMeta}>
+                <span>{newsDetail.authorUsername}</span>
+                <b>·</b>
+                <span>{newsDetail.createAt}</span>
+                <b>·</b>
+                <span>조회수 {newsDetail.viewCount}</span>
+              </div>
             </div>
-          </article>
-        </div>
+            <div className={styles.newsDetailContentDivider} />
+            <div className={styles.newsDetailSectionTop}>
+              <div>
+                <span className={styles.newsDetailMiniLabel}>기사 본문</span>
+                <h3>기사 본문</h3>
+              </div>
+            </div>
+            <div
+              className={styles.newsDetailBody}
+              dangerouslySetInnerHTML={{
+                __html: newsDetail.content,
+              }}
+            />
+          </section>
 
-        <aside className={styles.newsDetailSide}>
-          <div className={styles.newsDetailAsideCard}>
-            <span className={styles.newsDetailMiniLabel}>Article Tools</span>
-            <h3>문서 이동</h3>
-            <div className={styles.newsDetailAsideActions}>
-              <Link href="/board" className={styles.boardWriteButton}>
-                <FontAwesomeIcon icon={faArrowLeft} />
-                <span>목록 보기</span>
-              </Link>
-              {isAuthor && (
-                <div className={styles.newsDetailManageButtons}>
-                  <button type="button" onClick={onClickEdit}>
-                    <FontAwesomeIcon icon={faPenAlt} />
-                    <span>수정</span>
-                  </button>
-                  <button type="button" onClick={onClickDelete}>
-                    <FontAwesomeIcon icon={faTrashAlt} />
-                    <span>삭제</span>
-                  </button>
-                </div>
-              )}
-            </div>
+          <div className={styles.newsNavArea}>
+            <button
+              type="button"
+              onClick={moveToPrev}
+              className={styles.newsNavButton}
+              disabled={prevDisabled}
+            >
+              <FontAwesomeIcon icon={faChevronLeft} />
+              <span>이전 글</span>
+            </button>
+            <button
+              type="button"
+              onClick={moveToNext}
+              className={styles.newsNavButton}
+              disabled={nextDisabled}
+            >
+              <span>다음 글</span>
+              <FontAwesomeIcon icon={faChevronRight} />
+            </button>
           </div>
-        </aside>
-      </section>
+        </article>
+      </div>
+
+      <aside className={styles.newsDetailSide}>
+        <div className={styles.newsDetailAsideCard}>
+          <span className={styles.newsDetailMiniLabel}>Article Tools</span>
+          <h3>문서 이동</h3>
+          <div className={styles.newsDetailAsideActions}>
+            <Link href="/board" className={styles.boardWriteButton}>
+              <FontAwesomeIcon icon={faArrowLeft} />
+              <span>목록 보기</span>
+            </Link>
+            {isAuthor && (
+              <div className={styles.newsDetailManageButtons}>
+                <button type="button" onClick={onClickEdit}>
+                  <FontAwesomeIcon icon={faPenAlt} />
+                  <span>수정</span>
+                </button>
+                <button type="button" onClick={onClickDelete}>
+                  <FontAwesomeIcon icon={faTrashAlt} />
+                  <span>삭제</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </aside>
     </main>
   );
 };
