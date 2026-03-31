@@ -1099,13 +1099,20 @@ button.read_btn.delete:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 1.6rem;
   margin-bottom: 1.4rem;
+}
+
+.recommend_schools_top > div {
+  min-width: 0;
 }
 
 .recommend_schools_top h3 {
   margin-top: 1rem;
   font-size: 2.8rem;
   color: #241b33;
+  white-space: nowrap;
+  word-break: keep-all;
 }
 
 .schools_list_wrap {
@@ -1160,6 +1167,7 @@ button.read_btn.delete:hover {
   font-weight: 600;
   line-height: 1.4;
   word-break: keep-all;
+  overflow-wrap: normal;
 }
 
 .school_right {
@@ -1570,6 +1578,10 @@ button.read_btn.delete:hover {
     flex-direction: column;
     align-items: flex-start;
     gap: 1.2rem;
+  }
+
+  .recommend_schools_top h3 {
+    white-space: nowrap;
   }
 
   .recommendSchoolsSelect {
