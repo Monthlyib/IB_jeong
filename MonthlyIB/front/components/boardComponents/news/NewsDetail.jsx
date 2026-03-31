@@ -230,16 +230,6 @@ const NewsDetail = (pageId) => {
               )}
             </div>
           </div>
-
-          <div className={styles.newsDetailAsideCard}>
-            <span className={styles.newsDetailMiniLabel}>Reading Guide</span>
-            <h3>이 기사에서 확인할 내용</h3>
-            <ul className={styles.newsDetailGuideList}>
-              <li>핵심 일정과 발표 내용을 빠르게 확인하기</li>
-              <li>첨부 자료가 있다면 바로 내려받기</li>
-              <li>이전 글과 다음 글로 연속해서 탐색하기</li>
-            </ul>
-          </div>
         </aside>
       </section>
     </main>

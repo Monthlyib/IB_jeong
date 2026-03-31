@@ -397,14 +397,16 @@
 }
 
 .newsDetailPage {
+  width: min(132rem, calc(100vw - 4rem));
   margin-top: 2.4rem;
   padding-bottom: 6rem;
 }
 
 .newsDetailShell {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 30rem;
-  gap: 2rem;
+  grid-template-columns: minmax(0, 92rem) 30rem;
+  justify-content: space-between;
+  gap: 2.8rem;
   align-items: start;
 }
 
@@ -514,6 +516,7 @@
   top: 11rem;
   display: grid;
   gap: 1.6rem;
+  align-self: start;
 }
 
 .newsDetailAsideActions {
@@ -539,22 +542,6 @@
 .newsDetailManageButtons button:last-child {
   border-color: rgba(208, 88, 88, 0.18);
   color: #c15353;
-}
-
-.newsDetailGuideList li {
-  position: relative;
-  padding-left: 1.6rem;
-}
-
-.newsDetailGuideList li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 1.1rem;
-  width: 0.6rem;
-  height: 0.6rem;
-  border-radius: 999px;
-  background: rgba(81, 52, 108, 0.44);
 }
 
 .newsNavArea {
@@ -2022,6 +2009,7 @@ button.read_btn.delete:hover {
 @media screen and (max-width: 640px) {
   .boardPage,
   .newsDetailPage {
+    width: calc(100% - 3.2rem);
     margin-top: 1.6rem;
     padding-bottom: 4rem;
   }
