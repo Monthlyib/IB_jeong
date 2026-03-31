@@ -133,3 +133,50 @@ export const TutoringPostItem = async (
     console.error(error);
   }
 };
+
+const TUTORING_EMAIL_TEMPLATE_API_URL = `${TUTORING_API_URL}/email-template`;
+
+export const getTutoringEmailTemplate = async (session) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(
+      `${TUTORING_EMAIL_TEMPLATE_API_URL}/active`,
+      config
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const updateTutoringEmailTemplate = async (
+  templateId,
+  subject,
+  bodyTemplate,
+  session
+) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const data = { subject, bodyTemplate };
+    const res = await tokenRequireApi.patch(
+      `${TUTORING_EMAIL_TEMPLATE_API_URL}/${templateId}`,
+      data,
+      config
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

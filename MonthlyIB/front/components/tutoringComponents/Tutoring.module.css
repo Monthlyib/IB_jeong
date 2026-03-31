@@ -238,6 +238,166 @@
   cursor: pointer;
 }
 
+.templateSection {
+  width: 110rem;
+  margin: 0 auto;
+  padding: 0 0 10.6rem;
+}
+
+.templateCard {
+  border: 1px solid rgba(98, 62, 133, 0.12);
+  border-radius: 2.4rem;
+  background: #fff;
+  box-shadow: 0 2rem 5rem rgba(52, 37, 82, 0.06);
+  padding: 3.2rem;
+}
+
+.templateHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 2.4rem;
+  margin-bottom: 2.4rem;
+}
+
+.templateHeader h3 {
+  margin: 0.8rem 0 0.8rem;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #231836;
+}
+
+.templateHeader p {
+  margin: 0;
+  font-size: 1.6rem;
+  line-height: 1.6;
+  color: #655b77;
+}
+
+.templateEyebrow {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  background: #f3eefb;
+  color: var(--primary01);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.templateTokens {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-content: flex-start;
+}
+
+.templateTokens span {
+  display: inline-flex;
+  align-items: center;
+  height: 3.6rem;
+  padding: 0 1.2rem;
+  border-radius: 999px;
+  background: #f7f4fc;
+  color: #5d437f;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.templateForm {
+  display: grid;
+  gap: 1.8rem;
+}
+
+.templateField {
+  display: grid;
+  gap: 1rem;
+}
+
+.templateField span {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d2241;
+}
+
+.templateField input,
+.templateField textarea {
+  width: 100%;
+  border: 1px solid rgba(98, 62, 133, 0.16);
+  border-radius: 1.8rem;
+  background: #fcfbfe;
+  color: #231836;
+  font-size: 1.6rem;
+  box-sizing: border-box;
+}
+
+.templateField input {
+  height: 5.8rem;
+  padding: 0 1.8rem;
+}
+
+.templateField textarea {
+  min-height: 18rem;
+  padding: 1.8rem;
+  line-height: 1.7;
+  resize: vertical;
+}
+
+.templatePreview {
+  padding: 2rem;
+  border-radius: 1.8rem;
+  background: #f8f5fd;
+  border: 1px solid rgba(98, 62, 133, 0.08);
+}
+
+.templatePreviewLabel {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--primary01);
+  letter-spacing: 0.12em;
+}
+
+.templatePreview p {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.7;
+  color: #3c3250;
+  white-space: pre-wrap;
+}
+
+.templateActions {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+}
+
+.templateSubmit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18rem;
+  height: 5.6rem;
+  padding: 0 2rem;
+  border-radius: 1.6rem;
+  background: var(--primary01);
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.templateSubmit:disabled {
+  background: #b7abc9;
+  cursor: default;
+}
+
+.templateFeedback {
+  font-size: 1.4rem;
+  color: #5d437f;
+}
+
 @media screen and (max-width: 1024px) {
   /**************
        Tutor
@@ -263,6 +423,29 @@
   }
 
   .sc_main_wrap .sc_right_cont {
+    width: 100%;
+  }
+
+  .templateSection {
+    width: 100%;
+    padding: 0 2.4rem 8rem;
+    box-sizing: border-box;
+  }
+
+  .templateCard {
+    padding: 2.4rem;
+  }
+
+  .templateHeader {
+    flex-direction: column;
+  }
+
+  .templateActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .templateSubmit {
     width: 100%;
   }
 }

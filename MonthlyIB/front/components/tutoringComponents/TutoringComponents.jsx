@@ -2,11 +2,15 @@
 import styles from "./Tutoring.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import shortid from "shortid";
 import { useTutoringStore } from "@/store/tutoring";
 import { useUserInfo, useUserStore } from "@/store/user";
+import {
+  getTutoringEmailTemplate,
+  updateTutoringEmailTemplate,
+} from "@/apis/tutoringAPI";
 
 // 비동기 로드로 캘린더 컴포넌트를 불러옵니다 (SSR 비활성화)
 const DynamicCalendar = dynamic(() => import("./TutoringCalendar"), {
@@ -38,6 +42,12 @@ const TutoringComponents = () => {
 
   // 다중 선택된 시간 목록: [{ id, date, hour, minute }]
   const [selectedSlots, setSelectedSlots] = useState([]);
+  const [templateId, setTemplateId] = useState(null);
+  const [templateSubject, setTemplateSubject] = useState("");
+  const [templateBody, setTemplateBody] = useState("");
+  const [templateLoading, setTemplateLoading] = useState(false);
+  const [templateSaving, setTemplateSaving] = useState(false);
+  const [templateFeedback, setTemplateFeedback] = useState("");
 
   const { tutoringDateSimpleList, getTutoringDateSimpleList, postTutoring } =
     useTutoringStore(); // 예약 관련 Store 가져오기
@@ -45,6 +55,16 @@ const TutoringComponents = () => {
   const [minute, setMinute] = useState(0); // 선택한 시간의 분 부분
   const detail = useRef(""); // 예약 상세 설명
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore(); // 구독 정보 가져오기
+  const isAdmin = userInfo?.authority === "ADMIN";
+
+  const previewMessage = useMemo(
+    () =>
+      (templateBody || "")
+        .replaceAll("{nickName}", "홍길동")
+        .replaceAll("{date}", "2026-04-08")
+        .replaceAll("{time}", "19:30"),
+    [templateBody]
+  );
 
   // 컴포넌트 마운트 시 구독 정보 불러오기
   useEffect(() => {
@@ -56,6 +76,29 @@ const TutoringComponents = () => {
         localUser.state.userInfo
       );
   }, []);
+
+  useEffect(() => {
+    const loadTemplate = async () => {
+      if (!isAdmin || !userInfo?.accessToken) return;
+
+      setTemplateLoading(true);
+      setTemplateFeedback("");
+
+      try {
+        const res = await getTutoringEmailTemplate(userInfo);
+        const activeTemplate = res?.data;
+        setTemplateId(activeTemplate?.id ?? null);
+        setTemplateSubject(activeTemplate?.subject ?? "");
+        setTemplateBody(activeTemplate?.bodyTemplate ?? "");
+      } catch (error) {
+        setTemplateFeedback("메일 양식을 불러오지 못했습니다.");
+      } finally {
+        setTemplateLoading(false);
+      }
+    };
+
+    loadTemplate();
+  }, [isAdmin, userInfo]);
 
   // 시간표에서 특정 시간을 클릭하여 선택할 때 호출되는 함수
   const onClickTime = (h, m) => {
@@ -115,7 +158,8 @@ const TutoringComponents = () => {
   };
 
   // 예약을 제출하는 함수
-  const onSubmit = () => {
+  const onSubmit = (e) => {
+    e.preventDefault();
     if (
       userSubscribeInfo?.[0]?.tutoringCount > 0 &&
       userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" &&
@@ -143,6 +187,39 @@ const TutoringComponents = () => {
       );
       setTimeTable(temp);
       setSelectedSlots([]);
+    }
+  };
+
+  const onSubmitTemplate = async (e) => {
+    e.preventDefault();
+
+    if (!templateId) {
+      setTemplateFeedback("활성 메일 양식을 찾지 못했습니다.");
+      return;
+    }
+
+    if (!templateSubject.trim() || !templateBody.trim()) {
+      setTemplateFeedback("제목과 본문을 모두 입력해주세요.");
+      return;
+    }
+
+    setTemplateSaving(true);
+    setTemplateFeedback("");
+
+    try {
+      const res = await updateTutoringEmailTemplate(
+        templateId,
+        templateSubject.trim(),
+        templateBody.trim(),
+        userInfo
+      );
+      setTemplateSubject(res?.data?.subject ?? templateSubject.trim());
+      setTemplateBody(res?.data?.bodyTemplate ?? templateBody.trim());
+      setTemplateFeedback("메일 양식을 저장했습니다.");
+    } catch (error) {
+      setTemplateFeedback("메일 양식 저장에 실패했습니다.");
+    } finally {
+      setTemplateSaving(false);
     }
   };
 
@@ -375,6 +452,75 @@ const TutoringComponents = () => {
             </div>
           </div>
         </div>
+
+        {isAdmin && (
+          <section className={styles.templateSection}>
+            <div className={styles.templateCard}>
+              <div className={styles.templateHeader}>
+                <div>
+                  <span className={styles.templateEyebrow}>
+                    Admin Email Template
+                  </span>
+                  <h3>튜터링 확정 메일 양식</h3>
+                  <p>
+                    예약이 확정될 때 사용자에게 전송되는 제목과 본문을 바로
+                    수정할 수 있습니다.
+                  </p>
+                </div>
+                <div className={styles.templateTokens}>
+                  <span>{"{nickName}"}</span>
+                  <span>{"{date}"}</span>
+                  <span>{"{time}"}</span>
+                </div>
+              </div>
+
+              <form className={styles.templateForm} onSubmit={onSubmitTemplate}>
+                <label className={styles.templateField}>
+                  <span>메일 제목</span>
+                  <input
+                    type="text"
+                    value={templateSubject}
+                    onChange={(e) => setTemplateSubject(e.target.value)}
+                    placeholder="튜터링 예약 확정 메일 제목"
+                    disabled={templateLoading || templateSaving}
+                  />
+                </label>
+
+                <label className={styles.templateField}>
+                  <span>메일 본문</span>
+                  <textarea
+                    value={templateBody}
+                    onChange={(e) => setTemplateBody(e.target.value)}
+                    placeholder="치환 변수를 포함한 메일 본문을 입력하세요."
+                    disabled={templateLoading || templateSaving}
+                  />
+                </label>
+
+                <div className={styles.templatePreview}>
+                  <div className={styles.templatePreviewLabel}>미리보기</div>
+                  <p>{previewMessage || "본문을 입력하면 미리보기가 표시됩니다."}</p>
+                </div>
+
+                <div className={styles.templateActions}>
+                  <button
+                    type="submit"
+                    className={styles.templateSubmit}
+                    disabled={templateLoading || templateSaving}
+                  >
+                    {templateSaving ? "저장 중..." : "메일 양식 저장"}
+                  </button>
+                  {(templateLoading || templateFeedback) && (
+                    <span className={styles.templateFeedback}>
+                      {templateLoading
+                        ? "메일 양식을 불러오는 중입니다."
+                        : templateFeedback}
+                    </span>
+                  )}
+                </div>
+              </form>
+            </div>
+          </section>
+        )}
       </main>
     </>
   );
