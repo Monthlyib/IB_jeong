@@ -33,6 +33,7 @@ const AdminUser = () => {
   const [authority, setAuthority] = useState(""); // 사용자의 권한 상태
   const [subscirbeDataList, setSubscribeDataList] = useState({}); // 구독 상품 데이터 리스트
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -44,21 +45,25 @@ const AdminUser = () => {
   }, [subscribeList]);
 
   // 권한 변경 버튼 클릭 시, 해당 사용자의 정보를 가져오고 모달을 엽니다.
-  const onClickChangeAuthority = (userId) => {
-    setAdminModal(!adminModal); // 모달 열기/닫기
+  const onClickChangeAuthority = (userId, currentAuthority) => {
+    setSelectedUserId(userId);
+    setAuthority(currentAuthority ?? "");
+    setAdminModal(true);
     getUserInfo(userId, userInfo); // 선택한 사용자 정보 가져오기
-    setAuthority(userDetailInfo?.authority); // 사용자의 현재 권한 설정
   };
 
   // 사용자 정보 아이콘 클릭 시, 해당 사용자 상세 정보 모달을 엽니다.
   const onClickGetUserDetailInfo = (userId) => {
-    setModal(!modal); // 모달 열기/닫기
+    setSelectedUserId(userId);
+    setModal(true); // 모달 열기/닫기
     getUserInfo(userId, userInfo); // 선택한 사용자 정보 가져오기
   };
 
   // 메일 보내기 버튼 클릭 시, 메일 모달을 열고 해당 사용자 정보 설정
   const onClickMail = (userId) => {
-    setMailModal(!mailModal); // 메일 모달 열기/닫기
+    setSelectedUserId(userId);
+    setDetail("");
+    setMailModal(true); // 메일 모달 열기/닫기
     getUserInfo(userId, userInfo); // 선택한 사용자 정보 가져오기
   };
 
@@ -112,7 +117,7 @@ const AdminUser = () => {
                     {/* 권한/구독 관리 */}
                     <FontAwesomeIcon
                       icon={faUserGear}
-                      onClick={() => onClickChangeAuthority(v.userId)}
+                      onClick={() => onClickChangeAuthority(v.userId, v.authority)}
                     />
                     {/* 메일 보내기 */}
                     <FontAwesomeIcon
@@ -151,6 +156,7 @@ const AdminUser = () => {
           setAuthority={setAuthority}
           subscirbeDataList={subscirbeDataList}
           userDetailInfo={userDetailInfo}
+          selectedUserId={selectedUserId}
           userInfo={userInfo}
           getUserInfo={getUserInfo}
           reviseUserInfo={reviseUserInfo}

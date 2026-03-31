@@ -49,6 +49,7 @@ export const subscribeActiveUserInfo = async (userId,session) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -155,6 +156,7 @@ export const subscribePostUser = async (userId, subscribeId, session) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -168,7 +170,7 @@ export const subscribeReviseUser = async (
   session,
   newsubscribeId,
   subscribeStatus
-) => {
+  ) => {
   try {
     const config = {
       headers: {
@@ -184,12 +186,14 @@ export const subscribeReviseUser = async (
       videoLessionsIdList,
       subscribeStatus,
     };
-    await tokenRequireApi.patch(
+    const res = await tokenRequireApi.patch(
       `${SUBSCRIBE_API_URL}/user/${subscribeUserId}?newsubscribeId=${newsubscribeId}`,
       data,
       config
     );
+    return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };

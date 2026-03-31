@@ -29,6 +29,7 @@ export const userGetInfo = async (userId, session) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -110,6 +111,7 @@ export const userReviseInfo = async (
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 

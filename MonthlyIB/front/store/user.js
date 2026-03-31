@@ -80,8 +80,10 @@ export const useUserStore = create((set, get) => ({
     try {
       const res = await userGetInfo(userId, session);
       set({ userDetailInfo: res.data });
+      return res.data;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   getUserSubscribeInfo: async (userId, page, session) => {
@@ -122,7 +124,7 @@ export const useUserStore = create((set, get) => ({
     memo,
     marketingTermsCheck,
     userInfo
-  ) => {
+    ) => {
     try {
       const res = await userReviseInfo(
         userId,
@@ -141,8 +143,10 @@ export const useUserStore = create((set, get) => ({
         userInfo
       );
       set({ userDetailInfo: res.data });
+      return res.data;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   deleteUser: async (userId, session) => {
