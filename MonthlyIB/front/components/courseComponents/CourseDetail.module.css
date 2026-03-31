@@ -247,13 +247,15 @@
 .course_right {
   grid-area: sidebar;
   min-width: 0;
-  align-self: start;
+  height: 100%;
+  position: relative;
 }
 
 .course_info_cont {
   position: sticky;
   top: 10rem;
   width: 100%;
+  height: fit-content;
 }
 
 .course_info_top {
