@@ -92,7 +92,7 @@ const CourseDetail = ({ pageId }) => {
   return (
     <main className={`width_content ${styles.coursePage}`}>
       <div className={styles.course_detail_wrap}>
-        <div className={styles.course_left}>
+        <div className={styles.course_topColumn}>
           <section className={styles.courseHero}>
             <figure className={styles.course_thumbnail}>
               <Image
@@ -141,7 +141,17 @@ const CourseDetail = ({ pageId }) => {
             reviewCount={reviewStats.count}
             pageId={pageId}
           />
+        </div>
 
+        <CourseDetailRight
+          courseDetail={courseDetail}
+          reviewAvgPoint={reviewStats.average}
+          reviewCount={reviewStats.count}
+          pageId={pageId}
+          categoryPath={categoryPath}
+        />
+
+        <div className={styles.course_bottomColumn}>
           <nav className={styles.course_nav}>
             <ul>
               <li className={modal === 1 ? styles.active : ""}>
@@ -213,14 +223,6 @@ const CourseDetail = ({ pageId }) => {
             </section>
           </div>
         </div>
-
-        <CourseDetailRight
-          courseDetail={courseDetail}
-          reviewAvgPoint={reviewStats.average}
-          reviewCount={reviewStats.count}
-          pageId={pageId}
-          categoryPath={categoryPath}
-        />
       </div>
     </main>
   );

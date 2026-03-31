@@ -10,13 +10,26 @@
 .course_detail_wrap {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 36rem;
+  grid-template-areas:
+    "top sidebar"
+    "bottom sidebar";
   gap: 3.2rem;
   align-items: start;
   width: 100%;
 }
 
-.course_left {
+.course_left,
+.course_topColumn,
+.course_bottomColumn {
   min-width: 0;
+}
+
+.course_topColumn {
+  grid-area: top;
+}
+
+.course_bottomColumn {
+  grid-area: bottom;
 }
 
 .courseHero {
@@ -232,12 +245,15 @@
 }
 
 .course_right {
+  grid-area: sidebar;
   min-width: 0;
+  align-self: start;
 }
 
 .course_info_cont {
   position: sticky;
   top: 10rem;
+  width: 100%;
 }
 
 .course_info_top {
@@ -1101,6 +1117,9 @@ div.review_stars svg.active:hover ~ svg.empty {
 
   .course_detail_wrap {
     grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "top"
+      "bottom";
   }
 
   .courseHero {
