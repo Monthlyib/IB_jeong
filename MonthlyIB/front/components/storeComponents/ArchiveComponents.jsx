@@ -206,7 +206,7 @@ const ArchiveComponents = () => {
         <section className={styles.archiveHero}>
           <div className={styles.heroCopy}>
             <span className={styles.heroEyebrow}>Monthly IB Drive</span>
-            <h3>과목 자료를 폴더 단위로 빠르게 탐색하는 자료실</h3>
+            <h3>자료실</h3>
             <p>
               메인 폴더부터 세부 자료까지 한 흐름으로 이동하고, 구독 상태에 따라
               필요한 파일을 바로 열람할 수 있습니다.
@@ -274,21 +274,22 @@ const ArchiveComponents = () => {
                 <section className={styles.driveSection}>
                   <div className={styles.driveSectionHeader}>
                     <div>
-                      <span className={styles.sectionEyebrow}>Folders</span>
                       <h4>하위 폴더</h4>
                     </div>
                     <span className={styles.sectionCount}>{visibleFolders}</span>
                   </div>
                   {subLists["folders"]?.length > 0 ? (
-                    <ArchiveItems
-                      folders={subLists["folders"]}
-                      type="folders"
-                      onClickFolder={onClickFolder}
-                      setCurrentPath={setCurrentPath}
-                      key={`folders-${currentFolderId}`}
-                      currentFolderId={currentFolderId}
-                      canOpenFiles={canOpenFiles}
-                    />
+                    <div className={styles.driveList}>
+                      <ArchiveItems
+                        folders={subLists["folders"]}
+                        type="folders"
+                        onClickFolder={onClickFolder}
+                        setCurrentPath={setCurrentPath}
+                        key={`folders-${currentFolderId}`}
+                        currentFolderId={currentFolderId}
+                        canOpenFiles={canOpenFiles}
+                      />
+                    </div>
                   ) : (
                     <div className={styles.emptySection}>하위 폴더가 없습니다.</div>
                   )}
@@ -297,21 +298,22 @@ const ArchiveComponents = () => {
                 <section className={styles.driveSection}>
                   <div className={styles.driveSectionHeader}>
                     <div>
-                      <span className={styles.sectionEyebrow}>Files</span>
                       <h4>자료 파일</h4>
                     </div>
                     <span className={styles.sectionCount}>{visibleFiles}</span>
                   </div>
                   {subLists["files"]?.length > 0 ? (
-                    <ArchiveItems
-                      folders={subLists["files"]}
-                      type="files"
-                      onClickFolder={onClickFolder}
-                      setCurrentPath={setCurrentPath}
-                      key={`files-${currentFolderId}`}
-                      currentFolderId={currentFolderId}
-                      canOpenFiles={canOpenFiles}
-                    />
+                    <div className={styles.driveList}>
+                      <ArchiveItems
+                        folders={subLists["files"]}
+                        type="files"
+                        onClickFolder={onClickFolder}
+                        setCurrentPath={setCurrentPath}
+                        key={`files-${currentFolderId}`}
+                        currentFolderId={currentFolderId}
+                        canOpenFiles={canOpenFiles}
+                      />
+                    </div>
                   ) : (
                     <div className={styles.emptySection}>이 폴더에는 파일이 없습니다.</div>
                   )}
@@ -328,19 +330,20 @@ const ArchiveComponents = () => {
             <section className={styles.driveSection}>
               <div className={styles.driveSectionHeader}>
                 <div>
-                  <span className={styles.sectionEyebrow}>Main folders</span>
-                  <h4>과목별 드라이브</h4>
+                  <h4>메인 폴더</h4>
                 </div>
                 <span className={styles.sectionCount}>{visibleFolders}</span>
               </div>
-              <ArchiveItems
-                folders={mainFolders}
-                type="folders"
-                onClickFolder={onClickFolder}
-                setCurrentPath={setCurrentPath}
-                currentFolderId={currentFolderId}
-                canOpenFiles={canOpenFiles}
-              />
+              <div className={styles.driveList}>
+                <ArchiveItems
+                  folders={mainFolders}
+                  type="folders"
+                  onClickFolder={onClickFolder}
+                  setCurrentPath={setCurrentPath}
+                  currentFolderId={currentFolderId}
+                  canOpenFiles={canOpenFiles}
+                />
+              </div>
             </section>
           </div>
         ) : (

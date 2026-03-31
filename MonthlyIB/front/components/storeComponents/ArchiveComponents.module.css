@@ -486,6 +486,7 @@ button.read_btn.delete:hover {
   gap: 2rem;
   margin: 3rem 0 2rem;
   padding: 2.8rem 3rem;
+  box-sizing: border-box;
   border: 1px solid rgba(81, 52, 108, 0.16);
   border-radius: 2.4rem;
   background:
@@ -573,6 +574,7 @@ button.read_btn.delete:hover {
   gap: 1.6rem;
   margin-bottom: 2rem;
   padding: 1.8rem 2rem;
+  box-sizing: border-box;
   border: 1px solid #e5def0;
   border-radius: 2rem;
   background: #fff;
@@ -634,15 +636,25 @@ button.read_btn.delete:hover {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.8rem;
+  align-items: start;
 }
 
 .driveSection {
   min-width: 0;
+  width: 100%;
   padding: 2rem;
+  box-sizing: border-box;
   border: 1px solid #e7e0f0;
   border-radius: 2rem;
   background: #fff;
   box-shadow: 0 12px 32px rgba(34, 23, 51, 0.04);
+}
+
+.driveList {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
 }
 
 .driveSectionHeader {
@@ -655,20 +667,12 @@ button.read_btn.delete:hover {
   border-bottom: 1px solid #eee7f7;
 }
 
-.sectionEyebrow {
-  display: block;
-  margin-bottom: 0.6rem;
-  color: #7f70a0;
-  font-size: 1.2rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
 .driveSectionHeader h4 {
   color: #261d36;
   font-size: 2.2rem;
   font-weight: 700;
+  line-height: 1.3;
+  word-break: keep-all;
 }
 
 .sectionCount {
@@ -1204,13 +1208,17 @@ select#recommendSchools:selected {
   display: flex;
   width: 100%;
   min-width: 0;
-  margin-bottom: 0.9rem;
   padding: 1.4rem 1.6rem;
+  box-sizing: border-box;
   border: 1px solid #ece4f6;
   border-radius: 1.6rem;
   background: #fff;
   cursor: pointer;
   transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.driveItem + .driveItem {
+  margin-top: 0.9rem;
 }
 
 .driveItem:hover {
