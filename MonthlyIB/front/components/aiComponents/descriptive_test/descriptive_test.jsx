@@ -69,6 +69,17 @@ const DescriptiveTestMain = () => {
           </p>
         </div>
 
+        <div className={styles.selectionStatus}>
+          <div className={styles.statusCard}>
+            <span className={styles.statusLabel}>Selected Subject</span>
+            <strong className={styles.statusValue}>{subject || "아직 선택되지 않음"}</strong>
+          </div>
+          <div className={styles.statusCard}>
+            <span className={styles.statusLabel}>Selected Chapter</span>
+            <strong className={styles.statusValue}>{chapter || "아직 선택되지 않음"}</strong>
+          </div>
+        </div>
+
         <div className={styles.formSection}>
           <div className={styles.selectWrapper}>
             <label htmlFor="subjectSelect">과목 선택</label>
@@ -90,6 +101,7 @@ const DescriptiveTestMain = () => {
                 ))}
               </select>
             </div>
+            <p className={styles.fieldHint}>먼저 과목을 선택하면 아래 챕터 목록이 활성화됩니다.</p>
           </div>
 
           <div className={styles.selectWrapper}>
@@ -98,6 +110,7 @@ const DescriptiveTestMain = () => {
               <select
                 id="chapterSelect"
                 value={chapter}
+                disabled={!subject}
                 className={!chapter ? styles.placeholderSelect : ""}
                 onChange={(e) => setChapter(e.target.value)}
               >
@@ -109,6 +122,7 @@ const DescriptiveTestMain = () => {
                 ))}
               </select>
             </div>
+            <p className={styles.fieldHint}>선택한 과목 기준으로 준비된 챕터와 토픽만 표시됩니다.</p>
           </div>
         </div>
 

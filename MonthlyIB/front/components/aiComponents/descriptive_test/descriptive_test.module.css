@@ -121,6 +121,39 @@
   word-break: keep-all;
 }
 
+.selectionStatus {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-bottom: 2rem;
+}
+
+.statusCard {
+  min-width: 0;
+  padding: 1.4rem 1.6rem;
+  border-radius: 2rem;
+  background: rgba(247, 242, 251, 0.9);
+  border: 1px solid rgba(81, 52, 108, 0.1);
+}
+
+.statusLabel {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7d7293;
+}
+
+.statusValue {
+  display: block;
+  margin-top: 0.8rem;
+  font-size: 1.8rem;
+  line-height: 1.45;
+  color: #2b2339;
+  word-break: keep-all;
+}
+
 .formSection {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -165,6 +198,7 @@
   border-radius: 1.8rem;
   background: #fff;
   color: #2f273b;
+  color-scheme: light;
   font-size: 1.65rem;
   font-weight: 600;
   line-height: 1.6;
@@ -187,8 +221,22 @@
 }
 
 .selectWrapper select option {
-  color: #2f273b;
+  color: #20192c;
   background: #fff;
+  font-size: 1.55rem;
+}
+
+.selectWrapper select:disabled {
+  background: #f5f2f9;
+  color: #9d94ac;
+  cursor: not-allowed;
+}
+
+.fieldHint {
+  margin: 0;
+  font-size: 1.35rem;
+  line-height: 1.6;
+  color: #746b86;
 }
 
 .startButton {
@@ -279,6 +327,10 @@
   .formSection {
     grid-template-columns: 1fr;
     display: grid;
+  }
+
+  .selectionStatus {
+    grid-template-columns: 1fr;
   }
 
   .formHeader {
