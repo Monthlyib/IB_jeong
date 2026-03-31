@@ -92,55 +92,130 @@ const CourseDetail = ({ pageId }) => {
   return (
     <main className={`width_content ${styles.coursePage}`}>
       <div className={styles.course_detail_wrap}>
-        <div className={styles.course_topColumn}>
-          <section className={styles.courseHero}>
-            <figure className={styles.course_thumbnail}>
-              <Image
-                src={
-                  courseDetail?.videoLessonsIbThumbnailUrl
-                    ? courseDetail.videoLessonsIbThumbnailUrl
-                    : "/img/common/user_profile.jpg"
-                }
-                width="100"
-                height="100"
-                alt="강의 표지 사진"
-              />
-            </figure>
+        <div className={styles.course_mainColumn}>
+          <div className={styles.course_topColumn}>
+            <section className={styles.courseHero}>
+              <figure className={styles.course_thumbnail}>
+                <Image
+                  src={
+                    courseDetail?.videoLessonsIbThumbnailUrl
+                      ? courseDetail.videoLessonsIbThumbnailUrl
+                      : "/img/common/user_profile.jpg"
+                  }
+                  width="100"
+                  height="100"
+                  alt="강의 표지 사진"
+                />
+              </figure>
 
-            <div className={styles.courseHeroCard}>
-              <span className={styles.courseHeroLabel}>MONTHLY IB COURSE</span>
-              <h1 className={styles.courseHeroTitle}>{courseDetail?.title}</h1>
-              {courseSummary && (
-                <p className={styles.courseHeroSummary}>{courseSummary}</p>
-              )}
+              <div className={styles.courseHeroCard}>
+                <span className={styles.courseHeroLabel}>MONTHLY IB COURSE</span>
+                <h1 className={styles.courseHeroTitle}>{courseDetail?.title}</h1>
+                {courseSummary && (
+                  <p className={styles.courseHeroSummary}>{courseSummary}</p>
+                )}
 
-              <div className={styles.courseHeroMeta}>
-                {categoryPath && (
-                  <span className={styles.courseMetaChip}>{categoryPath}</span>
-                )}
-                {courseDetail?.instructor && (
+                <div className={styles.courseHeroMeta}>
+                  {categoryPath && (
+                    <span className={styles.courseMetaChip}>{categoryPath}</span>
+                  )}
+                  {courseDetail?.instructor && (
+                    <span className={styles.courseMetaChip}>
+                      Instructor {courseDetail.instructor}
+                    </span>
+                  )}
+                  {courseDetail?.chapterInfo && (
+                    <span className={styles.courseMetaChip}>
+                      {courseDetail.chapterInfo}
+                    </span>
+                  )}
                   <span className={styles.courseMetaChip}>
-                    Instructor {courseDetail.instructor}
+                    리뷰 {reviewStats.count}개
                   </span>
-                )}
-                {courseDetail?.chapterInfo && (
-                  <span className={styles.courseMetaChip}>
-                    {courseDetail.chapterInfo}
-                  </span>
-                )}
-                <span className={styles.courseMetaChip}>
-                  리뷰 {reviewStats.count}개
-                </span>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          <CourseDetailMob
-            courseDetail={courseDetail}
-            reviewAvgPoint={reviewStats.average}
-            reviewCount={reviewStats.count}
-            pageId={pageId}
-          />
+            <CourseDetailMob
+              courseDetail={courseDetail}
+              reviewAvgPoint={reviewStats.average}
+              reviewCount={reviewStats.count}
+              pageId={pageId}
+            />
+          </div>
+
+          <div className={styles.course_bottomColumn}>
+            <nav className={styles.course_nav}>
+              <ul>
+                <li className={modal === 1 ? styles.active : ""}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(courseContent, 1)}
+                  >
+                    과정소개
+                  </button>
+                </li>
+                <li className={modal === 2 ? styles.active : ""}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(courseCurriculum, 2)}
+                  >
+                    커리큘럼
+                  </button>
+                </li>
+                <li className={modal === 3 ? styles.active : ""}>
+                  <button
+                    type="button"
+                    onClick={() => scrollToSection(courseReview, 3)}
+                  >
+                    수강후기
+                  </button>
+                </li>
+              </ul>
+            </nav>
+
+            <div className={styles.mi_course}>
+              <section
+                ref={courseContent}
+                className={`${styles.course_content} ${styles.course_section} ${styles.course_sectionCard}`}
+              >
+                <div className={styles.course_tit_header}>
+                  <h3>과정소개</h3>
+                </div>
+                <div
+                  className={styles.course_contentInner}
+                  dangerouslySetInnerHTML={{
+                    __html: courseDetail?.content ?? "",
+                  }}
+                />
+              </section>
+
+              <section
+                ref={courseCurriculum}
+                className={`${styles.course_section} ${styles.course_sectionCard}`}
+              >
+                <div className={styles.course_tit_header}>
+                  <h3>커리큘럼</h3>
+                </div>
+
+                <div className={styles.course_curri_wrap}>
+                  <CourseCurriculum curriculum={courseDetail} />
+                </div>
+              </section>
+
+              <section
+                ref={courseReview}
+                className={`${styles.course_section} ${styles.course_sectionCard}`}
+              >
+                <CourseReview
+                  pageId={pageId}
+                  reviewAvgPoint={reviewStats.average}
+                  reviewPoint={reviewStats.distribution}
+                  courseDetail={courseDetail}
+                />
+              </section>
+            </div>
+          </div>
         </div>
 
         <CourseDetailRight
@@ -150,79 +225,6 @@ const CourseDetail = ({ pageId }) => {
           pageId={pageId}
           categoryPath={categoryPath}
         />
-
-        <div className={styles.course_bottomColumn}>
-          <nav className={styles.course_nav}>
-            <ul>
-              <li className={modal === 1 ? styles.active : ""}>
-                <button
-                  type="button"
-                  onClick={() => scrollToSection(courseContent, 1)}
-                >
-                  과정소개
-                </button>
-              </li>
-              <li className={modal === 2 ? styles.active : ""}>
-                <button
-                  type="button"
-                  onClick={() => scrollToSection(courseCurriculum, 2)}
-                >
-                  커리큘럼
-                </button>
-              </li>
-              <li className={modal === 3 ? styles.active : ""}>
-                <button
-                  type="button"
-                  onClick={() => scrollToSection(courseReview, 3)}
-                >
-                  수강후기
-                </button>
-              </li>
-            </ul>
-          </nav>
-
-          <div className={styles.mi_course}>
-            <section
-              ref={courseContent}
-              className={`${styles.course_content} ${styles.course_section} ${styles.course_sectionCard}`}
-            >
-              <div className={styles.course_tit_header}>
-                <h3>과정소개</h3>
-              </div>
-              <div
-                className={styles.course_contentInner}
-                dangerouslySetInnerHTML={{
-                  __html: courseDetail?.content ?? "",
-                }}
-              />
-            </section>
-
-            <section
-              ref={courseCurriculum}
-              className={`${styles.course_section} ${styles.course_sectionCard}`}
-            >
-              <div className={styles.course_tit_header}>
-                <h3>커리큘럼</h3>
-              </div>
-
-              <div className={styles.course_curri_wrap}>
-                <CourseCurriculum curriculum={courseDetail} />
-              </div>
-            </section>
-
-            <section
-              ref={courseReview}
-              className={`${styles.course_section} ${styles.course_sectionCard}`}
-            >
-              <CourseReview
-                pageId={pageId}
-                reviewAvgPoint={reviewStats.average}
-                reviewPoint={reviewStats.distribution}
-                courseDetail={courseDetail}
-              />
-            </section>
-          </div>
-        </div>
       </div>
     </main>
   );
