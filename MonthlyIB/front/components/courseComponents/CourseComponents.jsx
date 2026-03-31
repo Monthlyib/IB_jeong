@@ -151,12 +151,6 @@ const CourseComponents = () => {
             </div>
           </div>
         )}
-        <div className="header_flex">
-          <div className="header_tit_wrap">
-            <h2>영상강의</h2>
-          </div>
-        </div>
-
         <section className={styles.courseHero}>
           <div className={styles.courseHeroHeader}>
             <div className={styles.courseHeroCopy}>
