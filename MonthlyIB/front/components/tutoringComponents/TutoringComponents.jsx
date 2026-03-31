@@ -1,7 +1,11 @@
 "use client";
 import styles from "./Tutoring.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCalendarCheck,
+  faPenToSquare,
+  faXmark,
+} from "@fortawesome/free-solid-svg-icons";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import shortid from "shortid";
@@ -48,6 +52,7 @@ const TutoringComponents = () => {
   const [templateLoading, setTemplateLoading] = useState(false);
   const [templateSaving, setTemplateSaving] = useState(false);
   const [templateFeedback, setTemplateFeedback] = useState("");
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 
   const { tutoringDateSimpleList, getTutoringDateSimpleList, postTutoring } =
     useTutoringStore(); // 예약 관련 Store 가져오기
@@ -64,6 +69,27 @@ const TutoringComponents = () => {
         .replaceAll("{date}", "2026-04-08")
         .replaceAll("{time}", "19:30"),
     [templateBody]
+  );
+
+  const templateVariables = useMemo(
+    () => [
+      {
+        key: "{nickName}",
+        label: "학생 이름",
+        example: "홍길동",
+      },
+      {
+        key: "{date}",
+        label: "예약 날짜",
+        example: "2026-04-08",
+      },
+      {
+        key: "{time}",
+        label: "예약 시간",
+        example: "19:30",
+      },
+    ],
+    []
   );
 
   // 컴포넌트 마운트 시 구독 정보 불러오기
@@ -99,6 +125,25 @@ const TutoringComponents = () => {
 
     loadTemplate();
   }, [isAdmin, userInfo]);
+
+  useEffect(() => {
+    if (!isTemplateModalOpen) return undefined;
+
+    const handleEscClose = (event) => {
+      if (event.key === "Escape") {
+        setIsTemplateModalOpen(false);
+      }
+    };
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", handleEscClose);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleEscClose);
+    };
+  }, [isTemplateModalOpen]);
 
   // 시간표에서 특정 시간을 클릭하여 선택할 때 호출되는 함수
   const onClickTime = (h, m) => {
@@ -294,6 +339,16 @@ const TutoringComponents = () => {
             <span>Scheduling Tutoring</span>
             <h2>튜터링 예약</h2>
           </div>
+          {isAdmin && (
+            <button
+              type="button"
+              className={styles.templateManageButton}
+              onClick={() => setIsTemplateModalOpen(true)}
+            >
+              <FontAwesomeIcon icon={faPenToSquare} />
+              메일 양식 수정
+            </button>
+          )}
         </div>
 
         <div className={styles.sc_main_wrap}>
@@ -453,9 +508,15 @@ const TutoringComponents = () => {
           </div>
         </div>
 
-        {isAdmin && (
-          <section className={styles.templateSection}>
-            <div className={styles.templateCard}>
+        {isAdmin && isTemplateModalOpen && (
+          <div
+            className={styles.templateModalBackdrop}
+            onClick={() => setIsTemplateModalOpen(false)}
+          >
+            <div
+              className={styles.templateModal}
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className={styles.templateHeader}>
                 <div>
                   <span className={styles.templateEyebrow}>
@@ -463,14 +524,45 @@ const TutoringComponents = () => {
                   </span>
                   <h3>튜터링 확정 메일 양식</h3>
                   <p>
-                    예약이 확정될 때 사용자에게 전송되는 제목과 본문을 바로
-                    수정할 수 있습니다.
+                    예약 확정 메일을 현재 `/tutoring` 페이지 톤에 맞춘 관리
+                    팝업에서 바로 수정할 수 있습니다.
                   </p>
                 </div>
-                <div className={styles.templateTokens}>
-                  <span>{"{nickName}"}</span>
-                  <span>{"{date}"}</span>
-                  <span>{"{time}"}</span>
+                <button
+                  type="button"
+                  className={styles.templateCloseButton}
+                  onClick={() => setIsTemplateModalOpen(false)}
+                  aria-label="메일 양식 편집 닫기"
+                >
+                  <FontAwesomeIcon icon={faXmark} />
+                </button>
+              </div>
+
+              <div className={styles.templateGuide}>
+                <div className={styles.templateGuideCard}>
+                  <div className={styles.templateGuideTitle}>
+                    사용할 수 있는 변수
+                  </div>
+                  <div className={styles.templateTokenList}>
+                    {templateVariables.map((item) => (
+                      <div key={item.key} className={styles.templateTokenItem}>
+                        <code>{item.key}</code>
+                        <div>
+                          <strong>{item.label}</strong>
+                          <span>예시: {item.example}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className={styles.templateGuideCard}>
+                  <div className={styles.templateGuideTitle}>작성 팁</div>
+                  <ul className={styles.templateGuideList}>
+                    <li>제목은 너무 길지 않게 유지하는 편이 메일함에서 잘 보입니다.</li>
+                    <li>본문에는 최소 한 번 이상 날짜와 시간을 넣어 예약 정보를 분명히 하세요.</li>
+                    <li>변수는 그대로 입력해야 실제 발송 시 값으로 치환됩니다.</li>
+                  </ul>
                 </div>
               </div>
 
@@ -519,7 +611,7 @@ const TutoringComponents = () => {
                 </div>
               </form>
             </div>
-          </section>
+          </div>
         )}
       </main>
     </>
