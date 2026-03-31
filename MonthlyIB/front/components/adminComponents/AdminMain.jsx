@@ -109,7 +109,7 @@ const AdminMain = () => {
           </div>
         </div>
 
-        <div className={`${styles.dashboard_mid_wrap} ${styles.dashboard_mid_wrapWide}`}>
+        <div className={styles.dashboard_mid_wrap}>
           <AdminUser />
           <AdminSchedule />
         </div>

@@ -1,5 +1,5 @@
 .adminPage {
-  width: min(128rem, calc(100% - 4rem));
+  width: min(132rem, calc(100% - 4rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
 }
 
@@ -118,11 +118,6 @@
   gap: 1.8rem;
 }
 
-.dashboard_mid_wrapWide {
-  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.18fr);
-  align-items: start;
-}
-
 .dashboard_top {
   border: 1px solid #e8def2;
   border-radius: 2rem;
@@ -220,10 +215,9 @@
 
 .dashboard_mid_card .users,
 .dashboard_mid_card .users_inactive {
-  padding: 0.4rem 0;
+  padding: 1.4rem 0;
   font-size: 1.6rem;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
   gap: 1.2rem;
   align-items: center;
   color: var(--primary01);
@@ -234,10 +228,9 @@
 }
 
 .dashboard_mid_card .questions {
-  padding: 0.4rem 0;
+  padding: 1.4rem 0;
   font-size: 1.5rem;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: 1rem;
   align-items: center;
   color: var(--primary01);
@@ -274,9 +267,9 @@
   gap: 1rem;
 }
 
-.dashboard_mid_card .question_subtitle div,
-.dashboard_mid_card .subtitle div,
-.dashboard_mid_card .schedule_subtitle div {
+.dashboard_mid_card .question_subtitle > *,
+.dashboard_mid_card .subtitle > *,
+.dashboard_mid_card .schedule_subtitle > * {
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -319,6 +312,28 @@
   gap: 1.2rem;
   align-items: center;
   color: var(--primary01);
+}
+
+.userGrid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(7rem, 0.7fr);
+}
+
+.questionGrid {
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr)
+    minmax(0, 1.15fr)
+    minmax(0, 1fr)
+    minmax(0, 0.95fr)
+    minmax(7rem, 0.7fr);
+}
+
+.subscribeGrid {
+  grid-template-columns:
+    minmax(0, 1.2fr)
+    minmax(7rem, 0.8fr)
+    minmax(7rem, 0.9fr)
+    minmax(7rem, 0.7fr);
 }
 
 .tableToolbar {
@@ -397,19 +412,22 @@
 }
 
 .tableHeaderStatic:last-child,
-.scheduleTools {
+.tableTools {
   justify-self: end;
   text-align: right;
 }
 
+.tableBody,
 .scheduleBody {
   flex: 1;
 }
 
+.tableRowWrap,
 .scheduleRowWrap {
   border-bottom: 1px solid #eee7f7;
 }
 
+.tableRowWrap:last-child,
 .scheduleRowWrap:last-child {
   border-bottom: 0;
 }
@@ -422,6 +440,13 @@
   word-break: keep-all;
 }
 
+.tableCell {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: keep-all;
+}
+
+.tableTools,
 .scheduleTools {
   display: inline-flex;
   align-items: center;
@@ -729,8 +754,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .dashboard_mid_wrap,
-  .dashboard_mid_wrapWide {
+  .dashboard_mid_wrap {
     grid-template-columns: 1fr;
   }
 }

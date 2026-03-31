@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./AdminStyle.module.css";
 import {
@@ -7,140 +6,211 @@ import {
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { useUserInfo, useUserStore } from "@/store/user";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminUserDetail from "./AdminUserDetail";
 import AdminUserAdminModal from "./AdminUserAdminModal";
 import AdminScheduleModal from "./AdminSchedulemodal";
-import shortid from "shortid";
 import Paginatation from "../layoutComponents/Paginatation";
 import { useSubscribeStore } from "@/store/subscribe";
 import { getKnitSubscribeDataList } from "@/utils/utils";
 import { mailPost } from "@/apis/mail";
 
-// 페이지당 보여줄 사용자 수
-const numShowContents = 3;
+const PAGE_SIZE_OPTIONS = [5, 10, 20];
+
+const SORT_LABELS = {
+  username: "ID",
+  nickName: "Name",
+};
+
+const compareText = (left = "", right = "", direction = "asc") => {
+  const result = String(left).localeCompare(String(right), "ko", {
+    numeric: true,
+    sensitivity: "base",
+  });
+  return direction === "asc" ? result : -result;
+};
 
 const AdminUser = () => {
-  const { userInfo } = useUserInfo(); // 현재 로그인된 사용자 정보 가져오기
-  const { userList, userDetailInfo, getUserInfo, reviseUserInfo, getUserSubscribeInfo } = useUserStore(); // 사용자 리스트와 상세정보 가져오기
-  const { subscribeList } = useSubscribeStore(); // 구독 상품 리스트 가져오기
+  const { userInfo } = useUserInfo();
+  const { userList, userDetailInfo, getUserInfo, reviseUserInfo } =
+    useUserStore();
+  const { subscribeList } = useSubscribeStore();
 
-  // 페이지 상태와 페이지네이션 관련 상태들
-  const [modal, setModal] = useState(false); // 사용자 상세 정보 모달 상태
-  const [adminModal, setAdminModal] = useState(false); // 사용자 권한/구독 관리 모달 상태
-  const [mailModal, setMailModal] = useState(false); // 메일 보내기 모달 상태
-  const [detail, setDetail] = useState(""); // 메일 내용
-  const [authority, setAuthority] = useState(""); // 사용자의 권한 상태
-  const [subscirbeDataList, setSubscribeDataList] = useState({}); // 구독 상품 데이터 리스트
-  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [modal, setModal] = useState(false);
+  const [adminModal, setAdminModal] = useState(false);
+  const [mailModal, setMailModal] = useState(false);
+  const [detail, setDetail] = useState("");
+  const [authority, setAuthority] = useState("");
+  const [subscirbeDataList, setSubscribeDataList] = useState({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const [selectedUserId, setSelectedUserId] = useState(null);
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: null,
+  });
+
+  useEffect(() => {
+    getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
+  }, [subscribeList]);
+
+  const sortedUserList = useMemo(() => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return userList;
+    }
+
+    const nextList = [...userList];
+    nextList.sort((left, right) =>
+      compareText(left[sortConfig.key], right[sortConfig.key], sortConfig.direction)
+    );
+    return nextList;
+  }, [sortConfig, userList]);
+
+  const totalPages = Math.max(1, Math.ceil(sortedUserList.length / pageSize));
+  const paginatedUserList = sortedUserList.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
-  // 구독 상품 리스트가 변경될 때, 구독 데이터 리스트를 갱신합니다.
-  useEffect(() => {
-    getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
-  }, [subscribeList]);
+  const handlePageSizeChange = (event) => {
+    setPageSize(Number(event.target.value));
+    setCurrentPage(1);
+  };
 
-  // 권한 변경 버튼 클릭 시, 해당 사용자의 정보를 가져오고 모달을 엽니다.
+  const handleSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key !== key) {
+        return { key, direction: "asc" };
+      }
+      if (prev.direction === "asc") {
+        return { key, direction: "desc" };
+      }
+      return { key: null, direction: null };
+    });
+    setCurrentPage(1);
+  };
+
+  const renderSortLabel = (key) => {
+    if (sortConfig.key !== key) {
+      return `${SORT_LABELS[key]} ↕`;
+    }
+    return `${SORT_LABELS[key]} ${
+      sortConfig.direction === "asc" ? "↑" : "↓"
+    }`;
+  };
+
   const onClickChangeAuthority = (userId, currentAuthority) => {
     setSelectedUserId(userId);
     setAuthority(currentAuthority ?? "");
     setAdminModal(true);
-    getUserInfo(userId, userInfo); // 선택한 사용자 정보 가져오기
+    getUserInfo(userId, userInfo);
   };
 
-  // 사용자 정보 아이콘 클릭 시, 해당 사용자 상세 정보 모달을 엽니다.
   const onClickGetUserDetailInfo = (userId) => {
     setSelectedUserId(userId);
-    setModal(true); // 모달 열기/닫기
-    getUserInfo(userId, userInfo); // 선택한 사용자 정보 가져오기
+    setModal(true);
+    getUserInfo(userId, userInfo);
   };
 
-  // 메일 보내기 버튼 클릭 시, 메일 모달을 열고 해당 사용자 정보 설정
   const onClickMail = (userId) => {
     setSelectedUserId(userId);
     setDetail("");
-    setMailModal(true); // 메일 모달 열기/닫기
-    getUserInfo(userId, userInfo); // 선택한 사용자 정보 가져오기
+    setMailModal(true);
+    getUserInfo(userId, userInfo);
   };
 
-  // 메일 전송
   const onSubmitMail = () => {
-    setMailModal(false); // 메일 모달 닫기
-    mailPost(userDetailInfo?.userId, detail, userInfo); // 메일 전송 API 호출
+    setMailModal(false);
+    mailPost(userDetailInfo?.userId, detail, userInfo);
   };
-
-  // 페이지에 맞게 사용자 리스트를 분할하여 표시
-  const paginate = (items, pageNum) => {
-    const startIndex = (pageNum - 1) * numShowContents;
-    return _(items).slice(startIndex).take(numShowContents).value();
-  };
-
-  // 현재 페이지에 맞는 사용자 리스트
-  const paginatedUserList = paginate(userList, currentPage);
 
   return (
     <>
       <div className={styles.dashboard_mid_card}>
-        {/* 사용자 관리 제목 */}
         <div className={styles.title}>사용자 관리</div>
-        <div className={styles.subtitle}>
-          <div className={styles.username}>ID</div>
-          <div className={styles.nickname}>Name</div>
-          <div className={styles.functions}>Tools</div>
+
+        <div className={styles.tableToolbar}>
+          <div className={styles.tableMeta}>
+            <strong>{sortedUserList.length}</strong>
+            <span>명의 사용자</span>
+          </div>
+
+          <label className={styles.rowsPerPage}>
+            <span>항목 보기</span>
+            <select value={pageSize} onChange={handlePageSizeChange}>
+              {PAGE_SIZE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}개씩 보기
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
-        {/* 사용자 리스트 */}
-        {paginatedUserList.length > 0 && (
-          <>
-            {paginatedUserList.map((v) => (
-              <div key={shortid.generate()}>
-                <hr />
-                <div
-                  className={
-                    v.userStatus === "INACTIVE" // 사용자 상태에 따라 스타일 지정
-                      ? styles.users_inactive
-                      : styles.users
-                  }
-                >
-                  {v.username}
-                  <div>{v.nickName}</div>
-                  <span>
-                    {/* 사용자 상세 정보 보기 */}
-                    <FontAwesomeIcon
-                      icon={faUser}
-                      onClick={() => onClickGetUserDetailInfo(v.userId)}
-                    />
-                    {/* 권한/구독 관리 */}
-                    <FontAwesomeIcon
-                      icon={faUserGear}
-                      onClick={() => onClickChangeAuthority(v.userId, v.authority)}
-                    />
-                    {/* 메일 보내기 */}
-                    <FontAwesomeIcon
-                      icon={faEnvelope}
-                      onClick={() => onClickMail(v.userId)}
-                    />
-                  </span>
-                </div>
-                <hr />
+        <div className={`${styles.subtitle} ${styles.userGrid}`}>
+          <button
+            type="button"
+            className={styles.tableHeaderButton}
+            onClick={() => handleSort("username")}
+          >
+            {renderSortLabel("username")}
+          </button>
+          <button
+            type="button"
+            className={styles.tableHeaderButton}
+            onClick={() => handleSort("nickName")}
+          >
+            {renderSortLabel("nickName")}
+          </button>
+          <div className={styles.tableHeaderStatic}>Tools</div>
+        </div>
+
+        <div className={styles.tableBody}>
+          {paginatedUserList.map((user) => (
+            <div key={user.userId} className={styles.tableRowWrap}>
+              <div
+                className={`${user.userStatus === "INACTIVE" ? styles.users_inactive : styles.users} ${styles.userGrid}`}
+              >
+                <div className={styles.tableCell}>{user.username}</div>
+                <div className={styles.tableCell}>{user.nickName}</div>
+                <span className={styles.tableTools}>
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    onClick={() => onClickGetUserDetailInfo(user.userId)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faUserGear}
+                    onClick={() => onClickChangeAuthority(user.userId, user.authority)}
+                  />
+                  <FontAwesomeIcon
+                    icon={faEnvelope}
+                    onClick={() => onClickMail(user.userId)}
+                  />
+                </span>
               </div>
-            ))}
-          </>
+            </div>
+          ))}
+        </div>
+
+        {sortedUserList.length > 0 && (
+          <Paginatation
+            contents={sortedUserList}
+            currentPage={currentPage}
+            numShowContents={pageSize}
+            onPageChange={handlePageChange}
+          />
         )}
 
-        {/* 페이지네이션 컴포넌트 */}
-        <Paginatation
-          contents={userList}
-          currentPage={currentPage}
-          numShowContents={numShowContents}
-          onPageChange={handlePageChange}
-        />
-
-        {/* 사용자 상세 정보 모달 */}
         {modal === true && (
           <AdminUserDetail
             userDetailInfo={userDetailInfo}
@@ -148,7 +218,6 @@ const AdminUser = () => {
           />
         )}
 
-        {/* 권한/구독 관리 모달 */}
         <AdminUserAdminModal
           adminModal={adminModal}
           setAdminModal={setAdminModal}
@@ -162,7 +231,6 @@ const AdminUser = () => {
           reviseUserInfo={reviseUserInfo}
         />
 
-        {/* 메일 보내기 모달 */}
         <AdminScheduleModal
           modal={mailModal}
           setModal={setMailModal}

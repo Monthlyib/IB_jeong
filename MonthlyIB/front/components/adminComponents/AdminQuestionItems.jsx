@@ -1,4 +1,3 @@
-import _ from "lodash";
 import styles from "./AdminStyle.module.css";
 import Paginatation from "../layoutComponents/Paginatation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,18 +6,17 @@ import { useRef, useState } from "react";
 import { useUserInfo } from "@/store/user";
 import { useRouter } from "next/navigation";
 import { useQuestionStore } from "@/store/question";
-import shortid from "shortid";
 
 const AdminQuestionItems = ({
   questionList,
+  allQuestionList,
   currentPage,
   numShowContents,
   onPageChange,
 }) => {
   const [modal, setModal] = useState(false);
-  const [ind, setInd] = useState();
+  const [selectedQuestion, setSelectedQuestion] = useState(null);
   const router = useRouter();
-
   const closeRef = useRef();
 
   const { userInfo } = useUserInfo();
@@ -28,44 +26,45 @@ const AdminQuestionItems = ({
     setModal(false);
   };
 
-  const onSubmitDeleteTutoring = (questionId) => {
+  const onSubmitDeleteQuestion = (questionId) => {
     setModal(false);
     deleteQuestionItem(questionId, userInfo);
   };
 
-  const onClickEdit = (index) => {
-    setModal(!modal);
-    setInd(index);
+  const onClickEdit = (question) => {
+    setSelectedQuestion(question);
+    setModal(true);
   };
-  const paginate = (items, pageNum) => {
-    const startIndex = (pageNum - 1) * numShowContents;
-    return _(items).slice(startIndex).take(numShowContents).value();
-  };
-  const paginatedPage = paginate(questionList, currentPage);
+
   return (
     <>
-      {paginatedPage.map((v, i) => (
-        <div key={shortid.generate()}>
-          <hr />
-
-          <div className={styles.questions}>
-            {v.authorUsername}
-            <div>{v.authorNickName}</div>
-            <div>{v.createAt.split("T")[0]}</div>
-            <div style={{ marginLeft: "1rem" }}>{v.subject}</div>
-            <span style={{ lineHeight: "0.5" }}>
-              {v.questionStatus === "ANSWER_WAIT" ? "답변대기" : "답변완료"}
-            </span>
-            <div style={{ marginLeft: "2em" }}>
-              <FontAwesomeIcon icon={faPen} onClick={() => onClickEdit(i)} />
+      <div className={styles.tableBody}>
+        {questionList.map((question) => (
+          <div key={question.questionId} className={styles.tableRowWrap}>
+            <div className={`${styles.questions} ${styles.questionGrid}`}>
+              <div className={styles.tableCell}>{question.authorUsername}</div>
+              <div className={styles.tableCell}>{question.authorNickName}</div>
+              <div className={styles.tableCell}>
+                {question.createAt?.split("T")[0]}
+              </div>
+              <div className={styles.tableCell}>{question.subject}</div>
+              <div className={styles.tableCell}>
+                {question.questionStatus === "ANSWER_WAIT" ? "답변대기" : "답변완료"}
+              </div>
+              <div className={styles.tableTools}>
+                <FontAwesomeIcon
+                  icon={faPen}
+                  onClick={() => onClickEdit(question)}
+                />
+              </div>
             </div>
           </div>
-          <hr />
-        </div>
-      ))}
-      {questionList?.length > 0 && (
+        ))}
+      </div>
+
+      {allQuestionList?.length > 0 && (
         <Paginatation
-          contents={questionList}
+          contents={allQuestionList}
           currentPage={currentPage}
           numShowContents={numShowContents}
           onPageChange={onPageChange}
@@ -85,7 +84,7 @@ const AdminQuestionItems = ({
             >
               <div className={styles.md_top}>
                 <div className={styles.tit} style={{ marginBottom: "5srem" }}>
-                  {paginatedPage[ind]?.title}
+                  {selectedQuestion?.title}
                 </div>
                 <div
                   style={{
@@ -108,7 +107,7 @@ const AdminQuestionItems = ({
                   }}
                   type="text"
                   dangerouslySetInnerHTML={{
-                    __html: paginatedPage[ind]?.content,
+                    __html: selectedQuestion?.content,
                   }}
                   disabled
                 />
@@ -125,7 +124,7 @@ const AdminQuestionItems = ({
                   type="button"
                   className={styles.delete}
                   onClick={() => {
-                    onSubmitDeleteTutoring(paginatedPage[ind]?.questionId);
+                    onSubmitDeleteQuestion(selectedQuestion?.questionId);
                   }}
                 >
                   삭제
@@ -135,7 +134,7 @@ const AdminQuestionItems = ({
                   type="button"
                   className={styles.revise}
                   onClick={() => {
-                    router.push(`question/${paginatedPage[ind]?.questionId}`);
+                    router.push(`/question/${selectedQuestion?.questionId}`);
                   }}
                 >
                   자세히

@@ -2,15 +2,35 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./AdminStyle.module.css";
 
 import { faPlus, faPenAlt } from "@fortawesome/free-solid-svg-icons";
-import { use, useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSubscribeStore } from "@/store/subscribe";
-import shortid from "shortid";
 import { useUserInfo } from "@/store/user";
 import AdminSubscribeModal from "./AdminSubscribeModal";
 import { getKnitSubscribeDataList } from "@/utils/utils";
+import Paginatation from "../layoutComponents/Paginatation";
+
+const PAGE_SIZE_OPTIONS = [5, 10, 20];
+
+const SORT_LABELS = {
+  title: "Items",
+  planCount: "Plans",
+  premiumLabel: "Premium",
+};
+
+const compareText = (left = "", right = "", direction = "asc") => {
+  const result = String(left).localeCompare(String(right), "ko", {
+    numeric: true,
+    sensitivity: "base",
+  });
+  return direction === "asc" ? result : -result;
+};
+
+const compareNumber = (left = 0, right = 0, direction = "asc") => {
+  const result = left - right;
+  return direction === "asc" ? result : -result;
+};
 
 const AdminSubscribe = () => {
-  // 구독 상품 관련 데이터와 함수들을 구독 스토어에서 가져옴
   const {
     subscribeList,
     getSubscribeList,
@@ -20,7 +40,6 @@ const AdminSubscribe = () => {
   const { userInfo } = useUserInfo();
   const [subscribeDataList, setSubscribeDataList] = useState({});
 
-  // 모달 상태와 관련된 state들
   const [editModal, setEditModal] = useState(false);
   const [postModal, setPostModal] = useState(false);
   const [item, setItem] = useState("");
@@ -35,87 +54,61 @@ const AdminSubscribe = () => {
   const [subscriberIDList, setSubscribeIDList] = useState([]);
   const [subscribemonthPeriods, setSubscribeMonthPeriods] = useState([]);
   const [videoLessonsIDLists, setVideoLessonsIDLists] = useState([]);
-  const [isPremium, setIsPremium] = useState(false); // New state for premium toggle
+  const [isPremium, setIsPremium] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: null,
+  });
 
-  // 구독 상품 수정 제출 함수
-  const onSubmitReviseSubscribeItem = (item) => {
-    setEditModal(!editModal);
-    for (let i = 0; i < prices?.length; i++) {
-      editSubscribeItem(
-        subscriberIDList[i],
-        title,
-        content,
-        prices[i],
-        numQuestions,
-        numTutoring,
-        subscribemonthPeriods[i],
-        videoLessonsCount,
-        videoLessonsIDLists[i],
-        color.hex,
-        fontColor.hex,
-        userInfo,
-        isPremium // Include premium flag
-      );
+  const subscribeItems = useMemo(
+    () =>
+      Object.entries(subscribeDataList).map(([planTitle, planMap]) => {
+        const plans = Object.values(planMap || {});
+        const premium = plans.some((plan) => plan?.premium);
+
+        return {
+          title: planTitle,
+          planCount: plans.length,
+          premium,
+          premiumLabel: premium ? "Premium" : "Standard",
+        };
+      }),
+    [subscribeDataList]
+  );
+
+  const sortedSubscribeItems = useMemo(() => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return subscribeItems;
     }
-  };
 
-  // 구독 상품 추가 제출 함수
-  const onSubmitPostSubscribeItem = () => {
-    setPostModal(!postModal);
-    const subscribeMonthPeriod = [1, 3, 6, 12];
-    for (let i = 0; i < 4; i++) {
-      postSubscribeItem(
-        title,
-        content,
-        prices[i],
-        numQuestions,
-        numTutoring,
-        subscribeMonthPeriod[i],
-        videoLessonsCount,
-        [],
-        color.hex,
-        fontColor.hex,
-        userInfo,
-        isPremium // Include premium flag
-      );
-    }
-  };
+    const nextList = [...subscribeItems];
+    nextList.sort((left, right) => {
+      if (sortConfig.key === "planCount") {
+        return compareNumber(left.planCount, right.planCount, sortConfig.direction);
+      }
+      return compareText(left[sortConfig.key], right[sortConfig.key], sortConfig.direction);
+    });
+    return nextList;
+  }, [sortConfig, subscribeItems]);
 
+  const totalPages = Math.max(1, Math.ceil(sortedSubscribeItems.length / pageSize));
+  const paginatedSubscribeItems = sortedSubscribeItems.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
-  // 구독 상품 추가 모달 열기 함수
-  const onClickPostModal = () => {
-    setPostModal(!postModal);
-    setTitle("");
-    setPrices([]);
-    setNumQuestions("");
-    setNumTutoring("");
-    setColor("#000");
-    setFontColor("#000");
-    setVideoLessonsCount("");
-    setContent("");
-    setIsPremium(false); // Reset premium flag
-  };
-
-  // 가격 변경 처리 함수
-  const onChangePrice = (e, i) => {
-    const temp = [...prices];
-    temp[i] = e.target.value;
-    setPrices(temp);
-  };
-
-  // 구독 상품 수정 모달 열기 함수
-  const onClickEditItem = (itemName) => {
-    setEditModal(!editModal);
-    setItem(itemName);
-    setTitle(itemName);
-  };
-
-  // 컴포넌트 마운트 시 구독 리스트 가져오기
   useEffect(() => {
     getSubscribeList();
   }, []);
 
-  // 선택한 구독 상품의 정보를 수정 모달에 반영
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   useEffect(() => {
     if (item !== "") {
       const tempItem = subscribeDataList[item] || {};
@@ -139,15 +132,111 @@ const AdminSubscribe = () => {
       setVideoLessonsCount(tempItem[0]?.videoLessonsCount);
       setVideoLessonsIDLists(newVideosIDs);
       setContent(tempItem[0]?.content);
-      setIsPremium(tempItem[0]?.premium || false); // Set premium status
-      console.log(tempItem);
+      setIsPremium(tempItem[0]?.premium || false);
     }
-  }, [item]);
+  }, [item, subscribeDataList]);
 
-  // 구독 리스트 데이터를 가공하여 상태에 저장
   useEffect(() => {
     getKnitSubscribeDataList(subscribeList, setSubscribeDataList);
   }, [subscribeList]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handlePageSizeChange = (event) => {
+    setPageSize(Number(event.target.value));
+    setCurrentPage(1);
+  };
+
+  const handleSort = (key) => {
+    setSortConfig((prev) => {
+      if (prev.key !== key) {
+        return { key, direction: "asc" };
+      }
+      if (prev.direction === "asc") {
+        return { key, direction: "desc" };
+      }
+      return { key: null, direction: null };
+    });
+    setCurrentPage(1);
+  };
+
+  const renderSortLabel = (key) => {
+    if (sortConfig.key !== key) {
+      return `${SORT_LABELS[key]} ↕`;
+    }
+    return `${SORT_LABELS[key]} ${
+      sortConfig.direction === "asc" ? "↑" : "↓"
+    }`;
+  };
+
+  const onSubmitReviseSubscribeItem = () => {
+    setEditModal(false);
+    for (let i = 0; i < prices?.length; i++) {
+      editSubscribeItem(
+        subscriberIDList[i],
+        title,
+        content,
+        prices[i],
+        numQuestions,
+        numTutoring,
+        subscribemonthPeriods[i],
+        videoLessonsCount,
+        videoLessonsIDLists[i],
+        color.hex,
+        fontColor.hex,
+        userInfo,
+        isPremium
+      );
+    }
+  };
+
+  const onSubmitPostSubscribeItem = () => {
+    setPostModal(false);
+    const subscribeMonthPeriod = [1, 3, 6, 12];
+    for (let i = 0; i < 4; i++) {
+      postSubscribeItem(
+        title,
+        content,
+        prices[i],
+        numQuestions,
+        numTutoring,
+        subscribeMonthPeriod[i],
+        videoLessonsCount,
+        [],
+        color.hex,
+        fontColor.hex,
+        userInfo,
+        isPremium
+      );
+    }
+  };
+
+  const onClickPostModal = () => {
+    setPostModal(true);
+    setTitle("");
+    setPrices([]);
+    setNumQuestions("");
+    setNumTutoring("");
+    setColor("#000");
+    setFontColor("#000");
+    setVideoLessonsCount("");
+    setContent("");
+    setIsPremium(false);
+  };
+
+  const onChangePrice = (e, i) => {
+    const temp = [...prices];
+    temp[i] = e.target.value;
+    setPrices(temp);
+  };
+
+  const onClickEditItem = (itemName) => {
+    setEditModal(true);
+    setItem(itemName);
+    setTitle(itemName);
+  };
 
   return (
     <>
@@ -160,34 +249,77 @@ const AdminSubscribe = () => {
             onClick={onClickPostModal}
           />
         </div>
-        <div className={styles.subtitle}>
-          <div className={styles.username}>Items</div>
 
-          <div style={{ fontSize: "2rem" }}>Tools</div>
+        <div className={styles.tableToolbar}>
+          <div className={styles.tableMeta}>
+            <strong>{sortedSubscribeItems.length}</strong>
+            <span>개의 상품</span>
+          </div>
+
+          <label className={styles.rowsPerPage}>
+            <span>항목 보기</span>
+            <select value={pageSize} onChange={handlePageSizeChange}>
+              {PAGE_SIZE_OPTIONS.map((option) => (
+                <option key={option} value={option}>
+                  {option}개씩 보기
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
 
-        {/* 구독 상품 목록 출력 */}
-        {Object.keys(subscribeDataList).length > 0 && (
-          <>
-            {Object.keys(subscribeDataList).map((v) => (
-              <div key={shortid.generate()}>
-                <hr />
-                <div className={styles.users}>
-                  {v}
-                  <span>
-                    <FontAwesomeIcon
-                      icon={faPenAlt}
-                      onClick={() => onClickEditItem(v)}
-                    />
-                  </span>
-                </div>
-                <hr />
+        <div className={`${styles.subtitle} ${styles.subscribeGrid}`}>
+          <button
+            type="button"
+            className={styles.tableHeaderButton}
+            onClick={() => handleSort("title")}
+          >
+            {renderSortLabel("title")}
+          </button>
+          <button
+            type="button"
+            className={styles.tableHeaderButton}
+            onClick={() => handleSort("planCount")}
+          >
+            {renderSortLabel("planCount")}
+          </button>
+          <button
+            type="button"
+            className={styles.tableHeaderButton}
+            onClick={() => handleSort("premiumLabel")}
+          >
+            {renderSortLabel("premiumLabel")}
+          </button>
+          <div className={styles.tableHeaderStatic}>Tools</div>
+        </div>
+
+        <div className={styles.tableBody}>
+          {paginatedSubscribeItems.map((subscribeItem) => (
+            <div key={subscribeItem.title} className={styles.tableRowWrap}>
+              <div className={`${styles.users} ${styles.subscribeGrid}`}>
+                <div className={styles.tableCell}>{subscribeItem.title}</div>
+                <div className={styles.tableCell}>{subscribeItem.planCount}개</div>
+                <div className={styles.tableCell}>{subscribeItem.premiumLabel}</div>
+                <span className={styles.tableTools}>
+                  <FontAwesomeIcon
+                    icon={faPenAlt}
+                    onClick={() => onClickEditItem(subscribeItem.title)}
+                  />
+                </span>
               </div>
-            ))}
-          </>
+            </div>
+          ))}
+        </div>
+
+        {sortedSubscribeItems.length > 0 && (
+          <Paginatation
+            contents={sortedSubscribeItems}
+            currentPage={currentPage}
+            numShowContents={pageSize}
+            onPageChange={handlePageChange}
+          />
         )}
 
-        {/* 구독 상품 추가 모달 */}
         {postModal === true && (
           <AdminSubscribeModal
             mode={"post"}
@@ -208,13 +340,12 @@ const AdminSubscribe = () => {
             setFontColor={setFontColor}
             content={content}
             setContent={setContent}
-            isPremium={isPremium} // Pass premium status
-            setIsPremium={setIsPremium} // Pass premium setter
+            isPremium={isPremium}
+            setIsPremium={setIsPremium}
             onSubmit={onSubmitPostSubscribeItem}
           />
         )}
 
-        {/* 구독 상품 수정 모달 */}
         {editModal === true && (
           <AdminSubscribeModal
             mode={"edit"}
@@ -235,8 +366,8 @@ const AdminSubscribe = () => {
             setFontColor={setFontColor}
             content={content}
             setContent={setContent}
-            isPremium={isPremium} // Pass premium status
-            setIsPremium={setIsPremium} // Pass premium setter
+            isPremium={isPremium}
+            setIsPremium={setIsPremium}
             onSubmit={onSubmitReviseSubscribeItem}
             subscribeDataList={subscribeDataList}
           />
