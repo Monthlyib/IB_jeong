@@ -1,8 +1,9 @@
 "use client";
-import styles from "./CourseDetail.module.css";
+
+import { useEffect, useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt, faStar } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useState } from "react";
+import styles from "./CourseDetail.module.css";
 
 import CourseReviewItems from "./CourseReviewItems";
 import CourseReviewPost from "./CourseReviewPost";
@@ -17,13 +18,6 @@ const CourseReview = ({
 }) => {
   const [formModal, setFormModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-  };
-
-  const [filteredCourseDetail, setFilteredCourseDetail] = useState({});
-
   const [menuClicked, setMenuClicked] = useState({
     recent: true,
     likes: false,
@@ -31,63 +25,58 @@ const CourseReview = ({
   });
 
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+
   useEffect(() => {
-    const localUser = JSON.parse(localStorage.getItem("userInfo"));
-    if (localUser)
+    const savedUser = localStorage.getItem("userInfo");
+    if (!savedUser) return;
+
+    const localUser = JSON.parse(savedUser);
+    if (localUser?.state?.userInfo?.userId) {
       getUserSubscribeInfo(
         localUser.state.userInfo.userId,
         0,
         localUser.state.userInfo
       );
-  }, []);
-  const onClickRecent = () => {
-    setMenuClicked({ recent: true, likes: false, stars: false });
-  };
-
-  const onClickLikes = () => {
-    setMenuClicked({ recent: false, likes: true, stars: false });
-  };
-
-  const onClickStars = () => {
-    setMenuClicked({ recent: false, likes: false, stars: true });
-  };
-  useEffect(() => {
-    if (menuClicked.recent) {
-      const temp = { ...courseDetail };
-      const test = temp.reply?.data.sort((a, b) => {
-        return new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime();
-      });
-      setFilteredCourseDetail({ ...temp, reply: { data: test } });
-    } else if (menuClicked.likes) {
-      const temp = { ...courseDetail };
-      const test = temp.reply.data.sort((a, b) => {
-        return b.voteUserId.length - a.voteUserId.length;
-      });
-      setFilteredCourseDetail({ ...temp, reply: { data: test } });
-    } else if (menuClicked.stars) {
-      const temp = { ...courseDetail };
-      const test = temp.reply.data.sort((a, b) => {
-        return b.star - a.star;
-      });
-      setFilteredCourseDetail({ ...temp, reply: { data: test } });
     }
+  }, [getUserSubscribeInfo]);
+
+  const filteredReviews = useMemo(() => {
+    const reviews = [...(courseDetail?.reply?.data ?? [])];
+
+    if (menuClicked.likes) {
+      return reviews.sort(
+        (a, b) => (b.voteUserId?.length || 0) - (a.voteUserId?.length || 0)
+      );
+    }
+
+    if (menuClicked.stars) {
+      return reviews.sort((a, b) => (b.star || 0) - (a.star || 0));
+    }
+
+    return reviews.sort(
+      (a, b) => new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime()
+    );
   }, [courseDetail?.reply?.data, menuClicked]);
 
   return (
     <>
-      <div className={styles.course_section}>
-        <div className={styles.course_tit_header}>
-          <h3>수강생 리뷰</h3>
-          {userSubscribeInfo?.[0]?.subscribeStatus === "WAIT" && (
-            <button type="button" className={styles.btn_write}>
+      <div className={styles.course_tit_header}>
+        <h3>수강생 리뷰</h3>
+        {userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" && (
+          <>
+            <button
+              type="button"
+              className={styles.btn_write}
+              onClick={() => setFormModal(!formModal)}
+            >
               <FontAwesomeIcon icon={faPenAlt} />
-              <span onClick={() => setFormModal(!formModal)}>리뷰쓰기</span>
+              <span>리뷰쓰기</span>
             </button>
-          )}
-          {formModal === true && (
-            <CourseReviewPost setFormModal={setFormModal} pageId={pageId} />
-          )}
-        </div>
+            {formModal && (
+              <CourseReviewPost setFormModal={setFormModal} pageId={pageId} />
+            )}
+          </>
+        )}
       </div>
 
       <div className={styles.review_aver}>
@@ -97,7 +86,7 @@ const CourseReview = ({
             <b>{reviewAvgPoint.toFixed(1)}</b>
           </div>
           <p>
-            리뷰 <span>{courseDetail?.reply?.data?.length}</span>개
+            리뷰 <span>{courseDetail?.reply?.data?.length || 0}</span>개
           </p>
         </div>
         <CourseReviewSummary reviewPoint={reviewPoint} />
@@ -106,24 +95,33 @@ const CourseReview = ({
       <div className={styles.dt_review_wrap}>
         <div className={styles.dt_review_filter}>
           <h5>
-            리뷰 <span>{courseDetail?.reply?.data?.length}</span>개
+            리뷰 <span>{courseDetail?.reply?.data?.length || 0}</span>개
           </h5>
           <div className={styles.dt_review_select}>
             <button
-              className={menuClicked.recent === true ? styles.active : ""}
-              onClick={onClickRecent}
+              type="button"
+              className={menuClicked.recent ? styles.active : ""}
+              onClick={() =>
+                setMenuClicked({ recent: true, likes: false, stars: false })
+              }
             >
               최신순
             </button>
             <button
-              className={menuClicked.stars === true ? styles.active : ""}
-              onClick={onClickStars}
+              type="button"
+              className={menuClicked.stars ? styles.active : ""}
+              onClick={() =>
+                setMenuClicked({ recent: false, likes: false, stars: true })
+              }
             >
               리뷰평점순
             </button>
             <button
-              className={menuClicked.likes === true ? styles.active : ""}
-              onClick={onClickLikes}
+              type="button"
+              className={menuClicked.likes ? styles.active : ""}
+              onClick={() =>
+                setMenuClicked({ recent: false, likes: true, stars: false })
+              }
             >
               좋아요순
             </button>
@@ -131,15 +129,13 @@ const CourseReview = ({
         </div>
 
         <div className={styles.dt_review_cont}>
-          {
-            <CourseReviewItems
-              coursePostReviewPosts={filteredCourseDetail.reply?.data}
-              currentPage={currentPage}
-              numShowContents={5}
-              onPageChange={handlePageChange}
-              pageId={pageId}
-            />
-          }
+          <CourseReviewItems
+            coursePostReviewPosts={filteredReviews}
+            currentPage={currentPage}
+            numShowContents={5}
+            onPageChange={setCurrentPage}
+            pageId={pageId}
+          />
         </div>
       </div>
     </>

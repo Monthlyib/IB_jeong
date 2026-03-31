@@ -1,190 +1,228 @@
 "use client";
+
+import Image from "next/image";
+import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./CourseDetail.module.css";
-import { useEffect, useRef, useState } from "react";
 
 import CourseCurriculum from "./CourseCurriculum";
-import CourseReview from "./CourseReview";
 import CourseDetailMob from "./CourseDetailMob";
 import CourseDetailRight from "./CourseDetailRight";
-import { useRouter } from "next/navigation";
+import CourseReview from "./CourseReview";
 import { useCourseStore } from "@/store/course";
-import Image from "next/image";
 
-const reviewPoint = {
-  1: 0,
-  2: 0,
-  3: 0,
-  4: 0,
-  5: 0,
-};
+const stripHtml = (value = "") =>
+  value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 
-const CourseDetail = (pageId) => {
-  const router = useRouter();
+const CourseDetail = ({ pageId }) => {
   const [modal, setModal] = useState(1);
-  const [modalFixed, setModalFixed] = useState(false);
-  const [reviewAvgPoint, setReviewAvgPoint] = useState(0);
-  const [reviewStarHeight, setReviewStarHeight] = useState({});
-  let reviewValHolder = 0;
   const { courseDetail, getCourseDetail } = useCourseStore();
 
-  const courseContent = useRef();
-  const courseCurriculum = useRef();
-  const courseReivew = useRef();
+  const courseContent = useRef(null);
+  const courseCurriculum = useRef(null);
+  const courseReview = useRef(null);
 
-  const onClickCourseContent = () => {
-    courseContent.current?.scrollIntoView({ behavior: "smooth" });
-  };
+  const reviewData = courseDetail?.reply?.data ?? [];
 
-  const onClickCourseCurriculum = () => {
-    courseCurriculum.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const onClickCourseReview = () => {
-    courseReivew.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  useEffect(() => {
-    getCourseDetail(pageId?.pageId);
-  }, []);
-
-  // 어느정도 스크롤 후에 과정소개, 커리큘럼, 리뷰 모달 고정용
-  useEffect(() => {
-    const onScrollEvent = () => {
-      if (window.scrollY > document.documentElement.scrollHeight * 0.2) {
-        setModalFixed(true);
-      } else {
-        setModalFixed(false);
-      }
+  const reviewStats = useMemo(() => {
+    const distribution = {
+      1: 0,
+      2: 0,
+      3: 0,
+      4: 0,
+      5: 0,
     };
-    window.addEventListener("scroll", onScrollEvent);
 
-    return () => {
-      window.removeEventListener("scroll", onScrollEvent);
+    if (reviewData.length === 0) {
+      return { average: 0, distribution, count: 0 };
+    }
+
+    const total = reviewData.reduce((sum, item) => {
+      const score = Number(item.star) || 0;
+      const roundedScore = Math.min(5, Math.max(1, Math.round(score)));
+      distribution[roundedScore] += 1;
+      return sum + score;
+    }, 0);
+
+    Object.keys(distribution).forEach((key) => {
+      distribution[key] = distribution[key] / reviewData.length;
+    });
+
+    return {
+      average: total / reviewData.length,
+      distribution,
+      count: reviewData.length,
     };
-  }, [modalFixed]);
+  }, [reviewData]);
+
+  const categoryPath = [
+    courseDetail?.firstCategory?.categoryName,
+    courseDetail?.secondCategory?.categoryName,
+    courseDetail?.thirdCategory?.categoryName,
+  ]
+    .filter(Boolean)
+    .join(" / ");
+
+  const courseSummary = useMemo(() => {
+    const plainText = stripHtml(courseDetail?.content);
+    return plainText.length > 160
+      ? `${plainText.slice(0, 160).trim()}...`
+      : plainText;
+  }, [courseDetail?.content]);
+
+  const scrollToSection = (sectionRef, tabIndex) => {
+    const target = sectionRef.current;
+    if (!target) return;
+
+    const stickyOffset = 160;
+    const top = target.getBoundingClientRect().top + window.scrollY - stickyOffset;
+    window.scrollTo({ top, behavior: "smooth" });
+    setModal(tabIndex);
+  };
 
   useEffect(() => {
-    // Review 점수 표현
-    reviewValHolder = 0;
-    setReviewAvgPoint(0);
-    for (let i = 1; i < 6; i++) {
-      reviewPoint[i] = 0;
+    if (pageId) {
+      getCourseDetail(pageId);
     }
-    setReviewStarHeight({});
-    if (courseDetail.reply?.data.length > 0) {
-      for (let i = 0; i < courseDetail.reply?.data.length; i++) {
-        reviewValHolder += Number(courseDetail.reply?.data[i].star);
-        reviewPoint[String(courseDetail.reply?.data[i].star)] += 1;
-      }
-      for (let i = 1; i < 6; i++) {
-        reviewPoint[String(i)] =
-          reviewPoint[String(i)] / courseDetail.reply?.data.length;
-      }
-      reviewValHolder = reviewValHolder / courseDetail.reply?.data.length;
-      setReviewAvgPoint(reviewValHolder);
-    }
-    setReviewStarHeight(reviewPoint);
-  }, [courseDetail?.reply?.data, courseDetail?.reply?.data.star]);
+  }, [getCourseDetail, pageId]);
+
   return (
-    <>
-      <main className="width_content">
-        <div className={styles.course_detail_wrap}>
-          <div className={styles.course_left}>
-            <div className={styles.course_top}>
-              <figure className={styles.course_thumbnail}>
-                {courseDetail?.videoLessonsIbThumbnailUrl === "" ? (
-                  <Image
-                    src={"/img/common/user_profile.jpg"}
-                    width="100"
-                    height="100"
-                    alt="강의 표지 사진"
-                  />
-                ) : (
-                  <Image
-                    src={courseDetail?.videoLessonsIbThumbnailUrl}
-                    width="100"
-                    height="100"
-                    alt="강의 표지 사진"
-                  />
-                )}
-              </figure>
-              <CourseDetailMob
-                courseDetail={courseDetail}
-                reviewAvgPoint={reviewAvgPoint}
-                pageId={pageId?.pageId}
-              />
-              <nav
-                className={styles.course_nav}
-                style={
-                  modalFixed === true
-                    ? { position: "fixed", top: 0, zIndex: 999 }
-                    : { position: "relative" }
+    <main className={`width_content ${styles.coursePage}`}>
+      <div className={styles.course_detail_wrap}>
+        <div className={styles.course_left}>
+          <section className={styles.courseHero}>
+            <figure className={styles.course_thumbnail}>
+              <Image
+                src={
+                  courseDetail?.videoLessonsIbThumbnailUrl
+                    ? courseDetail.videoLessonsIbThumbnailUrl
+                    : "/img/common/user_profile.jpg"
                 }
-              >
-                <ul style={{ listStyle: "none" }}>
-                  <li
-                    className={modal === 1 ? styles.active : ""}
-                    onClick={() => setModal(1)}
-                  >
-                    <span onClick={onClickCourseContent}>과정소개</span>
-                  </li>
-                  <li
-                    className={modal === 2 ? styles.active : ""}
-                    onClick={() => setModal(2)}
-                  >
-                    <span onClick={onClickCourseCurriculum}>커리큘럼</span>
-                  </li>
-                  <li
-                    className={modal === 3 ? styles.active : ""}
-                    onClick={() => setModal(3)}
-                  >
-                    <span onClick={onClickCourseReview}>수강후기</span>
-                  </li>
-                </ul>
-              </nav>
-              <div className={styles.mi_course}>
-                <div
-                  className={`${styles.course_content} ${styles.course_section}`}
-                  ref={courseContent}
-                >
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: courseDetail.content,
-                    }}
-                  ></p>
-                </div>
+                width="100"
+                height="100"
+                alt="강의 표지 사진"
+              />
+            </figure>
 
-                <div
-                  className={`${styles.course_section}`}
-                  ref={courseCurriculum}
-                >
-                  <div className={styles.course_tit_header}>
-                    <h3>커리큘럼</h3>
-                  </div>
+            <div className={styles.courseHeroCard}>
+              <span className={styles.courseHeroLabel}>MONTHLY IB COURSE</span>
+              <h1 className={styles.courseHeroTitle}>{courseDetail?.title}</h1>
+              {courseSummary && (
+                <p className={styles.courseHeroSummary}>{courseSummary}</p>
+              )}
 
-                  <div className={styles.course_curri_wrap}>
-                    <CourseCurriculum curriculum={courseDetail} />
-                  </div>
-                </div>
-                <div ref={courseReivew} style={{ marginTop: 50 }} className="">
-                  <CourseReview
-                    pageId={pageId?.pageId}
-                    reviewAvgPoint={reviewAvgPoint}
-                    reviewPoint={reviewStarHeight}
-                    courseDetail={courseDetail}
-                  />
-                </div>
+              <div className={styles.courseHeroMeta}>
+                {categoryPath && (
+                  <span className={styles.courseMetaChip}>{categoryPath}</span>
+                )}
+                {courseDetail?.instructor && (
+                  <span className={styles.courseMetaChip}>
+                    Instructor {courseDetail.instructor}
+                  </span>
+                )}
+                {courseDetail?.chapterInfo && (
+                  <span className={styles.courseMetaChip}>
+                    {courseDetail.chapterInfo}
+                  </span>
+                )}
+                <span className={styles.courseMetaChip}>
+                  리뷰 {reviewStats.count}개
+                </span>
               </div>
             </div>
-          </div>
-          <CourseDetailRight
+          </section>
+
+          <CourseDetailMob
             courseDetail={courseDetail}
-            reviewAvgPoint={reviewAvgPoint}
-            pageId={pageId?.pageId}
+            reviewAvgPoint={reviewStats.average}
+            reviewCount={reviewStats.count}
+            pageId={pageId}
           />
+
+          <nav className={styles.course_nav}>
+            <ul>
+              <li className={modal === 1 ? styles.active : ""}>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection(courseContent, 1)}
+                >
+                  과정소개
+                </button>
+              </li>
+              <li className={modal === 2 ? styles.active : ""}>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection(courseCurriculum, 2)}
+                >
+                  커리큘럼
+                </button>
+              </li>
+              <li className={modal === 3 ? styles.active : ""}>
+                <button
+                  type="button"
+                  onClick={() => scrollToSection(courseReview, 3)}
+                >
+                  수강후기
+                </button>
+              </li>
+            </ul>
+          </nav>
+
+          <div className={styles.mi_course}>
+            <section
+              ref={courseContent}
+              className={`${styles.course_content} ${styles.course_section} ${styles.course_sectionCard}`}
+            >
+              <div className={styles.course_tit_header}>
+                <h3>과정소개</h3>
+              </div>
+              <div
+                className={styles.course_contentInner}
+                dangerouslySetInnerHTML={{
+                  __html: courseDetail?.content ?? "",
+                }}
+              />
+            </section>
+
+            <section
+              ref={courseCurriculum}
+              className={`${styles.course_section} ${styles.course_sectionCard}`}
+            >
+              <div className={styles.course_tit_header}>
+                <h3>커리큘럼</h3>
+              </div>
+
+              <div className={styles.course_curri_wrap}>
+                <CourseCurriculum curriculum={courseDetail} />
+              </div>
+            </section>
+
+            <section
+              ref={courseReview}
+              className={`${styles.course_section} ${styles.course_sectionCard}`}
+            >
+              <CourseReview
+                pageId={pageId}
+                reviewAvgPoint={reviewStats.average}
+                reviewPoint={reviewStats.distribution}
+                courseDetail={courseDetail}
+              />
+            </section>
+          </div>
         </div>
-      </main>
-    </>
+
+        <CourseDetailRight
+          courseDetail={courseDetail}
+          reviewAvgPoint={reviewStats.average}
+          reviewCount={reviewStats.count}
+          pageId={pageId}
+          categoryPath={categoryPath}
+        />
+      </div>
+    </main>
   );
 };
 
