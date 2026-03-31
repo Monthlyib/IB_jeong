@@ -38,14 +38,18 @@ const AdminSchedule = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [sortConfig, setSortConfig] = useState({
-    key: "date",
-    direction: "desc",
+    key: null,
+    direction: null,
   });
   const { tutoringDateList } = useTutoringStore();
 
   const scheduleList = tutoringDateList?.tutoring?.data ?? [];
 
   const sortedScheduleList = useMemo(() => {
+    if (!sortConfig.key || !sortConfig.direction) {
+      return scheduleList;
+    }
+
     const nextList = [...scheduleList];
 
     nextList.sort((left, right) => {
@@ -127,11 +131,26 @@ const AdminSchedule = () => {
   };
 
   const handleSort = (key) => {
-    setSortConfig((prev) => ({
-      key,
-      direction:
-        prev.key === key && prev.direction === "asc" ? "desc" : "asc",
-    }));
+    setSortConfig((prev) => {
+      if (prev.key !== key) {
+        return {
+          key,
+          direction: "asc",
+        };
+      }
+
+      if (prev.direction === "asc") {
+        return {
+          key,
+          direction: "desc",
+        };
+      }
+
+      return {
+        key: null,
+        direction: null,
+      };
+    });
     setCurrentPage(1);
   };
 
