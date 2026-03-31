@@ -155,7 +155,7 @@ const Calculator = () => {
         <div className="header_flex">
           <div className="header_tit_wrap">
             <span>Library</span>
-            <h2>IB 성적 계산기</h2>
+            <h2>합격 예측 계산기</h2>
           </div>
         </div>
 
