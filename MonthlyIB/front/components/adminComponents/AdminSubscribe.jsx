@@ -290,22 +290,21 @@ const AdminSubscribe = () => {
           >
             {renderSortLabel("premiumLabel")}
           </button>
-          <div className={styles.tableHeaderStatic}>Tools</div>
         </div>
 
         <div className={styles.tableBody}>
           {paginatedSubscribeItems.map((subscribeItem) => (
             <div key={subscribeItem.title} className={styles.tableRowWrap}>
               <div className={`${styles.users} ${styles.subscribeGrid}`}>
-                <div className={styles.tableCell}>{subscribeItem.title}</div>
-                <div className={styles.tableCell}>{subscribeItem.planCount}개</div>
-                <div className={styles.tableCell}>{subscribeItem.premiumLabel}</div>
-                <span className={styles.tableTools}>
+                <div className={`${styles.tableCell} ${styles.subscribeItemCell}`}>
+                  <span>{subscribeItem.title}</span>
                   <FontAwesomeIcon
                     icon={faPenAlt}
                     onClick={() => onClickEditItem(subscribeItem.title)}
                   />
-                </span>
+                </div>
+                <div className={styles.tableCell}>{subscribeItem.planCount}개</div>
+                <div className={styles.tableCell}>{subscribeItem.premiumLabel}</div>
               </div>
             </div>
           ))}
