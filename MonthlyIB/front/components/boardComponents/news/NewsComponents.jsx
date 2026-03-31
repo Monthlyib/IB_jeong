@@ -5,7 +5,7 @@ import NewsItems from "./NewsItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-import BoardCommonHead from "../BoardCommonHead";
+import BoardCommon from "../BoardCommon";
 import { useNewstore } from "@/store/news";
 import { useUserInfo } from "@/store/user";
 import Loading from "../../Loading";
@@ -13,27 +13,38 @@ import { useRouter } from "next/navigation";
 
 const NewsComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // Popup state
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [authResolved, setAuthResolved] = useState(false);
   const searchKeyword = useRef();
   const [searching, setSearching] = useState(false);
   const { userInfo } = useUserInfo();
-  const { newsList, getNewsList, PageInfo, loading } = useNewstore(); // PageInfo에 totalPages 포함
+  const { newsList, getNewsList, PageInfo, loading } = useNewstore();
   const router = useRouter();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
 
+  const handleSearch = () => {
+    setCurrentPage(1);
+    setSearching((prev) => !prev);
+  };
+
   useEffect(() => {
     const search = searchKeyword.current ?? "";
     getNewsList(currentPage, search);
-
-    // Show popup if user is not logged in
-    console.log(userInfo);
-    if (userInfo?.authority === undefined) {
-      setIsPopupOpen(true);
-    }
   }, [searching, currentPage]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const storedUserInfo = window.localStorage.getItem("userInfo");
+    const hasPersistedSession = Boolean(storedUserInfo);
+    const isLoggedIn = Boolean(userInfo?.authority) || hasPersistedSession;
+
+    setIsPopupOpen(!isLoggedIn);
+    setAuthResolved(true);
+  }, [userInfo?.authority]);
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);
@@ -42,25 +53,71 @@ const NewsComponents = () => {
 
   return (
     <>
-      <main className="width_content archive">
-        <BoardCommonHead
-          searchKeyword={searchKeyword}
-          setSeraching={setSearching}
-          modal={0}
-          placeholder="입시뉴스 검색"
-        />
-        {userInfo?.authority === "ADMIN" && (
-          <div className={styles.right_btn}>
-            <Link
-              href="/board/newswrite?type=write"
-              className={styles.btn_write}
-            >
-              <FontAwesomeIcon icon={faPenAlt} />
-              <span>글쓰기</span>
-            </Link>
+      <main className={`width_content archive ${styles.boardPage}`}>
+        <section className={styles.boardHero}>
+          <div className={styles.boardHeroCopy}>
+            <span className={styles.boardEyebrow}>Monthly IB Newsroom</span>
+            <h2>IB 입시뉴스</h2>
+            <p>
+              입시 일정, 대학 발표, 교육 트렌드를 한 화면에서 빠르게 확인할 수
+              있도록 정리한 뉴스 보드입니다.
+            </p>
           </div>
-        )}
-        <div className={styles.board_wrap}>
+
+          <div className={styles.boardHeroAside}>
+            <label className={styles.boardSearch}>
+              <span className={styles.boardSearchLabel}>뉴스 검색</span>
+              <div className={styles.boardSearchField}>
+                <input
+                  type="text"
+                  placeholder="입시뉴스 검색"
+                  defaultValue={searchKeyword.current}
+                  onChange={(e) => {
+                    searchKeyword.current = e.target.value;
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleSearch();
+                    }
+                  }}
+                />
+                <button type="button" onClick={handleSearch}>
+                  검색
+                </button>
+              </div>
+            </label>
+
+            <div className={styles.boardHeroActions}>
+              <div className={styles.boardStatCard}>
+                <span>현재 게시글</span>
+                <strong>{PageInfo?.totalElements ?? newsList.length ?? 0}</strong>
+              </div>
+              {userInfo?.authority === "ADMIN" && (
+                <Link
+                  href="/board/newswrite?type=write"
+                  className={styles.boardWriteButton}
+                >
+                  <FontAwesomeIcon icon={faPenAlt} />
+                  <span>글쓰기</span>
+                </Link>
+              )}
+            </div>
+          </div>
+        </section>
+
+        <BoardCommon modal={0} />
+
+        <section className={styles.boardPanel}>
+          <div className={styles.boardPanelHeader}>
+            <div>
+              <span className={styles.boardPanelEyebrow}>Latest Updates</span>
+              <h3>최신 입시 소식</h3>
+            </div>
+            <p>
+              제목을 열면 상세 기사와 첨부 자료를 함께 확인할 수 있습니다.
+            </p>
+          </div>
+
           {loading ? (
             <Loading />
           ) : (
@@ -71,66 +128,16 @@ const NewsComponents = () => {
               onPageChange={handlePageChange}
             />
           )}
-        </div>
+        </section>
 
-        {/* Popup Modal */}
-        {/* Popup Modal */}
-        {isPopupOpen && (
-          <div
-            style={{
-              position: "fixed",
-              top: "0",
-              left: "0",
-              width: "100%",
-              height: "100%",
-              backgroundColor: "rgba(0, 0, 0, 0.5)",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1000,
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "white",
-                borderRadius: "16px",
-                padding: "30px",
-                textAlign: "center",
-                boxShadow: "0 6px 12px rgba(0, 0, 0, 0.3)",
-                width: "400px", // 팝업의 크기를 키움
-              }}
-            >
-              <h2
-                style={{
-                  marginBottom: "20px",
-                  fontSize: "20px",
-                  color: "#5a2d82", // 헤더 색상 변경
-                }}
-              >
-                로그인 필요
-              </h2>
-              <p
-                style={{
-                  marginBottom: "30px",
-                  fontSize: "16px",
-                }}
-              >
-                로그인하시면 더 많은 정보를 확인하실 수 있습니다.
-              </p>
-              <button
-                onClick={handleClosePopup}
-                style={{
-                  padding: "12px 24px",
-                  backgroundColor: "#5a2d82", // 버튼 색상 헤더 색과 일치
-                  color: "white",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.2)",
-                }}
-              >
-                확인
+        {authResolved && isPopupOpen && (
+          <div className={styles.boardModalOverlay}>
+            <div className={styles.boardModalCard}>
+              <span className={styles.boardModalEyebrow}>Members Only</span>
+              <h3>로그인 필요</h3>
+              <p>로그인하시면 더 많은 정보를 확인하실 수 있습니다.</p>
+              <button type="button" onClick={handleClosePopup}>
+                로그인하기
               </button>
             </div>
           </div>
