@@ -408,14 +408,14 @@
 }
 
 .newsDetailShell {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 30rem;
-  justify-content: space-between;
+  display: flex;
   gap: 2.8rem;
-  align-items: start;
+  align-items: flex-start;
 }
 
 .newsDetailMain {
+  flex: 1 1 auto;
+  width: calc(100% - 32.8rem);
   min-width: 0;
 }
 
@@ -424,7 +424,6 @@
   gap: 2rem;
 }
 
-.newsDetailHeader,
 .newsDetailContent,
 .newsDetailAttachments,
 .newsDetailAsideCard {
@@ -435,8 +434,13 @@
   box-shadow: 0 18px 40px rgba(40, 27, 56, 0.06);
 }
 
-.newsDetailHeader h1 {
-  margin: 0 0 1.4rem;
+.newsDetailContentHeader {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.newsDetailContentHeader h1 {
+  margin: 0;
   color: #241a34;
   font-size: 4.4rem;
   line-height: 1.15;
@@ -450,6 +454,11 @@
   gap: 0.6rem;
   color: #7a6f8a;
   font-size: 1.4rem;
+}
+
+.newsDetailContentDivider {
+  margin: 2rem 0 2.2rem;
+  border-top: 1px solid rgba(81, 52, 108, 0.12);
 }
 
 .newsDetailSectionTop {
@@ -517,11 +526,13 @@
 }
 
 .newsDetailSide {
+  flex: 0 0 30rem;
+  width: 30rem;
   position: sticky;
   top: 11rem;
   display: grid;
   gap: 1.6rem;
-  align-self: start;
+  align-self: flex-start;
 }
 
 .newsDetailAsideActions {
@@ -1895,7 +1906,6 @@ button.read_btn.delete:hover {
   }
 
   .boardPanel,
-  .newsDetailHeader,
   .newsDetailContent,
   .newsDetailAttachments,
   .newsDetailAsideCard {
@@ -1915,12 +1925,18 @@ button.read_btn.delete:hover {
   }
 
   .newsDetailShell {
-    grid-template-columns: 1fr;
+    flex-direction: column;
   }
 
   .newsDetailSide {
+    width: 100%;
+    flex: 1 1 auto;
     position: static;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .newsDetailMain {
+    width: 100%;
   }
 
   .calcHero {
@@ -2025,7 +2041,7 @@ button.read_btn.delete:hover {
   }
 
   .boardHeroCopy h2,
-  .newsDetailHeader h1 {
+  .newsDetailContentHeader h1 {
     font-size: 3.2rem;
   }
 
@@ -2042,7 +2058,6 @@ button.read_btn.delete:hover {
   }
 
   .boardPanel,
-  .newsDetailHeader,
   .newsDetailContent,
   .newsDetailAttachments,
   .newsDetailAsideCard {

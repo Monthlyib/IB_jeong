@@ -134,17 +134,6 @@ const NewsDetail = (pageId) => {
           <BoardCommon modal={0} />
 
           <article className={styles.newsDetailArticle}>
-            <header className={styles.newsDetailHeader}>
-              <h1>{newsDetail.title}</h1>
-              <div className={styles.newsDetailMeta}>
-                <span>{newsDetail.authorUsername}</span>
-                <b>·</b>
-                <span>{newsDetail.createAt}</span>
-                <b>·</b>
-                <span>조회수 {newsDetail.viewCount}</span>
-              </div>
-            </header>
-
             {attachments.length > 0 && (
               <section className={styles.newsDetailAttachments}>
                 <div className={styles.newsDetailSectionTop}>
@@ -168,8 +157,21 @@ const NewsDetail = (pageId) => {
             )}
 
             <section className={styles.newsDetailContent}>
+              <div className={styles.newsDetailContentHeader}>
+                <span className={styles.newsDetailMiniLabel}>기사 제목</span>
+                <h1>{newsDetail.title}</h1>
+                <div className={styles.newsDetailMeta}>
+                  <span>{newsDetail.authorUsername}</span>
+                  <b>·</b>
+                  <span>{newsDetail.createAt}</span>
+                  <b>·</b>
+                  <span>조회수 {newsDetail.viewCount}</span>
+                </div>
+              </div>
+              <div className={styles.newsDetailContentDivider} />
               <div className={styles.newsDetailSectionTop}>
                 <div>
+                  <span className={styles.newsDetailMiniLabel}>기사 본문</span>
                   <h3>기사 본문</h3>
                 </div>
               </div>
