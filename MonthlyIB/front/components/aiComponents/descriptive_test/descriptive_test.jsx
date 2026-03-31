@@ -29,70 +29,87 @@ const DescriptiveTestMain = () => {
 
   return (
     <main className={styles.container}>
-      <section className={styles.intro}>
-        <h1 className={styles.title}>AI 서술형 평가</h1>
-        <p className={styles.subtitle}>
-          과목과 챕터를 선택하고 &lsquo;문제&nbsp;불러오기&rsquo; 버튼을 눌러 보세요!
-        </p>
+      <section className={styles.heroCard}>
+        <div className={styles.intro}>
+          <span className={styles.eyebrow}>AI Descriptive Practice</span>
+          <h1 className={styles.title}>AI 서술형 평가</h1>
+          <p className={styles.subtitle}>
+            과목과 챕터를 선택하고, 바로 서술형 문제를 불러와 답안 작성과 피드백까지 이어서 진행하세요.
+          </p>
+        </div>
+
+        {userInfo?.authority === "ADMIN" && (
+          <div className={styles.adminActions}>
+            <Link
+              href={`/aitools/descriptive/admin-input`}
+              className={styles.adminButton}
+            >
+              <FontAwesomeIcon icon={faPenAlt} />
+              <span>문제 입력</span>
+            </Link>
+            <Link
+              href={`/aitools/descriptive/list`}
+              className={styles.adminButton}
+            >
+              <FontAwesomeIcon icon={faPenAlt} />
+              <span>문제 목록 보기</span>
+            </Link>
+          </div>
+        )}
       </section>
 
-      {userInfo?.authority === "ADMIN" && (
-        <div className={styles.right_btn}>
-          <Link
-            href={`/aitools/descriptive/admin-input`}
-            className={styles.btn_write}
-          >
-            <FontAwesomeIcon icon={faPenAlt} />
-            <span>문제 입력</span>
-          </Link>
-        </div>
-      )}
-      {userInfo?.authority === "ADMIN" && (
-        <div className={styles.right_btn}>
-          <Link
-            href={`/aitools/descriptive/list`}
-            className={styles.btn_write}
-          >
-            <FontAwesomeIcon icon={faPenAlt} />
-            <span>문제 목록 보기</span>
-          </Link>
-        </div>
-      )}
-
-      <section className={styles.formSection}>
-        <div className={styles.selectWrapper}>
-          <label htmlFor="subjectSelect">과목 선택</label>
-          <select
-            id="subjectSelect"
-            value={subject}
-            onChange={(e) => {
-              setSubject(e.target.value);
-              setChapter("");
-            }}
-          >
-            <option value="">과목을 선택하세요</option>
-            {Object.keys(chapterOptions).map((sub) => (
-              <option key={sub} value={sub}>
-                {sub}
-              </option>
-            ))}
-          </select>
+      <section className={styles.formCard}>
+        <div className={styles.formHeader}>
+          <div>
+            <p className={styles.formEyebrow}>Choose Your Setup</p>
+            <h2 className={styles.formTitle}>과목과 챕터를 선택해 문제를 시작하세요</h2>
+          </div>
+          <p className={styles.formNote}>
+            과목을 먼저 선택하면 해당 과목의 챕터 목록이 열립니다.
+          </p>
         </div>
 
-        <div className={styles.selectWrapper}>
-          <label htmlFor="chapterSelect">챕터/토픽 선택</label>
-          <select
-            id="chapterSelect"
-            value={chapter}
-            onChange={(e) => setChapter(e.target.value)}
-          >
-            <option value="">챕터를 선택하세요</option>
-            {chapterOptions[subject]?.map((ch) => (
-              <option key={ch} value={ch}>
-                {ch}
-              </option>
-            ))}
-          </select>
+        <div className={styles.formSection}>
+          <div className={styles.selectWrapper}>
+            <label htmlFor="subjectSelect">과목 선택</label>
+            <div className={styles.selectField}>
+              <select
+                id="subjectSelect"
+                value={subject}
+                className={!subject ? styles.placeholderSelect : ""}
+                onChange={(e) => {
+                  setSubject(e.target.value);
+                  setChapter("");
+                }}
+              >
+                <option value="">과목을 선택하세요</option>
+                {Object.keys(chapterOptions).map((sub) => (
+                  <option key={sub} value={sub}>
+                    {sub}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className={styles.selectWrapper}>
+            <label htmlFor="chapterSelect">챕터/토픽 선택</label>
+            <div className={styles.selectField}>
+              <select
+                id="chapterSelect"
+                value={chapter}
+                className={!chapter ? styles.placeholderSelect : ""}
+                onChange={(e) => setChapter(e.target.value)}
+              >
+                <option value="">챕터를 선택하세요</option>
+                {chapterOptions[subject]?.map((ch) => (
+                  <option key={ch} value={ch}>
+                    {ch}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         <button className={styles.startButton} onClick={handleStart}>
