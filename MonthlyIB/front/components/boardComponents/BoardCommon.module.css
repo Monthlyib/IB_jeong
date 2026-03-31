@@ -314,114 +314,29 @@ button.read_btn.delete:hover {
 
 .calc_wrap {
   width: 100%;
+  display: grid;
+  gap: 1.4rem;
 }
 
 .calc_list {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  display: grid;
+  grid-template-columns: minmax(15rem, 0.9fr) minmax(0, 1.5fr) minmax(12rem, 0.75fr) minmax(12rem, 0.75fr);
+  gap: 1.2rem;
   width: 100%;
-  height: 8.6rem;
-  border-radius: 1rem;
-  border: 1px solid #d5d5d5;
-  padding: 1.2rem;
-  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
-  margin-bottom: 1.2rem;
-}
-
-.calc_list select {
-  display: block;
-  width: 15rem;
-  height: 100%;
-  border-radius: 0.5rem;
-  background: url("/img/icon/caret-down.png") no-repeat;
-  background-size: 1.1rem;
-  background-position: right 1.2rem center;
-  border: none;
-  color: #888;
-  font-size: 1.8rem;
-  line-height: 1.4;
-  padding: 0 1.2rem;
-}
-
-.calc_list select.group_one {
-  display: block;
-  width: 33rem;
-  height: 100%;
-  border-radius: 0.5rem;
-  background: url("/img/icon/caret-down.png") no-repeat;
-  background-size: 1.1rem;
-  background-position: right 1.2rem center;
-  border: none;
-  color: #888;
-  font-size: 1.8rem;
-  line-height: 1.4;
-  padding: 0 1.2rem;
-  text-align: center;
-}
-
-.calc_list select:selected {
-  color: #000;
-}
-
-.calc_list .calc_left {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-}
-
-.calc_list .calc_left > select {
-  margin-right: 2.4rem;
-}
-
-.calc_list .calc_left .calc_group {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 100%;
-}
-
-.calc_list .calc_left .calc_group > select {
-  margin-right: 1.2rem;
-}
-
-.calc_list .calc_left .calc_group .calc_class {
-  position: relative;
-  height: 100%;
-}
-
-.calc_list .calc_left .calc_group .calc_class select {
-  /* position: absolute; */
-  left: 0;
-  top: 0;
+  margin-top: 1.4rem;
 }
 
 .calc_bottom {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.calc_bottom select#bonus {
-  display: block;
-  width: 19rem;
-  height: 6rem;
-  border: 1px solid #d5d5d5;
-  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
-  border-radius: 1rem;
-  background: url("/img/icon/caret-down.png") no-repeat;
-  background-size: 1.1rem;
-  background-position: right 1.2rem center;
-  color: #888;
-  font-size: 1.8rem;
-  line-height: 1.4;
-  padding: 0 1.2rem;
+  align-items: flex-end;
+  gap: 1.6rem;
+  margin-top: 2rem;
 }
 
 .calc_bottom .calc_btn {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 
@@ -432,19 +347,16 @@ button.read_btn.delete:hover {
   width: 12rem;
   height: 5.2rem;
   font-size: 1.6rem;
-  border-radius: 1rem;
-  font-weight: 500;
-}
-
-.calc_bottom .calc_btn button.calc_btn {
-  background: var(--primary01);
-  color: #fff;
-  margin-right: 1.2rem;
+  border-radius: 1.4rem;
+  font-weight: 600;
 }
 
 .calc_bottom .calc_btn button.reset_btn {
-  border: 1px solid #000;
-  color: #000;
+  min-width: 13rem;
+  padding: 0 1.8rem;
+  border: 1px solid #d6cceb;
+  background: #fff;
+  color: #3d3154;
 }
 
 .calc_result {
@@ -452,9 +364,7 @@ button.read_btn.delete:hover {
   justify-content: center;
   align-items: center;
   width: 100%;
-  border-top: 1px solid #d5d5d5;
-  margin-top: 7rem;
-  padding: 2.6rem 0;
+  margin-top: 2rem;
 }
 
 .calc_result p {
@@ -469,6 +379,262 @@ button.read_btn.delete:hover {
   font-size: 3.2rem;
   color: var(--primary01);
   padding: 0 0.4rem 0 2.4rem;
+}
+
+.calcHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(30rem, 1fr);
+  gap: 2rem;
+  margin: 3rem 0 2rem;
+  padding: 2.8rem 3rem;
+  border: 1px solid rgba(81, 52, 108, 0.14);
+  border-radius: 2.4rem;
+  background:
+    radial-gradient(circle at top left, rgba(81, 52, 108, 0.08), transparent 32%),
+    linear-gradient(180deg, #fbf9ff 0%, #ffffff 100%);
+  box-shadow: 0 20px 56px rgba(44, 31, 62, 0.08);
+}
+
+.calcHeroCopy {
+  min-width: 0;
+}
+
+.calcEyebrow,
+.calcPanelEyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(81, 52, 108, 0.16);
+  background: rgba(81, 52, 108, 0.06);
+  color: var(--primary01);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.calcHeroCopy h3 {
+  margin: 1.6rem 0 1rem;
+  color: #21192f;
+  font-size: 3.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+  word-break: keep-all;
+}
+
+.calcHeroCopy p {
+  max-width: 70rem;
+  color: #665b79;
+  font-size: 1.6rem;
+  line-height: 1.75;
+  word-break: keep-all;
+}
+
+.calcSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.calcSummaryCard {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.8rem;
+  min-width: 0;
+  padding: 1.8rem;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 1.8rem;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.calcSummaryCard span {
+  color: #7d7290;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.calcSummaryCard strong {
+  color: #261d36;
+  font-size: 2.1rem;
+  font-weight: 700;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+
+.calcPanel,
+.recommend_schools_wrap {
+  margin-top: 2rem;
+  padding: 2.6rem 2.8rem;
+  border: 1px solid #e8e0f1;
+  border-radius: 2.4rem;
+  background: #fff;
+  box-shadow: 0 16px 44px rgba(38, 27, 54, 0.05);
+}
+
+.calcPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1.6rem;
+}
+
+.calcPanelHeader h3 {
+  margin-top: 1rem;
+  color: #241b33;
+  font-size: 2.8rem;
+  font-weight: 700;
+}
+
+.calcPanelHeader p {
+  max-width: 48rem;
+  color: #756a87;
+  font-size: 1.45rem;
+  line-height: 1.7;
+  text-align: right;
+  word-break: keep-all;
+}
+
+.calcCard {
+  padding: 1.8rem;
+  border: 1px solid #ece5f5;
+  border-radius: 2rem;
+  background: #fcfbfe;
+}
+
+.calcCardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.calcCardEyebrow {
+  display: block;
+  margin-bottom: 0.6rem;
+  color: #8678a3;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.calcCardHeader strong {
+  color: #261d36;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.calcCardStatus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 7rem;
+  height: 3.6rem;
+  padding: 0 1.2rem;
+  border-radius: 999px;
+  background: rgba(81, 52, 108, 0.08);
+  color: var(--primary01);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.calcSelectBlock {
+  min-width: 0;
+}
+
+.calcSelectBlock.isWide {
+  min-width: 0;
+}
+
+.calcLabel {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: #6e6381;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.calcSelect,
+.bonusSelect,
+.recommendSchoolsSelect {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: 5.6rem;
+  padding: 0 4rem 0 1.5rem;
+  border: 1px solid #ddd4ea;
+  border-radius: 1.4rem;
+  background: #fff url("/img/icon/caret-down.png") no-repeat right 1.4rem center;
+  background-size: 1rem;
+  color: #2d223e;
+  font-size: 1.55rem;
+  line-height: 1.4;
+}
+
+.calcSelect:disabled {
+  background-color: #f6f3fa;
+  color: #aea5bf;
+  cursor: not-allowed;
+}
+
+.subjectSelect {
+  text-align: left;
+}
+
+.bonusCard {
+  width: min(24rem, 100%);
+}
+
+.calcActionArea {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.4rem;
+  flex-wrap: wrap;
+}
+
+.calcHint {
+  color: #7a6f8f;
+  font-size: 1.4rem;
+}
+
+.calcResultCard {
+  width: 100%;
+  padding: 2rem 2.2rem;
+  border-radius: 2rem;
+  background: linear-gradient(135deg, #4f356d 0%, #6a4a94 100%);
+  color: #fff;
+  text-align: center;
+}
+
+.calcResultCard span {
+  display: block;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0.86;
+}
+
+.calcResultCard strong {
+  display: block;
+  margin-top: 1rem;
+  font-size: 5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.calcResultCard p {
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  color: rgba(255, 255, 255, 0.84);
 }
 
 .ib_archive_wrap {
@@ -937,40 +1103,26 @@ button.read_btn.delete:hover {
 }
 
 .recommend_schools_top h3 {
-  font-size: 2.4rem;
-}
-
-select#recommendSchools {
-  display: block;
-  width: 12rem;
-  height: 4.4rem;
-  border-radius: 0.5rem;
-  background: url("/img/icon/caret-down.png") no-repeat;
-  background-size: 1.1rem;
-  background-position: right 1.2rem center;
-  border: none;
-  font-size: 1.6rem;
-  line-height: 1.4;
-  padding: 0 1.2rem;
-  border: 1px solid #d5d5d5;
-}
-
-select#recommendSchools:selected {
-  color: #000;
+  margin-top: 1rem;
+  font-size: 2.8rem;
+  color: #241b33;
 }
 
 .schools_list_wrap {
   display: block;
+  margin-top: 2rem;
 }
 
 .schools_list_wrap .school_item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.4rem 3.2rem;
-  border: 1px solid #d5d5d5;
-  border-radius: 0.5rem;
-  margin-bottom: 0.8rem;
+  gap: 2rem;
+  padding: 2.2rem 2.6rem;
+  border: 1px solid #e6def0;
+  border-radius: 1.8rem;
+  margin-bottom: 1rem;
+  background: #fcfbfe;
 }
 
 .schools_list_wrap .school_item:last-child {
@@ -979,58 +1131,67 @@ select#recommendSchools:selected {
 
 .schools_list_wrap .school_item .school_left {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  min-width: 0;
 }
 
 .schools_list_wrap .school_item .school_left figure {
   display: flex;
   align-items: center;
-  width: 17.2rem;
-  height: 15.6rem;
-  margin-right: 2.4rem;
+  width: 12rem;
+  height: 10rem;
+  margin-right: 2rem;
   justify-content: center;
+  border-radius: 1.6rem;
+  background: #fff;
+  border: 1px solid #ede5f6;
 }
 
 .schools_list_wrap .school_item .school_left figure img {
   display: block;
   width: 100%;
-  object-fit: cover;
+  object-fit: contain;
   max-width: 140px;
+  max-height: 72px;
 }
 
 .schools_list_wrap .school_item .school_left .school_tit {
   font-size: 2rem;
   font-weight: 600;
   line-height: 1.4;
+  word-break: keep-all;
 }
 
 .school_right {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .school_right .school_info {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
   align-items: center;
-  margin-right: 3.2rem;
-}
-
-.school_right .school_info:last-child {
-  margin-right: 0;
+  min-width: 11rem;
+  padding: 1.2rem 1.4rem;
+  border-radius: 1.4rem;
+  background: #fff;
+  border: 1px solid #ece3f6;
 }
 
 .school_right .school_info span {
   display: block;
-  margin-bottom: 1.8rem;
-  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+  font-size: 1.2rem;
+  color: #7e7391;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 .school_right .school_info b {
-  font-size: 1.8rem;
+  font-size: 1.7rem;
   color: var(--primary01);
 }
 
@@ -1038,12 +1199,13 @@ select#recommendSchools:selected {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #d5d5d5;
-  border-radius: 1rem;
-  font-size: 1.4rem;
-  font-weight: 400;
-  padding: 2.4rem;
-  min-height: 12.6rem;
+  border: 1px dashed #d8cee8;
+  border-radius: 1.8rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #7f7592;
+  padding: 3rem;
+  min-height: 16rem;
 }
 
 .ib_archive_list {
@@ -1220,6 +1382,44 @@ select#recommendSchools:selected {
        Archive
     **************/
 
+  .calcHero {
+    grid-template-columns: 1fr;
+    padding: 2.4rem;
+  }
+
+  .calcPanel,
+  .recommend_schools_wrap {
+    padding: 2.2rem;
+  }
+
+  .calcPanelHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .calcPanelHeader p {
+    max-width: 100%;
+    text-align: left;
+  }
+
+  .calc_list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .calcSelectBlock.isWide {
+    grid-column: span 2;
+  }
+
+  .schools_list_wrap .school_item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .school_right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
   /* ib */
   .ib_archive_cont .ib_item {
     width: calc(50% - 1rem);
@@ -1299,48 +1499,104 @@ select#recommendSchools:selected {
   }
 
   /* calc */
+  .calcHero {
+    margin-top: 2rem;
+    padding: 2rem 1.6rem;
+  }
+
+  .calcHeroCopy h3 {
+    font-size: 2.8rem;
+  }
+
+  .calcSummaryGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .calcPanel,
+  .recommend_schools_wrap {
+    padding: 1.8rem 1.4rem;
+  }
+
+  .calcCard {
+    padding: 1.5rem;
+  }
+
+  .calcCardHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
   .calc_list {
-    padding: 0.8rem;
-    height: 6.2rem;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
 
-  .calc_list select {
-    width: 6rem;
-    padding: 0 0.4rem;
-    font-size: 1.2rem;
+  .calcSelectBlock.isWide {
+    grid-column: span 1;
+  }
+
+  .calcSelect,
+  .bonusSelect,
+  .recommendSchoolsSelect {
+    height: 5rem;
+    padding: 0 3.6rem 0 1.2rem;
+    font-size: 1.4rem;
     background-size: 0.8rem;
-  }
-
-  .calc_list .calc_left > select {
-    margin-right: 0.6rem;
-  }
-
-  .calc_list .calc_left .calc_group > select {
-    margin-right: 0.6rem;
   }
 
   .calc_bottom {
     flex-direction: column;
+    align-items: stretch;
   }
 
-  .calc_bottom select#bonus {
+  .bonusCard {
     width: 100%;
-    height: 6rem;
-    padding: 0 1.2rem;
-    font-size: 1.2rem;
-    background-size: 0.8rem;
-    margin-bottom: 1.2rem;
   }
 
-  .calc_bottom .calc_btn {
+  .calcActionArea {
     width: 100%;
+    justify-content: space-between;
   }
 
   .calc_result {
-    margin-top: 5.4rem;
+    margin-top: 1.6rem;
   }
 
-  .calc_result p {
-    font-size: 2rem;
+  .calcResultCard strong {
+    font-size: 4rem;
+  }
+
+  .recommend_schools_top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+  }
+
+  .recommendSchoolsSelect {
+    width: 100%;
+  }
+
+  .schools_list_wrap .school_item {
+    padding: 1.8rem;
+  }
+
+  .schools_list_wrap .school_item .school_left {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .schools_list_wrap .school_item .school_left figure {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 1.2rem;
+  }
+
+  .school_right {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .school_right .school_info {
+    width: 100%;
   }
 }
