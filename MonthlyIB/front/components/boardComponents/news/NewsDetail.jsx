@@ -135,7 +135,6 @@ const NewsDetail = (pageId) => {
 
           <article className={styles.newsDetailArticle}>
             <header className={styles.newsDetailHeader}>
-              <span className={styles.newsDetailEyebrow}>Article</span>
               <h1>{newsDetail.title}</h1>
               <div className={styles.newsDetailMeta}>
                 <span>{newsDetail.authorUsername}</span>
@@ -171,10 +170,8 @@ const NewsDetail = (pageId) => {
             <section className={styles.newsDetailContent}>
               <div className={styles.newsDetailSectionTop}>
                 <div>
-                  <span className={styles.newsDetailMiniLabel}>Full Story</span>
                   <h3>기사 본문</h3>
                 </div>
-                <p>본문은 원문 구조를 유지한 상태로 보여줍니다.</p>
               </div>
               <div
                 className={styles.newsDetailBody}

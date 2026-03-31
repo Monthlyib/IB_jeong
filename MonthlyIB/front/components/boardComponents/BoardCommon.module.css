@@ -396,15 +396,20 @@
   line-height: 1.65;
 }
 
-.newsDetailPage {
-  width: min(132rem, calc(100vw - 4rem));
+:global(.width_content).newsDetailPage {
+  width: min(138rem, calc(100vw - 4rem));
   margin-top: 2.4rem;
   padding-bottom: 6rem;
 }
 
+.newsDetailPage :global(.archive_tab) {
+  width: 100%;
+  margin: 0 0 5rem;
+}
+
 .newsDetailShell {
   display: grid;
-  grid-template-columns: minmax(0, 92rem) 30rem;
+  grid-template-columns: minmax(0, 1fr) 30rem;
   justify-content: space-between;
   gap: 2.8rem;
   align-items: start;
@@ -431,7 +436,7 @@
 }
 
 .newsDetailHeader h1 {
-  margin: 1.6rem 0 1.4rem;
+  margin: 0 0 1.4rem;
   color: #241a34;
   font-size: 4.4rem;
   line-height: 1.15;
@@ -452,7 +457,7 @@
   justify-content: space-between;
   gap: 2rem;
   align-items: flex-end;
-  margin-bottom: 2rem;
+  margin-bottom: 1.6rem;
 }
 
 .newsDetailSectionTop h3,
@@ -2007,8 +2012,8 @@ button.read_btn.delete:hover {
 }
 
 @media screen and (max-width: 640px) {
-  .boardPage,
-  .newsDetailPage {
+  :global(.width_content).boardPage,
+  :global(.width_content).newsDetailPage {
     width: calc(100% - 3.2rem);
     margin-top: 1.6rem;
     padding-bottom: 4rem;
