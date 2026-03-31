@@ -1,5 +1,5 @@
 "use client";
-import styles from "@/components/boardComponents/BoardCommon.module.css";
+import styles from "@/components/storeComponents/ArchiveComponents.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUpFromBracket,
@@ -25,13 +25,12 @@ const ArchiveUpperButtons = ({
   };
 
   return (
-    <div className={styles.right_btn} style={{ marginBottom: "3rem" }}>
-      {/* 상위 폴더 버튼은 모두가 접근 가능 */}
+    <div className={styles.toolbarActions}>
       <button
         className={
           currentFolderId > 0
-            ? styles.btn_write_back
-            : styles.btn_write_back_disabled
+            ? styles.archiveActionButton
+            : `${styles.archiveActionButton} ${styles.isDisabled}`
         }
         onClick={onClickUpFolder}
         disabled={currentFolderId > 0 ? false : true}
@@ -40,14 +39,13 @@ const ArchiveUpperButtons = ({
         <span>상위폴더</span>
       </button>
 
-      {/* ADMIN일 때만 폴더 추가와 파일 추가 버튼 표시 */}
       {authority === "ADMIN" && (
         <>
-          <button className={styles.btn_write_back} onClick={onClickCreateFolder}>
+          <button className={styles.archiveActionButton} onClick={onClickCreateFolder}>
             <FontAwesomeIcon icon={faFolderPlus} />
             <span>폴더추가</span>
           </button>
-          <button className={styles.btn_write_back} onClick={handleButtonClick}>
+          <button className={styles.archiveActionButton} onClick={handleButtonClick}>
             <FontAwesomeIcon icon={faFileCirclePlus} />
             <input key={key} type="file" onChange={onSelectFile} ref={file} />
             <span>파일추가</span>

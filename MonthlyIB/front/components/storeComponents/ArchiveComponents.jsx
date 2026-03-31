@@ -7,7 +7,7 @@ import ArchiveItems from "./ArchiveItems";
 import ArchiveFolderModal from "./ArchiveFolderModal";
 import ArchiveUpperButtons from "./ArchiveUpperButtons";
 import { useStoreStore } from "@/store/store";
-import { useUserInfo } from "@/store/user";
+import { useUserInfo, useUserStore } from "@/store/user";
 import { useRouter } from "next/navigation"; // useRouter 추가
 
 const ArchiveComponents = () => {
@@ -62,6 +62,7 @@ const ArchiveComponents = () => {
   const [folderNameModal, setFolderNameModal] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false); // 팝업 상태
   const router = useRouter(); // Router 추가
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   // 컴포넌트가 마운트될 때 폴더 리스트를 가져옵니다.
   useEffect(() => {
@@ -77,6 +78,17 @@ const ArchiveComponents = () => {
       setIsPopupOpen(true);
     }
   }, [searching]);
+
+  useEffect(() => {
+    const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    if (localUser?.state?.userInfo?.userId) {
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+    }
+  }, [getUserSubscribeInfo]);
 
 
   
@@ -124,6 +136,28 @@ const ArchiveComponents = () => {
     }
   };
 
+  const visibleFolders =
+    currentFolderId !== 0
+      ? Array.isArray(subLists["folders"])
+        ? subLists["folders"].length
+        : 0
+      : Array.isArray(mainFolders)
+        ? mainFolders.length
+        : 0;
+
+  const visibleFiles =
+    currentFolderId !== 0 && Array.isArray(subLists["files"])
+      ? subLists["files"].length
+      : 0;
+
+  const canOpenFiles =
+    userInfo?.authority === "ADMIN" ||
+    userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" ||
+    userSubscribeInfo?.[0]?.userId === 1;
+
+  const currentFolderLabel =
+    currentFolderId === 0 ? "메인 드라이브" : breadcrumbNames[breadcrumbNames.length - 1];
+
   return (
     <>
       <main className="width_content archive">
@@ -169,50 +203,119 @@ const ArchiveComponents = () => {
           placeholder="자료실 검색"
         />
 
-        <div className={styles.path_nav}>
-          <nav aria-label="breadcrumb" className={styles.breadcrumbNav}>
-            {breadcrumbNames.map((name, idx) => (
-              <span key={`crumb-${idx}`} className={styles.breadcrumbItem}>
-                <button
-                  type="button"
-                  onClick={() => onClickBreadcrumb(idx)}
-                  className={`${styles.breadcrumbBtn} ${idx === breadcrumbNames.length - 1 ? styles.isActive : ""}`}
-                  disabled={idx === breadcrumbNames.length - 1}
-                >
-                  {name}
-                </button>
-                {idx !== breadcrumbNames.length - 1 && <span className={styles.breadcrumbSep}>/</span>}
-              </span>
-            ))}
-          </nav>
-        </div>
+        <section className={styles.archiveHero}>
+          <div className={styles.heroCopy}>
+            <span className={styles.heroEyebrow}>Monthly IB Drive</span>
+            <h3>과목 자료를 폴더 단위로 빠르게 탐색하는 자료실</h3>
+            <p>
+              메인 폴더부터 세부 자료까지 한 흐름으로 이동하고, 구독 상태에 따라
+              필요한 파일을 바로 열람할 수 있습니다.
+            </p>
+          </div>
+          <div className={styles.heroStats}>
+            <div className={styles.heroStatCard}>
+              <span>현재 위치</span>
+              <strong>{currentFolderLabel}</strong>
+            </div>
+            <div className={styles.heroStatCard}>
+              <span>보이는 폴더</span>
+              <strong>{visibleFolders}</strong>
+            </div>
+            <div className={styles.heroStatCard}>
+              <span>보이는 파일</span>
+              <strong>{visibleFiles}</strong>
+            </div>
+            <div className={styles.heroStatCard}>
+              <span>열람 상태</span>
+              <strong>{canOpenFiles ? "Unlocked" : "Subscription required"}</strong>
+            </div>
+          </div>
+        </section>
 
-        <ArchiveUpperButtons
-          authority={userInfo?.authority}
-          onClickUpFolder={onClickUpFolder}
-          currentFolderId={currentFolderId}
-          onClickCreateFolder={onClickCreateFolder}
-          file={file}
-          onSelectFile={onSelectFile}
-          key={shortid.generate()}
-        />
+        <section className={styles.archiveToolbar}>
+          <div className={styles.path_nav}>
+            <nav aria-label="breadcrumb" className={styles.breadcrumbNav}>
+              {breadcrumbNames.map((name, idx) => (
+                <span key={`crumb-${idx}`} className={styles.breadcrumbItem}>
+                  <button
+                    type="button"
+                    onClick={() => onClickBreadcrumb(idx)}
+                    className={`${styles.breadcrumbBtn} ${idx === breadcrumbNames.length - 1 ? styles.isActive : ""}`}
+                    disabled={idx === breadcrumbNames.length - 1}
+                  >
+                    {name}
+                  </button>
+                  {idx !== breadcrumbNames.length - 1 && <span className={styles.breadcrumbSep}>/</span>}
+                </span>
+              ))}
+            </nav>
+            <p className={styles.toolbarCaption}>
+              {currentFolderId === 0
+                ? "메인 폴더에서 과목별 자료 흐름을 시작하세요."
+                : "하위 폴더와 파일을 한 화면에서 관리할 수 있습니다."}
+            </p>
+          </div>
+
+          <ArchiveUpperButtons
+            authority={userInfo?.authority}
+            onClickUpFolder={onClickUpFolder}
+            currentFolderId={currentFolderId}
+            onClickCreateFolder={onClickCreateFolder}
+            file={file}
+            onSelectFile={onSelectFile}
+            key={shortid.generate()}
+          />
+        </section>
 
         {currentFolderId !== 0 ? (
           subLists["folders"]?.length > 0 || subLists["files"]?.length > 0 ? (
             <div className={styles.ib_archive_wrap}>
-              <div className={styles.ib_archive_cont}>
-                {Object.keys(subLists).map((k) => (
-                  <ArchiveItems
-                    folders={subLists[k]}
-                    type={k}
-                    id={k.folderId}
-                    onClickFolder={onClickFolder}
-                    setCurrentPath={setCurrentPath}
-                    key={shortid.generate()}
-                    currentFolderId={currentFolderId}
-                    onClickUpFolder={onClickUpFolder}
-                  />
-                ))}
+              <div className={styles.driveGrid}>
+                <section className={styles.driveSection}>
+                  <div className={styles.driveSectionHeader}>
+                    <div>
+                      <span className={styles.sectionEyebrow}>Folders</span>
+                      <h4>하위 폴더</h4>
+                    </div>
+                    <span className={styles.sectionCount}>{visibleFolders}</span>
+                  </div>
+                  {subLists["folders"]?.length > 0 ? (
+                    <ArchiveItems
+                      folders={subLists["folders"]}
+                      type="folders"
+                      onClickFolder={onClickFolder}
+                      setCurrentPath={setCurrentPath}
+                      key={`folders-${currentFolderId}`}
+                      currentFolderId={currentFolderId}
+                      canOpenFiles={canOpenFiles}
+                    />
+                  ) : (
+                    <div className={styles.emptySection}>하위 폴더가 없습니다.</div>
+                  )}
+                </section>
+
+                <section className={styles.driveSection}>
+                  <div className={styles.driveSectionHeader}>
+                    <div>
+                      <span className={styles.sectionEyebrow}>Files</span>
+                      <h4>자료 파일</h4>
+                    </div>
+                    <span className={styles.sectionCount}>{visibleFiles}</span>
+                  </div>
+                  {subLists["files"]?.length > 0 ? (
+                    <ArchiveItems
+                      folders={subLists["files"]}
+                      type="files"
+                      onClickFolder={onClickFolder}
+                      setCurrentPath={setCurrentPath}
+                      key={`files-${currentFolderId}`}
+                      currentFolderId={currentFolderId}
+                      canOpenFiles={canOpenFiles}
+                    />
+                  ) : (
+                    <div className={styles.emptySection}>이 폴더에는 파일이 없습니다.</div>
+                  )}
+                </section>
               </div>
             </div>
           ) : (
@@ -222,15 +325,23 @@ const ArchiveComponents = () => {
           )
         ) : mainFolders.length > 0 ? (
           <div className={styles.ib_archive_wrap}>
-            <div className={styles.ib_archive_cont}>
+            <section className={styles.driveSection}>
+              <div className={styles.driveSectionHeader}>
+                <div>
+                  <span className={styles.sectionEyebrow}>Main folders</span>
+                  <h4>과목별 드라이브</h4>
+                </div>
+                <span className={styles.sectionCount}>{visibleFolders}</span>
+              </div>
               <ArchiveItems
                 folders={mainFolders}
                 type="folders"
                 onClickFolder={onClickFolder}
                 setCurrentPath={setCurrentPath}
                 currentFolderId={currentFolderId}
+                canOpenFiles={canOpenFiles}
               />
-            </div>
+            </section>
           </div>
         ) : (
           <div className={styles.ib_archive_no}>
