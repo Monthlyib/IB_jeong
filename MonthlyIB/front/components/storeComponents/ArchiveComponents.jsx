@@ -61,6 +61,7 @@ const ArchiveComponents = () => {
   const [searching, setSeraching] = useState(false);
   const [folderNameModal, setFolderNameModal] = useState(false);
   const [isPopupOpen, setIsPopupOpen] = useState(false); // 팝업 상태
+  const [authResolved, setAuthResolved] = useState(false);
   const router = useRouter(); // Router 추가
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
@@ -70,17 +71,15 @@ const ArchiveComponents = () => {
     if (searching) {
       getSubLists("", search);
     } else getMainFolders();
-
-    // 로그인 여부 확인 및 팝업 표시
-    // Show popup if user is not logged in
-    console.log(userInfo);
-    if (userInfo?.authority === undefined) {
-      setIsPopupOpen(true);
-    }
   }, [searching]);
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
+    const persistedUser = localUser?.state?.userInfo;
+
+    setIsPopupOpen(!persistedUser?.authority);
+    setAuthResolved(true);
+
     if (localUser?.state?.userInfo?.userId) {
       getUserSubscribeInfo(
         localUser.state.userInfo.userId,
@@ -162,7 +161,7 @@ const ArchiveComponents = () => {
     <>
       <main className="width_content archive">
         {/* 팝업 모달 */}
-        {isPopupOpen && (
+        {authResolved && isPopupOpen && (
           <div className={styles.popupOverlay}>
             <div className={styles.popupCard}>
               <h2 className={styles.popupTitle}>로그인 필요</h2>
