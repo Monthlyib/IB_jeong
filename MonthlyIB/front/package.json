@@ -1,10 +1,13 @@
 {
   "name": "monthlyib",
   "version": "1.0.0",
+  "private": true,
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "keywords": [],
   "author": "",
@@ -23,10 +26,8 @@
     "axios": "^1.6.8",
     "dotenv": "^16.4.5",
     "font-awesome": "^4.7.0",
-    "install": "^0.13.0",
     "lodash": "^4.17.21",
     "next": "^14.1.4",
-    "npm": "^10.8.2",
     "plaiceholder": "^3.0.0",
     "react": "^18.2.0",
     "react-beautiful-dnd": "^13.1.1",
@@ -38,7 +39,6 @@
     "react-fontawesome": "^1.7.1",
     "react-quill": "^2.0.0",
     "react-spinners": "^0.13.8",
-    "run": "^1.5.0",
     "sharp": "^0.33.4",
     "shortid": "^2.2.16",
     "swiper": "^8.4.7",
