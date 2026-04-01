@@ -249,6 +249,15 @@ const HomeBuilder = () => {
     [layout, draggingBlockId]
   );
   const isInsertDragging = Boolean(draggingBlockId || draggingPaletteType);
+  const draggingPreviewBlock = useMemo(() => {
+    if (draggingBlockLocation?.block) {
+      return draggingBlockLocation.block;
+    }
+    if (draggingPaletteType) {
+      return createDefaultBlock(draggingPaletteType);
+    }
+    return null;
+  }, [draggingBlockLocation, draggingPaletteType]);
   const palette = useMemo(() => getPaletteAvailability(layout), [layout]);
 
   const getMinimumInsertIndex = (column) =>
@@ -609,6 +618,7 @@ const HomeBuilder = () => {
     items.splice(insertIndex, 0, {
       kind: "placeholder",
       key: `placeholder-${rowId}-${columnId}-${insertIndex}`,
+      block: draggingPreviewBlock,
     });
 
     return items;
@@ -1254,7 +1264,28 @@ const HomeBuilder = () => {
                                     key={item.key}
                                     className={styles.blockDropPlaceholder}
                                   >
-                                    <span>여기에 배치</span>
+                                    <div className={styles.blockDropPlaceholderHeader}>
+                                      <div>
+                                        <span>
+                                          {item.block?.type || "block"}
+                                        </span>
+                                        <strong>
+                                          {BLOCK_LIBRARY.find(
+                                            (blockItem) => blockItem.type === item.block?.type
+                                          )?.label || "배치 예정"}
+                                        </strong>
+                                      </div>
+                                      <em>여기에 배치</em>
+                                    </div>
+                                    <div className={styles.blockDropPlaceholderPreview}>
+                                      {item.block ? (
+                                        <HomeBlockContent
+                                          block={item.block}
+                                          previewMode
+                                          compactPreview
+                                        />
+                                      ) : null}
+                                    </div>
                                   </div>
                                   );
                                 }
