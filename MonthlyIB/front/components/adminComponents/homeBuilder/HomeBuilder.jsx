@@ -59,6 +59,11 @@ const findBlockLocation = (layout, blockId) => {
   return null;
 };
 
+const isLockedBlock = (block) => block?.type === "existingHero";
+
+const isLockedRow = (row) =>
+  row?.columns?.some((column) => column.blocks?.some((block) => isLockedBlock(block)));
+
 const adjustRowColumns = (row, nextLayout) => {
   const nextCount = getColumnCountForLayout(nextLayout);
   const nextColumns = cloneLayout({ rows: [row] }).rows[0].columns;
@@ -139,7 +144,12 @@ const deleteBlockFromLayout = (layout, rowId, columnId, blockId) => {
   if (!column) {
     return layout;
   }
-  column.blocks = column.blocks.filter((block) => block.id !== blockId);
+  column.blocks = column.blocks.filter((block) => {
+    if (block.id !== blockId) {
+      return true;
+    }
+    return isLockedBlock(block);
+  });
   return next;
 };
 
@@ -213,6 +223,7 @@ const HomeBuilder = () => {
     [layout, selectedBlockId]
   );
   const selectedBlock = selectedBlockLocation?.block || null;
+  const selectedBlockLocked = isLockedBlock(selectedBlock);
   const palette = useMemo(() => getPaletteAvailability(layout), [layout]);
 
   const updateSelectedBlock = (nextProps) => {
@@ -273,7 +284,7 @@ const HomeBuilder = () => {
   };
 
   const deleteSelectedBlock = () => {
-    if (!selectedBlockLocation) {
+    if (!selectedBlockLocation || selectedBlockLocked) {
       return;
     }
 
@@ -290,7 +301,12 @@ const HomeBuilder = () => {
 
   const deleteRow = (rowId) => {
     setLayout((current) => {
-      const nextRows = normalizeHomeLayout(current).rows.filter((row) => row.id !== rowId);
+      const nextRows = normalizeHomeLayout(current).rows.filter((row) => {
+        if (row.id !== rowId) {
+          return true;
+        }
+        return isLockedRow(row);
+      });
       return {
         rows: nextRows,
       };
@@ -304,7 +320,7 @@ const HomeBuilder = () => {
     setLayout((current) => {
       const next = cloneLayout(current);
       next.rows = next.rows.map((row) =>
-        row.id === rowId ? adjustRowColumns(row, nextLayout) : row
+        row.id === rowId && !isLockedRow(row) ? adjustRowColumns(row, nextLayout) : row
       );
       return next;
     });
@@ -412,6 +428,11 @@ const HomeBuilder = () => {
   };
 
   const handleRowDragStart = (event, rowId) => {
+    const currentRow = layout.rows.find((row) => row.id === rowId);
+    if (isLockedRow(currentRow)) {
+      event.preventDefault();
+      return;
+    }
     event.dataTransfer.setData(
       "application/monthlyib-home",
       JSON.stringify({ kind: "row", rowId })
@@ -419,6 +440,11 @@ const HomeBuilder = () => {
   };
 
   const handleBlockDragStart = (event, rowId, columnId, blockId) => {
+    const currentBlock = findBlockLocation(layout, blockId)?.block;
+    if (isLockedBlock(currentBlock)) {
+      event.preventDefault();
+      return;
+    }
     event.dataTransfer.setData(
       "application/monthlyib-home",
       JSON.stringify({ kind: "block", rowId, columnId, blockId })
@@ -439,6 +465,11 @@ const HomeBuilder = () => {
     event.preventDefault();
     const payload = readDragPayload(event);
     if (payload?.kind !== "row") {
+      return;
+    }
+    const sourceRow = layout.rows.find((row) => row.id === payload.rowId);
+    const targetRow = layout.rows.find((row) => row.id === targetRowId);
+    if (isLockedRow(sourceRow) || isLockedRow(targetRow)) {
       return;
     }
     setLayout((current) => moveRow(current, payload.rowId, targetRowId));
@@ -650,6 +681,16 @@ const HomeBuilder = () => {
                 <div className={styles.inspectorHint}>
                   블록을 하나 선택하면 제목, 설명, 링크, 파일 업로드, 버튼 스타일 등
                   관련 속성이 여기에 표시됩니다.
+                </div>
+              ) : selectedBlockLocked ? (
+                <div className={styles.inspectorBody}>
+                  <div className={styles.inspectorHint}>
+                    기존 히어로는 홈의 고정 핵심 섹션이라 빌더에서 위치나 내용을 변경할 수 없습니다.
+                    상단 메인 화면은 실제 홈 컴포넌트에서만 관리됩니다.
+                  </div>
+                  <Link href="/" className={styles.plainButton}>
+                    실제 홈 보기
+                  </Link>
                 </div>
               ) : (
                 <div className={styles.inspectorBody}>
@@ -865,23 +906,22 @@ const HomeBuilder = () => {
           <div className={styles.canvasViewportWrap}>
             <div className={styles.canvasScaleWrap}>
               <div className={styles.canvasRows}>
-                {layout.rows.map((row) => (
+                {layout.rows.map((row) => {
+                  const rowLocked = isLockedRow(row);
+                  return (
                   <div
                     key={row.id}
                     className={styles.canvasRow}
                     onDragOver={(event) => event.preventDefault()}
                     onDrop={(event) => handleDropOnRow(event, row.id)}
                   >
-                    <div className={styles.rowHeader}>
+                    <div
+                      className={`${styles.rowHeader} ${!rowLocked ? styles.rowHeaderDraggable : ""}`}
+                      draggable={!rowLocked}
+                      onDragStart={(event) => handleRowDragStart(event, row.id)}
+                    >
                       <div className={styles.rowHeaderLeft}>
-                        <button
-                          type="button"
-                          className={styles.dragHandle}
-                          draggable
-                          onDragStart={(event) => handleRowDragStart(event, row.id)}
-                        >
-                          ↕
-                        </button>
+                        <div className={styles.dragHandle}>↕</div>
                         <div className={styles.rowMeta}>
                           <span>Row</span>
                           <strong>{HOME_LAYOUT_OPTIONS.find((item) => item.value === row.layout)?.label}</strong>
@@ -890,6 +930,8 @@ const HomeBuilder = () => {
                       <div className={styles.rowHeaderRight}>
                         <select
                           value={row.layout}
+                          disabled={rowLocked}
+                          onClick={(event) => event.stopPropagation()}
                           onChange={(event) => updateRowLayout(row.id, event.target.value)}
                         >
                           {HOME_LAYOUT_OPTIONS.map((option) => (
@@ -901,9 +943,13 @@ const HomeBuilder = () => {
                         <button
                           type="button"
                           className={styles.dangerButton}
-                          onClick={() => deleteRow(row.id)}
+                          disabled={rowLocked}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            deleteRow(row.id);
+                          }}
                         >
-                          행 삭제
+                          {rowLocked ? "고정 행" : "행 삭제"}
                         </button>
                       </div>
                     </div>
@@ -945,7 +991,7 @@ const HomeBuilder = () => {
                                   className={`${styles.canvasBlock} ${
                                     selectedBlockId === block.id ? styles.canvasBlockSelected : ""
                                   }`}
-                                  draggable
+                                  draggable={!isLockedBlock(block)}
                                   onDragStart={(event) =>
                                     handleBlockDragStart(event, row.id, column.id, block.id)
                                   }
@@ -968,6 +1014,7 @@ const HomeBuilder = () => {
                                     <button
                                       type="button"
                                       className={styles.dangerButton}
+                                      disabled={isLockedBlock(block)}
                                       onClick={(event) => {
                                         event.stopPropagation();
                                         setLayout((current) =>
@@ -978,14 +1025,14 @@ const HomeBuilder = () => {
                                         }
                                       }}
                                     >
-                                      삭제
+                                      {isLockedBlock(block) ? "고정 블록" : "삭제"}
                                     </button>
                                   </div>
-                                  <div className={styles.blockPreview}>
-                                    <div className={styles.blockPreviewInner}>
-                                      <HomeBlockContent block={block} previewMode />
+                                    <div className={styles.blockPreview}>
+                                      <div className={styles.blockPreviewInner}>
+                                        <HomeBlockContent block={block} previewMode compactPreview />
+                                      </div>
                                     </div>
-                                  </div>
                                 </div>
                               ))
                             )}
@@ -994,7 +1041,8 @@ const HomeBuilder = () => {
                       ))}
                     </div>
                   </div>
-                ))}
+                );
+                })}
               </div>
             </div>
           </div>

@@ -400,6 +400,14 @@
   min-width: 0;
 }
 
+.rowHeaderDraggable {
+  cursor: grab;
+}
+
+.rowHeaderDraggable:active {
+  cursor: grabbing;
+}
+
 .rowHeaderLeft {
   display: flex;
   align-items: center;
@@ -416,7 +424,8 @@
   background: rgba(81, 52, 108, 0.08);
   color: var(--primary01);
   font-size: 1.6rem;
-  cursor: grab;
+  cursor: inherit;
+  pointer-events: none;
 }
 
 .rowMeta span {

@@ -34,6 +34,93 @@
   min-width: 0;
 }
 
+.compactPreview {
+  min-width: 0;
+}
+
+.compactPreview .previewSection {
+  gap: 1.2rem;
+}
+
+.compactPreview .previewSection h3 {
+  font-size: clamp(1.8rem, 2vw, 2.4rem);
+}
+
+.compactPreview .previewSection p {
+  font-size: 1.32rem;
+  line-height: 1.6;
+}
+
+.compactPreview .previewHero {
+  grid-template-columns: minmax(0, 1fr) minmax(16rem, 22rem);
+  gap: 1.2rem;
+}
+
+.compactPreview .previewHeroCopy span {
+  font-size: 1.2rem;
+}
+
+.compactPreview .previewHeroCard,
+.compactPreview .previewHeroCardAlt {
+  min-height: 12rem;
+  padding: 1.2rem;
+  font-size: clamp(2rem, 2.8vw, 2.8rem);
+}
+
+.compactPreview .previewSearchBox {
+  min-height: 5rem;
+  padding: 0 1.6rem;
+  font-size: 1.3rem;
+}
+
+.compactPreview .previewGuideItem,
+.compactPreview .previewActivityCard,
+.compactPreview .previewReviewCard {
+  min-height: 7rem;
+  padding: 1.2rem 1.4rem;
+  font-size: 1.35rem;
+}
+
+.compactPreview .previewTabs span {
+  min-height: 3.8rem;
+  padding: 0 1.2rem;
+  font-size: 1.2rem;
+}
+
+.compactPreview .contentCard,
+.compactPreview .mediaCard {
+  padding: 1.8rem;
+  border-radius: 1.8rem;
+}
+
+.compactPreview .contentCard h3 {
+  margin-bottom: 1.2rem;
+  font-size: clamp(1.9rem, 2.2vw, 2.5rem);
+}
+
+.compactPreview .richTextContent {
+  font-size: 1.45rem;
+  line-height: 1.65;
+}
+
+.compactPreview .mediaPlaceholder {
+  min-height: 18rem;
+  font-size: 1.35rem;
+}
+
+.compactPreview .mediaCaption,
+.compactPreview .mediaCard figcaption {
+  font-size: 1.25rem;
+}
+
+.compactPreview .primaryButton,
+.compactPreview .secondaryButton,
+.compactPreview .ghostButton {
+  min-height: 4.6rem;
+  padding: 0 1.6rem;
+  font-size: 1.4rem;
+}
+
 .previewSection {
   display: flex;
   flex-direction: column;

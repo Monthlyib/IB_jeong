@@ -121,18 +121,26 @@ const ExistingBlockPreview = ({ type, title }) => {
   }
 };
 
-const HomeBlockContent = ({ block, previewMode = false }) => {
+const HomeBlockContent = ({ block, previewMode = false, compactPreview = false }) => {
   const props = block?.props || {};
+  const renderContent = (content) =>
+    previewMode && compactPreview ? (
+      <div className={styles.compactPreview}>{content}</div>
+    ) : (
+      content
+    );
 
   switch (block?.type) {
     case "existingHero":
       if (previewMode) {
-        return <ExistingBlockPreview type="existingHero" />;
+        return renderContent(<ExistingBlockPreview type="existingHero" />);
       }
       return <MainHeroSection />;
     case "existingSearch":
       if (previewMode) {
-        return <ExistingBlockPreview type="existingSearch" title={props?.title} />;
+        return renderContent(
+          <ExistingBlockPreview type="existingSearch" title={props?.title} />
+        );
       }
       return (
         <MainSearchSection
@@ -142,12 +150,16 @@ const HomeBlockContent = ({ block, previewMode = false }) => {
       );
     case "existingGuideLinks":
       if (previewMode) {
-        return <ExistingBlockPreview type="existingGuideLinks" title={props?.title} />;
+        return renderContent(
+          <ExistingBlockPreview type="existingGuideLinks" title={props?.title} />
+        );
       }
       return <MainGuideSection title={props?.title || "IB 입시가이드"} />;
     case "existingMemberActivity":
       if (previewMode) {
-        return <ExistingBlockPreview type="existingMemberActivity" title={props?.title} />;
+        return renderContent(
+          <ExistingBlockPreview type="existingMemberActivity" title={props?.title} />
+        );
       }
       return (
         <MainMemberActivitySection
@@ -157,11 +169,13 @@ const HomeBlockContent = ({ block, previewMode = false }) => {
       );
     case "existingReviewCarousel":
       if (previewMode) {
-        return <ExistingBlockPreview type="existingReviewCarousel" title={props?.title} />;
+        return renderContent(
+          <ExistingBlockPreview type="existingReviewCarousel" title={props?.title} />
+        );
       }
       return <MainReviewSection title={props?.title || "수강생 리뷰"} />;
     case "richText":
-      return (
+      return renderContent(
         <article className={styles.contentCard}>
           {props?.title ? <h3>{props.title}</h3> : null}
           <div
@@ -171,7 +185,7 @@ const HomeBlockContent = ({ block, previewMode = false }) => {
         </article>
       );
     case "image":
-      return (
+      return renderContent(
         <figure className={styles.mediaCard}>
           {props?.fileUrl ? (
             <img src={props.fileUrl} alt={props.alt || "홈 이미지"} />
@@ -193,7 +207,7 @@ const HomeBlockContent = ({ block, previewMode = false }) => {
       const videoUrl = props?.sourceType === "uploadedFile" ? props?.fileUrl : props?.embedUrl;
       const embedUrl = getEmbedVideoUrl(props?.embedUrl);
 
-      return (
+      return renderContent(
         <div className={styles.mediaCard}>
           {isUploadedVideo ? (
             videoUrl ? (
@@ -218,7 +232,7 @@ const HomeBlockContent = ({ block, previewMode = false }) => {
       );
     }
     case "button":
-      return (
+      return renderContent(
         <div className={styles.buttonBlock}>
           <Link
             href={props?.href || "#"}
