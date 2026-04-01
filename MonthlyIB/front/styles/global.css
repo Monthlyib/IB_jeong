@@ -81,8 +81,8 @@ body {
   width: 100%;
 }
 
-html {
-  overflow-x: hidden;
+body {
+  overflow-x: clip;
 }
 
 audio,
@@ -843,7 +843,7 @@ a.disabled {
          Common
       **************/
   body {
-    overflow-x: hidden;
+    overflow-x: clip;
   }
 
   .width_content {
