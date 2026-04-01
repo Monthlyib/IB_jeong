@@ -514,6 +514,11 @@
   background: rgba(81, 52, 108, 0.08);
 }
 
+.canvasColumnPreview {
+  border-color: rgba(81, 52, 108, 0.34);
+  background: rgba(81, 52, 108, 0.06);
+}
+
 .columnHeader {
   display: flex;
   justify-content: space-between;
@@ -579,6 +584,24 @@
 
 .blockDragging {
   opacity: 0.72;
+}
+
+.blockDropPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 8.4rem;
+  padding: 1.4rem;
+  border: 2px dashed rgba(81, 52, 108, 0.4);
+  border-radius: 1.8rem;
+  background: rgba(81, 52, 108, 0.08);
+  box-sizing: border-box;
+}
+
+.blockDropPlaceholder span {
+  color: var(--primary01);
+  font-size: 1.35rem;
+  font-weight: 700;
 }
 
 .blockHeader {
