@@ -61,6 +61,7 @@ const findBlockLocation = (layout, blockId) => {
 
 const DRAG_SCROLL_EDGE = 120;
 const DRAG_SCROLL_MAX_STEP = 28;
+const DRAG_PREVIEW_SCALE = 0.84;
 
 const isLockedBlock = (block) => block?.type === "existingHero";
 
@@ -459,15 +460,16 @@ const HomeBuilder = () => {
     clone.style.width = `${rect.width}px`;
     clone.style.pointerEvents = "none";
     clone.style.opacity = "0.96";
-    clone.style.transform = "rotate(0deg)";
+    clone.style.transform = `scale(${DRAG_PREVIEW_SCALE})`;
+    clone.style.transformOrigin = "top left";
     clone.style.boxShadow = "0 18px 42px rgba(32, 20, 49, 0.24)";
     clone.style.zIndex = "9999";
     document.body.appendChild(clone);
     dragPreviewRef.current = clone;
     event.dataTransfer.setDragImage(
       clone,
-      Math.min(80, rect.width / 2),
-      Math.min(48, rect.height / 2)
+      Math.min(72, (rect.width * DRAG_PREVIEW_SCALE) / 2),
+      Math.min(44, (rect.height * DRAG_PREVIEW_SCALE) / 2)
     );
   };
 
