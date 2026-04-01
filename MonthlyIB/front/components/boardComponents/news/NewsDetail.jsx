@@ -123,10 +123,32 @@ const NewsDetail = (pageId) => {
               <span>현재 게시글</span>
               <strong>{PageInfo?.totalElements ?? newsList.length ?? 0}</strong>
             </div>
-            <Link href="/board" className={styles.boardBackLink}>
-              <FontAwesomeIcon icon={faArrowLeft} />
-              <span>목록으로</span>
-            </Link>
+            <div className={styles.newsDetailTopActions}>
+              <Link href="/board" className={styles.boardBackLink}>
+                <FontAwesomeIcon icon={faArrowLeft} />
+                <span>목록으로</span>
+              </Link>
+              {isAuthor && (
+                <>
+                  <button
+                    type="button"
+                    className={styles.newsDetailTopButton}
+                    onClick={onClickEdit}
+                  >
+                    <FontAwesomeIcon icon={faPenAlt} />
+                    <span>수정</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.newsDetailTopButton} ${styles.newsDetailDeleteButton}`}
+                    onClick={onClickDelete}
+                  >
+                    <FontAwesomeIcon icon={faTrashAlt} />
+                    <span>삭제</span>
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </section>
 
@@ -204,31 +226,6 @@ const NewsDetail = (pageId) => {
           </div>
         </article>
       </div>
-
-      <aside className={styles.newsDetailSide}>
-        <div className={styles.newsDetailAsideCard}>
-          <span className={styles.newsDetailMiniLabel}>Article Tools</span>
-          <h3>문서 이동</h3>
-          <div className={styles.newsDetailAsideActions}>
-            <Link href="/board" className={styles.boardWriteButton}>
-              <FontAwesomeIcon icon={faArrowLeft} />
-              <span>목록 보기</span>
-            </Link>
-            {isAuthor && (
-              <div className={styles.newsDetailManageButtons}>
-                <button type="button" onClick={onClickEdit}>
-                  <FontAwesomeIcon icon={faPenAlt} />
-                  <span>수정</span>
-                </button>
-                <button type="button" onClick={onClickDelete}>
-                  <FontAwesomeIcon icon={faTrashAlt} />
-                  <span>삭제</span>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </aside>
     </main>
   );
 };
