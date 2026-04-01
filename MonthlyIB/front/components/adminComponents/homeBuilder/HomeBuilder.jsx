@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -31,9 +31,6 @@ const EditorComponents = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
   { ssr: false }
 );
-
-const CANVAS_SITE_WIDTH = 1100; // 실제 사이트 콘텐츠 폭(px) — 110rem@10px
-const CANVAS_VIEWPORT_GUTTER = 48;
 
 const cloneLayout = (layout) => JSON.parse(JSON.stringify(layout));
 
@@ -163,38 +160,6 @@ const HomeBuilder = () => {
 
   // 왼쪽 패널 탭: "palette" | "inspector"
   const [leftTab, setLeftTab] = useState("palette");
-
-  // 캔버스 스케일 계산
-  const canvasViewportRef = useRef(null);
-  const canvasInnerRef = useRef(null);
-  const [canvasScale, setCanvasScale] = useState(1);
-  const [canvasInnerHeight, setCanvasInnerHeight] = useState(0);
-
-  useEffect(() => {
-    const outerEl = canvasViewportRef.current;
-    const innerEl = canvasInnerRef.current;
-    if (!outerEl) return;
-
-    const update = () => {
-      const containerWidth = outerEl.offsetWidth;
-      const scale = containerWidth >= CANVAS_SITE_WIDTH + CANVAS_VIEWPORT_GUTTER
-        ? 1
-        : Math.max(
-            0.1,
-            (containerWidth - CANVAS_VIEWPORT_GUTTER) / CANVAS_SITE_WIDTH
-          );
-      setCanvasScale(scale);
-      if (innerEl) {
-        setCanvasInnerHeight(innerEl.offsetHeight);
-      }
-    };
-
-    update();
-    const ro = new ResizeObserver(update);
-    ro.observe(outerEl);
-    if (innerEl) ro.observe(innerEl);
-    return () => ro.disconnect();
-  }, [layout]);
 
   // 블록 선택 시 자동으로 속성 탭으로 전환
   useEffect(() => {
@@ -541,8 +506,6 @@ const HomeBuilder = () => {
       </main>
     );
   }
-
-  const scalePercent = Math.round(canvasScale * 100);
 
   return (
     <main className={styles.builderPage}>
@@ -896,30 +859,11 @@ const HomeBuilder = () => {
               <h2>캔버스 미리보기</h2>
               <p>블록을 클릭하면 왼쪽 속성 탭에서 수정할 수 있습니다.</p>
             </div>
-            <span className={styles.canvasScaleBadge}>
-              {scalePercent}% 축소 · {CANVAS_SITE_WIDTH}px 기준
-            </span>
+            <span className={styles.canvasScaleBadge}>패널 폭 기준 미리보기</span>
           </div>
 
-          {/* 스케일 뷰포트 */}
-          <div
-            ref={canvasViewportRef}
-            className={styles.canvasViewportWrap}
-            style={{
-              height: canvasInnerHeight > 0
-                ? canvasInnerHeight * canvasScale
-                : "auto",
-            }}
-          >
-            <div
-              ref={canvasInnerRef}
-              className={styles.canvasScaleWrap}
-              style={{
-                width: `${CANVAS_SITE_WIDTH}px`,
-                transform: `scale(${canvasScale})`,
-                transformOrigin: "top left",
-              }}
-            >
+          <div className={styles.canvasViewportWrap}>
+            <div className={styles.canvasScaleWrap}>
               <div className={styles.canvasRows}>
                 {layout.rows.map((row) => (
                   <div

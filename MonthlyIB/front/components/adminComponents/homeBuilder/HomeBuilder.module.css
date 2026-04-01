@@ -363,7 +363,6 @@
 .canvasViewportWrap {
   position: relative;
   width: 100%;
-  padding-right: 0.8rem;
   box-sizing: border-box;
   overflow: hidden;
   border-radius: 1.6rem;
@@ -372,8 +371,8 @@
 }
 
 .canvasScaleWrap {
-  transform-origin: top left;
-  /* width and transform set inline via JS */
+  width: 100%;
+  min-width: 0;
 }
 
 .canvasRows {
@@ -381,6 +380,7 @@
   gap: 1.6rem;
   padding: 2rem;
   min-width: 0;
+  box-sizing: border-box;
 }
 
 .canvasRow {
