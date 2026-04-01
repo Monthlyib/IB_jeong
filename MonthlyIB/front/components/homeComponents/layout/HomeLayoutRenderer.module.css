@@ -1,0 +1,202 @@
+.homeLayout {
+  width: min(120rem, calc(100% - 4rem));
+  margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+}
+
+.layoutRow {
+  display: grid;
+  gap: 2.4rem;
+}
+
+.layout_one {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.layout_two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.layout_three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.layoutColumn {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.blockShell {
+  min-width: 0;
+}
+
+.contentCard,
+.mediaCard {
+  padding: 2.8rem;
+  border: 1px solid rgba(81, 52, 108, 0.12);
+  border-radius: 2.4rem;
+  background: #fff;
+  box-shadow: 0 16px 44px rgba(34, 23, 50, 0.05);
+}
+
+.contentCard h3 {
+  margin: 0 0 1.6rem;
+  color: #241b34;
+  font-size: 2.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  word-break: keep-all;
+}
+
+.richTextContent {
+  color: #3d3450;
+  font-size: 1.7rem;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+.richTextContent :global(p) {
+  margin: 0 0 1.4rem;
+}
+
+.richTextContent :global(h1),
+.richTextContent :global(h2),
+.richTextContent :global(h3),
+.richTextContent :global(h4) {
+  margin: 0 0 1.4rem;
+  color: #241b34;
+}
+
+.mediaCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.mediaCard img,
+.mediaCard video {
+  width: 100%;
+  border-radius: 1.8rem;
+  object-fit: cover;
+  background: #f7f3fc;
+}
+
+.videoFrame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  border-radius: 1.8rem;
+  overflow: hidden;
+  background: #f7f3fc;
+}
+
+.videoFrame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.mediaPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24rem;
+  border: 1px dashed rgba(81, 52, 108, 0.2);
+  border-radius: 1.8rem;
+  color: #7f7394;
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: rgba(81, 52, 108, 0.04);
+}
+
+.mediaCaption,
+.mediaCard figcaption {
+  color: #675b7a;
+  font-size: 1.4rem;
+  line-height: 1.7;
+}
+
+.mediaCard figcaption {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.mediaCard figcaption a {
+  color: var(--primary01);
+  font-weight: 700;
+}
+
+.buttonBlock {
+  display: flex;
+  align-items: center;
+}
+
+.primaryButton,
+.secondaryButton,
+.ghostButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5.2rem;
+  padding: 0 2rem;
+  border-radius: 999px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primaryButton {
+  color: #fff;
+  background: var(--primary01);
+  box-shadow: 0 14px 30px rgba(81, 52, 108, 0.2);
+}
+
+.secondaryButton {
+  color: var(--primary01);
+  background: rgba(81, 52, 108, 0.08);
+  border: 1px solid rgba(81, 52, 108, 0.16);
+}
+
+.ghostButton {
+  color: #241b34;
+  background: #fff;
+  border: 1px solid rgba(81, 52, 108, 0.16);
+}
+
+.primaryButton:hover,
+.secondaryButton:hover,
+.ghostButton:hover {
+  transform: translateY(-1px);
+}
+
+@media screen and (max-width: 1024px) {
+  .layout_two,
+  .layout_three {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .homeLayout {
+    width: min(100%, calc(100% - 2.4rem));
+    gap: 2.8rem;
+    margin: calc(var(--appHeaderHeight, 7.2rem) + 1.6rem) auto 4rem;
+  }
+
+  .contentCard,
+  .mediaCard {
+    padding: 2rem;
+  }
+
+  .contentCard h3 {
+    font-size: 2.2rem;
+  }
+}

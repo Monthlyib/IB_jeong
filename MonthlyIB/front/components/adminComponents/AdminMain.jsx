@@ -1,5 +1,6 @@
 "use client";
 import styles from "./AdminStyle.module.css";
+import Link from "next/link";
 import {
   faUsers,
   faUserPlus,
@@ -52,6 +53,9 @@ const AdminMain = () => {
             사용자, 스케줄, 질문, 구독 상품을 한 화면에서 빠르게 확인하고 관리할 수
             있도록 정리된 운영 화면입니다.
           </p>
+          <div className={styles.adminHeroActions}>
+            <Link href="/adminpage/home-builder">홈 빌더 열기</Link>
+          </div>
         </div>
         <div className={styles.adminHeroMeta}>
           <div className={styles.adminMetaCard}>
