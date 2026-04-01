@@ -1,40 +1,72 @@
 import BoardCommon from "./BoardCommon";
+import styles from "./BoardCommon.module.css";
 
 const BoardCommonHead = ({
-  searchKeyword,
-  setSeraching,
   modal,
-  placeholder,
+  eyebrow,
+  title,
+  description,
+  search,
+  stats = [],
+  action = null,
 }) => {
-  const onChangeSearch = (e) => {
-    searchKeyword.current = e.target.value;
-  };
-  const onClickSearchButton = () => {
-    setSeraching((prev) => !prev);
-  };
   return (
     <>
-      <div className="header_flex">
-        <div className="header_tit_wrap">
-          <span>Library</span>
-          <h2>자료실</h2>
+      <section className={styles.boardHero}>
+        <div className={styles.boardHeroCopy}>
+          {eyebrow && <span className={styles.boardEyebrow}>{eyebrow}</span>}
+          <h2>{title}</h2>
+          {description && <p>{description}</p>}
         </div>
 
-        <div className="ft_search">
-          <input
-            type="text"
-            placeholder={placeholder}
-            defaultValue={searchKeyword.current}
-            onChange={onChangeSearch}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                onClickSearchButton();
-              }
-            }}
-          />
-          <button onClick={onClickSearchButton}>검색</button>
+        <div className={styles.boardHeroAside}>
+          {search && (
+            <label className={styles.boardSearch}>
+              <span className={styles.boardSearchLabel}>{search.label}</span>
+              <div className={styles.boardSearchField}>
+                <input
+                  type="text"
+                  placeholder={search.placeholder}
+                  value={search.value}
+                  onChange={(e) => search.onChange(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      search.onSubmit();
+                    }
+                  }}
+                />
+                <button type="button" onClick={search.onSubmit}>
+                  검색
+                </button>
+              </div>
+            </label>
+          )}
+
+          {stats.length > 0 && !action && (
+            <div className={styles.boardHeroStatsGrid}>
+              {stats.map((stat) => (
+                <div className={styles.boardStatCard} key={stat.label}>
+                  <span>{stat.label}</span>
+                  <strong>{stat.value}</strong>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {(stats.length > 0 || action) && action && (
+            <div className={styles.boardHeroActions}>
+              {stats.map((stat) => (
+                <div className={styles.boardStatCard} key={stat.label}>
+                  <span>{stat.label}</span>
+                  <strong>{stat.value}</strong>
+                </div>
+              ))}
+              {action}
+            </div>
+          )}
         </div>
-      </div>
+      </section>
+
       <BoardCommon modal={modal} />
     </>
   );

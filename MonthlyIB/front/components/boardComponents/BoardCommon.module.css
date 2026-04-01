@@ -205,6 +205,12 @@
   align-content: start;
 }
 
+.boardHeroStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 .boardSearch {
   display: grid;
   gap: 1rem;
@@ -307,9 +313,10 @@
 
 .boardStatCard strong {
   color: #221731;
-  font-size: 3.6rem;
+  font-size: clamp(2.2rem, 2.6vw, 3.6rem);
   font-weight: 700;
-  line-height: 1;
+  line-height: 1.2;
+  word-break: keep-all;
 }
 
 .boardWriteButton,
@@ -1944,6 +1951,10 @@ button.read_btn.delete:hover {
     grid-template-columns: 1fr;
   }
 
+  .boardHeroStatsGrid {
+    grid-template-columns: 1fr;
+  }
+
   .boardTabs {
     margin-bottom: 2.4rem;
   }
@@ -2088,6 +2099,11 @@ button.read_btn.delete:hover {
   }
 
   .boardSearchField {
+    grid-template-columns: 1fr;
+  }
+
+  .boardHeroStatsGrid,
+  .boardHeroActions {
     grid-template-columns: 1fr;
   }
 

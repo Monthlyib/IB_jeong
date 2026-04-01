@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import styles from "../BoardCommon.module.css";
-import BoardCommon from "../BoardCommon";
+import BoardCommonHead from "../BoardCommonHead";
 import CalculatorMenu from "./CalculatorMenu";
 import { listWrap, infoWrap } from "./UniversityList";
 import SchoolItems from "./SchoolItems";
@@ -151,45 +151,22 @@ const Calculator = () => {
   };
   return (
     <>
-      <main className="width_content archive">
-        <div className="header_flex">
-          <div className="header_tit_wrap">
-            <span>Library</span>
-            <h2>합격 예측 계산기</h2>
-          </div>
-        </div>
-
-        <BoardCommon modal={1} />
-        <section className={styles.calcHero}>
-          <div className={styles.calcHeroCopy}>
-            <span className={styles.calcEyebrow}>IB Score Planner</span>
-            <h3>과목 점수를 한 번에 정리하고 추천 학교를 바로 확인하세요</h3>
-            <p>
-              그룹, 과목, 레벨, 점수를 순서대로 선택하면 총점과 추천 학교가 자동으로
-              갱신됩니다.
-            </p>
-          </div>
-          <div className={styles.calcSummaryGrid}>
-            <div className={styles.calcSummaryCard}>
-              <span>총점</span>
-              <strong>{totalPoint}점</strong>
-            </div>
-            <div className={styles.calcSummaryCard}>
-              <span>보너스</span>
-              <strong>{points[6]}점</strong>
-            </div>
-            <div className={styles.calcSummaryCard}>
-              <span>HL / SL</span>
-              <strong>
-                {levelCounts.hl} / {levelCounts.sl}
-              </strong>
-            </div>
-            <div className={styles.calcSummaryCard}>
-              <span>학교 필터</span>
-              <strong>{country === "all" ? "전체 국가" : country.toUpperCase()}</strong>
-            </div>
-          </div>
-        </section>
+      <main className={`width_content archive ${styles.boardPage}`}>
+        <BoardCommonHead
+          modal={1}
+          eyebrow="Monthly IB Planner"
+          title="합격 예측 계산기"
+          description="그룹, 과목, 레벨, 점수를 순서대로 입력하면 총점과 추천 학교가 자동으로 갱신됩니다."
+          stats={[
+            { label: "총점", value: `${totalPoint}점` },
+            { label: "보너스", value: `${points[6]}점` },
+            { label: "HL / SL", value: `${levelCounts.hl} / ${levelCounts.sl}` },
+            {
+              label: "학교 필터",
+              value: country === "all" ? "전체 국가" : country.toUpperCase(),
+            },
+          ]}
+        />
 
         <section className={styles.calcPanel}>
           <div className={styles.calcPanelHeader}>

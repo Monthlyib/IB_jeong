@@ -1,6 +1,6 @@
 "use client";
 import styles from "../BoardCommon.module.css";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import NewsItems from "./NewsItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
@@ -15,8 +15,8 @@ const NewsComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [authResolved, setAuthResolved] = useState(false);
-  const searchKeyword = useRef();
-  const [searching, setSearching] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const { userInfo } = useUserInfo();
   const { newsList, getNewsList, PageInfo, loading } = useNewstore();
   const router = useRouter();
@@ -27,13 +27,12 @@ const NewsComponents = () => {
 
   const handleSearch = () => {
     setCurrentPage(1);
-    setSearching((prev) => !prev);
+    setSearchQuery(searchInput.trim());
   };
 
   useEffect(() => {
-    const search = searchKeyword.current ?? "";
-    getNewsList(currentPage, search);
-  }, [searching, currentPage]);
+    getNewsList(currentPage, searchQuery);
+  }, [currentPage, searchQuery, getNewsList]);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -71,9 +70,9 @@ const NewsComponents = () => {
                 <input
                   type="text"
                   placeholder="입시뉴스 검색"
-                  defaultValue={searchKeyword.current}
+                  value={searchInput}
                   onChange={(e) => {
-                    searchKeyword.current = e.target.value;
+                    setSearchInput(e.target.value);
                   }}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
