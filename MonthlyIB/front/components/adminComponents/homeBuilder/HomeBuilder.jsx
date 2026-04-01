@@ -178,7 +178,7 @@ const HomeBuilder = () => {
       const containerWidth = outerEl.offsetWidth;
       const scale = containerWidth >= CANVAS_SITE_WIDTH
         ? 1
-        : containerWidth / CANVAS_SITE_WIDTH;
+        : Math.max(0.1, (containerWidth - 32) / CANVAS_SITE_WIDTH);
       setCanvasScale(scale);
       if (innerEl) {
         setCanvasInnerHeight(innerEl.offsetHeight);
