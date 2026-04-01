@@ -3,6 +3,14 @@ import { tokenRequireApi } from "./refreshToken";
 
 const OPEN_API_URL = "open-api";
 
+const resolveFieldValue = (value) => {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  return value?.current ?? "";
+};
+
 export const openAPIVerifyUsername = async (username) => {
   try {
     const res = await fetch(
@@ -26,6 +34,7 @@ export const openAPIVerifyUsername = async (username) => {
 
 export const openAPIVerifyEmail = async (email) => {
   try {
+    const resolvedEmail = resolveFieldValue(email);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/verify-email`,
       {
@@ -33,12 +42,10 @@ export const openAPIVerifyEmail = async (email) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email: email.current }),
+        body: JSON.stringify({ email: resolvedEmail }),
       }
     );
-    if (res.ok) {
-      console.log("yay");
-    }
+    return res.json();
   } catch (error) {
     console.error(error);
   }
@@ -46,6 +53,8 @@ export const openAPIVerifyEmail = async (email) => {
 
 export const openAPIVerifyNum = async (email, verifyNum, pwdReset = false) => {
   try {
+    const resolvedEmail = resolveFieldValue(email);
+    const resolvedVerifyNum = resolveFieldValue(verifyNum);
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/verify-num`,
       {
@@ -54,8 +63,8 @@ export const openAPIVerifyNum = async (email, verifyNum, pwdReset = false) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: email.current,
-          verifyNum: verifyNum.current,
+          email: resolvedEmail,
+          verifyNum: resolvedVerifyNum,
           pwdReset: pwdReset,
         }),
       }
