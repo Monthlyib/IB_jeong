@@ -33,6 +33,7 @@ const EditorComponents = dynamic(
 );
 
 const CANVAS_SITE_WIDTH = 1100; // 실제 사이트 콘텐츠 폭(px) — 110rem@10px
+const CANVAS_VIEWPORT_GUTTER = 48;
 
 const cloneLayout = (layout) => JSON.parse(JSON.stringify(layout));
 
@@ -176,9 +177,12 @@ const HomeBuilder = () => {
 
     const update = () => {
       const containerWidth = outerEl.offsetWidth;
-      const scale = containerWidth >= CANVAS_SITE_WIDTH
+      const scale = containerWidth >= CANVAS_SITE_WIDTH + CANVAS_VIEWPORT_GUTTER
         ? 1
-        : Math.max(0.1, (containerWidth - 32) / CANVAS_SITE_WIDTH);
+        : Math.max(
+            0.1,
+            (containerWidth - CANVAS_VIEWPORT_GUTTER) / CANVAS_SITE_WIDTH
+          );
       setCanvasScale(scale);
       if (innerEl) {
         setCanvasInnerHeight(innerEl.offsetHeight);

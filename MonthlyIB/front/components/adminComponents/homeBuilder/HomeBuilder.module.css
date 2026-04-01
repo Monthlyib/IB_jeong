@@ -363,6 +363,8 @@
 .canvasViewportWrap {
   position: relative;
   width: 100%;
+  padding-right: 0.8rem;
+  box-sizing: border-box;
   overflow: hidden;
   border-radius: 1.6rem;
   border: 1px solid #e9e1f2;
