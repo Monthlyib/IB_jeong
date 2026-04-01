@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -31,6 +31,8 @@ const EditorComponents = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
   { ssr: false }
 );
+
+const CANVAS_SITE_WIDTH = 1100; // 실제 사이트 콘텐츠 폭(px) — 110rem@10px
 
 const cloneLayout = (layout) => JSON.parse(JSON.stringify(layout));
 
@@ -157,6 +159,45 @@ const HomeBuilder = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+
+  // 왼쪽 패널 탭: "palette" | "inspector"
+  const [leftTab, setLeftTab] = useState("palette");
+
+  // 캔버스 스케일 계산
+  const canvasViewportRef = useRef(null);
+  const canvasInnerRef = useRef(null);
+  const [canvasScale, setCanvasScale] = useState(1);
+  const [canvasInnerHeight, setCanvasInnerHeight] = useState(0);
+
+  useEffect(() => {
+    const outerEl = canvasViewportRef.current;
+    const innerEl = canvasInnerRef.current;
+    if (!outerEl) return;
+
+    const update = () => {
+      const containerWidth = outerEl.offsetWidth;
+      const scale = containerWidth >= CANVAS_SITE_WIDTH
+        ? 1
+        : containerWidth / CANVAS_SITE_WIDTH;
+      setCanvasScale(scale);
+      if (innerEl) {
+        setCanvasInnerHeight(innerEl.offsetHeight);
+      }
+    };
+
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(outerEl);
+    if (innerEl) ro.observe(innerEl);
+    return () => ro.disconnect();
+  }, [layout]);
+
+  // 블록 선택 시 자동으로 속성 탭으로 전환
+  useEffect(() => {
+    if (selectedBlockId) {
+      setLeftTab("inspector");
+    }
+  }, [selectedBlockId]);
 
   useEffect(() => {
     if (userInfo?.authority && userInfo.authority !== "ADMIN") {
@@ -497,6 +538,8 @@ const HomeBuilder = () => {
     );
   }
 
+  const scalePercent = Math.round(canvasScale * 100);
+
   return (
     <main className={styles.builderPage}>
       <section className={styles.builderHero}>
@@ -554,423 +597,460 @@ const HomeBuilder = () => {
       </section>
 
       <section className={styles.builderSurface}>
+        {/* ── 왼쪽 통합 패널 ── */}
         <aside className={styles.panel}>
-          <div className={styles.panelHeader}>
-            <div>
-              <h2>모듈 팔레트</h2>
-              <p>열을 선택한 뒤 클릭하거나, 직접 캔버스로 드래그하세요.</p>
-            </div>
+          {/* 탭 */}
+          <div className={styles.panelTabs}>
+            <button
+              type="button"
+              className={`${styles.panelTab} ${leftTab === "palette" ? styles.active : ""}`}
+              onClick={() => setLeftTab("palette")}
+            >
+              모듈 팔레트
+            </button>
+            <button
+              type="button"
+              className={`${styles.panelTab} ${leftTab === "inspector" ? styles.active : ""}`}
+              onClick={() => setLeftTab("inspector")}
+            >
+              속성
+              {selectedBlock && (
+                <span className={styles.panelTabBadge}>●</span>
+              )}
+            </button>
           </div>
 
-          <div className={styles.rowActions}>
-            {HOME_LAYOUT_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => addRow(option.value)}
-              >
-                {option.label} 행 추가
-              </button>
-            ))}
-          </div>
+          {/* 팔레트 탭 */}
+          {leftTab === "palette" && (
+            <>
+              <div className={styles.panelHeader}>
+                <div>
+                  <h2>행 추가</h2>
+                  <p>열 구성을 선택해 새 행을 추가합니다.</p>
+                </div>
+              </div>
+              <div className={styles.rowActions}>
+                {HOME_LAYOUT_OPTIONS.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => addRow(option.value)}
+                  >
+                    {option.label} 행 추가
+                  </button>
+                ))}
+              </div>
 
-          <div className={styles.paletteList}>
-            {palette.map((item) => (
-              <button
-                key={item.type}
-                type="button"
-                draggable={!item.disabled}
-                disabled={item.disabled}
-                className={styles.paletteButton}
-                onDragStart={(event) => handlePaletteDragStart(event, item.type)}
-                onClick={() => {
-                  if (!selectedColumnTarget) {
-                    alert("먼저 블록을 넣을 열을 선택하세요.");
-                    return;
-                  }
-                  addBlockToColumn(
-                    item.type,
-                    selectedColumnTarget.rowId,
-                    selectedColumnTarget.columnId
-                  );
-                }}
-              >
-                <span>{item.label}</span>
-                <small>{item.description}</small>
-              </button>
-            ))}
-          </div>
+              <div className={styles.panelHeader}>
+                <div>
+                  <h2>모듈</h2>
+                  <p>열을 선택한 뒤 클릭하거나 캔버스로 드래그하세요.</p>
+                </div>
+              </div>
+              <div className={styles.paletteList}>
+                {palette.map((item) => (
+                  <button
+                    key={item.type}
+                    type="button"
+                    draggable={!item.disabled}
+                    disabled={item.disabled}
+                    className={styles.paletteButton}
+                    onDragStart={(event) => handlePaletteDragStart(event, item.type)}
+                    onClick={() => {
+                      if (!selectedColumnTarget) {
+                        alert("먼저 블록을 넣을 열을 선택하세요.");
+                        return;
+                      }
+                      addBlockToColumn(
+                        item.type,
+                        selectedColumnTarget.rowId,
+                        selectedColumnTarget.columnId
+                      );
+                    }}
+                  >
+                    <span>{item.label}</span>
+                    <small>{item.description}</small>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* 속성 탭 */}
+          {leftTab === "inspector" && (
+            <>
+              {!selectedBlock ? (
+                <div className={styles.inspectorHint}>
+                  블록을 하나 선택하면 제목, 설명, 링크, 파일 업로드, 버튼 스타일 등
+                  관련 속성이 여기에 표시됩니다.
+                </div>
+              ) : (
+                <div className={styles.inspectorBody}>
+                  {(selectedBlock.type === "existingSearch" ||
+                    selectedBlock.type === "existingGuideLinks" ||
+                    selectedBlock.type === "existingMemberActivity" ||
+                    selectedBlock.type === "existingReviewCarousel") && (
+                    <div className={styles.inspectorGroup}>
+                      <label>섹션 제목</label>
+                      <input
+                        type="text"
+                        value={selectedBlock.props?.title || ""}
+                        onChange={(event) => updateSelectedBlock({ title: event.target.value })}
+                      />
+                    </div>
+                  )}
+
+                  {selectedBlock.type === "richText" && (
+                    <>
+                      <div className={styles.inspectorGroup}>
+                        <label>텍스트 블록 제목</label>
+                        <input
+                          type="text"
+                          value={selectedBlock.props?.title || ""}
+                          onChange={(event) => updateSelectedBlock({ title: event.target.value })}
+                        />
+                      </div>
+                      <div className={`${styles.inspectorGroup} ${styles.editorWrap}`}>
+                        <label>본문</label>
+                        <EditorComponents
+                          styleName=""
+                          content={selectedBlock.props?.html || "<p></p>"}
+                          setContent={(value) => updateSelectedBlock({ html: value })}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {selectedBlock.type === "image" && (
+                    <>
+                      <div className={styles.inspectorGroup}>
+                        <label>이미지 업로드</label>
+                        <div className={styles.uploadRow}>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(event) => handleUploadMedia(event, "image")}
+                          />
+                        </div>
+                        <div className={styles.uploadStatus}>
+                          {uploading ? "업로드 중..." : selectedBlock.props?.fileUrl || "업로드된 파일이 없습니다."}
+                        </div>
+                      </div>
+                      <div className={styles.inspectorGroup}>
+                        <label>대체 텍스트</label>
+                        <input
+                          type="text"
+                          value={selectedBlock.props?.alt || ""}
+                          onChange={(event) => updateSelectedBlock({ alt: event.target.value })}
+                        />
+                      </div>
+                      <div className={styles.inspectorGroup}>
+                        <label>캡션</label>
+                        <textarea
+                          value={selectedBlock.props?.caption || ""}
+                          onChange={(event) => updateSelectedBlock({ caption: event.target.value })}
+                        />
+                      </div>
+                      <div className={styles.inspectorGroup}>
+                        <label>이미지 링크</label>
+                        <input
+                          type="text"
+                          value={selectedBlock.props?.linkUrl || ""}
+                          onChange={(event) => updateSelectedBlock({ linkUrl: event.target.value })}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {selectedBlock.type === "video" && (
+                    <>
+                      <div className={styles.inspectorGroup}>
+                        <label>영상 소스</label>
+                        <select
+                          value={selectedBlock.props?.sourceType || "embedUrl"}
+                          onChange={(event) =>
+                            updateSelectedBlock({ sourceType: event.target.value })
+                          }
+                        >
+                          <option value="embedUrl">URL 임베드</option>
+                          <option value="uploadedFile">파일 업로드</option>
+                        </select>
+                      </div>
+
+                      {selectedBlock.props?.sourceType !== "uploadedFile" ? (
+                        <div className={styles.inspectorGroup}>
+                          <label>임베드 URL</label>
+                          <input
+                            type="text"
+                            value={selectedBlock.props?.embedUrl || ""}
+                            onChange={(event) => updateSelectedBlock({ embedUrl: event.target.value })}
+                            placeholder="https://youtu.be/... 또는 https://player.vimeo.com/..."
+                          />
+                        </div>
+                      ) : (
+                        <div className={styles.inspectorGroup}>
+                          <label>영상 파일 업로드</label>
+                          <input
+                            type="file"
+                            accept="video/*"
+                            onChange={(event) => handleUploadMedia(event, "video")}
+                          />
+                          <div className={styles.uploadStatus}>
+                            {uploading ? "업로드 중..." : selectedBlock.props?.fileUrl || "업로드된 영상이 없습니다."}
+                          </div>
+                        </div>
+                      )}
+
+                      <div className={styles.inspectorGroup}>
+                        <label>캡션</label>
+                        <textarea
+                          value={selectedBlock.props?.caption || ""}
+                          onChange={(event) => updateSelectedBlock({ caption: event.target.value })}
+                        />
+                      </div>
+                    </>
+                  )}
+
+                  {selectedBlock.type === "button" && (
+                    <>
+                      <div className={styles.inspectorGroup}>
+                        <label>버튼 라벨</label>
+                        <input
+                          type="text"
+                          value={selectedBlock.props?.label || ""}
+                          onChange={(event) => updateSelectedBlock({ label: event.target.value })}
+                        />
+                      </div>
+                      <div className={styles.inspectorGroup}>
+                        <label>링크</label>
+                        <input
+                          type="text"
+                          value={selectedBlock.props?.href || ""}
+                          onChange={(event) => updateSelectedBlock({ href: event.target.value })}
+                        />
+                      </div>
+                      <div className={styles.inspectorGroup}>
+                        <label>버튼 스타일</label>
+                        <select
+                          value={selectedBlock.props?.variant || "primary"}
+                          onChange={(event) => updateSelectedBlock({ variant: event.target.value })}
+                        >
+                          <option value="primary">Primary</option>
+                          <option value="secondary">Secondary</option>
+                          <option value="ghost">Ghost</option>
+                        </select>
+                      </div>
+                    </>
+                  )}
+
+                  {selectedBlock.type === "spacer" && (
+                    <div className={styles.inspectorGroup}>
+                      <label>공백 높이(px)</label>
+                      <input
+                        type="number"
+                        min={12}
+                        max={320}
+                        value={selectedBlock.props?.height || 48}
+                        onChange={(event) =>
+                          updateSelectedBlock({
+                            height: Number(event.target.value || 48),
+                          })
+                        }
+                      />
+                    </div>
+                  )}
+
+                  <div className={styles.inspectorHint}>
+                    저장은 초안만 변경합니다. 실제 홈 반영은 상단의 게시 버튼을 눌러야 합니다.
+                    <br />
+                    Draft: {draftMeta.draftUpdatedAt || "없음"}
+                    <br />
+                    Published: {draftMeta.publishedAt || "없음"}
+                  </div>
+
+                  <button
+                    type="button"
+                    className={styles.dangerButton}
+                    onClick={deleteSelectedBlock}
+                  >
+                    현재 블록 삭제
+                  </button>
+
+                  <Link href="/" className={styles.plainButton}>
+                    실제 홈 보기
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
         </aside>
 
+        {/* ── 캔버스 패널 ── */}
         <section className={styles.canvasPanel}>
           <div className={styles.canvasHeader}>
             <div>
               <h2>캔버스 미리보기</h2>
-              <p>블록을 선택하면 오른쪽 속성 패널에서 내용을 수정할 수 있습니다.</p>
+              <p>블록을 클릭하면 왼쪽 속성 탭에서 수정할 수 있습니다.</p>
             </div>
+            <span className={styles.canvasScaleBadge}>
+              {scalePercent}% 축소 · {CANVAS_SITE_WIDTH}px 기준
+            </span>
           </div>
 
-          <div className={styles.canvasRows}>
-            {layout.rows.map((row) => (
-              <div
-                key={row.id}
-                className={styles.canvasRow}
-                onDragOver={(event) => event.preventDefault()}
-                onDrop={(event) => handleDropOnRow(event, row.id)}
-              >
-                <div className={styles.rowHeader}>
-                  <div className={styles.rowHeaderLeft}>
-                    <button
-                      type="button"
-                      className={styles.dragHandle}
-                      draggable
-                      onDragStart={(event) => handleRowDragStart(event, row.id)}
-                    >
-                      ↕
-                    </button>
-                    <div className={styles.rowMeta}>
-                      <span>Row</span>
-                      <strong>{HOME_LAYOUT_OPTIONS.find((item) => item.value === row.layout)?.label}</strong>
-                    </div>
-                  </div>
-                  <div className={styles.rowHeaderRight}>
-                    <select
-                      value={row.layout}
-                      onChange={(event) => updateRowLayout(row.id, event.target.value)}
-                    >
-                      {HOME_LAYOUT_OPTIONS.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                    <button
-                      type="button"
-                      className={styles.dangerButton}
-                      onClick={() => deleteRow(row.id)}
-                    >
-                      행 삭제
-                    </button>
-                  </div>
-                </div>
-
-                <div className={`${styles.rowGrid} ${styles[`rowGrid_${row.layout}`]}`}>
-                  {row.columns.map((column, columnIndex) => (
-                    <div
-                      key={column.id}
-                      className={`${styles.canvasColumn} ${
-                        selectedColumnTarget?.columnId === column.id ? styles.canvasColumnActive : ""
-                      }`}
-                      onClick={() => setSelectedColumnTarget({ rowId: row.id, columnId: column.id })}
-                      onDragOver={(event) => event.preventDefault()}
-                      onDrop={(event) => handleDropOnColumn(event, row.id, column.id)}
-                    >
-                      <div className={styles.columnHeader}>
-                        <div>
-                          <strong>{columnIndex + 1}열</strong>
-                          <span>{column.blocks.length} blocks</span>
-                        </div>
+          {/* 스케일 뷰포트 */}
+          <div
+            ref={canvasViewportRef}
+            className={styles.canvasViewportWrap}
+            style={{
+              height: canvasInnerHeight > 0
+                ? canvasInnerHeight * canvasScale
+                : "auto",
+            }}
+          >
+            <div
+              ref={canvasInnerRef}
+              className={styles.canvasScaleWrap}
+              style={{
+                width: `${CANVAS_SITE_WIDTH}px`,
+                transform: `scale(${canvasScale})`,
+                transformOrigin: "top left",
+              }}
+            >
+              <div className={styles.canvasRows}>
+                {layout.rows.map((row) => (
+                  <div
+                    key={row.id}
+                    className={styles.canvasRow}
+                    onDragOver={(event) => event.preventDefault()}
+                    onDrop={(event) => handleDropOnRow(event, row.id)}
+                  >
+                    <div className={styles.rowHeader}>
+                      <div className={styles.rowHeaderLeft}>
                         <button
                           type="button"
-                          className={styles.columnAction}
-                          onClick={() => setSelectedColumnTarget({ rowId: row.id, columnId: column.id })}
+                          className={styles.dragHandle}
+                          draggable
+                          onDragStart={(event) => handleRowDragStart(event, row.id)}
                         >
-                          선택
+                          ↕
+                        </button>
+                        <div className={styles.rowMeta}>
+                          <span>Row</span>
+                          <strong>{HOME_LAYOUT_OPTIONS.find((item) => item.value === row.layout)?.label}</strong>
+                        </div>
+                      </div>
+                      <div className={styles.rowHeaderRight}>
+                        <select
+                          value={row.layout}
+                          onChange={(event) => updateRowLayout(row.id, event.target.value)}
+                        >
+                          {HOME_LAYOUT_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                        <button
+                          type="button"
+                          className={styles.dangerButton}
+                          onClick={() => deleteRow(row.id)}
+                        >
+                          행 삭제
                         </button>
                       </div>
+                    </div>
 
-                      <div className={styles.columnBlocks}>
-                        {column.blocks.length === 0 ? (
-                          <div className={styles.emptyColumn}>
-                            여기에 모듈을 드롭하거나 왼쪽 팔레트에서 추가하세요.
-                          </div>
-                        ) : (
-                          column.blocks.map((block, blockIndex) => (
-                            <div
-                              key={block.id}
-                              className={`${styles.canvasBlock} ${
-                                selectedBlockId === block.id ? styles.canvasBlockSelected : ""
-                              }`}
-                              draggable
-                              onDragStart={(event) =>
-                                handleBlockDragStart(event, row.id, column.id, block.id)
-                              }
-                              onDragOver={(event) => event.preventDefault()}
-                              onDrop={(event) =>
-                                handleDropOnBlock(event, row.id, column.id, blockIndex)
-                              }
-                              onClick={() => {
-                                setSelectedBlockId(block.id);
-                                setSelectedColumnTarget({ rowId: row.id, columnId: column.id });
-                              }}
+                    <div className={`${styles.rowGrid} ${styles[`rowGrid_${row.layout}`]}`}>
+                      {row.columns.map((column, columnIndex) => (
+                        <div
+                          key={column.id}
+                          className={`${styles.canvasColumn} ${
+                            selectedColumnTarget?.columnId === column.id ? styles.canvasColumnActive : ""
+                          }`}
+                          onClick={() => setSelectedColumnTarget({ rowId: row.id, columnId: column.id })}
+                          onDragOver={(event) => event.preventDefault()}
+                          onDrop={(event) => handleDropOnColumn(event, row.id, column.id)}
+                        >
+                          <div className={styles.columnHeader}>
+                            <div>
+                              <strong>{columnIndex + 1}열</strong>
+                              <span>{column.blocks.length} blocks</span>
+                            </div>
+                            <button
+                              type="button"
+                              className={styles.columnAction}
+                              onClick={() => setSelectedColumnTarget({ rowId: row.id, columnId: column.id })}
                             >
-                              <div className={styles.blockHeader}>
-                                <div>
-                                  <span>{block.type}</span>
-                                  <strong>
-                                    {BLOCK_LIBRARY.find((item) => item.type === block.type)?.label || block.type}
-                                  </strong>
-                                </div>
-                                <button
-                                  type="button"
-                                  className={styles.dangerButton}
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    setLayout((current) =>
-                                      deleteBlockFromLayout(current, row.id, column.id, block.id)
-                                    );
-                                    if (selectedBlockId === block.id) {
-                                      setSelectedBlockId(null);
-                                    }
+                              선택
+                            </button>
+                          </div>
+
+                          <div className={styles.columnBlocks}>
+                            {column.blocks.length === 0 ? (
+                              <div className={styles.emptyColumn}>
+                                여기에 모듈을 드롭하거나 왼쪽 팔레트에서 추가하세요.
+                              </div>
+                            ) : (
+                              column.blocks.map((block, blockIndex) => (
+                                <div
+                                  key={block.id}
+                                  className={`${styles.canvasBlock} ${
+                                    selectedBlockId === block.id ? styles.canvasBlockSelected : ""
+                                  }`}
+                                  draggable
+                                  onDragStart={(event) =>
+                                    handleBlockDragStart(event, row.id, column.id, block.id)
+                                  }
+                                  onDragOver={(event) => event.preventDefault()}
+                                  onDrop={(event) =>
+                                    handleDropOnBlock(event, row.id, column.id, blockIndex)
+                                  }
+                                  onClick={() => {
+                                    setSelectedBlockId(block.id);
+                                    setSelectedColumnTarget({ rowId: row.id, columnId: column.id });
                                   }}
                                 >
-                                  삭제
-                                </button>
-                              </div>
-                              <div className={styles.blockPreview}>
-                                <div className={styles.blockPreviewInner}>
-                                  <HomeBlockContent block={block} previewMode />
+                                  <div className={styles.blockHeader}>
+                                    <div>
+                                      <span>{block.type}</span>
+                                      <strong>
+                                        {BLOCK_LIBRARY.find((item) => item.type === block.type)?.label || block.type}
+                                      </strong>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      className={styles.dangerButton}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        setLayout((current) =>
+                                          deleteBlockFromLayout(current, row.id, column.id, block.id)
+                                        );
+                                        if (selectedBlockId === block.id) {
+                                          setSelectedBlockId(null);
+                                        }
+                                      }}
+                                    >
+                                      삭제
+                                    </button>
+                                  </div>
+                                  <div className={styles.blockPreview}>
+                                    <div className={styles.blockPreviewInner}>
+                                      <HomeBlockContent block={block} previewMode />
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
-                            </div>
-                          ))
-                        )}
-                      </div>
+                              ))
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
           </div>
         </section>
-
-        <aside className={styles.panel}>
-          <div className={styles.panelHeader}>
-            <div>
-              <h2>속성 패널</h2>
-              <p>선택한 블록의 텍스트, 링크, 미디어를 바로 수정합니다.</p>
-            </div>
-          </div>
-
-          {!selectedBlock ? (
-            <div className={styles.inspectorHint}>
-              블록을 하나 선택하면 제목, 설명, 링크, 파일 업로드, 버튼 스타일 등
-              관련 속성이 여기에 표시됩니다.
-            </div>
-          ) : (
-            <div className={styles.inspectorBody}>
-              {(selectedBlock.type === "existingSearch" ||
-                selectedBlock.type === "existingGuideLinks" ||
-                selectedBlock.type === "existingMemberActivity" ||
-                selectedBlock.type === "existingReviewCarousel") && (
-                <div className={styles.inspectorGroup}>
-                  <label>섹션 제목</label>
-                  <input
-                    type="text"
-                    value={selectedBlock.props?.title || ""}
-                    onChange={(event) => updateSelectedBlock({ title: event.target.value })}
-                  />
-                </div>
-              )}
-
-              {selectedBlock.type === "richText" && (
-                <>
-                  <div className={styles.inspectorGroup}>
-                    <label>텍스트 블록 제목</label>
-                    <input
-                      type="text"
-                      value={selectedBlock.props?.title || ""}
-                      onChange={(event) => updateSelectedBlock({ title: event.target.value })}
-                    />
-                  </div>
-                  <div className={`${styles.inspectorGroup} ${styles.editorWrap}`}>
-                    <label>본문</label>
-                    <EditorComponents
-                      styleName=""
-                      content={selectedBlock.props?.html || "<p></p>"}
-                      setContent={(value) => updateSelectedBlock({ html: value })}
-                    />
-                  </div>
-                </>
-              )}
-
-              {selectedBlock.type === "image" && (
-                <>
-                  <div className={styles.inspectorGroup}>
-                    <label>이미지 업로드</label>
-                    <div className={styles.uploadRow}>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(event) => handleUploadMedia(event, "image")}
-                      />
-                    </div>
-                    <div className={styles.uploadStatus}>
-                      {uploading ? "업로드 중..." : selectedBlock.props?.fileUrl || "업로드된 파일이 없습니다."}
-                    </div>
-                  </div>
-                  <div className={styles.inspectorGroup}>
-                    <label>대체 텍스트</label>
-                    <input
-                      type="text"
-                      value={selectedBlock.props?.alt || ""}
-                      onChange={(event) => updateSelectedBlock({ alt: event.target.value })}
-                    />
-                  </div>
-                  <div className={styles.inspectorGroup}>
-                    <label>캡션</label>
-                    <textarea
-                      value={selectedBlock.props?.caption || ""}
-                      onChange={(event) => updateSelectedBlock({ caption: event.target.value })}
-                    />
-                  </div>
-                  <div className={styles.inspectorGroup}>
-                    <label>이미지 링크</label>
-                    <input
-                      type="text"
-                      value={selectedBlock.props?.linkUrl || ""}
-                      onChange={(event) => updateSelectedBlock({ linkUrl: event.target.value })}
-                    />
-                  </div>
-                </>
-              )}
-
-              {selectedBlock.type === "video" && (
-                <>
-                  <div className={styles.inspectorGroup}>
-                    <label>영상 소스</label>
-                    <select
-                      value={selectedBlock.props?.sourceType || "embedUrl"}
-                      onChange={(event) =>
-                        updateSelectedBlock({ sourceType: event.target.value })
-                      }
-                    >
-                      <option value="embedUrl">URL 임베드</option>
-                      <option value="uploadedFile">파일 업로드</option>
-                    </select>
-                  </div>
-
-                  {selectedBlock.props?.sourceType !== "uploadedFile" ? (
-                    <div className={styles.inspectorGroup}>
-                      <label>임베드 URL</label>
-                      <input
-                        type="text"
-                        value={selectedBlock.props?.embedUrl || ""}
-                        onChange={(event) => updateSelectedBlock({ embedUrl: event.target.value })}
-                        placeholder="https://youtu.be/... 또는 https://player.vimeo.com/..."
-                      />
-                    </div>
-                  ) : (
-                    <div className={styles.inspectorGroup}>
-                      <label>영상 파일 업로드</label>
-                      <input
-                        type="file"
-                        accept="video/*"
-                        onChange={(event) => handleUploadMedia(event, "video")}
-                      />
-                      <div className={styles.uploadStatus}>
-                        {uploading ? "업로드 중..." : selectedBlock.props?.fileUrl || "업로드된 영상이 없습니다."}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className={styles.inspectorGroup}>
-                    <label>캡션</label>
-                    <textarea
-                      value={selectedBlock.props?.caption || ""}
-                      onChange={(event) => updateSelectedBlock({ caption: event.target.value })}
-                    />
-                  </div>
-                </>
-              )}
-
-              {selectedBlock.type === "button" && (
-                <>
-                  <div className={styles.inspectorGroup}>
-                    <label>버튼 라벨</label>
-                    <input
-                      type="text"
-                      value={selectedBlock.props?.label || ""}
-                      onChange={(event) => updateSelectedBlock({ label: event.target.value })}
-                    />
-                  </div>
-                  <div className={styles.inspectorGroup}>
-                    <label>링크</label>
-                    <input
-                      type="text"
-                      value={selectedBlock.props?.href || ""}
-                      onChange={(event) => updateSelectedBlock({ href: event.target.value })}
-                    />
-                  </div>
-                  <div className={styles.inspectorGroup}>
-                    <label>버튼 스타일</label>
-                    <select
-                      value={selectedBlock.props?.variant || "primary"}
-                      onChange={(event) => updateSelectedBlock({ variant: event.target.value })}
-                    >
-                      <option value="primary">Primary</option>
-                      <option value="secondary">Secondary</option>
-                      <option value="ghost">Ghost</option>
-                    </select>
-                  </div>
-                </>
-              )}
-
-              {selectedBlock.type === "spacer" && (
-                <div className={styles.inspectorGroup}>
-                  <label>공백 높이(px)</label>
-                  <input
-                    type="number"
-                    min={12}
-                    max={320}
-                    value={selectedBlock.props?.height || 48}
-                    onChange={(event) =>
-                      updateSelectedBlock({
-                        height: Number(event.target.value || 48),
-                      })
-                    }
-                  />
-                </div>
-              )}
-
-              <div className={styles.inspectorHint}>
-                저장은 초안만 변경합니다. 실제 홈 반영은 상단의 게시 버튼을 눌러야
-                합니다.
-                <br />
-                Draft: {draftMeta.draftUpdatedAt || "없음"}
-                <br />
-                Published: {draftMeta.publishedAt || "없음"}
-                <br />
-                URL 또는 버튼 링크는 `/path` 혹은 `https://...` 형식을 권장합니다.
-              </div>
-
-              <div className={styles.inspectorHint}>
-                업로드 영상/이미지는 홈 전용 미디어 경로에 저장됩니다.
-                YouTube, Vimeo, 직접 MP4 URL도 지원합니다.
-              </div>
-
-              <div className={styles.inspectorHint}>
-                <strong>지원 변수/구조</strong>
-                <br />
-                기존 블록은 한 번만 배치할 수 있습니다.
-                <br />
-                행은 1열 / 2열 / 3열만 지원하며, 모바일에서는 자동으로 세로 스택됩니다.
-              </div>
-
-              <button
-                type="button"
-                className={styles.dangerButton}
-                onClick={deleteSelectedBlock}
-              >
-                현재 블록 삭제
-              </button>
-
-              <Link href="/" className={styles.plainButton}>
-                실제 홈 보기
-              </Link>
-            </div>
-          )}
-        </aside>
       </section>
     </main>
   );
