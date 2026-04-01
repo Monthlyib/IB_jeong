@@ -47,13 +47,93 @@ const getEmbedVideoUrl = (url = "") => {
   return url;
 };
 
+const ExistingBlockPreview = ({ type, title }) => {
+  switch (type) {
+    case "existingHero":
+      return (
+        <section className={styles.previewSection}>
+          <span className={styles.previewBadge}>기존 히어로</span>
+          <div className={styles.previewHero}>
+            <div className={styles.previewHeroCopy}>
+              <span>IB 45 PROJECT</span>
+              <h3>학습콘텐츠</h3>
+              <p>홈 상단 메인 히어로와 슬라이드 영역이 이 자리에서 렌더링됩니다.</p>
+            </div>
+            <div className={styles.previewHeroVisual}>
+              <div className={styles.previewHeroCard}>LESSON</div>
+              <div className={styles.previewHeroCardAlt}>STUDY</div>
+            </div>
+          </div>
+        </section>
+      );
+    case "existingSearch":
+      return (
+        <section className={styles.previewSection}>
+          <span className={styles.previewBadge}>기존 검색</span>
+          <h3>{title || "궁금한 키워드를 검색해보세요!"}</h3>
+          <div className={styles.previewSearchBox}>홈 검색 입력창이 여기에 표시됩니다.</div>
+        </section>
+      );
+    case "existingGuideLinks":
+      return (
+        <section className={styles.previewSection}>
+          <span className={styles.previewBadge}>기존 가이드 링크</span>
+          <h3>{title || "IB 입시가이드"}</h3>
+          <div className={styles.previewGuideGrid}>
+            <div className={styles.previewGuideItem}>월간 IB</div>
+            <div className={styles.previewGuideItem}>IB 입시뉴스</div>
+            <div className={styles.previewGuideItem}>합격예측 계산기</div>
+            <div className={styles.previewGuideItem}>자료실</div>
+          </div>
+        </section>
+      );
+    case "existingMemberActivity":
+      return (
+        <section className={styles.previewSection}>
+          <span className={styles.previewBadge}>기존 회원 활동</span>
+          <h3>{title || "나의 프로필 관리"}</h3>
+          <div className={styles.previewTabs}>
+            <span>수강중인 강의</span>
+            <span>수업 스케쥴링</span>
+            <span>나의 질문리스트</span>
+          </div>
+          <div className={styles.previewActivityGrid}>
+            <div className={styles.previewActivityCard}>강의 카드</div>
+            <div className={styles.previewActivityCard}>스케줄 카드</div>
+            <div className={styles.previewActivityCard}>질문 카드</div>
+          </div>
+        </section>
+      );
+    case "existingReviewCarousel":
+      return (
+        <section className={styles.previewSection}>
+          <span className={styles.previewBadge}>기존 리뷰</span>
+          <h3>{title || "수강생 리뷰"}</h3>
+          <div className={styles.previewReviewList}>
+            <div className={styles.previewReviewCard}>리뷰 카드 1</div>
+            <div className={styles.previewReviewCard}>리뷰 카드 2</div>
+            <div className={styles.previewReviewCard}>리뷰 카드 3</div>
+          </div>
+        </section>
+      );
+    default:
+      return null;
+  }
+};
+
 const HomeBlockContent = ({ block, previewMode = false }) => {
   const props = block?.props || {};
 
   switch (block?.type) {
     case "existingHero":
+      if (previewMode) {
+        return <ExistingBlockPreview type="existingHero" />;
+      }
       return <MainHeroSection />;
     case "existingSearch":
+      if (previewMode) {
+        return <ExistingBlockPreview type="existingSearch" title={props?.title} />;
+      }
       return (
         <MainSearchSection
           title={props?.title || "궁금한 키워드를 검색해보세요!"}
@@ -61,8 +141,14 @@ const HomeBlockContent = ({ block, previewMode = false }) => {
         />
       );
     case "existingGuideLinks":
+      if (previewMode) {
+        return <ExistingBlockPreview type="existingGuideLinks" title={props?.title} />;
+      }
       return <MainGuideSection title={props?.title || "IB 입시가이드"} />;
     case "existingMemberActivity":
+      if (previewMode) {
+        return <ExistingBlockPreview type="existingMemberActivity" title={props?.title} />;
+      }
       return (
         <MainMemberActivitySection
           title={props?.title || "나의 프로필 관리"}
@@ -70,6 +156,9 @@ const HomeBlockContent = ({ block, previewMode = false }) => {
         />
       );
     case "existingReviewCarousel":
+      if (previewMode) {
+        return <ExistingBlockPreview type="existingReviewCarousel" title={props?.title} />;
+      }
       return <MainReviewSection title={props?.title || "수강생 리뷰"} />;
     case "richText":
       return (

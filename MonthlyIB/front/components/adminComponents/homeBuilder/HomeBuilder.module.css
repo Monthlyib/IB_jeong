@@ -87,6 +87,7 @@
   grid-template-columns: 28rem minmax(0, 1fr) 33rem;
   gap: 1.8rem;
   margin-top: 2.4rem;
+  align-items: start;
 }
 
 .panel,
@@ -100,10 +101,15 @@
 
 .panel {
   padding: 2rem;
+  position: sticky;
+  top: calc(var(--appHeaderHeight, 7.2rem) + 2rem);
+  max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
+  overflow: auto;
 }
 
 .canvasPanel {
   padding: 2rem;
+  overflow: hidden;
 }
 
 .panelHeader {
@@ -250,12 +256,14 @@
 .canvasRows {
   display: grid;
   gap: 1.6rem;
+  min-width: 0;
 }
 
 .canvasRow {
   border: 1px solid rgba(81, 52, 108, 0.12);
   border-radius: 2rem;
   background: #fdfcff;
+  overflow: hidden;
 }
 
 .rowHeader {
@@ -331,6 +339,7 @@
   display: grid;
   gap: 1.2rem;
   padding: 1.6rem;
+  min-width: 0;
 }
 
 .rowGrid_one {
@@ -346,11 +355,13 @@
 }
 
 .canvasColumn {
+  min-width: 0;
   min-height: 22rem;
   padding: 1.2rem;
   border: 1px dashed rgba(81, 52, 108, 0.18);
   border-radius: 1.8rem;
   background: rgba(81, 52, 108, 0.03);
+  overflow: hidden;
 }
 
 .canvasColumnActive {
@@ -381,6 +392,7 @@
 .columnBlocks {
   display: grid;
   gap: 1rem;
+  min-width: 0;
 }
 
 .emptyColumn {
@@ -397,6 +409,7 @@
 }
 
 .canvasBlock {
+  min-width: 0;
   border: 1px solid rgba(81, 52, 108, 0.12);
   border-radius: 1.8rem;
   background: #fff;
@@ -437,10 +450,13 @@
   padding: 1.2rem;
   max-height: 52rem;
   overflow: auto;
+  min-width: 0;
 }
 
 .blockPreviewInner {
   pointer-events: none;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .inspectorBody {
@@ -521,6 +537,11 @@
 
   .builderHeroMeta {
     min-width: 0;
+  }
+
+  .panel {
+    position: static;
+    max-height: none;
   }
 }
 
