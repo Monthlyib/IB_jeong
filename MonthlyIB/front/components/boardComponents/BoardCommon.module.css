@@ -118,6 +118,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  width: fit-content;
+  max-width: 100%;
   padding: 0.7rem 1.2rem;
   border-radius: 999px;
   border: 1px solid rgba(81, 52, 108, 0.14);
@@ -399,11 +401,11 @@
 
 :global(.width_content).newsDetailPage {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 30rem;
+  grid-template-columns: minmax(0, 1fr) 28rem;
   width: min(138rem, calc(100vw - 4rem));
   margin-top: 2.4rem;
   padding-bottom: 6rem;
-  column-gap: 2.8rem;
+  column-gap: 3.6rem;
   align-items: flex-start;
 }
 
@@ -523,8 +525,8 @@
 }
 
 .newsDetailSide {
-  flex: 0 0 30rem;
-  width: 30rem;
+  flex: 0 0 28rem;
+  width: 28rem;
   position: sticky;
   top: 11rem;
   display: grid;
