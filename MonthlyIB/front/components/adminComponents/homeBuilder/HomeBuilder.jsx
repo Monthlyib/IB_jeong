@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
@@ -58,6 +58,9 @@ const findBlockLocation = (layout, blockId) => {
   }
   return null;
 };
+
+const DRAG_SCROLL_EDGE = 120;
+const DRAG_SCROLL_MAX_STEP = 28;
 
 const isLockedBlock = (block) => block?.type === "existingHero";
 
@@ -167,6 +170,9 @@ const HomeBuilder = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [draggingRowId, setDraggingRowId] = useState(null);
+  const [draggingBlockId, setDraggingBlockId] = useState(null);
+  const dragPreviewRef = useRef(null);
 
   // 왼쪽 패널 탭: "palette" | "inspector"
   const [leftTab, setLeftTab] = useState("palette");
@@ -217,6 +223,15 @@ const HomeBuilder = () => {
       load();
     }
   }, [router, userInfo]);
+
+  useEffect(() => {
+    return () => {
+      if (dragPreviewRef.current?.isConnected) {
+        dragPreviewRef.current.remove();
+      }
+      dragPreviewRef.current = null;
+    };
+  }, []);
 
   const selectedBlockLocation = useMemo(
     () => findBlockLocation(layout, selectedBlockId),
@@ -427,12 +442,75 @@ const HomeBuilder = () => {
     );
   };
 
+  const syncDragPreview = (event, element) => {
+    if (!element || typeof document === "undefined") {
+      return;
+    }
+
+    if (dragPreviewRef.current?.isConnected) {
+      dragPreviewRef.current.remove();
+    }
+
+    const rect = element.getBoundingClientRect();
+    const clone = element.cloneNode(true);
+    clone.style.position = "fixed";
+    clone.style.top = "-9999px";
+    clone.style.left = "-9999px";
+    clone.style.width = `${rect.width}px`;
+    clone.style.pointerEvents = "none";
+    clone.style.opacity = "0.96";
+    clone.style.transform = "rotate(0deg)";
+    clone.style.boxShadow = "0 18px 42px rgba(32, 20, 49, 0.24)";
+    clone.style.zIndex = "9999";
+    document.body.appendChild(clone);
+    dragPreviewRef.current = clone;
+    event.dataTransfer.setDragImage(
+      clone,
+      Math.min(80, rect.width / 2),
+      Math.min(48, rect.height / 2)
+    );
+  };
+
+  const handleDragEnd = () => {
+    setDraggingRowId(null);
+    setDraggingBlockId(null);
+    if (dragPreviewRef.current?.isConnected) {
+      dragPreviewRef.current.remove();
+    }
+    dragPreviewRef.current = null;
+  };
+
+  const autoScrollByPointer = (clientY) => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    if (clientY < DRAG_SCROLL_EDGE) {
+      const ratio = (DRAG_SCROLL_EDGE - clientY) / DRAG_SCROLL_EDGE;
+      window.scrollBy({ top: -Math.ceil(ratio * DRAG_SCROLL_MAX_STEP), behavior: "auto" });
+      return;
+    }
+
+    const distanceToBottom = window.innerHeight - clientY;
+    if (distanceToBottom < DRAG_SCROLL_EDGE) {
+      const ratio = (DRAG_SCROLL_EDGE - distanceToBottom) / DRAG_SCROLL_EDGE;
+      window.scrollBy({ top: Math.ceil(ratio * DRAG_SCROLL_MAX_STEP), behavior: "auto" });
+    }
+  };
+
+  const handleWorkspaceDragOver = (event) => {
+    autoScrollByPointer(event.clientY);
+  };
+
   const handleRowDragStart = (event, rowId) => {
     const currentRow = layout.rows.find((row) => row.id === rowId);
     if (isLockedRow(currentRow)) {
       event.preventDefault();
       return;
     }
+    syncDragPreview(event, event.currentTarget);
+    setDraggingRowId(rowId);
+    setDraggingBlockId(null);
     event.dataTransfer.setData(
       "application/monthlyib-home",
       JSON.stringify({ kind: "row", rowId })
@@ -445,6 +523,9 @@ const HomeBuilder = () => {
       event.preventDefault();
       return;
     }
+    syncDragPreview(event, event.currentTarget);
+    setDraggingBlockId(blockId);
+    setDraggingRowId(null);
     event.dataTransfer.setData(
       "application/monthlyib-home",
       JSON.stringify({ kind: "block", rowId, columnId, blockId })
@@ -539,7 +620,7 @@ const HomeBuilder = () => {
   }
 
   return (
-    <main className={styles.builderPage}>
+    <main className={styles.builderPage} onDragOverCapture={handleWorkspaceDragOver}>
       <section className={styles.builderHero}>
         <div className={styles.builderHeroCopy}>
           <span className={styles.builderEyebrow}>Monthly IB Home Builder</span>
@@ -916,9 +997,12 @@ const HomeBuilder = () => {
                     onDrop={(event) => handleDropOnRow(event, row.id)}
                   >
                     <div
-                      className={`${styles.rowHeader} ${!rowLocked ? styles.rowHeaderDraggable : ""}`}
+                      className={`${styles.rowHeader} ${!rowLocked ? styles.rowHeaderDraggable : ""} ${
+                        draggingRowId === row.id ? styles.rowDragging : ""
+                      }`}
                       draggable={!rowLocked}
                       onDragStart={(event) => handleRowDragStart(event, row.id)}
+                      onDragEnd={handleDragEnd}
                     >
                       <div className={styles.rowHeaderLeft}>
                         <div className={styles.dragHandle}>↕</div>
@@ -990,11 +1074,14 @@ const HomeBuilder = () => {
                                   key={block.id}
                                   className={`${styles.canvasBlock} ${
                                     selectedBlockId === block.id ? styles.canvasBlockSelected : ""
+                                  } ${!isLockedBlock(block) ? styles.canvasBlockDraggable : ""} ${
+                                    draggingBlockId === block.id ? styles.blockDragging : ""
                                   }`}
                                   draggable={!isLockedBlock(block)}
                                   onDragStart={(event) =>
                                     handleBlockDragStart(event, row.id, column.id, block.id)
                                   }
+                                  onDragEnd={handleDragEnd}
                                   onDragOver={(event) => event.preventDefault()}
                                   onDrop={(event) =>
                                     handleDropOnBlock(event, row.id, column.id, blockIndex)

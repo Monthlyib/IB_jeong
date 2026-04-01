@@ -390,6 +390,10 @@
   overflow: hidden;
 }
 
+.rowDragging {
+  opacity: 0.74;
+}
+
 .rowHeader {
   display: flex;
   justify-content: space-between;
@@ -560,9 +564,21 @@
   box-sizing: border-box;
 }
 
+.canvasBlockDraggable {
+  cursor: grab;
+}
+
+.canvasBlockDraggable:active {
+  cursor: grabbing;
+}
+
 .canvasBlockSelected {
   border-color: var(--primary01);
   box-shadow: 0 0 0 3px rgba(81, 52, 108, 0.12);
+}
+
+.blockDragging {
+  opacity: 0.72;
 }
 
 .blockHeader {
