@@ -520,6 +520,39 @@ const HomeBuilder = () => {
         </div>
       </section>
 
+      <section className={styles.builderActionsBar}>
+        <div className={styles.builderActionsCopy}>
+          <h2>작업 도구</h2>
+          <p>초안 저장, 게시, 게시본 되돌리기를 여기서 먼저 실행한 뒤 캔버스를 편집하세요.</p>
+        </div>
+        <div className={styles.toolbarButtons}>
+          <button
+            type="button"
+            className={styles.plainButton}
+            onClick={handleResetDraft}
+            disabled={saving}
+          >
+            게시본으로 되돌리기
+          </button>
+          <button
+            type="button"
+            className={`${styles.plainButton} ${styles.saveButton}`}
+            onClick={handleSaveDraft}
+            disabled={saving}
+          >
+            {saving ? "저장 중..." : "초안 저장"}
+          </button>
+          <button
+            type="button"
+            className={`${styles.plainButton} ${styles.saveButton}`}
+            onClick={handlePublish}
+            disabled={saving}
+          >
+            게시
+          </button>
+        </div>
+      </section>
+
       <section className={styles.builderSurface}>
         <aside className={styles.panel}>
           <div className={styles.panelHeader}>
@@ -574,32 +607,6 @@ const HomeBuilder = () => {
             <div>
               <h2>캔버스 미리보기</h2>
               <p>블록을 선택하면 오른쪽 속성 패널에서 내용을 수정할 수 있습니다.</p>
-            </div>
-            <div className={styles.toolbarButtons}>
-              <button
-                type="button"
-                className={styles.plainButton}
-                onClick={handleResetDraft}
-                disabled={saving}
-              >
-                게시본으로 되돌리기
-              </button>
-              <button
-                type="button"
-                className={`${styles.plainButton} ${styles.saveButton}`}
-                onClick={handleSaveDraft}
-                disabled={saving}
-              >
-                {saving ? "저장 중..." : "초안 저장"}
-              </button>
-              <button
-                type="button"
-                className={`${styles.plainButton} ${styles.saveButton}`}
-                onClick={handlePublish}
-                disabled={saving}
-              >
-                게시
-              </button>
             </div>
           </div>
 
