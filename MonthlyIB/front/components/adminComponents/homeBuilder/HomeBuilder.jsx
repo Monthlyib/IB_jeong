@@ -543,11 +543,12 @@ const HomeBuilder = () => {
       draggingBlockId &&
       blockDropPreview?.rowId === rowId &&
       blockDropPreview?.columnId === columnId;
+    const hasDropPreview = Boolean(draggingBlockId && blockDropPreview);
     const draggingInColumn =
       draggingBlockLocation?.rowId === rowId &&
       draggingBlockLocation?.columnId === columnId;
 
-    const visibleBlocks = draggingInColumn
+    const visibleBlocks = draggingInColumn && hasDropPreview
       ? blocks.filter((block) => block.id !== draggingBlockId)
       : blocks;
 
@@ -604,6 +605,7 @@ const HomeBuilder = () => {
       return;
     }
     syncDragPreview(event, event.currentTarget);
+    setBlockDropPreview(null);
     setDraggingBlockId(blockId);
     setDraggingRowId(null);
     event.dataTransfer.setData(
