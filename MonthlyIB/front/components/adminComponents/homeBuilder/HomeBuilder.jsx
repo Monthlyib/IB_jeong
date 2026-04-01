@@ -175,6 +175,7 @@ const HomeBuilder = () => {
   const [uploading, setUploading] = useState(false);
   const [draggingRowId, setDraggingRowId] = useState(null);
   const [draggingBlockId, setDraggingBlockId] = useState(null);
+  const [draggingPaletteType, setDraggingPaletteType] = useState(null);
   const [blockDropPreview, setBlockDropPreview] = useState(null);
   const dragPreviewRef = useRef(null);
 
@@ -247,7 +248,14 @@ const HomeBuilder = () => {
     () => (draggingBlockId ? findBlockLocation(layout, draggingBlockId) : null),
     [layout, draggingBlockId]
   );
+  const isInsertDragging = Boolean(draggingBlockId || draggingPaletteType);
   const palette = useMemo(() => getPaletteAvailability(layout), [layout]);
+
+  const getMinimumInsertIndex = (column) =>
+    column?.blocks?.[0] && isLockedBlock(column.blocks[0]) ? 1 : 0;
+
+  const normalizeInsertIndex = (column, insertIndex, maxLength = column?.blocks?.length ?? 0) =>
+    clamp(insertIndex, getMinimumInsertIndex(column), maxLength);
 
   const updateSelectedBlock = (nextProps) => {
     if (!selectedBlockLocation) {
@@ -304,6 +312,23 @@ const HomeBuilder = () => {
     });
     setSelectedBlockId(nextBlock.id);
     setSelectedColumnTarget({ rowId, columnId });
+  };
+
+  const insertPaletteBlock = (layoutState, type, rowId, columnId, blockIndex = null) => {
+    const next = cloneLayout(layoutState);
+    const column = findColumn(next, rowId, columnId).column;
+    if (!column) {
+      return { layout: layoutState, insertedBlockId: null };
+    }
+
+    const nextBlock = createDefaultBlock(type);
+    const insertIndex =
+      typeof blockIndex === "number"
+        ? normalizeInsertIndex(column, blockIndex)
+        : column.blocks.length;
+
+    column.blocks.splice(insertIndex, 0, nextBlock);
+    return { layout: next, insertedBlockId: nextBlock.id };
   };
 
   const deleteSelectedBlock = () => {
@@ -445,6 +470,10 @@ const HomeBuilder = () => {
 
   const handlePaletteDragStart = (event, type) => {
     setBlockDropPreview(null);
+    setDraggingPaletteType(type);
+    setDraggingBlockId(null);
+    setDraggingRowId(null);
+    syncDragPreview(event, event.currentTarget);
     event.dataTransfer.setData(
       "application/monthlyib-home",
       JSON.stringify({ kind: "palette", type })
@@ -484,6 +513,7 @@ const HomeBuilder = () => {
   const handleDragEnd = () => {
     setDraggingRowId(null);
     setDraggingBlockId(null);
+    setDraggingPaletteType(null);
     setBlockDropPreview(null);
     if (dragPreviewRef.current?.isConnected) {
       dragPreviewRef.current.remove();
@@ -521,7 +551,7 @@ const HomeBuilder = () => {
 
   const updateBlockPreview = (event, rowId, columnId, blockIndex = null) => {
     const payload = readDragPayload(event);
-    if (!payload || payload.kind !== "block") {
+    if (!payload || (payload.kind !== "block" && payload.kind !== "palette")) {
       return;
     }
 
@@ -534,16 +564,16 @@ const HomeBuilder = () => {
     setBlockDropPreview({
       rowId,
       columnId,
-      blockIndex: nextIndex,
+      blockIndex: normalizeInsertIndex(column, nextIndex),
     });
   };
 
   const getRenderableBlocks = (rowId, columnId, blocks) => {
     const previewActive =
-      draggingBlockId &&
+      isInsertDragging &&
       blockDropPreview?.rowId === rowId &&
       blockDropPreview?.columnId === columnId;
-    const hasDropPreview = Boolean(draggingBlockId && blockDropPreview);
+    const hasDropPreview = Boolean(isInsertDragging && blockDropPreview);
     const draggingInColumn =
       draggingBlockLocation?.rowId === rowId &&
       draggingBlockLocation?.columnId === columnId;
@@ -571,7 +601,11 @@ const HomeBuilder = () => {
       insertIndex -= 1;
     }
 
-    insertIndex = clamp(insertIndex, 0, visibleBlocks.length);
+    insertIndex = normalizeInsertIndex(
+      { blocks: visibleBlocks },
+      insertIndex,
+      visibleBlocks.length
+    );
     items.splice(insertIndex, 0, {
       kind: "placeholder",
       key: `placeholder-${rowId}-${columnId}-${insertIndex}`,
@@ -592,6 +626,7 @@ const HomeBuilder = () => {
     setBlockDropPreview(null);
     setDraggingRowId(rowId);
     setDraggingBlockId(null);
+    setDraggingPaletteType(null);
     event.dataTransfer.setData(
       "application/monthlyib-home",
       JSON.stringify({ kind: "row", rowId })
@@ -608,6 +643,7 @@ const HomeBuilder = () => {
     setBlockDropPreview(null);
     setDraggingBlockId(blockId);
     setDraggingRowId(null);
+    setDraggingPaletteType(null);
     event.dataTransfer.setData(
       "application/monthlyib-home",
       JSON.stringify({ kind: "block", rowId, columnId, blockId })
@@ -647,8 +683,21 @@ const HomeBuilder = () => {
     }
 
     if (payload.kind === "palette") {
+      const column = findColumn(layout, rowId, columnId).column;
+      const targetIndex =
+        blockDropPreview?.rowId === rowId && blockDropPreview?.columnId === columnId
+          ? blockDropPreview.blockIndex
+          : normalizeInsertIndex(column, column?.blocks?.length ?? 0);
+
+      let insertedBlockId = null;
+      setLayout((current) => {
+        const result = insertPaletteBlock(current, payload.type, rowId, columnId, targetIndex);
+        insertedBlockId = result.insertedBlockId;
+        return result.layout;
+      });
+      setSelectedBlockId(insertedBlockId);
+      setSelectedColumnTarget({ rowId, columnId });
       setBlockDropPreview(null);
-      addBlockToColumn(payload.type, rowId, columnId);
       return;
     }
 
@@ -674,8 +723,9 @@ const HomeBuilder = () => {
 
   const handleDropOnBlock = (event, rowId, columnId, blockIndex) => {
     event.preventDefault();
+    event.stopPropagation();
     const payload = readDragPayload(event);
-    if (!payload || payload.kind !== "block") {
+    if (!payload || (payload.kind !== "block" && payload.kind !== "palette")) {
       return;
     }
 
@@ -684,11 +734,33 @@ const HomeBuilder = () => {
         ? blockDropPreview.blockIndex
         : getBlockInsertIndex(event, blockIndex);
 
+    const column = findColumn(layout, rowId, columnId).column;
+    const normalizedTargetIndex = normalizeInsertIndex(column, targetIndex);
+
+    if (payload.kind === "palette") {
+      let insertedBlockId = null;
+      setLayout((current) => {
+        const result = insertPaletteBlock(
+          current,
+          payload.type,
+          rowId,
+          columnId,
+          normalizedTargetIndex
+        );
+        insertedBlockId = result.insertedBlockId;
+        return result.layout;
+      });
+      setSelectedBlockId(insertedBlockId);
+      setSelectedColumnTarget({ rowId, columnId });
+      setBlockDropPreview(null);
+      return;
+    }
+
     setLayout((current) =>
       moveBlock(current, payload, {
         rowId,
         columnId,
-        blockIndex: targetIndex,
+        blockIndex: normalizedTargetIndex,
       })
     );
     setBlockDropPreview(null);
@@ -1205,6 +1277,7 @@ const HomeBuilder = () => {
                                   onDragEnd={handleDragEnd}
                                   onDragOver={(event) => {
                                     event.preventDefault();
+                                    event.stopPropagation();
                                     updateBlockPreview(event, row.id, column.id, actualBlockIndex);
                                   }}
                                   onDrop={(event) =>
