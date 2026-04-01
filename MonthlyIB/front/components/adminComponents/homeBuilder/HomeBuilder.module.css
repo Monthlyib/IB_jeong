@@ -3,6 +3,15 @@
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
 }
 
+/* Override global section { max-width: 110rem } for builder elements */
+.builderPage section,
+.builderHero,
+.builderActionsBar,
+.builderSurface {
+  max-width: none;
+  width: auto;
+}
+
 .builderHero {
   display: flex;
   justify-content: space-between;

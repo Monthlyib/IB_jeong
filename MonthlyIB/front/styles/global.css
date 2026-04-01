@@ -79,6 +79,9 @@ input[type="number"]::-webkit-inner-spin-button {
 html,
 body {
   width: 100%;
+}
+
+html {
   overflow-x: hidden;
 }
 
@@ -399,7 +402,8 @@ main {
 }
 
 section {
-  width: 110rem;
+  max-width: 110rem;
+  width: 100%;
   margin: 0 auto;
   height: auto;
   padding: 7.4rem 0;
@@ -422,7 +426,8 @@ footer {
 }
 
 .width_content {
-  width: 110rem;
+  max-width: 110rem;
+  width: 100%;
   margin: 0 auto;
   min-height: 88rem;
   padding: 8rem 0 8.8rem;
@@ -518,7 +523,8 @@ footer {
 .archive_tab {
   display: flex;
   align-items: center;
-  width: 110rem;
+  max-width: 110rem;
+  width: 100%;
   margin: 0 auto;
   border-bottom: 1px solid #d5d5d5;
   white-space: nowrap;
@@ -770,8 +776,8 @@ a.disabled {
 
 /* 카드들을 감싸는 컨테이너 */
 .aiToolsCardContainer {
-  width: 110rem; /* 프로젝트 전체 폭에 맞춰 조정 */
-  max-width: 100%;
+  max-width: 110rem;
+  width: 100%;
   margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr); /* 기본: 4열 (1행 4열) */
