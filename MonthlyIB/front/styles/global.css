@@ -79,10 +79,7 @@ input[type="number"]::-webkit-inner-spin-button {
 html,
 body {
   width: 100%;
-}
-
-body {
-  overflow-x: clip;
+  overflow-x: hidden;
 }
 
 audio,
@@ -842,9 +839,6 @@ a.disabled {
   /**************
          Common
       **************/
-  body {
-    overflow-x: clip;
-  }
 
   .width_content {
     width: 100%;
