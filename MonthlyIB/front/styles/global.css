@@ -1,3 +1,6 @@
+@import url("https://cdn.jsdelivr.net/npm/pretendard/dist/web/static/pretendard.css");
+@import url("https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Gothic+A1:wght@400;500;700&family=Nanum+Gothic:wght@400;700&family=Nanum+Pen+Script&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap");
+
 :root {
   /*******************
           Color Pallte
@@ -35,10 +38,20 @@ body {
   font-size: 10px;
   color: #000;
   line-height: 1.2rem;
-  font-family: "Pretendard", "Roboto", "Font Awesome 5 Pro", "돋움", sans-serif;
+  font-family:
+    "Pretendard",
+    "Roboto",
+    "Noto Sans KR",
+    "Malgun Gothic",
+    "Apple SD Gothic Neo",
+    "Segoe UI",
+    "돋움",
+    sans-serif;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: subpixel-antialiased;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 article,
@@ -881,10 +894,6 @@ a.disabled {
   font-size: 32.5px;
 }
 
-
-@import url('https://fonts.googleapis.com/css2?family=Edu+AU+VIC+WA+NT+Hand:wght@400..700&family=Gothic+A1&family=Nanum+Gothic&family=Nanum+Pen+Script&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-
-
 .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Nanum_Gothic"]::before,
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Nanum_Gothic"]::before {
   font-family: "Nanum Gothic", sans-serif;
@@ -921,7 +930,7 @@ a.disabled {
 .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="bokor"]::before {
   font-family: "Edu AU VIC WA NT Hand", cursive;
   font-optical-sizing: auto;
-  font-weight: <weight>;
+  font-weight: 500;
   font-style: normal;
   content: "bokor" !important;
 }
@@ -942,7 +951,7 @@ a.disabled {
 .ql-font-bokor {
   font-family: "Edu AU VIC WA NT Hand", cursive;
   font-optical-sizing: auto;
-  font-weight: <weight>;
+  font-weight: 500;
   font-style: normal;
 }
 
