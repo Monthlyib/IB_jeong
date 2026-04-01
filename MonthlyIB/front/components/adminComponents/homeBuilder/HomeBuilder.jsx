@@ -508,7 +508,9 @@ const HomeBuilder = () => {
       event.preventDefault();
       return;
     }
-    syncDragPreview(event, event.currentTarget);
+    const rowPreviewElement =
+      event.currentTarget?.closest?.(`.${styles.canvasRow}`) || event.currentTarget;
+    syncDragPreview(event, rowPreviewElement);
     setDraggingRowId(rowId);
     setDraggingBlockId(null);
     event.dataTransfer.setData(
