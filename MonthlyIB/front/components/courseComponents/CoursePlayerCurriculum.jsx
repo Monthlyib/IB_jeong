@@ -39,7 +39,9 @@ const CoursePlayerCurriculum = ({
         return (
           <li
             key={chapter.chapterId}
-            className={isOpen ? styles.active : ""}
+            className={`${styles.playerCurriculumChapterItem} ${
+              isOpen ? styles.playerCurriculumChapterOpen : ""
+            }`}
           >
             <button
               type="button"
@@ -67,7 +69,7 @@ const CoursePlayerCurriculum = ({
                 return (
                   <li
                     key={subChapter.chapterId}
-                    className={isActive ? styles.active : ""}
+                    className={isActive ? styles.playerLessonActive : ""}
                   >
                     <div className={styles.playerLessonRow}>
                       <button

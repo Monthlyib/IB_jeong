@@ -1007,19 +1007,27 @@ div.review_stars svg.active:hover ~ svg.empty {
   width: 7.2rem;
   border-right: 1px solid #343434;
   padding: 1.5rem 1.2rem;
+  overflow: visible;
+  z-index: 20;
 }
 .flex_top .player_nav .player_exit {
   display: none;
 }
 .flex_top .player_nav .curri_btn {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 4.8rem;
   height: 4.8rem;
   border-radius: 1rem;
+  transition: background 0.2s ease, color 0.2s ease;
+  z-index: 32;
 }
-.flex_top .player_nav .curri_btn.active svg {
+.curriBtnOpen {
+  background: #342640;
+}
+.curriBtnOpen svg {
   color: #fff;
 }
 .flex_top .player_nav .curri_btn:hover {
@@ -1041,10 +1049,24 @@ div.review_stars svg.active:hover ~ svg.empty {
   border-right: 1px solid #343434;
   padding: 2.4rem 2rem;
   overflow-y: auto;
-  z-index: 10;
+  z-index: 30;
+  box-shadow: -1.2rem 0 3rem rgba(0, 0, 0, 0.22);
+}
+.playerCurriBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 6, 16, 0.38);
+  border: none;
+  z-index: 24;
 }
 .flex_top .player_nav .player_curri .curri_tit_cont {
   padding-bottom: 3.2rem;
+}
+.playerCurriTitleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.2rem;
 }
 .flex_top .player_nav .player_curri .curri_tit_cont span {
   display: block;
@@ -1055,6 +1077,21 @@ div.review_stars svg.active:hover ~ svg.empty {
 .flex_top .player_nav .player_curri .curri_tit_cont h3 {
   color: #f4f4f4;
   font-size: 2.4rem;
+}
+.playerCurriClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f4f4;
+  flex-shrink: 0;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.playerCurriClose:hover {
+  background: rgba(255, 255, 255, 0.14);
 }
 
 .playerProgressSummary {
@@ -1069,7 +1106,7 @@ div.review_stars svg.active:hover ~ svg.empty {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 1.4rem 0;
+  padding: 1.6rem 1.8rem;
   gap: 1.2rem;
   text-align: left;
 }
@@ -1078,22 +1115,40 @@ div.review_stars svg.active:hover ~ svg.empty {
   display: inline-flex;
   align-items: center;
   gap: 0.8rem;
-  color: #f4f4f4;
+  min-width: 0;
+  color: #241b35;
 }
 
 .playerCurriculumChapter strong {
   font-size: 1.65rem;
-  color: #f4f4f4;
+  color: #241b35;
+  line-height: 1.4;
+  word-break: keep-all;
 }
 
 .playerCurriculumChapter small {
-  color: #9186a1;
+  color: #7a6b95;
   font-size: 1.25rem;
   font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  text-align: right;
 }
 
-.course_curri_inner > li:hover {
-  border-color: #555;
+.playerCurriculumChapterItem {
+  margin-bottom: 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2rem;
+  background: #fff;
+  overflow: hidden;
+}
+
+.playerCurriculumChapterItem:last-child {
+  margin-bottom: 0;
+}
+
+.playerCurriculumChapterItem:hover {
+  border-color: rgba(184, 156, 255, 0.45);
 }
 
 .course_curri_inner > li > ul {
@@ -1143,10 +1198,10 @@ div.review_stars svg.active:hover ~ svg.empty {
   margin-top: 1rem;
 }
 
-.course_curri_inner > li > ul li.active .playerLessonTitle {
+.playerLessonActive .playerLessonTitle {
   color: #b89cff;
 }
-.course_curri_inner > li.active > ul {
+.playerCurriculumChapterOpen > ul {
   display: block;
 }
 
@@ -1325,7 +1380,6 @@ div.review_stars svg.active:hover ~ svg.empty {
     transition: all 0.3s;
   }
   .flex_top .player_nav .player_curri {
-    display: none;
     top: inherit;
     right: 0;
     bottom: 7.2rem;
@@ -1335,9 +1389,10 @@ div.review_stars svg.active:hover ~ svg.empty {
     border-top-right-radius: 3rem;
     border-right: none;
     padding: 4.4rem 2.4rem;
+    box-shadow: 0 -1.6rem 3rem rgba(0, 0, 0, 0.24);
   }
-  .flex_top .player_nav .player_curri.active {
-    display: block;
+  .playerCurriBackdrop {
+    display: none;
   }
 
   .flex_top .player_wrap {
@@ -1419,10 +1474,6 @@ div.review_stars svg.active:hover ~ svg.empty {
   .comment_content_wrap .comment_content_flex {
     grid-template-columns: 1fr;
   }
-}
-
-.course_curri_wrap .active {
-  display: block;
 }
 
 .btn_write {

@@ -2,7 +2,7 @@
 
 import styles from "./CourseDetail.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faXmark } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -81,6 +81,7 @@ const CoursePlayer = ({ pageId }) => {
   const videoRef = useRef(null);
   const youtubeContainerRef = useRef(null);
   const youtubePlayerRef = useRef(null);
+  const youtubePlayerReadyRef = useRef(false);
   const currentTimeRef = useRef(0);
   const durationRef = useRef(0);
   const saveInFlightRef = useRef(false);
@@ -329,15 +330,34 @@ const CoursePlayer = ({ pageId }) => {
     const safeSeconds = Math.max(0, Math.floor(Number(seconds) || 0));
     currentTimeRef.current = safeSeconds;
 
-    if (youtubePlayerRef.current?.seekTo) {
-      youtubePlayerRef.current.seekTo(safeSeconds, true);
-      youtubePlayerRef.current.playVideo?.();
+    const youtubePlayer = youtubePlayerRef.current;
+    const youtubeIframe =
+      typeof youtubePlayer?.getIframe === "function"
+        ? youtubePlayer.getIframe()
+        : null;
+
+    if (
+      youtubePlayer?.seekTo &&
+      youtubePlayerReadyRef.current &&
+      youtubeIframe?.isConnected
+    ) {
+      try {
+        youtubePlayer.seekTo(safeSeconds, true);
+        youtubePlayer.playVideo?.();
+        return;
+      } catch (error) {
+        console.error("YouTube seek 처리 중 오류 발생:", error);
+      }
     }
 
     if (videoRef.current) {
       videoRef.current.currentTime = safeSeconds;
       videoRef.current.play().catch(() => {});
+      return;
     }
+
+    setStartAtSeconds(safeSeconds);
+    setPlayerVersion((prev) => prev + 1);
   }, []);
 
   const switchLesson = useCallback(
@@ -483,6 +503,7 @@ const CoursePlayer = ({ pageId }) => {
         youtubePlayerRef.current.destroy();
       }
       youtubePlayerRef.current = null;
+      youtubePlayerReadyRef.current = false;
       return undefined;
     }
 
@@ -501,6 +522,7 @@ const CoursePlayer = ({ pageId }) => {
       if (youtubePlayerRef.current?.destroy) {
         youtubePlayerRef.current.destroy();
       }
+      youtubePlayerReadyRef.current = false;
 
       youtubePlayerRef.current = new YT.Player(youtubeContainerRef.current, {
         videoId,
@@ -508,13 +530,12 @@ const CoursePlayer = ({ pageId }) => {
           playsinline: 1,
           rel: 0,
           modestbranding: 1,
+          start: Math.max(0, Math.floor(startAtSeconds || 0)),
         },
         events: {
           onReady: (event) => {
+            youtubePlayerReadyRef.current = true;
             durationRef.current = Math.floor(event.target.getDuration() || 0);
-            if ((startAtSeconds || 0) > 0) {
-              event.target.seekTo(startAtSeconds, true);
-            }
           },
           onStateChange: (event) => {
             durationRef.current = Math.floor(event.target.getDuration() || 0);
@@ -530,6 +551,7 @@ const CoursePlayer = ({ pageId }) => {
 
     return () => {
       cancelled = true;
+      youtubePlayerReadyRef.current = false;
       if (youtubePlayerRef.current?.destroy) {
         youtubePlayerRef.current.destroy();
       }
@@ -596,6 +618,14 @@ const CoursePlayer = ({ pageId }) => {
     await switchLesson(orderedLessons[currentLessonIndex + 1]);
   };
 
+  const handleToggleCurriculum = useCallback(() => {
+    setModal((prev) => !prev);
+  }, []);
+
+  const handleCloseCurriculum = useCallback(() => {
+    setModal(false);
+  }, []);
+
   return (
     <div className={styles.player_content}>
       <div className={styles.flex_top}>
@@ -603,38 +633,63 @@ const CoursePlayer = ({ pageId }) => {
           <button
             type="button"
             id="curri_btn"
-            className={`${styles.curri_btn} ${modal ? styles.active : ""}`}
-            onClick={() => setModal((prev) => !prev)}
+            className={`${styles.curri_btn} ${
+              modal ? styles.curriBtnOpen : ""
+            }`}
+            onClick={handleToggleCurriculum}
+            aria-expanded={modal}
+            aria-controls="player_curriculum_panel"
           >
             <FontAwesomeIcon icon={faBars} />
           </button>
 
-          <div
-            className={`${styles.player_curri} ${modal ? styles.active : ""}`}
-          >
-            <div className={styles.curri_tit_cont}>
-              <span>강의 목차</span>
-              <h3>{courseDetail?.title}</h3>
-              <p className={styles.playerProgressSummary}>
-                전체 진도 {Math.round(courseProgress?.progressPercent || 0)}% ·{" "}
-                {courseProgress?.completedLessonCount || 0}/
-                {courseProgress?.totalLessonCount || 0} 레슨 완료
-              </p>
-            </div>
-
-            <div className={styles.course_curri_wrap}>
-              <CoursePlayerCurriculum
-                curriculum={courseDetail?.chapters}
-                className={styles.course_curri_inner}
-                activeMainChapterId={selectedLessonIds?.mainChapterId}
-                activeSubChapterId={selectedLessonIds?.subChapterId}
-                onSelectLesson={switchLesson}
-                progressSummary={courseProgress}
-                onResumeLesson={handleResumeLesson}
-                onRestartLesson={handleRestartLesson}
+          {modal && (
+            <>
+              <button
+                type="button"
+                className={styles.playerCurriBackdrop}
+                aria-label="강의 목차 닫기"
+                onClick={handleCloseCurriculum}
               />
-            </div>
-          </div>
+
+              <div id="player_curriculum_panel" className={styles.player_curri}>
+                <div className={styles.curri_tit_cont}>
+                  <div className={styles.playerCurriTitleRow}>
+                    <div>
+                      <span>강의 목차</span>
+                      <h3>{courseDetail?.title}</h3>
+                    </div>
+                    <button
+                      type="button"
+                      className={styles.playerCurriClose}
+                      aria-label="강의 목차 닫기"
+                      onClick={handleCloseCurriculum}
+                    >
+                      <FontAwesomeIcon icon={faXmark} />
+                    </button>
+                  </div>
+                  <p className={styles.playerProgressSummary}>
+                    전체 진도 {Math.round(courseProgress?.progressPercent || 0)}% ·{" "}
+                    {courseProgress?.completedLessonCount || 0}/
+                    {courseProgress?.totalLessonCount || 0} 레슨 완료
+                  </p>
+                </div>
+
+                <div className={styles.course_curri_wrap}>
+                  <CoursePlayerCurriculum
+                    curriculum={courseDetail?.chapters}
+                    className={styles.course_curri_inner}
+                    activeMainChapterId={selectedLessonIds?.mainChapterId}
+                    activeSubChapterId={selectedLessonIds?.subChapterId}
+                    onSelectLesson={switchLesson}
+                    progressSummary={courseProgress}
+                    onResumeLesson={handleResumeLesson}
+                    onRestartLesson={handleRestartLesson}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <div className={styles.player_exit}>
             <Link href={`/course/${pageId}`}>나가기</Link>
