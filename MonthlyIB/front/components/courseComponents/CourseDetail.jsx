@@ -2,13 +2,25 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import styles from "./CourseDetail.module.css";
 
 import CourseCurriculum from "./CourseCurriculum";
 import CourseDetailMob from "./CourseDetailMob";
 import CourseDetailRight from "./CourseDetailRight";
 import CourseReview from "./CourseReview";
+import { getCookie } from "@/apis/cookies";
+import {
+  courseGetProgress,
+  coursePostUser,
+  courseRestartLessonProgress,
+} from "@/apis/courseAPI";
 import { useCourseStore } from "@/store/course";
+import { useUserStore } from "@/store/user";
+import {
+  getPlayerUrl,
+  resolveCourseEntryTarget,
+} from "./courseProgressUtils";
 
 const stripHtml = (value = "") =>
   value
@@ -18,12 +30,17 @@ const stripHtml = (value = "") =>
     .trim();
 
 const CourseDetail = ({ pageId }) => {
+  const router = useRouter();
   const [modal, setModal] = useState(1);
   const { courseDetail, getCourseDetail } = useCourseStore();
+  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const [courseProgress, setCourseProgress] = useState(null);
+  const accessToken = getCookie("accessToken");
 
   const courseContent = useRef(null);
   const courseCurriculum = useRef(null);
   const courseReview = useRef(null);
+  const isSubscribed = userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE";
 
   const reviewData = courseDetail?.reply?.data ?? [];
 
@@ -89,6 +106,98 @@ const CourseDetail = ({ pageId }) => {
     }
   }, [getCourseDetail, pageId]);
 
+  useEffect(() => {
+    const savedUser = localStorage.getItem("userInfo");
+    if (!savedUser) return;
+
+    const localUser = JSON.parse(savedUser);
+    if (localUser?.state?.userInfo?.userId) {
+      getUserSubscribeInfo(
+        localUser.state.userInfo.userId,
+        0,
+        localUser.state.userInfo
+      );
+    }
+  }, [getUserSubscribeInfo]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    if (!accessToken || !pageId) {
+      setCourseProgress(null);
+      return () => {
+        ignore = true;
+      };
+    }
+
+    courseGetProgress(pageId, { accessToken })
+      .then((res) => {
+        if (!ignore) {
+          setCourseProgress(res?.data ?? null);
+        }
+      })
+      .catch(() => {
+        if (!ignore) {
+          setCourseProgress(null);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [accessToken, pageId]);
+
+  const ensureCourseEnrolment = async () => {
+    if (!accessToken) {
+      router.push("/login");
+      return false;
+    }
+
+    if (!isSubscribed) {
+      return false;
+    }
+
+    const response = await coursePostUser(Number(pageId), { accessToken });
+    return response?.status === 200 || response?.status === 201;
+  };
+
+  const handleTakeCourse = async () => {
+    const hasAccess = await ensureCourseEnrolment();
+    if (!hasAccess) return;
+
+    const target = resolveCourseEntryTarget(courseDetail, courseProgress);
+    router.push(getPlayerUrl(pageId, target));
+  };
+
+  const handleResumeLesson = async (target) => {
+    const hasAccess = await ensureCourseEnrolment();
+    if (!hasAccess) return;
+
+    router.push(getPlayerUrl(pageId, target));
+  };
+
+  const handleRestartLesson = async (target) => {
+    const hasAccess = await ensureCourseEnrolment();
+    if (!hasAccess || !target?.subChapterId) return;
+
+    try {
+      const response = await courseRestartLessonProgress(
+        Number(pageId),
+        target.subChapterId,
+        { accessToken }
+      );
+      setCourseProgress(response?.data ?? null);
+      router.push(
+        getPlayerUrl(pageId, {
+          ...target,
+          positionSeconds: 0,
+        })
+      );
+    } catch (error) {
+      console.error("레슨 다시 시작 중 오류 발생:", error);
+    }
+  };
+
   return (
     <main className={`width_content ${styles.coursePage}`}>
       <div className={styles.course_detail_wrap}>
@@ -141,6 +250,9 @@ const CourseDetail = ({ pageId }) => {
               reviewAvgPoint={reviewStats.average}
               reviewCount={reviewStats.count}
               pageId={pageId}
+              isSubscribed={isSubscribed}
+              courseProgress={courseProgress}
+              onClickTakeCourse={handleTakeCourse}
             />
           </div>
 
@@ -199,7 +311,13 @@ const CourseDetail = ({ pageId }) => {
                 </div>
 
                 <div className={styles.course_curri_wrap}>
-                  <CourseCurriculum curriculum={courseDetail} />
+                  <CourseCurriculum
+                    curriculum={courseDetail}
+                    progressSummary={courseProgress}
+                    isSubscribed={isSubscribed}
+                    onResumeLesson={handleResumeLesson}
+                    onRestartLesson={handleRestartLesson}
+                  />
                 </div>
               </section>
 
@@ -224,6 +342,9 @@ const CourseDetail = ({ pageId }) => {
           reviewCount={reviewStats.count}
           pageId={pageId}
           categoryPath={categoryPath}
+          isSubscribed={isSubscribed}
+          courseProgress={courseProgress}
+          onClickTakeCourse={handleTakeCourse}
         />
       </div>
     </main>

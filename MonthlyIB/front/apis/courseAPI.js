@@ -317,3 +317,83 @@ export const coursePostUser = async (videoLessonsId, session) => {
     console.log("done");
   }
 };
+
+export const courseGetProgress = async (videoLessonsId, session) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+
+    const res = await tokenRequireApi.get(
+      `${COURSE_API_URL}/progress/${videoLessonsId}`,
+      config
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const coursePutLessonProgress = async (
+  videoLessonsId,
+  subChapterId,
+  lastPositionSeconds,
+  durationSeconds,
+  session
+) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+
+    const data = {
+      lastPositionSeconds,
+      durationSeconds,
+    };
+
+    const res = await tokenRequireApi.put(
+      `${COURSE_API_URL}/progress/${videoLessonsId}/lesson/${subChapterId}`,
+      data,
+      config
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const courseRestartLessonProgress = async (
+  videoLessonsId,
+  subChapterId,
+  session
+) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+
+    const res = await tokenRequireApi.post(
+      `${COURSE_API_URL}/progress/${videoLessonsId}/lesson/${subChapterId}/restart`,
+      {},
+      config
+    );
+
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

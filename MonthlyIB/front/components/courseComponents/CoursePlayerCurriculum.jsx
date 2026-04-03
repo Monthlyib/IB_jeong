@@ -1,84 +1,138 @@
 "use client";
+
 import styles from "./CourseDetail.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleDown, faAngleUp } from "@fortawesome/free-solid-svg-icons";
-import { useState } from "react";
-import shortid from "shortid";
+import { useEffect, useMemo, useState } from "react";
+import {
+  buildLessonProgressMap,
+  getLessonProgressLabel,
+} from "./courseProgressUtils";
 
 const CoursePlayerCurriculum = ({
   curriculum,
   className,
-  setChapterNum,
-  subChapterNum,
-  setSubChapterNum,
+  activeMainChapterId,
+  activeSubChapterId,
+  onSelectLesson,
+  progressSummary,
+  onResumeLesson,
+  onRestartLesson,
 }) => {
-  const [modalOpen, setModalOpen] = useState(0);
+  const progressMap = useMemo(
+    () => buildLessonProgressMap(progressSummary),
+    [progressSummary]
+  );
+  const [modalOpen, setModalOpen] = useState(activeMainChapterId || null);
 
-  let value = -1;
+  useEffect(() => {
+    if (activeMainChapterId) {
+      setModalOpen(activeMainChapterId);
+    }
+  }, [activeMainChapterId]);
 
   return (
     <ul className={className} style={{ listStyle: "none" }}>
-      {curriculum?.map((v, i) => (
-        <li
-          key={shortid.generate()}
-          className={modalOpen === i ? styles.active : ""}
-          onClick={() => {
-            setModalOpen(i);
-            setChapterNum(i);
-          }}
-        >
-          <p style={{ color: "white" }}>
-            {modalOpen === i ? (
-              <FontAwesomeIcon icon={faAngleUp} />
-            ) : (
-              <FontAwesomeIcon icon={faAngleDown} />
-            )}
-            <span style={{ color: "white" }}>{v.chapterTitle}</span>
-          </p>
-          {
-            <ul style={{ listStyle: "none" }}>
-              {v.subChapters.map(function (s, i) {
-                value += 1;
+      {curriculum?.map((chapter) => {
+        const isOpen = modalOpen === chapter.chapterId;
+
+        return (
+          <li
+            key={chapter.chapterId}
+            className={isOpen ? styles.active : ""}
+          >
+            <button
+              type="button"
+              className={styles.playerCurriculumChapter}
+              onClick={() =>
+                setModalOpen((prev) =>
+                  prev === chapter.chapterId ? null : chapter.chapterId
+                )
+              }
+            >
+              <span>
+                <FontAwesomeIcon
+                  icon={isOpen ? faAngleUp : faAngleDown}
+                />
+                <strong>{chapter.chapterTitle}</strong>
+              </span>
+              <small>{chapter.subChapters?.length || 0}개 레슨</small>
+            </button>
+
+            <ul>
+              {chapter.subChapters?.map((subChapter) => {
+                const progress = progressMap[subChapter.chapterId];
+                const isActive = activeSubChapterId === subChapter.chapterId;
+
                 return (
-                  <List
-                    key={shortid.generate()}
-                    value={value}
-                    index={i}
-                    name={s.chapterTitle}
-                    subActive={subChapterNum}
-                    setSubActive={setSubChapterNum}
-                    setSubChapterNum={setSubChapterNum}
-                  />
+                  <li
+                    key={subChapter.chapterId}
+                    className={isActive ? styles.active : ""}
+                  >
+                    <div className={styles.playerLessonRow}>
+                      <button
+                        type="button"
+                        className={styles.playerLessonButton}
+                        onClick={() =>
+                          onSelectLesson?.({
+                            mainChapterId: chapter.chapterId,
+                            subChapterId: subChapter.chapterId,
+                          })
+                        }
+                      >
+                        <span className={styles.playerLessonTitle}>
+                          {subChapter.chapterTitle}
+                        </span>
+                        <span
+                          className={`${styles.playerLessonState} ${
+                            progress?.completed
+                              ? styles.completed
+                              : progress
+                              ? styles.inProgress
+                              : styles.notStarted
+                          }`}
+                        >
+                          {getLessonProgressLabel(progress)}
+                        </span>
+                      </button>
+
+                      {progress && (
+                        <div className={styles.playerLessonActions}>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              onResumeLesson?.({
+                                mainChapterId: chapter.chapterId,
+                                subChapterId: subChapter.chapterId,
+                              });
+                            }}
+                          >
+                            이어보기
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              onRestartLesson?.({
+                                mainChapterId: chapter.chapterId,
+                                subChapterId: subChapter.chapterId,
+                              });
+                            }}
+                          >
+                            처음부터
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </li>
                 );
               })}
             </ul>
-          }
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
-  );
-};
-
-const List = ({
-  value,
-  index,
-  name,
-  subActive,
-  setSubActive,
-  setSubChapterNum,
-}) => {
-  return (
-    <li className={subActive === value ? styles.active : ""}>
-      <button
-        type="button"
-        onClick={() => {
-          setSubActive(value);
-          setSubChapterNum(index);
-        }}
-      >
-        {name}
-      </button>
-    </li>
   );
 };
 

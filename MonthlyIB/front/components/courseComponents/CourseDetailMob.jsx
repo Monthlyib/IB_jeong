@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faChalkboardUser,
@@ -11,54 +9,16 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import styles from "./CourseDetail.module.css";
 
-import { getCookie } from "@/apis/cookies";
-import { coursePostUser } from "@/apis/courseAPI";
-import { useUserStore } from "@/store/user";
+import { formatSeconds } from "./courseProgressUtils";
 
 const CourseDetailMob = ({
   courseDetail,
   reviewAvgPoint,
   reviewCount,
-  pageId,
+  isSubscribed,
+  courseProgress,
+  onClickTakeCourse,
 }) => {
-  const router = useRouter();
-  const accessToken = getCookie("accessToken");
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
-  const subscribeStatus = userSubscribeInfo?.[0]?.subscribeStatus;
-  const isSubscribed = subscribeStatus === "ACTIVE";
-
-  useEffect(() => {
-    const savedUser = localStorage.getItem("userInfo");
-    if (!savedUser) return;
-
-    const localUser = JSON.parse(savedUser);
-    if (localUser?.state?.userInfo?.userId) {
-      getUserSubscribeInfo(
-        localUser.state.userInfo.userId,
-        0,
-        localUser.state.userInfo
-      );
-    }
-  }, [getUserSubscribeInfo]);
-
-  const onClickTakeCourse = async () => {
-    if (!accessToken) {
-      router.push("/login");
-      return;
-    }
-
-    try {
-      if (isSubscribed) {
-        const response = await coursePostUser(parseInt(pageId), { accessToken });
-        if (response?.status === 200 || response?.status === 201) {
-          router.push(`/course/player/${pageId}`);
-        }
-      }
-    } catch (error) {
-      console.error("수강 신청 중 오류 발생:", error);
-    }
-  };
-
   return (
     <div className={styles.mo_course_info}>
       <div className={styles.course_info_top}>
@@ -116,6 +76,38 @@ const CourseDetailMob = ({
         </ul>
       </div>
 
+      {courseProgress && (
+        <div className={styles.courseProgressCard}>
+          <div className={styles.courseProgressHead}>
+            <div>
+              <span className={styles.courseProgressLabel}>전체 진도율</span>
+              <b className={styles.courseProgressValue}>
+                {Math.round(courseProgress.progressPercent || 0)}%
+              </b>
+            </div>
+            <span className={styles.courseProgressMeta}>
+              {courseProgress.completedLessonCount || 0}/
+              {courseProgress.totalLessonCount || 0} 레슨 완료
+            </span>
+          </div>
+          <div className={styles.courseProgressBar}>
+            <span
+              style={{
+                width: `${Math.min(
+                  100,
+                  Math.max(0, courseProgress.progressPercent || 0)
+                )}%`,
+              }}
+            />
+          </div>
+          {courseProgress.resumeTarget && (
+            <p className={styles.courseProgressHint}>
+              마지막 시청 위치 {formatSeconds(courseProgress.resumeTarget.positionSeconds)}
+            </p>
+          )}
+        </div>
+      )}
+
       <div className={styles.center_btn_wrap}>
         <button
           type="button"
@@ -124,7 +116,11 @@ const CourseDetailMob = ({
             !isSubscribed ? styles.disabled : ""
           }`}
         >
-          {isSubscribed ? "수강하기" : "구독 후 수강 가능"}
+          {isSubscribed
+            ? courseProgress?.resumeTarget
+              ? "이어보기"
+              : "수강하기"
+            : "구독 후 수강 가능"}
         </button>
       </div>
     </div>
