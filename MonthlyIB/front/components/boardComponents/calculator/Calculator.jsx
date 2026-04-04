@@ -4,8 +4,15 @@ import { useEffect, useMemo, useState } from "react";
 import styles from "../BoardCommon.module.css";
 import BoardCommonHead from "../BoardCommonHead";
 import CalculatorMenu from "./CalculatorMenu";
-import { listWrap, infoWrap } from "./UniversityList";
 import SchoolItems from "./SchoolItems";
+import { openAPIGetCalculatorRecommendations } from "@/apis/calculatorRecommendationAPI";
+import {
+  buildDefaultCalculatorRecommendationConfig,
+  getCalculatorCountryOptions,
+  getPointBandForTotal,
+  getRecommendedSchools,
+  normalizeCalculatorRecommendationConfig,
+} from "./calculatorRecommendationUtils";
 
 const Calculator = () => {
   const numCalcMenu = [1, 2, 3, 4, 5, 6];
@@ -36,33 +43,41 @@ const Calculator = () => {
     "all",
     "all",
   ]);
+  const [calculatorConfig, setCalculatorConfig] = useState(
+    buildDefaultCalculatorRecommendationConfig()
+  );
+
+  useEffect(() => {
+    const fetchCalculatorConfig = async () => {
+      const response = await openAPIGetCalculatorRecommendations();
+      const serverConfig = response?.data?.config;
+      if (serverConfig) {
+        setCalculatorConfig(normalizeCalculatorRecommendationConfig(serverConfig));
+      }
+    };
+
+    fetchCalculatorConfig();
+  }, []);
 
   const totalPoint = useMemo(
     () => points.reduce((sum, value) => sum + Number(value || 0), 0),
     [points]
   );
 
-  const pointCat = useMemo(() => {
-    if (totalPoint >= 44) {
-      return "44";
-    }
-    if (totalPoint >= 43) {
-      return "43";
-    }
-    if (totalPoint >= 40) {
-      return "40";
-    }
-    if (totalPoint >= 37) {
-      return "37";
-    }
-    if (totalPoint >= 34) {
-      return "34";
-    }
-    if (totalPoint >= 7) {
-      return "33";
-    }
-    return "0";
-  }, [totalPoint]);
+  const activeBand = useMemo(
+    () => getPointBandForTotal(calculatorConfig, totalPoint),
+    [calculatorConfig, totalPoint]
+  );
+
+  const countryOptions = useMemo(
+    () => getCalculatorCountryOptions(calculatorConfig),
+    [calculatorConfig]
+  );
+
+  const recommendedSchools = useMemo(
+    () => getRecommendedSchools(calculatorConfig, country, activeBand?.key),
+    [activeBand?.key, calculatorConfig, country]
+  );
 
   const groupCounts = useMemo(
     () =>
@@ -83,6 +98,12 @@ const Calculator = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [totalPoint, country]);
+
+  useEffect(() => {
+    if (!countryOptions.some((option) => option.code === country)) {
+      setCountry("all");
+    }
+  }, [country, countryOptions]);
 
   const handleCountryChange = (e) => {
     setCountry(e.target.value);
@@ -231,7 +252,9 @@ const Calculator = () => {
             <div className={styles.calcResultCard}>
               <span>Predicted IB Total</span>
               <strong>{totalPoint}</strong>
-              <p>추천 학교 기준 점수대: {pointCat === "0" ? "계산 전" : `${pointCat}+`}</p>
+              <p>
+                추천 학교 기준 점수대: {activeBand ? activeBand.label : "계산 전"}
+              </p>
             </div>
           </div>
         </section>
@@ -247,22 +270,17 @@ const Calculator = () => {
               onChange={handleCountryChange}
               value={country}
             >
-              <option value="all">전체 국가</option>
-              <option value="us">미국</option>
-              <option value="gb">영국</option>
-              <option value="sg">싱가포르</option>
-              <option value="kr">한국</option>
-              <option value="hk">홍콩</option>
-              <option value="ca">캐나다</option>
-              <option value="au">호주</option>
-              <option value="jp">일본</option>
+              {countryOptions.map((option) => (
+                <option key={option.code} value={option.code}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </div>
           <div className={styles.schools_list_wrap}>
-            {listWrap[country] !== undefined ? (
+            {countryOptions.some((option) => option.code === country) ? (
               <SchoolItems
-                schoolList={listWrap[country][pointCat]}
-                schoolObj={infoWrap[country]}
+                schools={recommendedSchools}
                 currentPage={currentPage}
                 numShowContents={5}
                 onPageChange={handlePageChange}

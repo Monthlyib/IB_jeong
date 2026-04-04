@@ -136,6 +136,11 @@
   gap: 1.8rem;
 }
 
+.dashboard_single_wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .dashboard_top {
   border: 1px solid #e8def2;
   border-radius: 2rem;
@@ -204,6 +209,314 @@
   background: #fff;
   box-shadow: 0 16px 42px rgba(34, 23, 50, 0.05);
   overflow: hidden;
+}
+
+.calculatorAdminDescription {
+  margin-top: 1.4rem;
+  color: #6f6484;
+  font-size: 1.5rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.calculatorAdminSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.calculatorAdminSummary div {
+  padding: 1.6rem;
+  border: 1px solid #ece4f5;
+  border-radius: 1.8rem;
+  background: #fbf9ff;
+}
+
+.calculatorAdminSummary span {
+  display: block;
+  color: #857b97;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.calculatorAdminSummary strong {
+  display: block;
+  margin-top: 0.8rem;
+  color: #251c35;
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+
+.calculatorConfigMeta {
+  margin-top: 1.8rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.calculatorConfigMeta p {
+  color: #7d7391;
+  font-size: 1.4rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.calculatorConfigTrigger,
+.calculatorPrimaryButton,
+.calculatorSecondaryButton,
+.calculatorDangerButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.6rem;
+  padding: 0 1.6rem;
+  border-radius: 1.4rem;
+  font-size: 1.45rem;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.calculatorConfigTrigger,
+.calculatorPrimaryButton {
+  border: none;
+  color: #fff;
+  background: var(--primary01);
+}
+
+.calculatorConfigTrigger {
+  width: fit-content;
+  margin-top: 2rem;
+}
+
+.calculatorSecondaryButton {
+  border: 1px solid #ddd2ed;
+  background: #fff;
+  color: #47345f;
+}
+
+.calculatorDangerButton {
+  border: 1px solid rgba(205, 92, 92, 0.24);
+  background: #fff6f6;
+  color: #c05353;
+}
+
+.calculatorConfigModal {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+}
+
+.calculatorConfigBackdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(23, 14, 35, 0.38);
+  backdrop-filter: blur(10px);
+}
+
+.calculatorConfigDialog {
+  width: min(150rem, calc(100vw - 4rem));
+  max-height: calc(100vh - 4rem);
+  display: flex;
+  flex-direction: column;
+  border-radius: 2.8rem;
+  background: #fff;
+  box-shadow: 0 28px 60px rgba(29, 19, 42, 0.24);
+  overflow: hidden;
+}
+
+.calculatorConfigHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2.6rem 3rem;
+  border-bottom: 1px solid #eee6f6;
+}
+
+.calculatorConfigHeader h3 {
+  margin: 1.2rem 0 0.8rem;
+  color: #241b34;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.calculatorConfigHeader p {
+  max-width: 64rem;
+  color: #74698a;
+  font-size: 1.5rem;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+.calculatorModalActions {
+  display: flex;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.calculatorConfigBody {
+  display: grid;
+  grid-template-columns: minmax(30rem, 36rem) minmax(0, 1fr);
+  gap: 2rem;
+  padding: 2.4rem 3rem 3rem;
+  overflow: auto;
+}
+
+.calculatorConfigColumn,
+.calculatorConfigColumnWide {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.calculatorSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.2rem;
+  margin-bottom: 1.4rem;
+}
+
+.calculatorSectionHeader h4 {
+  color: #241b34;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.calculatorBandList,
+.calculatorSchoolList {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.calculatorBandRow,
+.calculatorCountryEditor,
+.calculatorSchoolCard {
+  padding: 1.6rem;
+  border: 1px solid #ece4f5;
+  border-radius: 2rem;
+  background: #fff;
+}
+
+.calculatorBandRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem) auto;
+  gap: 1rem;
+  align-items: end;
+}
+
+.calculatorCountryTabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-bottom: 1.4rem;
+}
+
+.calculatorCountryTab {
+  min-height: 4.2rem;
+  padding: 0 1.4rem;
+  border: 1px solid #e3d9f1;
+  border-radius: 999px;
+  background: #fff;
+  color: #6b5f80;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.calculatorCountryTabActive {
+  color: #fff;
+  border-color: var(--primary01);
+  background: var(--primary01);
+}
+
+.calculatorCountryEditor {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.2rem;
+  align-items: flex-end;
+  margin-bottom: 1.6rem;
+}
+
+.calculatorField {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.calculatorField span {
+  color: #7b718e;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.calculatorField input {
+  width: 100%;
+  min-height: 4.6rem;
+  padding: 0 1.4rem;
+  border: 1px solid #e4dcf0;
+  border-radius: 1.4rem;
+  background: #fff;
+  color: #241b34;
+  font-size: 1.45rem;
+}
+
+.calculatorInlineFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.calculatorSchoolCard {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.calculatorSchoolHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.calculatorSchoolHeader strong {
+  color: #261d36;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.calculatorCheckboxGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.calculatorCheckboxGrid label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ece3f5;
+  border-radius: 1.2rem;
+  background: #fbf9ff;
+  color: #4d3a65;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.calculatorEmpty {
+  padding: 2rem;
+  border: 1px dashed #d9ccec;
+  border-radius: 1.8rem;
+  color: #776c8b;
+  font-size: 1.45rem;
+  text-align: center;
 }
 
 .dashboard_mid_card .title {
@@ -795,6 +1108,10 @@
   .dashboard_mid_wrap {
     grid-template-columns: 1fr;
   }
+
+  .calculatorConfigBody {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media screen and (max-width: 720px) {
@@ -851,6 +1168,31 @@
 
   .dashboard_mid_card .title {
     font-size: 2.2rem;
+  }
+
+  .calculatorAdminSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .calculatorConfigHeader {
+    flex-direction: column;
+  }
+
+  .calculatorModalActions {
+    width: 100%;
+  }
+
+  .calculatorModalActions button {
+    flex: 1;
+  }
+
+  .calculatorBandRow,
+  .calculatorInlineFields {
+    grid-template-columns: 1fr;
+  }
+
+  .calculatorCountryEditor {
+    display: grid;
   }
 
   .dashboard_mid_card .subtitle,

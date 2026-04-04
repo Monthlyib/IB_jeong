@@ -3,8 +3,7 @@ import _ from "lodash";
 import Pagination from "../../layoutComponents/Paginatation";
 
 const SchoolItems = ({
-  schoolList,
-  schoolObj,
+  schools,
   currentPage,
   numShowContents,
   onPageChange,
@@ -17,30 +16,30 @@ const SchoolItems = ({
       return items;
     }
   };
-  const paginatedPage = paginate(schoolList, currentPage);
+  const paginatedPage = paginate(schools, currentPage);
   return (
     <>
-      {schoolList?.length > 0 ? (
-        paginatedPage.map((schoolName) => (
-          <div className={styles.school_item} key={schoolName}>
+      {schools?.length > 0 ? (
+        paginatedPage.map((school) => (
+          <div className={styles.school_item} key={school.id || school.name}>
             <div className={styles.school_left}>
               <figure className={styles.school_logo}>
-                <img src={schoolObj[schoolName]?.img} alt="University Logo" />
+                <img src={school?.img} alt="University Logo" />
               </figure>
-              <p className={styles.school_tit}>{schoolObj[schoolName]?.name}</p>
+              <p className={styles.school_tit}>{school?.name}</p>
             </div>
             <div className={styles.school_right}>
               <div className={styles.school_info}>
                 <span>IB Score</span>
-                <b>{schoolObj[schoolName]?.IBScore}</b>
+                <b>{school?.ibScore}</b>
               </div>
               <div className={styles.school_info}>
                 <span>World Ranking</span>
-                <b>{schoolObj[schoolName]?.rank}</b>
+                <b>{school?.rank}</b>
               </div>
               <div className={styles.school_info}>
                 <span>Tuition</span>
-                <b>{schoolObj[schoolName]?.tuition}</b>
+                <b>{school?.tuition}</b>
               </div>
             </div>
           </div>
@@ -50,9 +49,9 @@ const SchoolItems = ({
           <p>추천학교가 없습니다.</p>
         </div>
       )}
-      {schoolList?.length > 0 && (
+      {schools?.length > 0 && (
         <Pagination
-          contents={schoolList}
+          contents={schools}
           currentPage={currentPage}
           numShowContents={numShowContents}
           onPageChange={onPageChange}

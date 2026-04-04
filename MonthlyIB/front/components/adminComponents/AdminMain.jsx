@@ -14,6 +14,7 @@ import { useUserStore } from "@/store/user";
 import { useEffect, useMemo, useState } from "react";
 import AdminQuestion from "./AdminQuestion";
 import AdminSubscribe from "./AdminSubscribe";
+import AdminCalculatorRecommendations from "./AdminCalculatorRecommendations";
 import { useSubscribeStore } from "@/store/subscribe";
 import { useTutoringStore } from "@/store/tutoring";
 import { getCookie } from "@/apis/cookies";
@@ -144,6 +145,19 @@ const AdminMain = () => {
         <div className={styles.dashboard_mid_wrap}>
           <AdminQuestion />
           <AdminSubscribe />
+        </div>
+      </section>
+
+      <section className={styles.adminSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <span className={styles.sectionEyebrow}>Calculator</span>
+            <h2>합격 예측 계산기 관리</h2>
+          </div>
+        </div>
+
+        <div className={styles.dashboard_single_wrap}>
+          <AdminCalculatorRecommendations />
         </div>
       </section>
     </main>
