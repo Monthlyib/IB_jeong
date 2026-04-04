@@ -305,23 +305,28 @@
 .calculatorConfigModal {
   position: fixed;
   inset: 0;
-  z-index: 5000;
+  z-index: 10020;
 }
 
 .calculatorConfigBackdrop {
   position: absolute;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 2rem;
+  padding:
+    calc(var(--appHeaderHeight, 7.2rem) + 2rem)
+    2rem
+    2rem;
   background: rgba(23, 14, 35, 0.38);
   backdrop-filter: blur(10px);
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .calculatorConfigDialog {
   width: min(150rem, calc(100vw - 4rem));
-  max-height: calc(100vh - 4rem);
+  max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
   display: flex;
   flex-direction: column;
   border-radius: 2.8rem;
@@ -826,11 +831,17 @@
 .md .md_box_flex {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
   width: 100%;
   height: 100%;
   z-index: 10;
+  padding:
+    calc(var(--appHeaderHeight, 7.2rem) + 2rem)
+    2rem
+    2rem;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .md .admin_box {
@@ -844,7 +855,10 @@
   border-radius: 1rem;
   padding: 3rem;
   text-align: center;
-  margin: 0 2rem;
+  margin: 0;
+  max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 .md .admin_box select {
   height: 5rem;
@@ -864,7 +878,10 @@
   border-radius: 1rem;
   padding: 3rem;
   text-align: center;
-  margin: 0 2rem;
+  margin: 0;
+  max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 .md .admin_box .md_top,
 .md .md_box .md_top {
@@ -1209,5 +1226,13 @@
   .dashboard_mid_card .subtitle div,
   .dashboard_mid_card .schedule_subtitle div {
     font-size: 1.2rem;
+  }
+
+  .calculatorConfigBackdrop,
+  .md .md_box_flex {
+    padding:
+      calc(var(--appHeaderHeight, 7.2rem) + 1.2rem)
+      1.4rem
+      1.4rem;
   }
 }
