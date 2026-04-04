@@ -1,4 +1,4 @@
-import { setCookie } from "./cookies";
+import { getCookie, setCookie } from "./cookies";
 import { tokenRequireApi } from "./refreshToken";
 
 const OPEN_API_URL = "open-api";
@@ -128,6 +128,11 @@ export const openAPIRegister = async (
 
 export const openAPIReissueToken = async (userId) => {
   try {
+    const refreshToken = getCookie("refreshToken");
+    if (!refreshToken) {
+      return null;
+    }
+
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/reissue-token/${userId}`,
       {
@@ -136,6 +141,7 @@ export const openAPIReissueToken = async (userId) => {
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ refreshToken }),
       }
     );
 
@@ -188,6 +194,10 @@ export const openAPILogin = async (username, password) => {
       path: "/",
       sameSite: "lax",
     });
+    setCookie("refreshToken", res.data.data.refreshToken, {
+      path: "/",
+      sameSite: "lax",
+    });
     setCookie("authority", res.data.data.authority, {
       path: "/",
       sameSite: "lax",
@@ -221,6 +231,10 @@ export const openAPISocialLoginCheck = async (oauthAccessToken, loginType) => {
     const json = await res.json();
     if (json.data.userStatus === "ACTIVE") {
       setCookie("accessToken", json.data.accessToken, {
+        path: "/",
+        sameSite: "lax",
+      });
+      setCookie("refreshToken", json.data.refreshToken, {
         path: "/",
         sameSite: "lax",
       });
@@ -261,6 +275,10 @@ export const openAPINaverLogin = async (authorizationCode, state) => {
     const json = await res.json();
     if (json.data.userStatus === "ACTIVE") {
       setCookie("accessToken", json.data.accessToken, {
+        path: "/",
+        sameSite: "lax",
+      });
+      setCookie("refreshToken", json.data.refreshToken, {
         path: "/",
         sameSite: "lax",
       });

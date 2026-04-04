@@ -72,6 +72,7 @@ const UserUtilBox = () => {
     signOut();
     localStorage.removeItem("userInfo");
     removeCookie("accessToken");
+    removeCookie("refreshToken");
     removeCookie("authority");
     location.reload();
   }, []);

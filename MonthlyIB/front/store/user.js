@@ -32,6 +32,7 @@ export const useUserInfo = create(
         set({ userInfo: {} });
         localStorage.removeItem("userInfo");
         removeCookie("accessToken");
+        removeCookie("refreshToken");
         removeCookie("authority");
       },
       socialSignIn: async (oauthAccessToken, loginType) => {
@@ -126,6 +127,7 @@ export const useUserStore = create((set, get) => ({
     set({ userInfo: {} });
     localStorage.removeItem("userInfo");
     removeCookie("accessToken");
+    removeCookie("refreshToken");
     removeCookie("authority");
   },
 

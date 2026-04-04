@@ -1,7 +1,7 @@
 import axios from "axios";
 import { openAPIReissueToken } from "./openAPI";
 import { useUserInfo } from "@/store/user";
-import { setCookie } from "./cookies";
+import { removeCookie, setCookie } from "./cookies";
 
 export const tokenRequireApi = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}`,
@@ -67,12 +67,17 @@ const reissueAccessToken = async () => {
 
         const newToken = res.data.accessToken;
         setCookie("accessToken", newToken, { path: "/", sameSite: "lax" });
+        setCookie("refreshToken", res.data.refreshToken, {
+          path: "/",
+          sameSite: "lax",
+        });
         setCookie("authority", res.data.authority, {
           path: "/",
           sameSite: "lax",
         });
 
         userInfo.state.userInfo.accessToken = newToken;
+        userInfo.state.userInfo.refreshToken = res.data.refreshToken;
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
         useUserInfo.getState().updateUserInfo(userInfo.state.userInfo);
 
@@ -117,6 +122,14 @@ tokenRequireApi.interceptors.response.use(
   async (error) => {
     const errorStatus = error?.response?.data?.status;
     const errorMessage = error?.response?.data?.message;
+    if (errorStatus === 403 && errorMessage === "SESSION_EXPIRED_BY_NEW_LOGIN") {
+      removeCookie("accessToken");
+      removeCookie("refreshToken");
+      removeCookie("authority");
+      handleExpiredSession();
+      return Promise.reject(error);
+    }
+
     if (
       errorStatus === 403 &&
       errorMessage === "Expired Access Token"
