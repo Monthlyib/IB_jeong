@@ -159,6 +159,8 @@ export const updateTutoringEmailTemplate = async (
   templateId,
   subject,
   bodyTemplate,
+  recipientMode,
+  recipientEmail,
   session
 ) => {
   try {
@@ -168,7 +170,7 @@ export const updateTutoringEmailTemplate = async (
         Authorization: session?.accessToken,
       },
     };
-    const data = { subject, bodyTemplate };
+    const data = { subject, bodyTemplate, recipientMode, recipientEmail };
     const res = await tokenRequireApi.patch(
       `${TUTORING_EMAIL_TEMPLATE_API_URL}/${templateId}`,
       data,

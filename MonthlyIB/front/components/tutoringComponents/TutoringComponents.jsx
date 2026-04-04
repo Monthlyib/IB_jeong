@@ -49,6 +49,10 @@ const TutoringComponents = () => {
   const [templateId, setTemplateId] = useState(null);
   const [templateSubject, setTemplateSubject] = useState("");
   const [templateBody, setTemplateBody] = useState("");
+  const [templateRecipientMode, setTemplateRecipientMode] = useState("BOTH");
+  const [templateRecipientEmail, setTemplateRecipientEmail] = useState(
+    "monthlyib@gmail.com"
+  );
   const [templateLoading, setTemplateLoading] = useState(false);
   const [templateSaving, setTemplateSaving] = useState(false);
   const [templateFeedback, setTemplateFeedback] = useState("");
@@ -70,6 +74,16 @@ const TutoringComponents = () => {
         .replaceAll("{time}", "19:30"),
     [templateBody]
   );
+
+  const templateRecipientSummary = useMemo(() => {
+    if (templateRecipientMode === "USER") {
+      return "현재 설정: 신청자 이메일로만 발송";
+    }
+    if (templateRecipientMode === "FIXED") {
+      return `현재 설정: 고정 이메일(${templateRecipientEmail || "monthlyib@gmail.com"})로만 발송`;
+    }
+    return `현재 설정: 신청자 + 고정 이메일(${templateRecipientEmail || "monthlyib@gmail.com"}) 둘 다 발송`;
+  }, [templateRecipientEmail, templateRecipientMode]);
 
   const templateVariables = useMemo(
     () => [
@@ -116,6 +130,10 @@ const TutoringComponents = () => {
         setTemplateId(activeTemplate?.id ?? null);
         setTemplateSubject(activeTemplate?.subject ?? "");
         setTemplateBody(activeTemplate?.bodyTemplate ?? "");
+        setTemplateRecipientMode(activeTemplate?.recipientMode ?? "BOTH");
+        setTemplateRecipientEmail(
+          activeTemplate?.recipientEmail ?? "monthlyib@gmail.com"
+        );
       } catch (error) {
         setTemplateFeedback("메일 양식을 불러오지 못했습니다.");
       } finally {
@@ -256,10 +274,18 @@ const TutoringComponents = () => {
         templateId,
         templateSubject.trim(),
         templateBody.trim(),
+        templateRecipientMode,
+        templateRecipientEmail.trim() || "monthlyib@gmail.com",
         userInfo
       );
       setTemplateSubject(res?.data?.subject ?? templateSubject.trim());
       setTemplateBody(res?.data?.bodyTemplate ?? templateBody.trim());
+      setTemplateRecipientMode(res?.data?.recipientMode ?? templateRecipientMode);
+      setTemplateRecipientEmail(
+        res?.data?.recipientEmail ??
+          templateRecipientEmail.trim() ??
+          "monthlyib@gmail.com"
+      );
       setTemplateFeedback("메일 양식을 저장했습니다.");
     } catch (error) {
       setTemplateFeedback("메일 양식 저장에 실패했습니다.");
@@ -562,6 +588,7 @@ const TutoringComponents = () => {
                     <li>제목은 너무 길지 않게 유지하는 편이 메일함에서 잘 보입니다.</li>
                     <li>본문에는 최소 한 번 이상 날짜와 시간을 넣어 예약 정보를 분명히 하세요.</li>
                     <li>변수는 그대로 입력해야 실제 발송 시 값으로 치환됩니다.</li>
+                    <li>고정 이메일 기본값은 monthlyib@gmail.com 입니다.</li>
                   </ul>
                 </div>
               </div>
@@ -588,8 +615,47 @@ const TutoringComponents = () => {
                   />
                 </label>
 
+                <label className={styles.templateField}>
+                  <span>수신 방식</span>
+                  <div className={styles.templateRecipientModes}>
+                    {[
+                      { value: "USER", label: "신청자 이메일" },
+                      { value: "FIXED", label: "고정 이메일" },
+                      { value: "BOTH", label: "둘 다 발송" },
+                    ].map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        className={
+                          templateRecipientMode === option.value
+                            ? styles.templateRecipientModeActive
+                            : styles.templateRecipientMode
+                        }
+                        onClick={() => setTemplateRecipientMode(option.value)}
+                        disabled={templateLoading || templateSaving}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                </label>
+
+                <label className={styles.templateField}>
+                  <span>고정 수신 이메일</span>
+                  <input
+                    type="email"
+                    value={templateRecipientEmail}
+                    onChange={(e) => setTemplateRecipientEmail(e.target.value)}
+                    placeholder="monthlyib@gmail.com"
+                    disabled={templateLoading || templateSaving}
+                  />
+                </label>
+
                 <div className={styles.templatePreview}>
                   <div className={styles.templatePreviewLabel}>미리보기</div>
+                  <strong className={styles.templateRecipientSummary}>
+                    {templateRecipientSummary}
+                  </strong>
                   <p>{previewMessage || "본문을 입력하면 미리보기가 표시됩니다."}</p>
                 </div>
 
