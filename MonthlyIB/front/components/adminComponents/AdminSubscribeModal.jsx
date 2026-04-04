@@ -1,9 +1,8 @@
-import { use, useRef } from "react";
+import { useRef } from "react";
 import styles from "./AdminStyle.module.css";
 import { ChromePicker } from "react-color";
 import { useUserInfo } from "@/store/user";
 import { useSubscribeStore } from "@/store/subscribe";
-import { last } from "lodash";
 
 const AdminSubscribeModal = ({
   mode,
@@ -26,8 +25,12 @@ const AdminSubscribeModal = ({
   setContent,
   onSubmit,
   subscribeDataList,
-  isPremium, // Add default value
-  setIsPremium, // Add handler for premium toggle
+  unlimitedQuestions,
+  setUnlimitedQuestions,
+  unlimitedTutoring,
+  setUnlimitedTutoring,
+  unlimitedVideoLessons,
+  setUnlimitedVideoLessons,
 }) => {
   const closeRef = useRef();
   const { userInfo } = useUserInfo();
@@ -122,7 +125,19 @@ const AdminSubscribeModal = ({
                   placeholder="질문 갯수"
                   value={numQuestions}
                   onChange={(e) => setNumQuestions(e.target.value)}
+                  disabled={unlimitedQuestions}
                 />
+              </div>
+              <div className={styles.subscribe_price_flex}>
+                <span>질문 무한</span>
+                <label className={styles.toggle_switch}>
+                  <input
+                    type="checkbox"
+                    checked={unlimitedQuestions}
+                    onChange={(e) => setUnlimitedQuestions(e.target.checked)}
+                  />
+                  <span className={styles.slider}></span>
+                </label>
               </div>
               <div className={styles.subscribe_price_flex}>
                 <span>튜터링 갯수</span>
@@ -133,26 +148,38 @@ const AdminSubscribeModal = ({
                   placeholder="튜터링 갯수"
                   value={numTutoring}
                   onChange={(e) => setNumTutoring(e.target.value)}
+                  disabled={unlimitedTutoring}
                 />
               </div>
               <div className={styles.subscribe_price_flex}>
-                <span style={{ fontSize: "1.5rem" }}>영상강의 열람횟수</span>
-                <input
-                  type="number"
-                  autoComplete="off"
-                  required
-                  placeholder="영상강의 열람 횟수"
-                  value={videoLessonsCount}
-                  onChange={(e) => setVideoLessonsCount(e.target.value)}
-                />
-              </div>
-              <div className={styles.subscribe_price_flex}>
-                <span>프리미엄 여부</span>
+                <span>튜터링 무한</span>
                 <label className={styles.toggle_switch}>
                   <input
                     type="checkbox"
-                    checked={isPremium} // 상태 값에 따라 체크 여부 설정
-                    onChange={(e) => setIsPremium(e.target.checked)} // 변경 이벤트에서 상태 업데이트
+                    checked={unlimitedTutoring}
+                    onChange={(e) => setUnlimitedTutoring(e.target.checked)}
+                  />
+                  <span className={styles.slider}></span>
+                </label>
+              </div>
+              <div className={styles.subscribe_price_flex}>
+                <span style={{ fontSize: "1.5rem" }}>영상강의 수강 가능 수</span>
+                <input
+                  type="number"
+                  autoComplete="off"
+                  placeholder="영상강의 수강 가능 수"
+                  value={videoLessonsCount}
+                  onChange={(e) => setVideoLessonsCount(e.target.value)}
+                  disabled={unlimitedVideoLessons}
+                />
+              </div>
+              <div className={styles.subscribe_price_flex}>
+                <span>영상강의 무한</span>
+                <label className={styles.toggle_switch}>
+                  <input
+                    type="checkbox"
+                    checked={unlimitedVideoLessons}
+                    onChange={(e) => setUnlimitedVideoLessons(e.target.checked)}
                   />
                   <span className={styles.slider}></span>
                 </label>

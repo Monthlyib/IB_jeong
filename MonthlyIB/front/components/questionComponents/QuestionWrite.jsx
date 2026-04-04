@@ -6,6 +6,7 @@ import styles from "./Question.module.css";
 import dynamic from "next/dynamic";
 import { useQuestionStore } from "@/store/question";
 import { useUserInfo, useUserStore } from "@/store/user";
+import { hasQuestionAccess } from "@/utils/subscribeUtils";
 
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -24,7 +25,7 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
   const closeRef = useRef();
 
   const { userInfo } = useUserInfo();
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -52,6 +53,9 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
   };
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (type === "write" && !hasQuestionAccess(activeSubscribeInfo)) {
+      return;
+    }
     if (type === "write") {
       const res = await postQuestionItem(
         title,
@@ -110,7 +114,11 @@ const QuestionWrite = ({ setModal, type, questionId, currentPage }) => {
                   <div className={styles.md_question_count}>
                     <span>
                       질문 남은 횟수 :{" "}
-                      <b>{userSubscribeInfo?.[0]?.questionCount}</b>
+                      <b>
+                        {activeSubscribeInfo?.unlimitedQuestions
+                          ? "무한"
+                          : activeSubscribeInfo?.questionCount ?? 0}
+                      </b>
                     </span>
                   </div>
                 </div>

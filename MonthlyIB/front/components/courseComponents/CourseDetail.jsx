@@ -17,6 +17,7 @@ import {
 } from "@/apis/courseAPI";
 import { useCourseStore } from "@/store/course";
 import { useUserStore } from "@/store/user";
+import { canEnrollCourse } from "@/utils/subscribeUtils";
 import {
   getPlayerUrl,
   resolveCourseEntryTarget,
@@ -33,14 +34,14 @@ const CourseDetail = ({ pageId }) => {
   const router = useRouter();
   const [modal, setModal] = useState(1);
   const { courseDetail, getCourseDetail } = useCourseStore();
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
   const [courseProgress, setCourseProgress] = useState(null);
   const accessToken = getCookie("accessToken");
 
   const courseContent = useRef(null);
   const courseCurriculum = useRef(null);
   const courseReview = useRef(null);
-  const isSubscribed = userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE";
+  const isSubscribed = canEnrollCourse(activeSubscribeInfo, pageId);
 
   const reviewData = courseDetail?.reply?.data ?? [];
 

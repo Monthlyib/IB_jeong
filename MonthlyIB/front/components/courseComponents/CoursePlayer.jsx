@@ -24,6 +24,7 @@ import {
   isYouTubeVideoUrl,
   resolveCourseEntryTarget,
 } from "./courseProgressUtils";
+import { hasCourseAccess } from "@/utils/subscribeUtils";
 
 let youtubeIframeApiPromise = null;
 
@@ -76,7 +77,7 @@ const CoursePlayer = ({ pageId }) => {
   const [progressResolved, setProgressResolved] = useState(false);
   const [playerVersion, setPlayerVersion] = useState(0);
   const { courseDetail, getCourseDetail } = useCourseStore();
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   const videoRef = useRef(null);
   const youtubeContainerRef = useRef(null);
@@ -90,8 +91,7 @@ const CoursePlayer = ({ pageId }) => {
   const courseProgressRef = useRef(null);
   const hasInitializedSelectionRef = useRef(false);
 
-  const subscribeStatus = userSubscribeInfo?.[0]?.subscribeStatus;
-  const isSubscribed = subscribeStatus === "ACTIVE";
+  const isSubscribed = hasCourseAccess(activeSubscribeInfo, pageId);
   const orderedLessons = useMemo(
     () => flattenCourseLessons(courseDetail),
     [courseDetail]
@@ -185,15 +185,13 @@ const CoursePlayer = ({ pageId }) => {
 
   useEffect(() => {
     if (
-      Array.isArray(userSubscribeInfo) &&
-      userSubscribeInfo.length >= 0 &&
-      subscribeStatus &&
-      subscribeStatus !== "ACTIVE"
+      activeSubscribeInfo &&
+      !hasCourseAccess(activeSubscribeInfo, pageId)
     ) {
       alert("잘못된 접근입니다.");
       router.back();
     }
-  }, [router, subscribeStatus, userSubscribeInfo]);
+  }, [activeSubscribeInfo, pageId, router]);
 
   useEffect(() => {
     if (

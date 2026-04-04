@@ -353,6 +353,15 @@
     minmax(7rem, 0.9fr);
 }
 
+.subscribeGridDetailed {
+  grid-template-columns:
+    minmax(0, 1.3fr)
+    minmax(7rem, 0.7fr)
+    minmax(9rem, 0.95fr)
+    minmax(9rem, 0.95fr)
+    minmax(9rem, 0.95fr);
+}
+
 .tableToolbar {
   display: flex;
   justify-content: space-between;

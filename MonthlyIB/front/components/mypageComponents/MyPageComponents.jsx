@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
 import { useUserInfo, useUserStore } from "@/store/user";
+import { isActiveSubscribe } from "@/utils/subscribeUtils";
 
 const MyPageComponents = () => {
   const router = useRouter();
@@ -24,7 +25,7 @@ const MyPageComponents = () => {
   const { userInfo } = useUserInfo();
   const { getUserInfo, userDetailInfo } = useUserStore();
 
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -86,10 +87,10 @@ const MyPageComponents = () => {
                 </Link>
               </div>
               <div className={styles.plan_wrap}>
-                {userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" ? (
+                {isActiveSubscribe(activeSubscribeInfo) ? (
                   <SubscribePlan
-                    plan={userSubscribeInfo?.[0]?.title}
-                    expirationDate={userSubscribeInfo?.[0]?.expirationDate}
+                    plan={activeSubscribeInfo?.title}
+                    expirationDate={activeSubscribeInfo?.expirationDate}
                   />
                 ) : (
                   <Link href="/subscribe" className={styles.plan_btn}>

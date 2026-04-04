@@ -18,83 +18,19 @@ export const useSubscribeStore = create((set, get) => ({
   },
   editSubscribeItem: async (
     subscribeId,
-    title,
-    content,
-    price,
-    questionCount,
-    tutoringCount,
-    subscribeMonthPeriod,
-    videoLessonsCount,
-    videoLessionsIdList,
-    color,
-    fontColor,
-    session,
-    premium
+    payload,
+    session
   ) => {
     try {
-      await subscribeReviseItem(
-        subscribeId,
-        title,
-        content,
-        price,
-        questionCount,
-        tutoringCount,
-        subscribeMonthPeriod,
-        videoLessonsCount,
-        videoLessionsIdList,
-        color,
-        fontColor,
-        session,
-        premium
-      );
+      await subscribeReviseItem(subscribeId, payload, session);
       get().getSubscribeList();
     } catch (error) {
       console.error(error);
     }
   },
-  postSubscribeItem: async (
-    title,
-    content,
-    price,
-    questionCount,
-    tutoringCount,
-    subscribeMonthPeriod,
-    videoLessonsCount,
-    videoLessionsIdList,
-    color,
-    fontColor,
-    session,
-    Premium
-  ) => {
-    console.log(
-      title,
-      content,
-      price,
-      questionCount,
-      tutoringCount,
-      subscribeMonthPeriod,
-      videoLessonsCount,
-      videoLessionsIdList,
-      color,
-      fontColor,
-      session,
-      Premium
-    );
+  postSubscribeItem: async (payload, session) => {
     try {
-      await subscribePostItem(
-        title,
-        content,
-        price,
-        questionCount,
-        tutoringCount,
-        subscribeMonthPeriod,
-        videoLessonsCount,
-        videoLessionsIdList,
-        color,
-        fontColor,
-        session,
-        Premium
-      );
+      await subscribePostItem(payload, session);
       get().getSubscribeList();
     } catch (error) {
       console.error(error);

@@ -43,7 +43,7 @@ const QuestionDetail = (pageId) => {
     (v) => v.questionId === parseInt(pageId?.pageId)
   );
 
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -328,7 +328,12 @@ const QuestionDetail = (pageId) => {
                     <b>{userInfo?.nickname}</b> 님
                   </span>
                   <span className={styles.count}>
-                    남은 질문 수 <b>{userSubscribeInfo?.[0]?.questionCount}</b>
+                    남은 질문 수{" "}
+                    <b>
+                      {activeSubscribeInfo?.unlimitedQuestions
+                        ? "무한"
+                        : activeSubscribeInfo?.questionCount ?? 0}
+                    </b>
                   </span>
                 </div>
                 <figure>

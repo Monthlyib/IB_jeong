@@ -4,7 +4,7 @@ import {
   openAPINaverLogin,
   openAPISocialLoginCheck,
 } from "@/apis/openAPI";
-import { subscribeGetUserInfo } from "@/apis/subscribeAPI";
+import { subscribeActiveUserInfo, subscribeGetUserInfo } from "@/apis/subscribeAPI";
 import {
   userDelete,
   userGetAllList,
@@ -68,6 +68,7 @@ export const useUserStore = create((set, get) => ({
   userDetailInfo: {},
   userList: [],
   userSubscribeInfo: {},
+  activeSubscribeInfo: null,
   getUserList: async (session) => {
     try {
       const res = await userGetAllList(session);
@@ -89,9 +90,27 @@ export const useUserStore = create((set, get) => ({
   getUserSubscribeInfo: async (userId, page, session) => {
     try {
       const res = await subscribeGetUserInfo(userId, page, session);
-      set({ userSubscribeInfo: res.data });
+      let activeSubscribeInfo = null;
+      try {
+        const activeRes = await subscribeActiveUserInfo(userId, session);
+        activeSubscribeInfo = activeRes?.data ?? null;
+      } catch (error) {
+        activeSubscribeInfo = null;
+      }
+      set({ userSubscribeInfo: res.data, activeSubscribeInfo });
     } catch (error) {
       console.error(error);
+    }
+  },
+  getActiveSubscribeInfo: async (userId, session) => {
+    try {
+      const res = await subscribeActiveUserInfo(userId, session);
+      set({ activeSubscribeInfo: res?.data ?? null });
+      return res?.data ?? null;
+    } catch (error) {
+      console.error(error);
+      set({ activeSubscribeInfo: null });
+      return null;
     }
   },
   signIn: async (username, password) => {

@@ -9,7 +9,7 @@ const MyPageQuestionList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { userInfo } = useUserInfo();
   const { getUserQuestionList, questionList, questionPageInfo } = useQuestionStore();
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -36,7 +36,12 @@ const MyPageQuestionList = () => {
     <>
       <div className={styles.q_header}>
         <span>
-          남은 질문 횟수 : <b>{userSubscribeInfo?.[0]?.questionCount}</b>
+          남은 질문 횟수 :{" "}
+          <b>
+            {activeSubscribeInfo?.unlimitedQuestions
+              ? "무한"
+              : activeSubscribeInfo?.questionCount ?? 0}
+          </b>
         </span>
       </div>
       <div className={styles.question_wrap}>

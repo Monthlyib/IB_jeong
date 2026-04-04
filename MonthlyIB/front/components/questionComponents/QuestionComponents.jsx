@@ -11,6 +11,7 @@ import { useCallback } from "react";
 import { getCookie } from "@/apis/cookies";
 import { useQuestionStore } from "@/store/question";
 import { useUserInfo, useUserStore } from "@/store/user";
+import { hasQuestionAccess } from "@/utils/subscribeUtils";
 
 const QuestionComponents = () => {
   const { questionList, questionPageInfo, getQuestionList, getUserQuestionList } =
@@ -22,7 +23,9 @@ const QuestionComponents = () => {
   const [searching, setSeraching] = useState(false);
 
   const { userInfo } = useUserInfo();
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const canWriteQuestion =
+    userInfo?.authority === "USER" && hasQuestionAccess(activeSubscribeInfo);
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -99,8 +102,7 @@ const QuestionComponents = () => {
               <span>총 질문 수</span>
               <b>{questionPageInfo?.totalElements ?? questionList?.length ?? 0}</b>
             </div>
-            {(userInfo?.authority === "USER" ||
-              userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") && (
+            {canWriteQuestion && (
               <button
                 type="button"
                 className="btn_write"
@@ -111,9 +113,7 @@ const QuestionComponents = () => {
               </button>
             )}
           </div>
-          {modal === true &&
-            (userInfo?.authority === "USER" ||
-              userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") && (
+          {modal === true && canWriteQuestion && (
               <QuestionWrite
                 setModal={setModal}
                 currentPage={currentPage}

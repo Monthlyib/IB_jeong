@@ -8,13 +8,16 @@ import { useUserInfo } from "@/store/user";
 import AdminSubscribeModal from "./AdminSubscribeModal";
 import { getKnitSubscribeDataList } from "@/utils/utils";
 import Paginatation from "../layoutComponents/Paginatation";
+import { formatQuotaSummary } from "@/utils/subscribeUtils";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
 const SORT_LABELS = {
   title: "Items",
   planCount: "Plans",
-  premiumLabel: "Premium",
+  questionSummary: "질문",
+  tutoringSummary: "튜터링",
+  courseSummary: "강의",
 };
 
 const compareText = (left = "", right = "", direction = "asc") => {
@@ -53,8 +56,9 @@ const AdminSubscribe = () => {
   const [videoLessonsCount, setVideoLessonsCount] = useState("");
   const [subscriberIDList, setSubscribeIDList] = useState([]);
   const [subscribemonthPeriods, setSubscribeMonthPeriods] = useState([]);
-  const [videoLessonsIDLists, setVideoLessonsIDLists] = useState([]);
-  const [isPremium, setIsPremium] = useState(false);
+  const [unlimitedQuestions, setUnlimitedQuestions] = useState(false);
+  const [unlimitedTutoring, setUnlimitedTutoring] = useState(false);
+  const [unlimitedVideoLessons, setUnlimitedVideoLessons] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [sortConfig, setSortConfig] = useState({
@@ -66,13 +70,26 @@ const AdminSubscribe = () => {
     () =>
       Object.entries(subscribeDataList).map(([planTitle, planMap]) => {
         const plans = Object.values(planMap || {});
-        const premium = plans.some((plan) => plan?.premium);
+        const basePlan = plans[0] || {};
 
         return {
           title: planTitle,
           planCount: plans.length,
-          premium,
-          premiumLabel: premium ? "Premium" : "Standard",
+          questionSummary: formatQuotaSummary(
+            basePlan.questionCount,
+            basePlan.unlimitedQuestions,
+            "질문"
+          ),
+          tutoringSummary: formatQuotaSummary(
+            basePlan.tutoringCount,
+            basePlan.unlimitedTutoring,
+            "튜터링"
+          ),
+          courseSummary: formatQuotaSummary(
+            basePlan.videoLessonsCount,
+            basePlan.unlimitedVideoLessons,
+            "강의"
+          ),
         };
       }),
     [subscribeDataList]
@@ -117,10 +134,6 @@ const AdminSubscribe = () => {
       const newPeriods = Object.values(tempItem).map(
         (data) => data.subscribeMonthPeriod
       );
-      const newVideosIDs = Object.values(tempItem).map(
-        (data) => data.videoLessonsCount
-      );
-
       setPrices(newPrices);
       setTitle(item);
       setSubscribeIDList(newIDs);
@@ -130,9 +143,10 @@ const AdminSubscribe = () => {
       setColor(tempItem[0]?.color);
       setFontColor(tempItem[0]?.fontColor);
       setVideoLessonsCount(tempItem[0]?.videoLessonsCount);
-      setVideoLessonsIDLists(newVideosIDs);
       setContent(tempItem[0]?.content);
-      setIsPremium(tempItem[0]?.premium || false);
+      setUnlimitedQuestions(Boolean(tempItem[0]?.unlimitedQuestions));
+      setUnlimitedTutoring(Boolean(tempItem[0]?.unlimitedTutoring));
+      setUnlimitedVideoLessons(Boolean(tempItem[0]?.unlimitedVideoLessons));
     }
   }, [item, subscribeDataList]);
 
@@ -171,23 +185,32 @@ const AdminSubscribe = () => {
     }`;
   };
 
+  const normalizePickerColor = (value) =>
+    typeof value === "string" ? value : value?.hex || "#000000";
+
+  const buildPlanPayload = (price, subscribeMonthPeriod) => ({
+    title,
+    content,
+    price: Number(price),
+    questionCount: Number(numQuestions || 0),
+    unlimitedQuestions,
+    tutoringCount: Number(numTutoring || 0),
+    unlimitedTutoring,
+    subscribeMonthPeriod: Number(subscribeMonthPeriod || 0),
+    videoLessonsCount: Number(videoLessonsCount || 0),
+    unlimitedVideoLessons,
+    videoLessonsIdList: [],
+    color: normalizePickerColor(color),
+    fontColor: normalizePickerColor(fontColor),
+  });
+
   const onSubmitReviseSubscribeItem = () => {
     setEditModal(false);
     for (let i = 0; i < prices?.length; i++) {
       editSubscribeItem(
         subscriberIDList[i],
-        title,
-        content,
-        prices[i],
-        numQuestions,
-        numTutoring,
-        subscribemonthPeriods[i],
-        videoLessonsCount,
-        videoLessonsIDLists[i],
-        color.hex,
-        fontColor.hex,
-        userInfo,
-        isPremium
+        buildPlanPayload(prices[i], subscribemonthPeriods[i]),
+        userInfo
       );
     }
   };
@@ -196,34 +219,23 @@ const AdminSubscribe = () => {
     setPostModal(false);
     const subscribeMonthPeriod = [1, 3, 6, 12];
     for (let i = 0; i < 4; i++) {
-      postSubscribeItem(
-        title,
-        content,
-        prices[i],
-        numQuestions,
-        numTutoring,
-        subscribeMonthPeriod[i],
-        videoLessonsCount,
-        [],
-        color.hex,
-        fontColor.hex,
-        userInfo,
-        isPremium
-      );
+      postSubscribeItem(buildPlanPayload(prices[i], subscribeMonthPeriod[i]), userInfo);
     }
   };
 
   const onClickPostModal = () => {
     setPostModal(true);
     setTitle("");
-    setPrices([]);
+    setPrices(["", "", "", ""]);
     setNumQuestions("");
     setNumTutoring("");
     setColor("#000");
     setFontColor("#000");
     setVideoLessonsCount("");
     setContent("");
-    setIsPremium(false);
+    setUnlimitedQuestions(false);
+    setUnlimitedTutoring(false);
+    setUnlimitedVideoLessons(false);
   };
 
   const onChangePrice = (e, i) => {
@@ -268,7 +280,7 @@ const AdminSubscribe = () => {
           </label>
         </div>
 
-        <div className={`${styles.subtitle} ${styles.subscribeGrid}`}>
+        <div className={`${styles.subtitle} ${styles.subscribeGridDetailed}`}>
           <button
             type="button"
             className={styles.tableHeaderButton}
@@ -286,16 +298,30 @@ const AdminSubscribe = () => {
           <button
             type="button"
             className={styles.tableHeaderButton}
-            onClick={() => handleSort("premiumLabel")}
+            onClick={() => handleSort("questionSummary")}
           >
-            {renderSortLabel("premiumLabel")}
+            {renderSortLabel("questionSummary")}
+          </button>
+          <button
+            type="button"
+            className={styles.tableHeaderButton}
+            onClick={() => handleSort("tutoringSummary")}
+          >
+            {renderSortLabel("tutoringSummary")}
+          </button>
+          <button
+            type="button"
+            className={styles.tableHeaderButton}
+            onClick={() => handleSort("courseSummary")}
+          >
+            {renderSortLabel("courseSummary")}
           </button>
         </div>
 
         <div className={styles.tableBody}>
           {paginatedSubscribeItems.map((subscribeItem) => (
             <div key={subscribeItem.title} className={styles.tableRowWrap}>
-              <div className={`${styles.users} ${styles.subscribeGrid}`}>
+              <div className={`${styles.users} ${styles.subscribeGridDetailed}`}>
                 <div className={`${styles.tableCell} ${styles.subscribeItemCell}`}>
                   <span>{subscribeItem.title}</span>
                   <FontAwesomeIcon
@@ -304,7 +330,9 @@ const AdminSubscribe = () => {
                   />
                 </div>
                 <div className={styles.tableCell}>{subscribeItem.planCount}개</div>
-                <div className={styles.tableCell}>{subscribeItem.premiumLabel}</div>
+                <div className={styles.tableCell}>{subscribeItem.questionSummary}</div>
+                <div className={styles.tableCell}>{subscribeItem.tutoringSummary}</div>
+                <div className={styles.tableCell}>{subscribeItem.courseSummary}</div>
               </div>
             </div>
           ))}
@@ -339,8 +367,12 @@ const AdminSubscribe = () => {
             setFontColor={setFontColor}
             content={content}
             setContent={setContent}
-            isPremium={isPremium}
-            setIsPremium={setIsPremium}
+            unlimitedQuestions={unlimitedQuestions}
+            setUnlimitedQuestions={setUnlimitedQuestions}
+            unlimitedTutoring={unlimitedTutoring}
+            setUnlimitedTutoring={setUnlimitedTutoring}
+            unlimitedVideoLessons={unlimitedVideoLessons}
+            setUnlimitedVideoLessons={setUnlimitedVideoLessons}
             onSubmit={onSubmitPostSubscribeItem}
           />
         )}
@@ -365,8 +397,12 @@ const AdminSubscribe = () => {
             setFontColor={setFontColor}
             content={content}
             setContent={setContent}
-            isPremium={isPremium}
-            setIsPremium={setIsPremium}
+            unlimitedQuestions={unlimitedQuestions}
+            setUnlimitedQuestions={setUnlimitedQuestions}
+            unlimitedTutoring={unlimitedTutoring}
+            setUnlimitedTutoring={setUnlimitedTutoring}
+            unlimitedVideoLessons={unlimitedVideoLessons}
+            setUnlimitedVideoLessons={setUnlimitedVideoLessons}
             onSubmit={onSubmitReviseSubscribeItem}
             subscribeDataList={subscribeDataList}
           />

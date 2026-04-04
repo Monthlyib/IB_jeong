@@ -11,9 +11,13 @@ const EMPTY_SUBSCRIBE = {
   subscribeId: -1,
   title: "",
   questionCount: "",
+  unlimitedQuestions: false,
   tutoringCount: "",
+  unlimitedTutoring: false,
   subscribeMonthPeriod: "",
   videoLessonsCount: "",
+  unlimitedVideoLessons: false,
+  videoLessonsIdList: [],
   subscribeStatus: "WAIT",
 };
 
@@ -55,9 +59,16 @@ const AdminUserAdminModal = ({
       title: selectedPlan.title,
       subscribeId: selectedPlan.subscriberId,
       questionCount: selectedPlan.questionCount,
+      unlimitedQuestions: Boolean(selectedPlan.unlimitedQuestions),
       tutoringCount: selectedPlan.tutoringCount,
+      unlimitedTutoring: Boolean(selectedPlan.unlimitedTutoring),
       subscribeMonthPeriod: selectedPlan.subscribeMonthPeriod,
       videoLessonsCount: selectedPlan.videoLessonsCount,
+      unlimitedVideoLessons: Boolean(selectedPlan.unlimitedVideoLessons),
+      videoLessonsIdList:
+        prev.subscribeId === selectedPlan.subscriberId
+          ? prev.videoLessonsIdList
+          : [],
       subscribeStatus: prev.subscribeStatus || "ACTIVE",
     }));
   };
@@ -89,9 +100,13 @@ const AdminUserAdminModal = ({
             subscribeId: activeSubscription.subscribeId,
             title: activeSubscription.title ?? "",
             questionCount: activeSubscription.questionCount ?? "",
+            unlimitedQuestions: Boolean(activeSubscription.unlimitedQuestions),
             tutoringCount: activeSubscription.tutoringCount ?? "",
+            unlimitedTutoring: Boolean(activeSubscription.unlimitedTutoring),
             subscribeMonthPeriod: activeSubscription.subscribeMonthPeriod ?? "",
             videoLessonsCount: activeSubscription.videoLessonsCount ?? "",
+            unlimitedVideoLessons: Boolean(activeSubscription.unlimitedVideoLessons),
+            videoLessonsIdList: activeSubscription.videoLessonsIdList ?? [],
             subscribeStatus: activeSubscription.subscribeStatus ?? "ACTIVE",
           };
           setOriginalSubscribe(normalized);
@@ -175,26 +190,36 @@ const AdminUserAdminModal = ({
 
           await subscribeReviseUser(
             created?.data?.subscribeUserId ?? created?.subscribeUserId,
-            Number(newSubscribe.questionCount),
-            Number(newSubscribe.tutoringCount),
-            Number(newSubscribe.subscribeMonthPeriod),
-            Number(newSubscribe.videoLessonsCount),
-            [],
+            {
+              questionCount: Number(newSubscribe.questionCount),
+              unlimitedQuestions: newSubscribe.unlimitedQuestions,
+              tutoringCount: Number(newSubscribe.tutoringCount),
+              unlimitedTutoring: newSubscribe.unlimitedTutoring,
+              subscribeMonthPeriod: Number(newSubscribe.subscribeMonthPeriod),
+              videoLessonsCount: Number(newSubscribe.videoLessonsCount),
+              unlimitedVideoLessons: newSubscribe.unlimitedVideoLessons,
+              videoLessonsIdList: newSubscribe.videoLessonsIdList ?? [],
+              subscribeStatus: newSubscribe.subscribeStatus,
+            },
             userInfo,
-            newSubscribe.subscribeId,
-            newSubscribe.subscribeStatus
+            newSubscribe.subscribeId
           );
         } else {
           await subscribeReviseUser(
             originalSubscribe.subscribeUserId,
-            Number(newSubscribe.questionCount),
-            Number(newSubscribe.tutoringCount),
-            Number(newSubscribe.subscribeMonthPeriod),
-            Number(newSubscribe.videoLessonsCount),
-            [],
+            {
+              questionCount: Number(newSubscribe.questionCount),
+              unlimitedQuestions: newSubscribe.unlimitedQuestions,
+              tutoringCount: Number(newSubscribe.tutoringCount),
+              unlimitedTutoring: newSubscribe.unlimitedTutoring,
+              subscribeMonthPeriod: Number(newSubscribe.subscribeMonthPeriod),
+              videoLessonsCount: Number(newSubscribe.videoLessonsCount),
+              unlimitedVideoLessons: newSubscribe.unlimitedVideoLessons,
+              videoLessonsIdList: newSubscribe.videoLessonsIdList ?? [],
+              subscribeStatus: newSubscribe.subscribeStatus,
+            },
             userInfo,
-            newSubscribe.subscribeId,
-            newSubscribe.subscribeStatus
+            newSubscribe.subscribeId
           );
         }
       }
@@ -305,8 +330,26 @@ const AdminUserAdminModal = ({
                         questionCount: e.target.value,
                       }))
                     }
-                    disabled={saving}
+                    disabled={newSubscribe.unlimitedQuestions || saving}
                   />
+                </div>
+
+                <div className={styles.subscribe_price_flex}>
+                  <span>질문 무한</span>
+                  <label className={styles.toggle_switch}>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(newSubscribe.unlimitedQuestions)}
+                      onChange={(e) =>
+                        setNewSubscribe((prev) => ({
+                          ...prev,
+                          unlimitedQuestions: e.target.checked,
+                        }))
+                      }
+                      disabled={saving}
+                    />
+                    <span className={styles.slider}></span>
+                  </label>
                 </div>
 
                 <div className={styles.subscribe_price_flex}>
@@ -322,8 +365,26 @@ const AdminUserAdminModal = ({
                         tutoringCount: e.target.value,
                       }))
                     }
-                    disabled={saving}
+                    disabled={newSubscribe.unlimitedTutoring || saving}
                   />
+                </div>
+
+                <div className={styles.subscribe_price_flex}>
+                  <span>튜터링 무한</span>
+                  <label className={styles.toggle_switch}>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(newSubscribe.unlimitedTutoring)}
+                      onChange={(e) =>
+                        setNewSubscribe((prev) => ({
+                          ...prev,
+                          unlimitedTutoring: e.target.checked,
+                        }))
+                      }
+                      disabled={saving}
+                    />
+                    <span className={styles.slider}></span>
+                  </label>
                 </div>
 
                 <div className={styles.subscribe_price_flex}>
@@ -356,8 +417,26 @@ const AdminUserAdminModal = ({
                         videoLessonsCount: e.target.value,
                       }))
                     }
-                    disabled={saving}
+                    disabled={newSubscribe.unlimitedVideoLessons || saving}
                   />
+                </div>
+
+                <div className={styles.subscribe_price_flex}>
+                  <span>영상강의 무한</span>
+                  <label className={styles.toggle_switch}>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(newSubscribe.unlimitedVideoLessons)}
+                      onChange={(e) =>
+                        setNewSubscribe((prev) => ({
+                          ...prev,
+                          unlimitedVideoLessons: e.target.checked,
+                        }))
+                      }
+                      disabled={saving}
+                    />
+                    <span className={styles.slider}></span>
+                  </label>
                 </div>
 
                 {feedback && (

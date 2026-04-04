@@ -2,12 +2,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import styles from "./Subscribe.module.css";
 import Link from "next/link";
-import { useEffect } from "react";
+import { getPlanBenefitLines } from "@/utils/subscribeUtils";
 
 const SubscribeItems = ({ saledPrice, months, oriPrice, modal, planName }) => {
   const newOriPriceArray = [null, oriPrice * 3, oriPrice * 6, oriPrice * 12];
-
-
 
   return (
     <>
@@ -40,10 +38,7 @@ const SubscribeItems = ({ saledPrice, months, oriPrice, modal, planName }) => {
           <div className={styles.plan_info}>
             <h4>플랜혜택 정보</h4>
             <ul style={{ listStyle: "none" }}>
-              {saledPrice[modal].content
-                .trim()
-                .split("\n")
-                .map((v, i) => (
+              {getPlanBenefitLines(saledPrice[modal]).map((v, i) => (
                   <li key={i}>
                     <FontAwesomeIcon icon={faCheck} />
                     <span>{v}</span>

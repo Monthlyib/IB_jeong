@@ -11,7 +11,7 @@ const MyPageScheduleList = () => {
   const { userInfo } = useUserInfo();
   const [currentPage, setCurrentPage] = useState(1);
   const { tutoringDateList, getTutoringDateList, deleteTutoring } = useTutoringStore();
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
     const localUser = JSON.parse(localStorage.getItem("userInfo"));
@@ -60,7 +60,11 @@ const MyPageScheduleList = () => {
           <div className={styles.schedule_right}>
             <span>
               남은 예약 :{" "}
-              <b id="remain">{userSubscribeInfo?.[0]?.tutoringCount}</b>
+              <b id="remain">
+                {activeSubscribeInfo?.unlimitedTutoring
+                  ? "무한"
+                  : activeSubscribeInfo?.tutoringCount ?? 0}
+              </b>
             </span>
           </div>
         </div>

@@ -53,21 +53,7 @@ export const subscribeActiveUserInfo = async (userId,session) => {
   }
 };
 
-export const subscribeReviseItem = async (//subscribe.js
-  subscribeId,
-  title,
-  content,
-  price,
-  questionCount,
-  tutoringCount,
-  subscribeMonthPeriod,
-  videoLessonsCount,
-  videoLessionsIdList,
-  color,
-  fontColor,
-  session,
-  premium
-) => {
+export const subscribeReviseItem = async (subscribeId, payload, session) => {
   try {
     const config = {
       headers: {
@@ -75,22 +61,9 @@ export const subscribeReviseItem = async (//subscribe.js
         Authorization: session?.accessToken,
       },
     };
-    const data = {
-      title,
-      content,
-      price,
-      questionCount,
-      tutoringCount,
-      subscribeMonthPeriod,
-      videoLessonsCount,
-      videoLessionsIdList,
-      color,
-      fontColor,
-      premium
-    };
     await tokenRequireApi.patch(
       `${SUBSCRIBE_API_URL}/${subscribeId}`,
-      data,
+      payload,
       config
     );
   } catch (error) {
@@ -98,20 +71,7 @@ export const subscribeReviseItem = async (//subscribe.js
   }
 };
 
-export const subscribePostItem = async (//subscribe.js
-  title,
-  content,
-  price,
-  questionCount,
-  tutoringCount,
-  subscribeMonthPeriod,
-  videoLessonsCount,
-  videoLessionsIdList,
-  color,
-  fontColor,
-  session,
-  premium
-) => {
+export const subscribePostItem = async (payload, session) => {
   try {
     const config = {
       headers: {
@@ -119,21 +79,7 @@ export const subscribePostItem = async (//subscribe.js
         Authorization: session?.accessToken,
       },
     };
-    const data = {
-      title,
-      content,
-      price,
-      questionCount,
-      tutoringCount,
-      subscribeMonthPeriod,
-      videoLessonsCount,
-      videoLessionsIdList,
-      color,
-      fontColor,
-      premium
-    };
-    console.log(data);
-    await tokenRequireApi.post(`${SUBSCRIBE_API_URL}`, data, config);
+    await tokenRequireApi.post(`${SUBSCRIBE_API_URL}`, payload, config);
   } catch (error) {
     console.error(error);
   }
@@ -162,14 +108,9 @@ export const subscribePostUser = async (userId, subscribeId, session) => {
 
 export const subscribeReviseUser = async (
   subscribeUserId,
-  questionCount,
-  tutoringCount,
-  subscribeMonthPeriod,
-  videoLessonsCount,
-  videoLessionsIdList,
+  payload,
   session,
-  newsubscribeId,
-  subscribeStatus
+  newsubscribeId
   ) => {
   try {
     const config = {
@@ -178,17 +119,9 @@ export const subscribeReviseUser = async (
         Authorization: session?.accessToken,
       },
     };
-    const data = {
-      questionCount,
-      tutoringCount,
-      subscribeMonthPeriod,
-      videoLessonsCount,
-      videoLessionsIdList,
-      subscribeStatus,
-    };
     const res = await tokenRequireApi.patch(
       `${SUBSCRIBE_API_URL}/user/${subscribeUserId}?newsubscribeId=${newsubscribeId}`,
-      data,
+      payload,
       config
     );
     return res.data;

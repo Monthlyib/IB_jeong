@@ -9,6 +9,7 @@ import CourseReviewItems from "./CourseReviewItems";
 import CourseReviewPost from "./CourseReviewPost";
 import CourseReviewSummary from "./CourseReviewSummary";
 import { useUserStore } from "@/store/user";
+import { isActiveSubscribe } from "@/utils/subscribeUtils";
 
 const CourseReview = ({
   pageId,
@@ -24,7 +25,7 @@ const CourseReview = ({
     stars: false,
   });
 
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
     const savedUser = localStorage.getItem("userInfo");
@@ -62,7 +63,7 @@ const CourseReview = ({
     <>
       <div className={styles.course_tit_header}>
         <h3>수강생 리뷰</h3>
-        {userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" && (
+        {isActiveSubscribe(activeSubscribeInfo) && (
           <>
             <button
               type="button"

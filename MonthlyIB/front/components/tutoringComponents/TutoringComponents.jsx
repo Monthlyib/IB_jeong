@@ -15,6 +15,7 @@ import {
   getTutoringEmailTemplate,
   updateTutoringEmailTemplate,
 } from "@/apis/tutoringAPI";
+import { hasTutoringAccess } from "@/utils/subscribeUtils";
 
 // 비동기 로드로 캘린더 컴포넌트를 불러옵니다 (SSR 비활성화)
 const DynamicCalendar = dynamic(() => import("./TutoringCalendar"), {
@@ -63,8 +64,9 @@ const TutoringComponents = () => {
   const [hour, setHour] = useState(0); // 선택한 시간의 시간 부분
   const [minute, setMinute] = useState(0); // 선택한 시간의 분 부분
   const detail = useRef(""); // 예약 상세 설명
-  const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore(); // 구독 정보 가져오기
+  const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore(); // 구독 정보 가져오기
   const isAdmin = userInfo?.authority === "ADMIN";
+  const canBookTutoring = hasTutoringAccess(activeSubscribeInfo);
 
   const previewMessage = useMemo(
     () =>
@@ -224,8 +226,7 @@ const TutoringComponents = () => {
   const onSubmit = (e) => {
     e.preventDefault();
     if (
-      userSubscribeInfo?.[0]?.tutoringCount > 0 &&
-      userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE" &&
+      canBookTutoring &&
       selectedSlots.length > 0
     ) {
       // 선택된 슬롯 각각에 대해 예약 요청
@@ -511,8 +512,7 @@ const TutoringComponents = () => {
                     type="submit"
                     disabled={
                       selectedSlots.length === 0 ||
-                      userSubscribeInfo?.[0]?.tutoringCount === 0 ||
-                      userSubscribeInfo?.[0]?.subscribeStatus !== "ACTIVE"
+                      !canBookTutoring
                     }
                   >
                     <FontAwesomeIcon icon={faCalendarCheck} />
@@ -526,7 +526,9 @@ const TutoringComponents = () => {
                 <span>
                   남은예약 :{" "}
                   <b className="count">
-                    {userSubscribeInfo?.[0]?.tutoringCount}
+                    {activeSubscribeInfo?.unlimitedTutoring
+                      ? "무한"
+                      : activeSubscribeInfo?.tutoringCount ?? 0}
                   </b>
                 </span>
               </div>
