@@ -8,6 +8,7 @@ const QuestionItems = ({
   numShowContents,
   onPageChange,
   totalPages,
+  isAdmin = false,
 }) => {
   return (
     <>
@@ -27,6 +28,11 @@ const QuestionItems = ({
             >
               <div className={styles.q_flex_top}>
                 <p>{content?.title}</p>
+                {isAdmin && (
+                  <span className={styles.q_author}>
+                    작성자: {content?.authorNickName} ({content?.authorUsername})
+                  </span>
+                )}
               </div>
               <div className={styles.q_flex_bottom}>
                 <span className={styles.q_class}>{content?.subject}</span>

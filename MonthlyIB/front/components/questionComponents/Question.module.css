@@ -54,6 +54,9 @@
 
 .question_wrap .question_item a .q_flex_top {
   margin-bottom: 2.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .question_wrap .question_item a .q_flex_top p {
@@ -67,6 +70,17 @@
   font-size: 1.8rem;
   font-weight: 400;
   line-height: 1.5;
+}
+
+.question_wrap .question_item a .q_flex_top .q_author {
+  display: block;
+  font-size: 1.3rem;
+  line-height: 1.5;
+  color: #6d6489;
+  word-break: keep-all;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .question_wrap .question_item a .q_flex_bottom {
@@ -198,14 +212,23 @@
 
 .dt_question_wrap .dt_question .dt_question_top .dt_question_info {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  flex: 9;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.6rem;
 }
 
 .dt_question_wrap .dt_question .dt_question_top .dt_question_info .class {
   font-size: 1.5rem;
   color: #444;
+}
+
+.dt_question_wrap .dt_question .dt_question_top .dt_question_info .author {
+  font-size: 1.5rem;
+  color: #6d6489;
+  font-weight: 500;
+  word-break: keep-all;
 }
 
 .dt_question_wrap .dt_question .dt_question_top .dt_question_info .date {

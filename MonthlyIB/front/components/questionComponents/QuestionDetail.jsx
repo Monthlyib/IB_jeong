@@ -146,6 +146,12 @@ const QuestionDetail = (pageId) => {
                     <span className={styles.class}>
                       {questionDetail?.subject}
                     </span>
+                    {userInfo?.authority === "ADMIN" && (
+                      <span className={styles.author}>
+                        작성자: {questionDetail?.authorNickName} (
+                        {questionDetail?.authorUsername})
+                      </span>
+                    )}
                     <span className={styles.date}>
                       {questionDetail?.createAt?.split("T")[0]} &nbsp;
                       {questionDetail?.createAt?.split("T")[1]}

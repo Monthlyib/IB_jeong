@@ -128,6 +128,7 @@ const QuestionComponents = () => {
                 currentPage={currentPage}
                 numShowContents={6}
                 onPageChange={handlePageChange}
+                isAdmin={userInfo?.authority === "ADMIN"}
               />
             </div>
           </div>
