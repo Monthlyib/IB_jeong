@@ -4,6 +4,7 @@ const COURSE_API_URL = "api/video";
 const COURSE_REPLY_API_URL = "api/video-reply";
 const COURSE_CATEGORY_API_URL = "api/video-category";
 const COURSE_IMAGE_API_URL = "api/video-image";
+const COURSE_FILE_API_URL = "api/video-file";
 
 export const courseDeleteItem = async (videoLessonsId, session) => {
   try {
@@ -150,6 +151,27 @@ export const coursePostThumnail = async (videoLessonsId, image, session) => {
       formData,
       config
     );
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const coursePostVideoFile = async (file, session) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.post(
+      `${COURSE_FILE_API_URL}`,
+      formData,
+      config
+    );
+    return res.data;
   } catch (error) {
     console.error(error);
   }

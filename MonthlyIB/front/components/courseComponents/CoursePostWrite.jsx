@@ -1,17 +1,22 @@
 "use client";
+
 import styles from "./CourseComponents.module.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 import CoursePostCurriculum from "./CoursePostCurriculum";
 import CoursePostCategory from "./CoursePostCategory";
-import dynamic from "next/dynamic";
-import { coursePostThumnail, courseReviseItem } from "@/apis/courseAPI";
+import {
+  coursePostThumnail,
+  coursePostVideoFile,
+  courseReviseItem,
+} from "@/apis/courseAPI";
 import { useCourseStore } from "@/store/course";
 import { getCookie } from "@/apis/cookies";
+import { isYouTubeVideoUrl } from "@/components/courseComponents/courseProgressUtils";
 
-// DynamicEditor: 서버사이드 렌더링을 비활성화한 에디터 컴포넌트
 const DynamicEditor = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
   {
@@ -19,31 +24,153 @@ const DynamicEditor = dynamic(
   }
 );
 
-// 카테고리 그룹 정보 상수
-const GROUPS = { all: -1, Group1: 1, Group2: 2, Group3: 3, Group4: 4, Group5: 5, Group6: 6 };
-
-// 과목 목록 상수
-const SUBJECTS = {
-  all: -1, "English Literature": 7, "English Language ": 8, Korean: 9, "English B": 10,
-  "Mandarin B": 11, "Spanish B": 12, Economics: 13, "Business & Management": 14,
-  Psychology: 15, Geography: 16, History: 17, Physics: 18, Chemistry: 19, Biology: 20,
-  "Design Technology": 21, "Math AA": 22, "Math AI": 23, "Visual Arts": 24
+const GROUPS = {
+  all: -1,
+  Group1: 1,
+  Group2: 2,
+  Group3: 3,
+  Group4: 4,
+  Group5: 5,
+  Group6: 6,
 };
 
-// 레벨 정보 상수
+const SUBJECTS = {
+  all: -1,
+  "English Literature": 7,
+  "English Language ": 8,
+  Korean: 9,
+  "English B": 10,
+  "Mandarin B": 11,
+  "Spanish B": 12,
+  Economics: 13,
+  "Business & Management": 14,
+  Psychology: 15,
+  Geography: 16,
+  History: 17,
+  Physics: 18,
+  Chemistry: 19,
+  Biology: 20,
+  "Design Technology": 21,
+  "Math AA": 22,
+  "Math AI": 23,
+  "Visual Arts": 24,
+};
+
 const LEVELS = { all: 27, SL: 25, HL: 26 };
 
-// 강의 작성 컴포넌트
+const createTimestampedFile = (file) => {
+  if (!file) {
+    return file;
+  }
+
+  const dotIndex = file.name.lastIndexOf(".");
+  const baseName =
+    dotIndex === -1 ? file.name : file.name.slice(0, dotIndex);
+  const extension = dotIndex === -1 ? "" : file.name.slice(dotIndex);
+  const safeBaseName = baseName.replace(/\s+/g, "-");
+
+  return new File([file], `${safeBaseName}-${Date.now()}${extension}`, {
+    type: file.type,
+    lastModified: file.lastModified,
+  });
+};
+
+const deriveUploadedFileName = (videoFileUrl = "") => {
+  if (!videoFileUrl || isYouTubeVideoUrl(videoFileUrl)) {
+    return "";
+  }
+
+  try {
+    const parsed = new URL(videoFileUrl);
+    const fileName = parsed.pathname.split("/").pop() || "";
+    return decodeURIComponent(fileName);
+  } catch (error) {
+    return "";
+  }
+};
+
+const createLessonDraft = (lesson = {}, lessonIndex = 0) => {
+  const videoFileUrl = lesson?.videoFileUrl || "";
+  const isYouTube = !videoFileUrl || isYouTubeVideoUrl(videoFileUrl);
+
+  return {
+    chapterId: lesson?.chapterId ?? null,
+    chapterStatus: "SUB_CHAPTER",
+    chapterTitle: lesson?.chapterTitle || "",
+    chapterIndex: lesson?.chapterIndex ?? lessonIndex,
+    videoFileUrl,
+    videoInputMode: isYouTube ? "youtube" : "upload",
+    uploadedFileName: deriveUploadedFileName(videoFileUrl),
+    uploading: false,
+  };
+};
+
+const createChapterDraft = (chapter = {}, chapterIndex = 0) => {
+  const subChapters = Array.isArray(chapter?.subChapters)
+    ? chapter.subChapters.map((lesson, lessonIndex) =>
+        createLessonDraft(lesson, lessonIndex)
+      )
+    : [createLessonDraft({}, 0)];
+
+  return {
+    chapterId: chapter?.chapterId ?? null,
+    chapterStatus: "MAIN_CHAPTER",
+    chapterTitle: chapter?.chapterTitle || "",
+    chapterIndex: chapter?.chapterIndex ?? chapterIndex,
+    subChapters,
+  };
+};
+
+const reindexSubChapters = (subChapters = []) =>
+  subChapters.map((lesson, index) => ({
+    ...lesson,
+    chapterIndex: index,
+  }));
+
+const reindexChapters = (chapters = []) =>
+  chapters.map((chapter, chapterIndex) => ({
+    ...chapter,
+    chapterIndex,
+    subChapters: reindexSubChapters(chapter.subChapters || []),
+  }));
+
+const normalizeChapters = (chapters = []) => {
+  if (!Array.isArray(chapters) || chapters.length === 0) {
+    return [createChapterDraft({}, 0)];
+  }
+
+  return reindexChapters(
+    chapters.map((chapter, chapterIndex) =>
+      createChapterDraft(chapter, chapterIndex)
+    )
+  );
+};
+
+const serializeChaptersForSubmit = (chapters = []) =>
+  reindexChapters(chapters).map((chapter) => ({
+    chapterId: chapter.chapterId ?? undefined,
+    chapterStatus: "MAIN_CHAPTER",
+    chapterTitle: chapter.chapterTitle,
+    chapterIndex: chapter.chapterIndex,
+    subChapters: (chapter.subChapters || []).map((lesson) => ({
+      chapterId: lesson.chapterId ?? undefined,
+      chapterStatus: "SUB_CHAPTER",
+      chapterTitle: lesson.chapterTitle,
+      chapterIndex: lesson.chapterIndex,
+      videoFileUrl: lesson.videoFileUrl,
+    })),
+  }));
+
 const CoursePostWrite = () => {
   const router = useRouter();
   const imageInput = useRef();
   const searchParams = useSearchParams();
-  const type = searchParams.get("type"); // type 파라미터 (수정 또는 새로 등록)
-  const videoLessonsId = searchParams.get("videoLessonsId"); // 수정 시 기존 강의 ID
+  const type = searchParams.get("type");
+  const videoLessonsId = searchParams.get("videoLessonsId");
+  const isEditMode = type === "edit";
   const { courseDetail, postCourseItem, getCourseDetail } = useCourseStore();
-  const accessToken = getCookie("accessToken"); // 사용자 액세스 토큰
+  const accessToken = getCookie("accessToken");
 
-  // 상태 관리 변수들
   const [group, setGroup] = useState("all");
   const [level, setLevel] = useState("all");
   const [subject, setSubject] = useState("all");
@@ -57,236 +184,233 @@ const CoursePostWrite = () => {
   const [content, setContent] = useState("");
   const [lecturer, setLecturer] = useState("");
   const [videoLessonsStatus, setVideoLessonsStatus] = useState("");
+  const [chapters, setChapters] = useState(() => normalizeChapters());
 
-  const [subChapters, setSubChapters] = useState({
-    0: [
-      {
-        chapterStatus: "SUB_CHAPTER",
-        chapterTitle: "",
-        chapterIndex: 0,
-        videoFileUrl: "",
-      },
-    ],
-  });
-  const [chapters, setChapters] = useState([
-    {
-      chapterStatus: "MAIN_CHAPTER",
-      chapterTitle: "",
-      chapterIndex: 0,
-      subChapters: subChapters[0],
-    },
-  ]);
-
-  // 파일명 변경 함수: 파일명에 타임스탬프 추가
-  const changeFileName = (file) => {
-    const fileExtention = file.name.split(".")[1];
-    const oldFileName = file.name.split(".")[0];
-    const date = new Date();
-    var hours = ("0" + date.getHours()).slice(-2);
-    var minutes = ("0" + date.getMinutes()).slice(-2);
-    var seconds = ("0" + date.getSeconds()).slice(-2);
-    var timeString = hours + ":" + minutes + ":" + seconds;
-    const newFile = new File(
-      [file],
-      `${oldFileName}_${timeString}.${fileExtention}`,
-      {
-        type: file.type,
-      }
-    );
-    return newFile;
-  };
-
-  // 강의 정보를 로드하는 함수
-  const loadingInfo = async (videoLessonsId) => {
-    await getCourseDetail(videoLessonsId);
-  };
-
-  // 강의 ID가 있을 경우 강의 정보를 로드
   useEffect(() => {
     if (videoLessonsId) {
-      loadingInfo(videoLessonsId);
-    }
-  }, []);
-  // 수정 모드일 때 기존 데이터를 불러오는 함수
-  useEffect(() => {
-    if (videoLessonsId) {
-      if (!courseDetail?.title) {
-        alert("잘못된 접근입니다.");
-        router.push("/course/");
-      }
       getCourseDetail(videoLessonsId);
-      setTitle(courseDetail?.title);
-      setContent(courseDetail?.content);
-      setLecturer(courseDetail?.instructor);
-      setChapters(courseDetail?.chapters);
-      const temp = [];
-      courseDetail?.chapters?.map((v) => temp.push(v.subChapters));
-      setSubChapters(temp);
-      setFirstCategoryId(courseDetail?.firstCategory?.videoCategoryId);
-      setSecondCategoryId(courseDetail?.secondCategory?.videoCategoryId);
-      setThirdCategoryId(courseDetail?.thirdCategory?.videoCategoryId);
-      setGroup(courseDetail?.firstCategory?.categoryName);
-      setSubject(courseDetail?.secondCategory?.categoryName);
-      setLevel(courseDetail?.thirdCategory?.categoryName);
-      setDuration(courseDetail?.duration);
-      setVideoLessonsStatus(courseDetail?.videoLessonsStatus);
     }
-  }, []);
+  }, [getCourseDetail, videoLessonsId]);
 
-  // 그룹 변경 시 호출되는 핸들러 함수
+  useEffect(() => {
+    if (!isEditMode || !videoLessonsId) {
+      return;
+    }
+
+    if (Number(courseDetail?.videoLessonsId) !== Number(videoLessonsId)) {
+      return;
+    }
+
+    setTitle(courseDetail?.title || "");
+    setContent(courseDetail?.content || "");
+    setLecturer(courseDetail?.instructor || "");
+    setChapters(normalizeChapters(courseDetail?.chapters));
+    setFirstCategoryId(courseDetail?.firstCategory?.videoCategoryId ?? -1);
+    setSecondCategoryId(courseDetail?.secondCategory?.videoCategoryId ?? -1);
+    setThirdCategoryId(courseDetail?.thirdCategory?.videoCategoryId ?? 27);
+    setGroup(courseDetail?.firstCategory?.categoryName || "all");
+    setSubject(courseDetail?.secondCategory?.categoryName || "all");
+    setLevel(courseDetail?.thirdCategory?.categoryName || "all");
+    setDuration(courseDetail?.duration || "");
+    setVideoLessonsStatus(courseDetail?.videoLessonsStatus || "");
+  }, [courseDetail, isEditMode, videoLessonsId]);
+
   const handleGroupChange = (e) => {
     setGroup(e.target.value);
     setFirstCategoryId(GROUPS[e.target.value]);
   };
 
-  // 레벨 변경 시 호출되는 핸들러 함수
   const handleLevelChange = (e) => {
     setLevel(e.target.value);
     setThirdCategoryId(LEVELS[e.target.value]);
   };
 
-  // 과목 변경 시 호출되는 핸들러 함수
   const handleSubjectChange = (e) => {
     setSubject(e.target.value);
     setSecondCategoryId(SUBJECTS[e.target.value]);
   };
 
-  // 새로운 챕터 추가
+  const updateChapters = useCallback((updater) => {
+    setChapters((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      return reindexChapters(next);
+    });
+  }, []);
+
   const addNumCurriChapter = () => {
-    let temp = [...chapters];
-    const subTemp = { ...subChapters };
-    let chptIndex = Number(temp.length);
-    subTemp[chptIndex] = [
-      {
-        chapterStatus: "SUB_CHAPTER",
-        chapterTitle: "",
-        chapterIndex: 0,
-        videoFileUrl: "",
-      },
-    ];
-    temp.push({
-      chapterStatus: "MAIN_CHAPTER",
-      chapterTitle: "",
-      chapterIndex: chptIndex,
-      subChapters: subTemp[chptIndex],
-    });
-    setSubChapters(subTemp);
-    setChapters(temp);
+    updateChapters((prev) => [...prev, createChapterDraft({}, prev.length)]);
   };
 
-  // 마지막 챕터 제거
   const removeNumCurriChapter = () => {
-    let tempNumCurriculumChapter = [...chapters];
-    const subTemp = { ...subChapters };
-    if (tempNumCurriculumChapter.length > 1) {
-      delete subTemp[tempNumCurriculumChapter.length - 1];
-      tempNumCurriculumChapter.pop();
-      setChapters(tempNumCurriculumChapter);
-      setSubChapters(subTemp);
-    }
-  };
-
-  // 서브 챕터 추가
-  const addNumCurriSubChapter = (chapterIndex) => {
-    const subTemp = { ...subChapters };
-
-    subTemp[chapterIndex].push({
-      chapterStatus: "SUB_CHAPTER",
-      chapterTitle: "",
-      chapterIndex: subTemp[chapterIndex].length,
-      videoFileUrl: "",
+    updateChapters((prev) => {
+      if (prev.length <= 1) {
+        return prev;
+      }
+      return prev.slice(0, -1);
     });
-
-    setSubChapters(subTemp);
   };
 
-  // 특정 메인 챕터의 특정 서브 챕터를 삭제하는 함수
-  const removeNumCurriSubChapter = (index, index_sub) => {
-    const subTemp = { ...subChapters };
+  const addNumCurriSubChapter = (chapterIndex) => {
+    updateChapters((prev) =>
+      prev.map((chapter, index) => {
+        if (index !== chapterIndex) {
+          return chapter;
+        }
 
-    if (subTemp[index] && subTemp[index][index_sub] !== undefined) {
-      subTemp[index] = subTemp[index].filter((_, idx) => idx !== index_sub);
-
-      setSubChapters(subTemp);
-
-      // chapters 상태도 업데이트하여 동기화
-      const updatedChapters = [...chapters];
-      updatedChapters[index] = {
-        ...updatedChapters[index],
-        subChapters: subTemp[index],
-      };
-      setChapters(updatedChapters);
-    }
+        return {
+          ...chapter,
+          subChapters: [
+            ...(chapter.subChapters || []),
+            createLessonDraft({}, chapter.subChapters?.length || 0),
+          ],
+        };
+      })
+    );
   };
 
-  useEffect(() => {
-    console.log("subChapters", subChapters);
-  }, [subChapters]);
+  const removeNumCurriSubChapter = (chapterIndex, subIndex) => {
+    updateChapters((prev) =>
+      prev.map((chapter, index) => {
+        if (index !== chapterIndex) {
+          return chapter;
+        }
 
+        return {
+          ...chapter,
+          subChapters: (chapter.subChapters || []).filter(
+            (_, lessonIndex) => lessonIndex !== subIndex
+          ),
+        };
+      })
+    );
+  };
 
+  const handleCurriculumChange = useCallback(
+    (chapterIndex, subIndex, patch) => {
+      updateChapters((prev) =>
+        prev.map((chapter, currentChapterIndex) => {
+          if (currentChapterIndex !== chapterIndex) {
+            return chapter;
+          }
 
-  // 제목 변경 핸들러
+          if (typeof subIndex !== "number") {
+            return { ...chapter, ...patch };
+          }
+
+          return {
+            ...chapter,
+            subChapters: (chapter.subChapters || []).map((lesson, lessonIndex) =>
+              lessonIndex === subIndex ? { ...lesson, ...patch } : lesson
+            ),
+          };
+        })
+      );
+    },
+    [updateChapters]
+  );
+
+  const handleLessonVideoModeChange = useCallback(
+    (chapterIndex, subIndex, nextMode) => {
+      handleCurriculumChange(chapterIndex, subIndex, {
+        videoInputMode: nextMode,
+        videoFileUrl: "",
+        uploadedFileName: "",
+        uploading: false,
+      });
+    },
+    [handleCurriculumChange]
+  );
+
+  const handleLessonVideoUpload = useCallback(
+    async (chapterIndex, subIndex, file) => {
+      if (!file) {
+        return;
+      }
+
+      const renamedFile = createTimestampedFile(file);
+      handleCurriculumChange(chapterIndex, subIndex, {
+        uploading: true,
+      });
+
+      try {
+        const response = await coursePostVideoFile(renamedFile, { accessToken });
+        const uploadedUrl = response?.data?.fileUrl;
+        if (!uploadedUrl) {
+          throw new Error("Video upload failed");
+        }
+
+        handleCurriculumChange(chapterIndex, subIndex, {
+          videoFileUrl: uploadedUrl,
+          uploadedFileName:
+            response?.data?.fileName || renamedFile.name || file.name,
+          videoInputMode: "upload",
+          uploading: false,
+        });
+      } catch (error) {
+        console.error("Failed to upload course lesson video:", error);
+        handleCurriculumChange(chapterIndex, subIndex, {
+          uploading: false,
+        });
+        alert("동영상 업로드에 실패했습니다.");
+      }
+    },
+    [accessToken, handleCurriculumChange]
+  );
+
   const onChangeTitle = useCallback((e) => {
     setTitle(e.target.value);
   }, []);
 
-  // 강사 이름 변경 핸들러
   const onChangeLecturer = useCallback((e) => {
     setLecturer(e.target.value);
   }, []);
 
-  // 썸네일 업로드 핸들러
   const onClickImageUpload = (e) => {
-    imageInput.current = changeFileName(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (!file) {
+      return;
+    }
+    imageInput.current = createTimestampedFile(file);
   };
 
-  // 폼 제출 핸들러 (새 강의 생성 또는 기존 강의 수정)
   const onSubmit = async (e) => {
     e.preventDefault();
-    const chapterInfo =
-      chapters.length == 1
-        ? chapters.length.toString() + " Chapter"
-        : chapters.length.toString() + " Chapters";
 
-    // 수정 모드일 때
-    console.log("type", type);
-    console.log(parseInt(videoLessonsId),
-      title,
-      content,
-      lecturer,
-      chapterInfo,
-      duration,
-      chapters,
-      firstCategoryId,
-      secondCategoryId,
-      thirdCategoryId,
-      videoLessonsStatus);
-    if (type === "edit") {
+    const serializedChapters = serializeChaptersForSubmit(chapters);
+    const chapterInfo =
+      serializedChapters.length === 1
+        ? "1 Chapter"
+        : `${serializedChapters.length} Chapters`;
+
+    if (isEditMode) {
       await courseReviseItem(
-        parseInt(videoLessonsId),
+        parseInt(videoLessonsId, 10),
         title,
         content,
         lecturer,
         chapterInfo,
         duration,
-        chapters,
+        serializedChapters,
         firstCategoryId,
         secondCategoryId,
         thirdCategoryId,
         videoLessonsStatus,
         { accessToken }
       );
-      if (imageInput.current)
-        coursePostThumnail(videoLessonsId, imageInput.current, { accessToken });
+
+      if (imageInput.current) {
+        await coursePostThumnail(videoLessonsId, imageInput.current, {
+          accessToken,
+        });
+      }
     } else {
-      // 새 강의 등록 모드일 때
-      const res = await postCourseItem(
+      await postCourseItem(
         title,
         content,
         lecturer,
         chapterInfo,
         duration,
-        chapters,
+        serializedChapters,
         firstCategoryId,
         secondCategoryId,
         thirdCategoryId,
@@ -299,95 +423,94 @@ const CoursePostWrite = () => {
   };
 
   return (
-    <>
-      <main className="width_content">
-        <form onSubmit={onSubmit}>
-          <div className={styles.write_wrap}>
-            <input
-              type="text"
-              value={title}
-              onChange={onChangeTitle}
-              className={styles.write_tit}
-              placeholder="강의제목"
-            />
-            <DynamicEditor
-              styleName={styles.write_content}
-              content={content}
-              setContent={setContent}
-            />
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                <div className={styles.write_link_title}>
-                  <p>강사 이름</p>
-                </div>
-                <input
-                  type="text"
-                  className={styles.write_link_lecturer}
-                  value={lecturer}
-                  onChange={onChangeLecturer}
-                />
-                <div className={styles.write_link_title}>
-                  <p>강의 유효기간</p>
-                </div>
-                <input
-                  type="text"
-                  className={styles.write_link_lecturer}
-                  value={duration}
-                  onChange={(e) => setDuration(e.target.value)}
-                  placeholder="구독기간 동안 무제한 제공"
-                />
+    <main className="width_content">
+      <form onSubmit={onSubmit}>
+        <div className={styles.write_wrap}>
+          <input
+            type="text"
+            value={title}
+            onChange={onChangeTitle}
+            className={styles.write_tit}
+            placeholder="강의제목"
+          />
+          <DynamicEditor
+            styleName={styles.write_content}
+            content={content}
+            setContent={setContent}
+          />
+          <div style={{ display: "flex", justifyContent: "space-between" }}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <div className={styles.write_link_title}>
+                <p>강사 이름</p>
               </div>
-              <CoursePostCategory
-                group={group}
-                subject={subject}
-                level={level}
-                handleGroupChange={handleGroupChange}
-                handleSubjectChange={handleSubjectChange}
-                handleLevelChange={handleLevelChange}
-              />
-            </div>
-            <div className={styles.write_link_title}>
-              <p>강의 커리큘럼</p>
-            </div>
-            <CoursePostCurriculum
-              numCurriculumChapter={chapters}
-              numCurriculumSubChapter={subChapters}
-              addNumCurriSubChapter={addNumCurriSubChapter}
-              removeNumCurriSubChapter={removeNumCurriSubChapter}
-              setSubChapters={setSubChapters}
-              setChapters={setChapters}
-            />
-            <div className={styles.write_block}>
-              <label>썸네일 등록 ( jpg, png, gif 파일 )</label>
               <input
-                type="file"
-                accept="image/jpg,impge/png,image/jpeg,image/gif"
-                className={styles.write_img}
-                onChange={onClickImageUpload}
+                type="text"
+                className={styles.write_link_lecturer}
+                value={lecturer}
+                onChange={onChangeLecturer}
               />
-
-              <label>커리큘럼 추가 / 제거</label>
-              <div className={styles.curriculum_buttons}>
-                <button type="Button" onClick={addNumCurriChapter}>
-                  +
-                </button>
-                <button type="Button" onClick={removeNumCurriChapter}>
-                  -
-                </button>
+              <div className={styles.write_link_title}>
+                <p>강의 유효기간</p>
               </div>
+              <input
+                type="text"
+                className={styles.write_link_lecturer}
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                placeholder="구독기간 동안 무제한 제공"
+              />
             </div>
-            <div className={styles.write_btn_area}>
-              <Link href="/course/" className={styles.cancel}>
-                취소
-              </Link>
-              <button className={styles.submit} type="submit">
-                등록
+            <CoursePostCategory
+              group={group}
+              subject={subject}
+              level={level}
+              handleGroupChange={handleGroupChange}
+              handleSubjectChange={handleSubjectChange}
+              handleLevelChange={handleLevelChange}
+            />
+          </div>
+          <div className={styles.write_link_title}>
+            <p>강의 커리큘럼</p>
+          </div>
+          <CoursePostCurriculum
+            chapters={chapters}
+            addNumCurriSubChapter={addNumCurriSubChapter}
+            removeNumCurriSubChapter={removeNumCurriSubChapter}
+            setChapters={updateChapters}
+            handleCurriculumChange={handleCurriculumChange}
+            handleLessonVideoModeChange={handleLessonVideoModeChange}
+            handleLessonVideoUpload={handleLessonVideoUpload}
+          />
+          <div className={styles.write_block}>
+            <label>썸네일 등록 ( jpg, png, gif 파일 )</label>
+            <input
+              type="file"
+              accept="image/jpg,impge/png,image/jpeg,image/gif"
+              className={styles.write_img}
+              onChange={onClickImageUpload}
+            />
+
+            <label>커리큘럼 추가 / 제거</label>
+            <div className={styles.curriculum_buttons}>
+              <button type="button" onClick={addNumCurriChapter}>
+                +
+              </button>
+              <button type="button" onClick={removeNumCurriChapter}>
+                -
               </button>
             </div>
           </div>
-        </form>
-      </main>
-    </>
+          <div className={styles.write_btn_area}>
+            <Link href="/course/" className={styles.cancel}>
+              취소
+            </Link>
+            <button className={styles.submit} type="submit">
+              {isEditMode ? "수정" : "등록"}
+            </button>
+          </div>
+        </div>
+      </form>
+    </main>
   );
 };
 

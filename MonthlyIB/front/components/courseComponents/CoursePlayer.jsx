@@ -585,6 +585,7 @@ const CoursePlayer = ({ pageId }) => {
         ref={videoRef}
         src={currentLesson.videoFileUrl}
         controls
+        preload="metadata"
         playsInline
         onLoadedMetadata={(event) => {
           durationRef.current = Math.floor(event.currentTarget.duration || 0);
@@ -600,9 +601,7 @@ const CoursePlayer = ({ pageId }) => {
           currentTimeRef.current = Math.floor(durationRef.current || 0);
           persistCurrentLessonProgress({ markComplete: true });
         }}
-      >
-        <source src={currentLesson.videoFileUrl} type="video/mp4" />
-      </video>
+      />
     );
   }, [currentLesson, persistCurrentLessonProgress, playerVersion, startAtSeconds]);
 

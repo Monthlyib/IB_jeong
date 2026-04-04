@@ -509,7 +509,8 @@
 
 .subcurriculum_wrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .subcurriculum_btn_wrapper {
@@ -544,7 +545,7 @@
 }
 .write_wrap .write_sub_link {
   display: block;
-  width: 110rem;
+  width: 100%;
   min-height: 1rem;
   margin-top: 1rem;
   border: 1px solid #d5d5d5;
@@ -557,6 +558,66 @@
   font-weight: 400;
   line-height: 1.4;
   resize: none;
+}
+
+.lessonEditorCard {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: 1.4rem 1.6rem 1.8rem;
+  margin-top: 1rem;
+  border: 1px solid #e0d8eb;
+  border-radius: 1.4rem;
+  background: #fcfbff;
+}
+
+.lessonVideoMode {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.2rem;
+}
+
+.lessonVideoMode button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 4rem;
+  padding: 0 1.6rem;
+  border-radius: 999px;
+  border: 1px solid #ddd4ea;
+  background: #fff;
+  color: #56466e;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.lessonVideoMode button.lessonVideoModeActive {
+  border-color: var(--primary01);
+  background: rgba(81, 52, 108, 0.08);
+  color: var(--primary01);
+}
+
+.lessonUploadArea {
+  margin-top: 1.2rem;
+}
+
+.lessonUploadStatus {
+  margin-top: 0.8rem;
+  color: #6c6181;
+  font-size: 1.35rem;
+  font-weight: 500;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.lessonUploadLink {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 0.8rem;
+  color: var(--primary01);
+  font-size: 1.35rem;
+  font-weight: 700;
 }
 
 .write_block {

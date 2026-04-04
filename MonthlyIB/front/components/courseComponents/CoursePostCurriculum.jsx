@@ -2,48 +2,55 @@ import styles from "./CourseComponents.module.css";
 import { useRef } from "react";
 
 const CoursePostCurriculum = ({
-  numCurriculumChapter,
-  numCurriculumSubChapter,
+  chapters,
   addNumCurriSubChapter,
   removeNumCurriSubChapter,
-  setSubChapters,
   setChapters,
+  handleCurriculumChange,
+  handleLessonVideoModeChange,
+  handleLessonVideoUpload,
 }) => {
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
 
-  // 드래그 시작 시 호출되는 핸들러
   const onDragStart = (index) => {
-    dragItem.current = index; // 드래그한 아이템의 인덱스 저장
+    dragItem.current = index;
   };
 
-  // 드래그 중 드래그 오버된 아이템의 인덱스를 저장
   const onDragOver = (index) => {
     dragOverItem.current = index;
   };
 
-  // 드래그가 끝났을 때 호출되는 핸들러
   const onDrop = (chapterIndex) => {
-    const updatedSubChapters = [...numCurriculumSubChapter[chapterIndex]];
-
-    // 드래그 아이템과 드래그 오버 아이템의 위치 교환
     const dragIndex = dragItem.current;
     const dragOverIndex = dragOverItem.current;
 
-    if (dragIndex !== dragOverIndex && dragIndex !== null && dragOverIndex !== null) {
-      // 교환
-      const temp = updatedSubChapters[dragIndex];
-      updatedSubChapters[dragIndex] = updatedSubChapters[dragOverIndex];
-      updatedSubChapters[dragOverIndex] = temp;
-
-      // chapterIndex 동기화
-      updatedSubChapters[dragIndex].chapterIndex = dragIndex;
-      updatedSubChapters[dragOverIndex].chapterIndex = dragOverIndex;
-
-      // 상태 업데이트
-      const newSubChapters = { ...numCurriculumSubChapter, [chapterIndex]: updatedSubChapters };
-      setSubChapters(newSubChapters);
+    if (
+      dragIndex === null ||
+      dragOverIndex === null ||
+      dragIndex === dragOverIndex
+    ) {
+      dragItem.current = null;
+      dragOverItem.current = null;
+      return;
     }
+
+    setChapters((prev) =>
+      prev.map((chapter, currentChapterIndex) => {
+        if (currentChapterIndex !== chapterIndex) {
+          return chapter;
+        }
+
+        const updatedSubChapters = [...(chapter.subChapters || [])];
+        const [draggedLesson] = updatedSubChapters.splice(dragIndex, 1);
+        updatedSubChapters.splice(dragOverIndex, 0, draggedLesson);
+
+        return {
+          ...chapter,
+          subChapters: updatedSubChapters,
+        };
+      })
+    );
 
     dragItem.current = null;
     dragOverItem.current = null;
@@ -51,72 +58,149 @@ const CoursePostCurriculum = ({
 
   return (
     <ul style={{ listStyle: "none" }}>
-      {numCurriculumChapter?.map((chapter, chapterIndex) => (
-        <li key={chapterIndex}>
-          {/* 챕터 제목 입력 */}
+      {chapters?.map((chapter, chapterIndex) => (
+        <li key={chapter.chapterId ?? `chapter-${chapterIndex}`}>
           <input
             type="text"
             value={chapter.chapterTitle}
             className={styles.write_link}
             placeholder="강의 챕터 제목을 입력해주세요."
             onChange={(e) => {
-              const updatedChapters = [...numCurriculumChapter];
-              updatedChapters[chapterIndex].chapterTitle = e.target.value;
-              setChapters(updatedChapters);
+              handleCurriculumChange(chapterIndex, null, {
+                chapterTitle: e.target.value,
+              });
             }}
           />
 
-          {/* 서브 챕터 리스트 */}
           <ul style={{ listStyle: "none" }}>
-            {numCurriculumSubChapter[chapterIndex]?.map((subChapter, subIndex) => (
+            {chapter.subChapters?.map((subChapter, subIndex) => (
               <li
-                key={subChapter.chapterId}
+                key={subChapter.chapterId ?? `lesson-${chapterIndex}-${subIndex}`}
                 className={styles.subcurriculum_wrapper}
                 draggable
                 onDragStart={() => onDragStart(subIndex)}
                 onDragOver={(e) => {
-                  e.preventDefault(); // 기본 이벤트 막기
+                  e.preventDefault();
                   onDragOver(subIndex);
                 }}
                 onDrop={() => onDrop(chapterIndex)}
               >
                 <div className={styles.subcurriculum_btn_wrapper}>
-                  {/* 서브 챕터 추가 버튼 */}
-                  <button type="button" onClick={() => addNumCurriSubChapter(chapterIndex)}>
+                  <button
+                    type="button"
+                    onClick={() => addNumCurriSubChapter(chapterIndex)}
+                  >
                     +
                   </button>
 
-                  {/* 서브 챕터 제거 버튼 */}
-                  <button type="button" onClick={() => removeNumCurriSubChapter(chapterIndex, subIndex)}>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      removeNumCurriSubChapter(chapterIndex, subIndex)
+                    }
+                  >
                     -
                   </button>
                 </div>
 
-                {/* 서브 챕터 제목 입력 */}
-                <input
-                  type="text"
-                  value={subChapter.chapterTitle}
-                  className={styles.write_sub_link}
-                  placeholder="서브 챕터 제목을 입력해주세요"
-                  onChange={(e) => {
-                    const updatedSubChapters = [...numCurriculumSubChapter[chapterIndex]];
-                    updatedSubChapters[subIndex].chapterTitle = e.target.value;
-                    setSubChapters({ ...numCurriculumSubChapter, [chapterIndex]: updatedSubChapters });
-                  }}
-                />
+                <div className={styles.lessonEditorCard}>
+                  <input
+                    type="text"
+                    value={subChapter.chapterTitle}
+                    className={styles.write_sub_link}
+                    placeholder="서브 챕터 제목을 입력해주세요"
+                    onChange={(e) => {
+                      handleCurriculumChange(chapterIndex, subIndex, {
+                        chapterTitle: e.target.value,
+                      });
+                    }}
+                  />
 
-                {/* 서브 챕터 영상 링크 입력 */}
-                <input
-                  type="url"
-                  value={subChapter.videoFileUrl}
-                  className={styles.write_link}
-                  placeholder="영상 링크를 넣어주세요."
-                  onChange={(e) => {
-                    const updatedSubChapters = [...numCurriculumSubChapter[chapterIndex]];
-                    updatedSubChapters[subIndex].videoFileUrl = e.target.value;
-                    setSubChapters({ ...numCurriculumSubChapter, [chapterIndex]: updatedSubChapters });
-                  }}
-                />
+                  <div className={styles.lessonVideoMode}>
+                    <button
+                      type="button"
+                      className={
+                        subChapter.videoInputMode === "youtube"
+                          ? styles.lessonVideoModeActive
+                          : ""
+                      }
+                      onClick={() =>
+                        handleLessonVideoModeChange(
+                          chapterIndex,
+                          subIndex,
+                          "youtube"
+                        )
+                      }
+                    >
+                      YouTube 링크
+                    </button>
+                    <button
+                      type="button"
+                      className={
+                        subChapter.videoInputMode === "upload"
+                          ? styles.lessonVideoModeActive
+                          : ""
+                      }
+                      onClick={() =>
+                        handleLessonVideoModeChange(
+                          chapterIndex,
+                          subIndex,
+                          "upload"
+                        )
+                      }
+                    >
+                      동영상 파일
+                    </button>
+                  </div>
+
+                  {subChapter.videoInputMode === "youtube" ? (
+                    <input
+                      type="url"
+                      value={subChapter.videoFileUrl}
+                      className={styles.write_link}
+                      placeholder="유튜브 링크를 넣어주세요."
+                      onChange={(e) => {
+                        handleCurriculumChange(chapterIndex, subIndex, {
+                          videoFileUrl: e.target.value,
+                        });
+                      }}
+                    />
+                  ) : (
+                    <div className={styles.lessonUploadArea}>
+                      <input
+                        type="file"
+                        accept="video/*"
+                        className={styles.write_file}
+                        disabled={subChapter.uploading}
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) {
+                            return;
+                          }
+
+                          handleLessonVideoUpload(chapterIndex, subIndex, file);
+                          e.target.value = "";
+                        }}
+                      />
+                      <p className={styles.lessonUploadStatus}>
+                        {subChapter.uploading
+                          ? "동영상을 업로드 중입니다..."
+                          : subChapter.uploadedFileName ||
+                            "업로드된 파일이 없습니다."}
+                      </p>
+                      {subChapter.videoFileUrl ? (
+                        <a
+                          href={subChapter.videoFileUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className={styles.lessonUploadLink}
+                        >
+                          현재 업로드된 영상 확인
+                        </a>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
               </li>
             ))}
           </ul>
