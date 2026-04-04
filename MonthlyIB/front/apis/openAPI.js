@@ -292,10 +292,15 @@ export const monthlyIBGetList = async (keyWord, page) => {
   }
 };
 
-export const questionGetList = async (questionStatus, keyWord, page) => {
+export const questionGetList = async (
+  questionStatus,
+  keyWord,
+  page,
+  size = 10
+) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/question?page=${page}&keyWord=${keyWord}&questionStatus=${questionStatus}`,
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/question?page=${page}&size=${size}&keyWord=${keyWord}&questionStatus=${questionStatus}`,
       {
         method: "GET",
         headers: {

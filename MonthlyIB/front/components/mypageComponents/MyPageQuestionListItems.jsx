@@ -1,5 +1,4 @@
 import styles from "./MyPage.module.css";
-import _ from "lodash";
 import Pagination from "@/components/layoutComponents/Paginatation";
 import Link from "next/link";
 
@@ -8,16 +7,12 @@ const MyPageQuestionListItems = ({
   currentPage,
   numShowContents,
   onPageChange,
+  totalPages,
 }) => {
-  const paginate = (items, pageNum) => {
-    const startIndex = (pageNum - 1) * numShowContents;
-    return _(items).slice(startIndex).take(numShowContents).value();
-  };
-  const paginatedPage = paginate(questionContents, currentPage);
   return (
     <>
       {questionContents.length > 0 ? (
-        paginatedPage.map((content) => (
+        questionContents.map((content) => (
           <div
             className={`${styles.question_item} 
                         ${
@@ -59,6 +54,7 @@ const MyPageQuestionListItems = ({
           currentPage={currentPage}
           numShowContents={numShowContents}
           onPageChange={onPageChange}
+          totalPages={totalPages}
         />
       )}
     </>

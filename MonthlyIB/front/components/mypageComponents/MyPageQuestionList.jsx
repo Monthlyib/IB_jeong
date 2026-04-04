@@ -8,7 +8,7 @@ import { useUserInfo, useUserStore } from "@/store/user";
 const MyPageQuestionList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { userInfo } = useUserInfo();
-  const { getUserQuestionList, questionList } = useQuestionStore();
+  const { getUserQuestionList, questionList, questionPageInfo } = useQuestionStore();
   const { userSubscribeInfo, getUserSubscribeInfo } = useUserStore();
 
   useEffect(() => {
@@ -21,8 +21,12 @@ const MyPageQuestionList = () => {
       );
   }, []);
   useEffect(() => {
-    getUserQuestionList("", currentPage - 1, "", userInfo);
-  }, []);
+    if (!userInfo?.accessToken) {
+      return;
+    }
+
+    getUserQuestionList("", currentPage, "", userInfo, 6);
+  }, [currentPage, getUserQuestionList, userInfo]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -41,6 +45,7 @@ const MyPageQuestionList = () => {
           currentPage={currentPage}
           numShowContents={6}
           onPageChange={handlePageChange}
+          totalPages={questionPageInfo?.totalPages ?? 1}
         />
       </div>
     </>

@@ -36,7 +36,8 @@ export const questionGetUserList = async (
   questionStatus,
   page,
   keyWord,
-  session
+  session,
+  size = 10
 ) => {
   try {
     const config = {
@@ -46,7 +47,7 @@ export const questionGetUserList = async (
       },
     };
     const res = await tokenRequireApi.get(
-      `${QUESTION_API_URL}?keyWord=${keyWord}&questionStatus=${questionStatus}&page=${page}`,
+      `${QUESTION_API_URL}?keyWord=${keyWord}&questionStatus=${questionStatus}&page=${page}&size=${size}`,
       config
     );
 

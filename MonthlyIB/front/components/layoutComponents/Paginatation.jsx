@@ -5,13 +5,15 @@ import { range } from "lodash";
 import styles from "./Pagination.module.css";
 
 const Pagination = ({
-  contents,
+  contents = [],
   currentPage,
   numShowContents,
   onPageChange,
+  totalPages,
 }) => {
-  const pageCount = contents.length / numShowContents;
-  const pages = range(1, Math.ceil(pageCount) + 1);
+  const resolvedTotalPages =
+    totalPages ?? Math.max(1, Math.ceil(contents.length / numShowContents));
+  const pages = range(1, resolvedTotalPages + 1);
   return (
     <div className={styles.page_cont}>
       <ul style={{ listStyle: "none" }}>
@@ -33,7 +35,7 @@ const Pagination = ({
         <li>
           <a
             onClick={() =>
-              Math.ceil(pageCount) > currentPage
+              resolvedTotalPages > currentPage
                 ? onPageChange(currentPage + 1)
                 : null
             }

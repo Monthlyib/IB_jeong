@@ -24,6 +24,7 @@ const QuestionDetail = (pageId) => {
   const {
     questionDetail,
     getQuestionDetail,
+    getQuestionList,
     deleteQuestionAnswer,
     reviseQuestionAnswer,
     submitQuestionAnswer,
@@ -36,7 +37,7 @@ const QuestionDetail = (pageId) => {
   const [reviseModal, setReviseModal] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const currentPage = searchParams.get("currentPage");
+  const currentPage = Number(searchParams.get("currentPage") || 1);
 
   const currentIndex = questionList?.findIndex(
     (v) => v.questionId === parseInt(pageId?.pageId)
@@ -58,10 +59,18 @@ const QuestionDetail = (pageId) => {
 
   useEffect(() => {
     tempAccess.accessToken = getCookie("accessToken");
-    if (tempAccess.accessToken) {
-      getUserQuestionList("", currentPage - 1, "", tempAccess);
+    if (userInfo?.authority === "ADMIN") {
+      getQuestionList(currentPage, "", 6);
+      return;
     }
-  }, []);
+
+    if (tempAccess.accessToken) {
+      getUserQuestionList("", currentPage, "", tempAccess, 6);
+      return;
+    }
+
+    getQuestionList(currentPage, "", 6);
+  }, [currentPage, getQuestionList, getUserQuestionList, userInfo?.authority]);
 
   const onClickWriteAnswer = () => {
     setModal(!modal);

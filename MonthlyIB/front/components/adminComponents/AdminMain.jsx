@@ -11,35 +11,51 @@ import AdminCards from "./AdminCards";
 import AdminUser from "./AdminUser";
 import AdminSchedule from "./AdminSchedule";
 import { useUserStore } from "@/store/user";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminQuestion from "./AdminQuestion";
 import AdminSubscribe from "./AdminSubscribe";
 import { useSubscribeStore } from "@/store/subscribe";
 import { useTutoringStore } from "@/store/tutoring";
 import { getCookie } from "@/apis/cookies";
-import { useQuestionStore } from "@/store/question";
+import { questionGetUserList } from "@/apis/questionAPI";
 
 const AdminMain = () => {
   const { userList, getUserList } = useUserStore();
   const { tutoringDateList, getTutoringDateList } = useTutoringStore();
   const { subscribeList, getSubscribeList } = useSubscribeStore();
-  const { questionList, getUserQuestionList } = useQuestionStore();
   const activatedUserList = userList.filter((v) => v.userStatus === "ACTIVE");
   const subscribePlanCount = useMemo(
     () => new Set((subscribeList || []).map((item) => item?.title).filter(Boolean)).size,
     [subscribeList]
   );
   const tutoringCount = tutoringDateList?.tutoring?.data?.length ?? 0;
+  const [questionMetrics, setQuestionMetrics] = useState({ total: 0, waiting: 0 });
 
   const tempAccess = {};
 
   useEffect(() => {
     tempAccess.accessToken = getCookie("accessToken");
+    if (!tempAccess.accessToken) {
+      return;
+    }
+
+    const fetchQuestionMetrics = async () => {
+      const [totalResponse, waitingResponse] = await Promise.all([
+        questionGetUserList("", 0, "", tempAccess, 1),
+        questionGetUserList("ANSWER_WAIT", 0, "", tempAccess, 1),
+      ]);
+
+      setQuestionMetrics({
+        total: totalResponse?.pageInfo?.totalElements ?? 0,
+        waiting: waitingResponse?.pageInfo?.totalElements ?? 0,
+      });
+    };
+
     if (tempAccess.accessToken) {
       getUserList(tempAccess);
       getSubscribeList();
       getTutoringDateList("", "", 0, tempAccess);
-      getUserQuestionList("", 0, "", tempAccess);
+      fetchQuestionMetrics();
     }
   }, []);
 
@@ -65,9 +81,7 @@ const AdminMain = () => {
           <div className={styles.adminMetaCard}>
             <span>질문 대기 / 전체</span>
             <strong>
-              {questionList?.filter((item) => item.questionStatus === "ANSWER_WAIT")
-                ?.length ?? 0}
-              /{questionList?.length ?? 0}
+              {questionMetrics.waiting}/{questionMetrics.total}
             </strong>
           </div>
         </div>
@@ -99,7 +113,7 @@ const AdminMain = () => {
           />
           <AdminCards
             title="질문"
-            number={questionList?.length ?? 0}
+            number={questionMetrics.total}
             icon={faComments}
           />
         </div>

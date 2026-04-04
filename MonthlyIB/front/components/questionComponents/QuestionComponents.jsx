@@ -13,7 +13,8 @@ import { useQuestionStore } from "@/store/question";
 import { useUserInfo, useUserStore } from "@/store/user";
 
 const QuestionComponents = () => {
-  const { questionList,getQuestionList, getUserQuestionList } = useQuestionStore();
+  const { questionList, questionPageInfo, getQuestionList, getUserQuestionList } =
+    useQuestionStore();
   const [modal, setModal] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,6 +45,7 @@ const QuestionComponents = () => {
     searchKeyword.current = e.target.value;
   };
   const onClickSearchButton = () => {
+    setCurrentPage(1);
     setSeraching((prev) => !prev);
   };
 
@@ -56,14 +58,14 @@ const QuestionComponents = () => {
 
     if (tempAccess?.accessToken) {
       if (userInfo?.authority === "ADMIN") {
-        // ADMIN일 경우 모든 질문을 조회
-        getQuestionList(currentPage, search);
+        getQuestionList(currentPage, search, 6);
       } else {
-        // 일반 사용자일 경우 자신의 질문만 조회
-        getUserQuestionList("", currentPage - 1, search, tempAccess);
+        getUserQuestionList("", currentPage, search, tempAccess, 6);
       }
+    } else {
+      getQuestionList(currentPage, search, 6);
     }
-  }, [searching, currentPage, modal]);
+  }, [getQuestionList, getUserQuestionList, modal, searching, currentPage, userInfo?.authority]);
 
 
   return (
@@ -95,7 +97,7 @@ const QuestionComponents = () => {
           <div className={styles.question_header}>
             <div className={styles.question_count}>
               <span>총 질문 수</span>
-              <b>{questionList?.length}</b>
+              <b>{questionPageInfo?.totalElements ?? questionList?.length ?? 0}</b>
             </div>
             {(userInfo?.authority === "USER" ||
               userSubscribeInfo?.[0]?.subscribeStatus === "ACTIVE") && (
@@ -121,7 +123,8 @@ const QuestionComponents = () => {
           <div className={styles.question_wrap}>
             <div className={styles.question_cont}>
               <QuestionItems
-                questions={searching ? searchedPosts : questionList}
+                questions={questionList}
+                totalPages={questionPageInfo?.totalPages ?? 1}
                 currentPage={currentPage}
                 numShowContents={6}
                 onPageChange={handlePageChange}

@@ -12,24 +12,45 @@ import { create } from "zustand";
 
 export const useQuestionStore = create((set, get) => ({
   questionList: [],
+  questionPageInfo: null,
   questionDetail: {},
-  getQuestionList: async (currentPage, keyword) => {
+  getQuestionList: async (currentPage, keyword, pageSize = 10, questionStatus = "") => {
     try {
-      const res = await questionGetList("", keyword, currentPage - 1);
-      set({ questionList: res.data });
+      const res = await questionGetList(
+        questionStatus,
+        keyword,
+        Math.max(currentPage - 1, 0),
+        pageSize
+      );
+      set({
+        questionList: res?.data ?? [],
+        questionPageInfo: res?.pageInfo ?? null,
+      });
+      return res;
     } catch (error) {
       console.error(error);
     }
   },
-  getUserQuestionList: async (questionStatus, page, keyWord, session) => {
+  getUserQuestionList: async (
+    questionStatus,
+    currentPage,
+    keyWord,
+    session,
+    pageSize = 10
+  ) => {
     try {
       const res = await questionGetUserList(
         questionStatus,
-        page,
+        Math.max(currentPage - 1, 0),
         keyWord,
-        session
+        session,
+        pageSize
       );
-      set({ questionList: res.data });
+      set({
+        questionList: res?.data ?? [],
+        questionPageInfo: res?.pageInfo ?? null,
+      });
+      return res;
     } catch (error) {
       console.error(error);
     }
@@ -83,10 +104,15 @@ export const useQuestionStore = create((set, get) => ({
       console.error(error);
     }
   },
-  deleteQuestionItem: async (questionId, session) => {
+  deleteQuestionItem: async (
+    questionId,
+    session,
+    currentPage = 1,
+    pageSize = 10
+  ) => {
     try {
       await questionDelete(questionId, session);
-      get().getUserQuestionList("", 0, "", session);
+      get().getUserQuestionList("", currentPage, "", session, pageSize);
     } catch (error) {
       console.error(error);
     }

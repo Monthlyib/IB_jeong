@@ -9,10 +9,10 @@ import { useQuestionStore } from "@/store/question";
 
 const AdminQuestionItems = ({
   questionList,
-  allQuestionList,
   currentPage,
-  numShowContents,
+  pageSize,
   onPageChange,
+  totalPages,
 }) => {
   const [modal, setModal] = useState(false);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
@@ -28,7 +28,7 @@ const AdminQuestionItems = ({
 
   const onSubmitDeleteQuestion = (questionId) => {
     setModal(false);
-    deleteQuestionItem(questionId, userInfo);
+    deleteQuestionItem(questionId, userInfo, currentPage, pageSize);
   };
 
   const onClickEdit = (question) => {
@@ -62,12 +62,13 @@ const AdminQuestionItems = ({
         ))}
       </div>
 
-      {allQuestionList?.length > 0 && (
+      {(totalPages ?? 0) > 0 && (
         <Paginatation
-          contents={allQuestionList}
+          contents={questionList}
           currentPage={currentPage}
-          numShowContents={numShowContents}
+          numShowContents={questionList?.length || 1}
           onPageChange={onPageChange}
+          totalPages={totalPages}
         />
       )}
 

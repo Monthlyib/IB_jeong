@@ -36,7 +36,7 @@ const MainMemberActivitySection = ({
     if (session?.userId !== undefined) {
       getUserCourseList(session.userId, currentPage - 1, session);
       getTutoringDateList("", "", 0, session);
-      getUserQuestionList("", 0, "", session);
+      getUserQuestionList("", 1, "", session, 6);
     }
   }, [currentPage, getTutoringDateList, getUserCourseList, getUserQuestionList, previewMode]);
 
