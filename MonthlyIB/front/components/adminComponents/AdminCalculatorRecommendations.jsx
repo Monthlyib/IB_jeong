@@ -54,6 +54,14 @@ const AdminCalculatorRecommendations = () => {
       ),
     [config]
   );
+  const subjectCount = useMemo(
+    () =>
+      config.groups.reduce(
+        (sum, group) => sum + (group.subjects?.length ?? 0),
+        0
+      ),
+    [config]
+  );
 
   const handleSave = async (draft) => {
     try {
@@ -77,10 +85,19 @@ const AdminCalculatorRecommendations = () => {
       <div className={styles.dashboard_mid_card}>
         <div className={styles.title}>추천학교 관리</div>
         <p className={styles.calculatorAdminDescription}>
-          합격 예측 계산기에서 사용하는 점수대 기준과 국가별 추천 학교를 관리합니다.
+          합격 예측 계산기에서 사용하는 그룹, 과목, 점수대 기준과 국가별 추천
+          학교를 함께 관리합니다.
         </p>
 
         <div className={styles.calculatorAdminSummary}>
+          <div>
+            <span>그룹</span>
+            <strong>{config.groups.length}</strong>
+          </div>
+          <div>
+            <span>과목</span>
+            <strong>{subjectCount}</strong>
+          </div>
           <div>
             <span>점수대</span>
             <strong>{config.scoreBands.length}</strong>
@@ -96,6 +113,9 @@ const AdminCalculatorRecommendations = () => {
         </div>
 
         <div className={styles.calculatorConfigMeta}>
+          <p>
+            현재 그룹: {config.groups.map((group) => group.label).join(", ")}
+          </p>
           <p>현재 국가: {config.countries.map((country) => country.label).join(", ")}</p>
           <p>
             최근 수정:{" "}
@@ -111,7 +131,7 @@ const AdminCalculatorRecommendations = () => {
           onClick={() => setOpen(true)}
           disabled={loading}
         >
-          {loading ? "불러오는 중..." : "추천학교 설정 열기"}
+          {loading ? "불러오는 중..." : "계산기 설정 열기"}
         </button>
       </div>
 

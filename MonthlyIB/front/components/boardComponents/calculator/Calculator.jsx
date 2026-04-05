@@ -8,6 +8,7 @@ import SchoolItems from "./SchoolItems";
 import { openAPIGetCalculatorRecommendations } from "@/apis/calculatorRecommendationAPI";
 import {
   buildDefaultCalculatorRecommendationConfig,
+  getCalculatorGroups,
   getCalculatorCountryOptions,
   getPointBandForTotal,
   getRecommendedSchools,
@@ -69,6 +70,11 @@ const Calculator = () => {
     [calculatorConfig, totalPoint]
   );
 
+  const calculatorGroups = useMemo(
+    () => getCalculatorGroups(calculatorConfig),
+    [calculatorConfig]
+  );
+
   const countryOptions = useMemo(
     () => getCalculatorCountryOptions(calculatorConfig),
     [calculatorConfig]
@@ -79,11 +85,14 @@ const Calculator = () => {
     [activeBand?.key, calculatorConfig, country]
   );
 
-  const groupCounts = useMemo(
+  const groupUsageMap = useMemo(
     () =>
-      Array.from({ length: 6 }, (_, index) =>
-        selectedGroups.filter((value) => value === `Group${index + 1}`).length
-      ),
+      selectedGroups.reduce((acc, value) => {
+        if (value !== "all") {
+          acc[value] = (acc[value] ?? 0) + 1;
+        }
+        return acc;
+      }, {}),
     [selectedGroups]
   );
 
@@ -104,6 +113,90 @@ const Calculator = () => {
       setCountry("all");
     }
   }, [country, countryOptions]);
+
+  useEffect(() => {
+    const groupMap = new Map(
+      calculatorGroups.map((group) => [group.key, group])
+    );
+    const nextGroups = [...selectedGroups];
+    const nextSubjects = [...selectedSubjects];
+    const nextLevels = [...selectedLevels];
+    const nextPoints = [...points];
+    const usageMap = {};
+    let hasChanges = false;
+
+    selectedGroups.forEach((groupKey, index) => {
+      if (groupKey === "all") {
+        if (
+          selectedSubjects[index] !== "all" ||
+          selectedLevels[index] !== "all" ||
+          Number(points[index]) !== 0
+        ) {
+          nextSubjects[index] = "all";
+          nextLevels[index] = "all";
+          nextPoints[index] = 0;
+          hasChanges = true;
+        }
+        return;
+      }
+
+      const group = groupMap.get(groupKey);
+      if (!group) {
+        nextGroups[index] = "all";
+        nextSubjects[index] = "all";
+        nextLevels[index] = "all";
+        nextPoints[index] = 0;
+        hasChanges = true;
+        return;
+      }
+
+      usageMap[group.key] = (usageMap[group.key] ?? 0) + 1;
+      if (usageMap[group.key] > group.maxSelectableCount) {
+        nextGroups[index] = "all";
+        nextSubjects[index] = "all";
+        nextLevels[index] = "all";
+        nextPoints[index] = 0;
+        hasChanges = true;
+        usageMap[group.key] -= 1;
+        return;
+      }
+
+      const subject = group.subjects.find(
+        (item) => item.name === selectedSubjects[index]
+      );
+
+      if (!subject) {
+        if (
+          selectedSubjects[index] !== "all" ||
+          selectedLevels[index] !== "all" ||
+          Number(points[index]) !== 0
+        ) {
+          nextSubjects[index] = "all";
+          nextLevels[index] = "all";
+          nextPoints[index] = 0;
+          hasChanges = true;
+        }
+        return;
+      }
+
+      const currentLevel = selectedLevels[index];
+      if (
+        (currentLevel === "sl" && !subject.slEnabled) ||
+        (currentLevel === "hl" && !subject.hlEnabled)
+      ) {
+        nextLevels[index] = "all";
+        nextPoints[index] = 0;
+        hasChanges = true;
+      }
+    });
+
+    if (hasChanges) {
+      setSelectedGroups(nextGroups);
+      setSelectedSubjects(nextSubjects);
+      setSelectedLevels(nextLevels);
+      setPoints(nextPoints);
+    }
+  }, [calculatorGroups, points, selectedGroups, selectedLevels, selectedSubjects]);
 
   const handleCountryChange = (e) => {
     setCountry(e.target.value);
@@ -201,11 +294,12 @@ const Calculator = () => {
             {numCalcMenu.map((_, i) => (
               <CalculatorMenu
                 index={i}
+                groups={calculatorGroups}
                 selectedGroup={selectedGroups[i]}
                 selectedSubject={selectedSubjects[i]}
                 selectedLevel={selectedLevels[i]}
                 selectedPoint={points[i]}
-                groupCounts={groupCounts}
+                groupUsageMap={groupUsageMap}
                 levelCounts={levelCounts}
                 onGroupChange={handleGroupChange}
                 onSubjectChange={handleSubjectChange}

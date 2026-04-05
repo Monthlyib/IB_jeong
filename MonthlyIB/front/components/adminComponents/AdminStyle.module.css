@@ -221,7 +221,7 @@
 
 .calculatorAdminSummary {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1.2rem;
   margin-top: 2rem;
 }
@@ -394,7 +394,14 @@
   font-weight: 700;
 }
 
+.calculatorSectionHeader h5 {
+  color: #302441;
+  font-size: 1.7rem;
+  font-weight: 700;
+}
+
 .calculatorBandList,
+.calculatorGroupList,
 .calculatorSchoolList {
   display: grid;
   gap: 1.2rem;
@@ -402,11 +409,16 @@
 
 .calculatorBandRow,
 .calculatorCountryEditor,
-.calculatorSchoolCard {
+.calculatorSchoolCard,
+.calculatorGroupCard {
   padding: 1.6rem;
   border: 1px solid #ece4f5;
   border-radius: 2rem;
   background: #fff;
+}
+
+.calculatorGroupSection {
+  margin-top: 2rem;
 }
 
 .calculatorBandRow {
@@ -414,6 +426,31 @@
   grid-template-columns: minmax(0, 1fr) minmax(12rem, 16rem) auto;
   gap: 1rem;
   align-items: end;
+}
+
+.calculatorGroupCard {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.calculatorGroupHeader {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.calculatorGroupHeader strong {
+  color: #261d36;
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.calculatorGroupHeader p {
+  margin-top: 0.6rem;
+  color: #7a708c;
+  font-size: 1.35rem;
+  line-height: 1.65;
+  word-break: keep-all;
 }
 
 .calculatorCountryTabs {
@@ -481,6 +518,63 @@
 .calculatorSchoolCard {
   display: grid;
   gap: 1.2rem;
+}
+
+.calculatorGroupSubjects {
+  display: grid;
+  gap: 1rem;
+}
+
+.calculatorSubjectRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 1rem;
+  align-items: end;
+  padding: 1.2rem;
+  border: 1px solid #ede5f6;
+  border-radius: 1.6rem;
+  background: #fbf9ff;
+}
+
+.calculatorSubjectField {
+  min-width: 0;
+}
+
+.calculatorLevelToggleGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.calculatorLevelToggle {
+  min-height: 4.2rem;
+  padding: 0 1.2rem;
+  border: 1px solid #ddd2ed;
+  border-radius: 1.2rem;
+  background: #fff;
+  color: #56456e;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.calculatorLevelToggleActive {
+  border-color: var(--primary01);
+  background: var(--primary01);
+  color: #fff;
+}
+
+.calculatorSubjectActions {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.calculatorSmallButton {
+  min-height: 4rem;
+  padding: 0 1.2rem;
+  border-radius: 1.2rem;
+  font-size: 1.3rem;
 }
 
 .calculatorSchoolHeader {
@@ -1208,8 +1302,17 @@
     grid-template-columns: 1fr;
   }
 
+  .calculatorSubjectRow {
+    grid-template-columns: 1fr;
+  }
+
   .calculatorCountryEditor {
     display: grid;
+  }
+
+  .calculatorSubjectActions,
+  .calculatorLevelToggleGroup {
+    justify-content: flex-start;
   }
 
   .dashboard_mid_card .subtitle,

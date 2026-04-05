@@ -2,51 +2,31 @@ import styles from "../BoardCommon.module.css";
 
 const CalculatorMenu = ({
   index,
+  groups,
   selectedGroup,
   selectedSubject,
   selectedLevel,
   selectedPoint,
-  groupCounts,
+  groupUsageMap,
   levelCounts,
   onGroupChange,
   onSubjectChange,
   onLevelChange,
   onPointChange,
 }) => {
-  const courseCategoryList = {
-    all: [],
-    Group1: ["English Literature", "English Language ", "Korean"],
-    Group2: ["English B", "Mandarin B", "Spanish B"],
-    Group3: [
-      "Economics",
-      "Business & Management",
-      "Psychology",
-      "Geography",
-      "History",
-      "Global Politics",
-      "Digital Society",
-      "Philosophy",
-      "Social & Cultural Anthropology",
-      "World Religions",
-    ],
-    Group4: [
-      "Physics",
-      "Chemistry",
-      "Biology",
-      "Design Technology",
-      "Sports, Exercise & Health Science",
-      "Environmental System & Societies",
-    ],
-    Group5: ["Math AA", "Math AI"],
-    Group6: ["Visual Arts", "Dance", "Music", "Film", "Theatre"],
-  };
-
-  const availableSubjects = courseCategoryList[selectedGroup] ?? [];
+  const activeGroup =
+    groups.find((group) => group.key === selectedGroup) ?? null;
+  const availableSubjects = activeGroup?.subjects ?? [];
+  const activeSubject =
+    availableSubjects.find((subject) => subject.name === selectedSubject) ?? null;
   const isLevelLocked = selectedGroup === "all" || !selectedSubject;
   const isPointLocked = isLevelLocked || selectedLevel === "all";
   const slDisabled =
-    selectedSubject === "World Religions" || levelCounts.sl >= 3;
-  const hlDisabled = levelCounts.hl >= 4;
+    !activeSubject?.slEnabled ||
+    (selectedLevel !== "sl" && levelCounts.sl >= 3);
+  const hlDisabled =
+    !activeSubject?.hlEnabled ||
+    (selectedLevel !== "hl" && levelCounts.hl >= 4);
 
   return (
     <div className={styles.calcCard}>
@@ -68,21 +48,18 @@ const CalculatorMenu = ({
             value={selectedGroup}
           >
             <option value="all">그룹 선택</option>
-            {groupCounts.map((value, i) =>
-              i < 4 && value < 2 ? (
-                <option key={i} value={`Group${i + 1}`}>
-                  {`Group ${i + 1}`}
+            {groups.map((group) => {
+              const usedCount = groupUsageMap[group.key] ?? 0;
+              const isDisabled =
+                selectedGroup !== group.key &&
+                usedCount >= group.maxSelectableCount;
+
+              return (
+                <option key={group.key} value={group.key} disabled={isDisabled}>
+                  {group.label}
                 </option>
-              ) : i >= 4 && value < 1 ? (
-                <option key={i} value={`Group${i + 1}`}>
-                  {`Group ${i + 1}`}
-                </option>
-              ) : (
-                <option key={i} value={`Group${i + 1}`} disabled>
-                  {`Group ${i + 1}`}
-                </option>
-              )
-            )}
+              );
+            })}
           </select>
         </div>
         <div className={`${styles.calcSelectBlock} ${styles.isWide}`}>
@@ -94,9 +71,9 @@ const CalculatorMenu = ({
             disabled={selectedGroup === "all"}
           >
             <option value="all">과목 선택</option>
-            {availableSubjects.map((value, i) => (
-              <option key={i} value={value}>
-                {value}
+            {availableSubjects.map((subject) => (
+              <option key={subject.name} value={subject.name}>
+                {subject.name}
               </option>
             ))}
           </select>

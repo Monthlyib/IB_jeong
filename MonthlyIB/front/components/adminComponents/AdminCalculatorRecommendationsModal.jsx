@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import styles from "./AdminStyle.module.css";
+import { normalizeCalculatorRecommendationConfig } from "../boardComponents/calculator/calculatorRecommendationUtils";
 
 const createBandDraft = () => ({
   key: `band-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
@@ -25,10 +26,14 @@ const createSchoolDraft = () => ({
   bandKeys: [],
 });
 
-const normalizeConfig = (config) => ({
-  scoreBands: Array.isArray(config?.scoreBands) ? config.scoreBands : [],
-  countries: Array.isArray(config?.countries) ? config.countries : [],
+const createSubjectDraft = () => ({
+  name: "새 과목",
+  slEnabled: true,
+  hlEnabled: true,
 });
+
+const normalizeConfig = (config) =>
+  normalizeCalculatorRecommendationConfig(config);
 
 const AdminCalculatorRecommendationsModal = ({
   config,
@@ -76,6 +81,7 @@ const AdminCalculatorRecommendationsModal = ({
 
   const removeBand = (bandKey) => {
     setDraft((prev) => ({
+      ...prev,
       scoreBands: prev.scoreBands.filter((band) => band.key !== bandKey),
       countries: prev.countries.map((country) => ({
         ...country,
@@ -91,6 +97,120 @@ const AdminCalculatorRecommendationsModal = ({
     setDraft((prev) => ({
       ...prev,
       scoreBands: [...prev.scoreBands, createBandDraft()],
+    }));
+  };
+
+  const updateGroup = (groupKey, field, value) => {
+    setDraft((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.key === groupKey
+          ? {
+              ...group,
+              [field]:
+                field === "maxSelectableCount"
+                  ? Math.min(6, Math.max(1, Number(value || 1)))
+                  : value,
+            }
+          : group
+      ),
+    }));
+  };
+
+  const addGroupSubject = (groupKey) => {
+    setDraft((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.key === groupKey
+          ? { ...group, subjects: [...group.subjects, createSubjectDraft()] }
+          : group
+      ),
+    }));
+  };
+
+  const updateGroupSubject = (groupKey, subjectIndex, field, value) => {
+    setDraft((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.key === groupKey
+          ? {
+              ...group,
+              subjects: group.subjects.map((subject, index) =>
+                index === subjectIndex ? { ...subject, [field]: value } : subject
+              ),
+            }
+          : group
+      ),
+    }));
+  };
+
+  const toggleGroupSubjectLevel = (groupKey, subjectIndex, field) => {
+    setDraft((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.key !== groupKey) {
+          return group;
+        }
+
+        return {
+          ...group,
+          subjects: group.subjects.map((subject, index) => {
+            if (index !== subjectIndex) {
+              return subject;
+            }
+
+            const nextValue = !subject[field];
+            const otherField = field === "slEnabled" ? "hlEnabled" : "slEnabled";
+            if (!nextValue && !subject[otherField]) {
+              return subject;
+            }
+
+            return {
+              ...subject,
+              [field]: nextValue,
+            };
+          }),
+        };
+      }),
+    }));
+  };
+
+  const moveGroupSubject = (groupKey, subjectIndex, direction) => {
+    setDraft((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.key !== groupKey) {
+          return group;
+        }
+
+        const targetIndex = subjectIndex + direction;
+        if (targetIndex < 0 || targetIndex >= group.subjects.length) {
+          return group;
+        }
+
+        const nextSubjects = [...group.subjects];
+        const [movedSubject] = nextSubjects.splice(subjectIndex, 1);
+        nextSubjects.splice(targetIndex, 0, movedSubject);
+
+        return {
+          ...group,
+          subjects: nextSubjects,
+        };
+      }),
+    }));
+  };
+
+  const removeGroupSubject = (groupKey, subjectIndex) => {
+    setDraft((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.key === groupKey
+          ? {
+              ...group,
+              subjects: group.subjects.filter((_, index) => index !== subjectIndex),
+            }
+          : group
+      ),
     }));
   };
 
@@ -119,18 +239,21 @@ const AdminCalculatorRecommendationsModal = ({
   };
 
   const removeCountry = (countryCode) => {
-    setDraft((prev) => ({
-      ...prev,
-      countries: prev.countries.filter((country) => country.code !== countryCode),
-    }));
-    setSelectedCountryCode((prev) => {
-      if (prev !== countryCode) {
-        return prev;
-      }
-      const remainingCountry = draft.countries.find(
+    setDraft((prev) => {
+      const nextCountries = prev.countries.filter(
         (country) => country.code !== countryCode
       );
-      return remainingCountry?.code ?? "";
+      setSelectedCountryCode((currentCode) => {
+        if (currentCode !== countryCode) {
+          return currentCode;
+        }
+        return nextCountries[0]?.code ?? "";
+      });
+
+      return {
+        ...prev,
+        countries: nextCountries,
+      };
     });
   };
 
@@ -233,10 +356,10 @@ const AdminCalculatorRecommendationsModal = ({
           <div className={styles.calculatorConfigHeader}>
             <div>
               <span className={styles.adminEyebrow}>Calculator Admin</span>
-              <h3>추천학교 기준 관리</h3>
+              <h3>추천학교 및 그룹 설정 관리</h3>
               <p>
-                점수대와 국가별 추천 학교를 수정하면 합격 예측 계산기 화면에 바로
-                반영됩니다.
+                그룹 표시명, 과목, 허용 레벨, 점수대와 국가별 추천 학교를 한 번에
+                수정하면 합격 예측 계산기 화면에 바로 반영됩니다.
               </p>
             </div>
             <div className={styles.calculatorModalActions}>
@@ -303,6 +426,170 @@ const AdminCalculatorRecommendationsModal = ({
                     </button>
                   </div>
                 ))}
+              </div>
+
+              <div className={styles.calculatorGroupSection}>
+                <div className={styles.calculatorSectionHeader}>
+                  <h4>그룹 설정</h4>
+                </div>
+
+                <div className={styles.calculatorGroupList}>
+                  {draft.groups.map((group) => (
+                    <div className={styles.calculatorGroupCard} key={group.key}>
+                      <div className={styles.calculatorGroupHeader}>
+                        <div>
+                          <strong>{group.key}</strong>
+                          <p>
+                            계산기에서 노출되는 그룹명과 선택 규칙을 수정할 수
+                            있습니다.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className={styles.calculatorInlineFields}>
+                        <div className={styles.calculatorField}>
+                          <span>그룹 표시명</span>
+                          <input
+                            type="text"
+                            value={group.label}
+                            onChange={(event) =>
+                              updateGroup(group.key, "label", event.target.value)
+                            }
+                          />
+                        </div>
+                        <div className={styles.calculatorField}>
+                          <span>선택 가능 과목 수</span>
+                          <input
+                            type="number"
+                            min="1"
+                            max="6"
+                            value={group.maxSelectableCount}
+                            onChange={(event) =>
+                              updateGroup(
+                                group.key,
+                                "maxSelectableCount",
+                                event.target.value
+                              )
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className={styles.calculatorSectionHeader}>
+                        <h5>과목 목록</h5>
+                        <button
+                          type="button"
+                          className={`${styles.calculatorSecondaryButton} ${styles.calculatorSmallButton}`}
+                          onClick={() => addGroupSubject(group.key)}
+                        >
+                          과목 추가
+                        </button>
+                      </div>
+
+                      <div className={styles.calculatorGroupSubjects}>
+                        {group.subjects.map((subject, subjectIndex) => (
+                          <div
+                            className={styles.calculatorSubjectRow}
+                            key={`${group.key}-${subject.name}-${subjectIndex}`}
+                          >
+                            <div
+                              className={`${styles.calculatorField} ${styles.calculatorSubjectField}`}
+                            >
+                              <span>과목명</span>
+                              <input
+                                type="text"
+                                value={subject.name}
+                                onChange={(event) =>
+                                  updateGroupSubject(
+                                    group.key,
+                                    subjectIndex,
+                                    "name",
+                                    event.target.value
+                                  )
+                                }
+                              />
+                            </div>
+
+                            <div className={styles.calculatorLevelToggleGroup}>
+                              <button
+                                type="button"
+                                className={`${styles.calculatorLevelToggle} ${
+                                  subject.slEnabled
+                                    ? styles.calculatorLevelToggleActive
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  toggleGroupSubjectLevel(
+                                    group.key,
+                                    subjectIndex,
+                                    "slEnabled"
+                                  )
+                                }
+                              >
+                                SL
+                              </button>
+                              <button
+                                type="button"
+                                className={`${styles.calculatorLevelToggle} ${
+                                  subject.hlEnabled
+                                    ? styles.calculatorLevelToggleActive
+                                    : ""
+                                }`}
+                                onClick={() =>
+                                  toggleGroupSubjectLevel(
+                                    group.key,
+                                    subjectIndex,
+                                    "hlEnabled"
+                                  )
+                                }
+                              >
+                                HL
+                              </button>
+                            </div>
+
+                            <div className={styles.calculatorSubjectActions}>
+                              <button
+                                type="button"
+                                className={`${styles.calculatorSecondaryButton} ${styles.calculatorSmallButton}`}
+                                onClick={() =>
+                                  moveGroupSubject(group.key, subjectIndex, -1)
+                                }
+                                disabled={subjectIndex === 0}
+                              >
+                                위로
+                              </button>
+                              <button
+                                type="button"
+                                className={`${styles.calculatorSecondaryButton} ${styles.calculatorSmallButton}`}
+                                onClick={() =>
+                                  moveGroupSubject(group.key, subjectIndex, 1)
+                                }
+                                disabled={subjectIndex === group.subjects.length - 1}
+                              >
+                                아래로
+                              </button>
+                              <button
+                                type="button"
+                                className={`${styles.calculatorDangerButton} ${styles.calculatorSmallButton}`}
+                                onClick={() =>
+                                  removeGroupSubject(group.key, subjectIndex)
+                                }
+                              >
+                                삭제
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+
+                        {group.subjects.length === 0 && (
+                          <div className={styles.calculatorEmpty}>
+                            아직 등록된 과목이 없습니다.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
 
