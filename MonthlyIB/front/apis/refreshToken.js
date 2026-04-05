@@ -10,6 +10,7 @@ export const tokenRequireApi = axios.create({
 tokenRequireApi.defaults.withCredentials = true;
 
 let refreshPromise = null;
+let isHandlingExpiredSession = false;
 
 const parseJwtPayload = (token) => {
   try {
@@ -44,6 +45,11 @@ const isTokenExpired = (token) => {
 };
 
 const handleExpiredSession = () => {
+  if (isHandlingExpiredSession) {
+    return;
+  }
+
+  isHandlingExpiredSession = true;
   useUserInfo.getState().signOut();
   alert("다시 로그인 해주세요.");
   window.location.replace("/login");

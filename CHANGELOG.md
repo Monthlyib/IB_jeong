@@ -27,5 +27,6 @@
 - `/adminpage` 구독상품 관리와 사용자 구독 관리 화면을 `premium` 텍스트 대신 질문/튜터링/강의 수량과 무한 토글 중심으로 재구성했습니다.
 - `/question`, `/tutoring`, `/course/[id]`, `/course/player/[id]`, `/mypage`, `/subscribe`가 `activeSubscribeInfo` 기준으로 실제 권한과 잔여 횟수를 반영하도록 정리했습니다.
 - 로그인/토큰 재발급 흐름을 refresh token 기반으로 바꿔 한 계정의 새 로그인 이후 예전 세션이 더 이상 재발급되지 않도록 정리했습니다.
+- 세션 만료 alert가 여러 번 쌓이던 문제를 막고, 한 번의 확인만으로 로그인 화면으로 이동하도록 정리했습니다.
 - `/board/calculator`가 백엔드 추천학교 설정을 우선 읽고, 서버 설정이 없을 때만 기존 하드코드 데이터를 fallback으로 사용하도록 정리했습니다.
 - `/board/calculator`의 그룹/과목 하드코드를 제거하고, 서버 계산기 설정의 그룹 규칙을 우선 사용하도록 정리했습니다.
