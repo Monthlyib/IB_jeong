@@ -63,6 +63,7 @@ const TopMenuPreviewChip = ({
   <button
     ref={provided.innerRef}
     type="button"
+    style={provided.draggableProps?.style}
     className={`${styles.headerNavPreviewMenu} ${
       isActive ? styles.headerNavPreviewMenuActive : ""
     } ${isHidden ? styles.headerNavPreviewMenuHidden : ""} ${
@@ -82,6 +83,7 @@ const TopMenuPreviewChip = ({
 const ChildMenuPreviewRow = ({ child, isHidden = false, isDragging = false, provided = {} }) => (
   <div
     ref={provided.innerRef}
+    style={provided.draggableProps?.style}
     className={`${styles.headerNavPreviewChildItem} ${
       isHidden ? styles.headerNavPreviewMenuHidden : ""
     } ${isDragging ? styles.headerNavPreviewMenuDragging : ""}`}
