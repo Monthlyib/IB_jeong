@@ -25,7 +25,17 @@ import {
   adminSaveHomeLayoutDraft,
   adminUploadHomeLayoutMedia,
 } from "@/apis/homeLayoutAPI";
+import {
+  adminGetHeaderNavigation,
+  adminSaveHeaderNavigation,
+} from "@/apis/headerNavigationAPI";
+import AdminHeaderNavigationModal from "@/components/adminComponents/AdminHeaderNavigationModal";
 import { useUserInfo } from "@/store/user";
+import {
+  buildDefaultHeaderNavigationConfig,
+  normalizeHeaderNavigationConfig,
+  publishHeaderNavigationConfig,
+} from "@/utils/headerNavigationUtils";
 
 const EditorComponents = dynamic(
   () => import("@/components/boardComponents/EditorComponents"),
@@ -237,6 +247,11 @@ const HomeBuilder = () => {
   const [uploading, setUploading] = useState(false);
   const [nativePaletteTarget, setNativePaletteTarget] = useState(null);
   const [draggingPaletteType, setDraggingPaletteType] = useState(null);
+  const [headerConfig, setHeaderConfig] = useState(buildDefaultHeaderNavigationConfig());
+  const [headerUpdatedAt, setHeaderUpdatedAt] = useState(null);
+  const [headerLoading, setHeaderLoading] = useState(false);
+  const [headerSaving, setHeaderSaving] = useState(false);
+  const [headerOpen, setHeaderOpen] = useState(false);
 
   // 왼쪽 패널 탭: "palette" | "inspector"
   const [leftTab, setLeftTab] = useState("palette");
@@ -500,6 +515,50 @@ const HomeBuilder = () => {
     }
   };
 
+  const openHeaderSettings = async () => {
+    if (!userInfo?.accessToken) {
+      return;
+    }
+
+    try {
+      setHeaderLoading(true);
+      const response = await adminGetHeaderNavigation(userInfo);
+      setHeaderConfig(
+        normalizeHeaderNavigationConfig(
+          response?.data?.config ?? buildDefaultHeaderNavigationConfig()
+        )
+      );
+      setHeaderUpdatedAt(response?.data?.updatedAt ?? null);
+    } catch (error) {
+      console.error("Failed to load header navigation:", error);
+      setHeaderConfig(buildDefaultHeaderNavigationConfig());
+      setHeaderUpdatedAt(null);
+      alert("헤더 설정을 불러오지 못했습니다. 기본 메뉴 기준으로 편집을 시작합니다.");
+    } finally {
+      setHeaderLoading(false);
+      setHeaderOpen(true);
+    }
+  };
+
+  const handleSaveHeaderNavigation = async (draft) => {
+    try {
+      setHeaderSaving(true);
+      const response = await adminSaveHeaderNavigation(draft, userInfo);
+      const nextConfig = normalizeHeaderNavigationConfig(
+        response?.data?.config ?? draft
+      );
+      setHeaderConfig(nextConfig);
+      publishHeaderNavigationConfig(nextConfig);
+      setHeaderUpdatedAt(response?.data?.updatedAt ?? null);
+      setHeaderOpen(false);
+    } catch (error) {
+      console.error("Failed to save header navigation from home builder:", error);
+      alert("헤더 설정 저장에 실패했습니다.");
+    } finally {
+      setHeaderSaving(false);
+    }
+  };
+
   const handlePaletteDragStart = (event, item) => {
     if (item.disabled) {
       event.preventDefault();
@@ -678,9 +737,20 @@ const HomeBuilder = () => {
       <section className={styles.builderActionsBar}>
         <div className={styles.builderActionsCopy}>
           <h2>작업 도구</h2>
-          <p>초안 저장, 게시, 게시본 되돌리기를 여기서 먼저 실행한 뒤 캔버스를 편집하세요.</p>
+          <p>
+            초안 저장, 게시, 헤더 메뉴 편집을 여기서 먼저 실행한 뒤 캔버스를 편집하세요.
+            {headerUpdatedAt ? ` 최근 헤더 수정: ${new Date(headerUpdatedAt).toLocaleString("ko-KR")}` : ""}
+          </p>
         </div>
         <div className={styles.toolbarButtons}>
+          <button
+            type="button"
+            className={styles.plainButton}
+            onClick={openHeaderSettings}
+            disabled={headerLoading || headerSaving}
+          >
+            {headerLoading ? "헤더 불러오는 중..." : "헤더 설정"}
+          </button>
           <button
             type="button"
             className={styles.plainButton}
@@ -1337,6 +1407,15 @@ const HomeBuilder = () => {
         </section>
       </section>
       </DragDropContext>
+
+      {headerOpen && (
+        <AdminHeaderNavigationModal
+          config={headerConfig}
+          saving={headerSaving}
+          onClose={() => setHeaderOpen(false)}
+          onSave={handleSaveHeaderNavigation}
+        />
+      )}
     </main>
   );
 };
