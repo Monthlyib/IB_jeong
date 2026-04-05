@@ -15,8 +15,10 @@ import { adjustWindowSize } from "@/utils/utils";
 import { getCookie } from "@/apis/cookies";
 import { openAPIGetHeaderNavigation } from "@/apis/headerNavigationAPI";
 import {
+  HEADER_NAVIGATION_UPDATED_EVENT,
   buildDefaultHeaderNavigationConfig,
   getVisibleHeaderMenus,
+  normalizeHeaderNavigationConfig,
 } from "@/utils/headerNavigationUtils";
 
 const renderTopLevelMenu = (menu) => {
@@ -101,7 +103,9 @@ const AppLayout = ({ children, disable }) => {
       }
 
       setHeaderNavigationConfig(
-        response?.data?.config ?? buildDefaultHeaderNavigationConfig()
+        normalizeHeaderNavigationConfig(
+          response?.data?.config ?? buildDefaultHeaderNavigationConfig()
+        )
       );
     };
 
@@ -109,6 +113,26 @@ const AppLayout = ({ children, disable }) => {
 
     return () => {
       ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleHeaderNavigationUpdated = (event) => {
+      setHeaderNavigationConfig(
+        normalizeHeaderNavigationConfig(event.detail ?? buildDefaultHeaderNavigationConfig())
+      );
+    };
+
+    window.addEventListener(
+      HEADER_NAVIGATION_UPDATED_EVENT,
+      handleHeaderNavigationUpdated
+    );
+
+    return () => {
+      window.removeEventListener(
+        HEADER_NAVIGATION_UPDATED_EVENT,
+        handleHeaderNavigationUpdated
+      );
     };
   }, []);
 

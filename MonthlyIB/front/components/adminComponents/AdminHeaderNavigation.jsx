@@ -10,6 +10,7 @@ import {
 import {
   buildDefaultHeaderNavigationConfig,
   normalizeHeaderNavigationConfig,
+  publishHeaderNavigationConfig,
 } from "@/utils/headerNavigationUtils";
 import AdminHeaderNavigationModal from "./AdminHeaderNavigationModal";
 
@@ -69,6 +70,7 @@ const AdminHeaderNavigation = () => {
         response?.data?.config ?? draft
       );
       setConfig(nextConfig);
+      publishHeaderNavigationConfig(nextConfig);
       setUpdatedAt(response?.data?.updatedAt ?? null);
       setOpen(false);
     } catch (error) {

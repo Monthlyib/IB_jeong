@@ -10,6 +10,9 @@ const createMenuClone = (menu) => ({
     : [],
 });
 
+export const HEADER_NAVIGATION_UPDATED_EVENT =
+  "monthlyib:header-navigation-updated";
+
 export const DEFAULT_HEADER_NAVIGATION_MENUS = [
   {
     key: "ai-tools",
@@ -230,3 +233,15 @@ export const createHeaderNavigationDraftMenu = (depth = 0) => ({
   order: 0,
   children: [],
 });
+
+export const publishHeaderNavigationConfig = (config) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  window.dispatchEvent(
+    new CustomEvent(HEADER_NAVIGATION_UPDATED_EVENT, {
+      detail: normalizeHeaderNavigationConfig(config),
+    })
+  );
+};
