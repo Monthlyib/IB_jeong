@@ -230,13 +230,6 @@ const HomeBuilder = () => {
   // 왼쪽 패널 탭: "palette" | "inspector"
   const [leftTab, setLeftTab] = useState("palette");
 
-  // 블록 선택 시 자동으로 속성 탭으로 전환
-  useEffect(() => {
-    if (selectedBlockId) {
-      setLeftTab("inspector");
-    }
-  }, [selectedBlockId]);
-
   useEffect(() => {
     if (userInfo?.authority && userInfo.authority !== "ADMIN") {
       router.replace("/");

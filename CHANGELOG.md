@@ -28,6 +28,7 @@
 - `/adminpage/home-builder`의 행/블록 드래그를 브라우저 기본 HTML5 drag/drop 대신 `react-beautiful-dnd` 기반 정렬로 바꿔, 팔레트에서 캔버스로 끌어 넣거나 캔버스 안에서 재배치할 때 더 부드럽게 움직이도록 정리했습니다.
 - `/adminpage/home-builder`의 기존 홈 섹션 블록 프리뷰를 placeholder가 아니라 실제 홈 섹션 컴포넌트 렌더로 바꿔, 기능은 막으면서 겉모양은 실제 홈과 최대한 동일하게 보이도록 정리했습니다.
 - `/adminpage/home-builder`에서 모듈, 행, 블록을 드래그할 때 마우스 아래에 실제 드래그 clone이 따라다니도록 `renderClone` 기반 미리보기를 추가했습니다.
+- `/adminpage/home-builder`가 첫 블록 선택 때문에 자동으로 `속성` 탭으로 넘어가던 동작을 제거해, 진입 시 `모듈 팔레트`가 기본으로 바로 보이게 정리했습니다.
 
 ## 2026-04-04
 
