@@ -143,7 +143,7 @@ const AdminMain = () => {
           </div>
         </div>
 
-        <div className={styles.dashboard_mid_wrap}>
+        <div className={styles.dashboard_support_wrap}>
           <AdminQuestion />
           <AdminSubscribe />
         </div>

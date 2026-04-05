@@ -1,5 +1,5 @@
 .adminPage {
-  width: min(132rem, calc(100% - 4rem));
+  width: min(144rem, calc(100% - 4rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
 }
 
@@ -133,6 +133,12 @@
 .dashboard_mid_wrap {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.8rem;
+}
+
+.dashboard_support_wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.24fr);
   gap: 1.8rem;
 }
 
@@ -762,7 +768,6 @@
 
 .dashboard_mid_card .subtitle {
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) auto;
   gap: 1.2rem;
 }
 
@@ -847,11 +852,31 @@
 
 .subscribeGridDetailed {
   grid-template-columns:
-    minmax(0, 1.3fr)
-    minmax(7rem, 0.7fr)
-    minmax(9rem, 0.95fr)
-    minmax(9rem, 0.95fr)
-    minmax(9rem, 0.95fr);
+    minmax(0, 1.25fr)
+    minmax(7.4rem, 0.64fr)
+    minmax(10rem, 0.88fr)
+    minmax(10rem, 0.88fr)
+    minmax(10rem, 0.88fr);
+}
+
+.dashboard_mid_card .userGrid {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) minmax(7rem, 0.7fr);
+}
+
+.dashboard_mid_card .subscribeGrid {
+  grid-template-columns:
+    minmax(0, 1.35fr)
+    minmax(7rem, 0.8fr)
+    minmax(7rem, 0.9fr);
+}
+
+.dashboard_mid_card .subscribeGridDetailed {
+  grid-template-columns:
+    minmax(0, 1.25fr)
+    minmax(7.4rem, 0.64fr)
+    minmax(10rem, 0.88fr)
+    minmax(10rem, 0.88fr)
+    minmax(10rem, 0.88fr);
 }
 
 .tableToolbar {
@@ -1547,6 +1572,10 @@
   }
 
   .dashboard_mid_wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard_support_wrap {
     grid-template-columns: 1fr;
   }
 
