@@ -1077,6 +1077,204 @@
   height: 10rem;
   font-size: 1.8rem;
 }
+.usageSection {
+  margin-top: 3.2rem;
+  padding-top: 2.8rem;
+  border-top: 1px solid #ece3f5;
+}
+
+.usageSectionHeader h3 {
+  color: #221933;
+  font-size: 2.2rem;
+  font-weight: 700;
+}
+
+.usageSectionHeader p {
+  margin-top: 0.8rem;
+  color: #7e7590;
+  font-size: 1.45rem;
+  line-height: 1.6;
+}
+
+.usageOverviewGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+  margin-top: 2rem;
+}
+
+.usageOverviewCard,
+.usagePlanCard,
+.usageCourseItem {
+  border: 1px solid #ece3f5;
+  border-radius: 1.8rem;
+  background: #fcfbff;
+  box-shadow: 0 10px 26px rgba(35, 24, 51, 0.04);
+}
+
+.usageOverviewCard {
+  padding: 1.8rem;
+}
+
+.usageOverviewCard span,
+.usagePlanMeta span,
+.usageCourseMeta span {
+  color: #847a97;
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+
+.usageOverviewCard strong {
+  display: block;
+  margin-top: 0.8rem;
+  color: #241b34;
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.4;
+  word-break: keep-all;
+}
+
+.usageOverviewCard small {
+  display: block;
+  margin-top: 0.8rem;
+  color: #6c6280;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.usagePlanCard,
+.usageCourseSection {
+  margin-top: 1.8rem;
+}
+
+.usagePlanCard {
+  padding: 2rem;
+}
+
+.usagePlanHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.usagePlanHeader h4 {
+  color: #241b34;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.usagePlanHeader span {
+  color: #7a708d;
+  font-size: 1.35rem;
+  line-height: 1.5;
+  text-align: right;
+}
+
+.usagePlanMeta {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.6rem;
+}
+
+.usagePlanMeta div {
+  padding: 1.4rem;
+  border-radius: 1.4rem;
+  background: #ffffff;
+  border: 1px solid #f0e7f7;
+}
+
+.usagePlanMeta strong {
+  display: block;
+  margin-top: 0.7rem;
+  color: #241b34;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+.usagePlanEmpty {
+  margin-top: 1.6rem;
+  padding: 1.6rem;
+  border-radius: 1.4rem;
+  background: #ffffff;
+  border: 1px dashed #ddd2ea;
+  color: #766c88;
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.usageCourseSection {
+  padding: 2rem;
+  border: 1px solid #ece3f5;
+  border-radius: 1.8rem;
+  background: #fcfbff;
+}
+
+.usageCourseList {
+  display: grid;
+  gap: 1.4rem;
+  margin-top: 1.6rem;
+}
+
+.usageCourseItem {
+  padding: 1.8rem;
+  background: #fff;
+}
+
+.usageCourseHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.usageCourseHead strong {
+  color: #241b34;
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.usageCourseHead p {
+  margin-top: 0.7rem;
+  color: #766c88;
+  font-size: 1.35rem;
+  line-height: 1.6;
+}
+
+.usageCourseHead span {
+  min-width: fit-content;
+  color: var(--primary01);
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.usageProgressTrack {
+  margin-top: 1.4rem;
+  width: 100%;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: #efe7f7;
+  overflow: hidden;
+}
+
+.usageProgressBar {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #51346c 0%, #8b67b0 100%);
+}
+
+.usageCourseMeta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.2rem;
+  margin-top: 1.4rem;
+  flex-wrap: wrap;
+}
+
 .md .memo span,
 .md .userInfos span {
   padding-top: 0.5rem;
@@ -1223,6 +1421,10 @@
   .calculatorConfigBody {
     grid-template-columns: 1fr;
   }
+
+  .usagePlanMeta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media screen and (max-width: 720px) {
@@ -1300,6 +1502,26 @@
   .calculatorBandRow,
   .calculatorInlineFields {
     grid-template-columns: 1fr;
+  }
+
+  .usageOverviewGrid,
+  .usagePlanMeta {
+    grid-template-columns: 1fr;
+  }
+
+  .usagePlanHeader,
+  .usageCourseHead,
+  .usageCourseMeta,
+  .md .userInfos {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .md .userInfos input,
+  .md .userInfos select {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 1rem;
   }
 
   .calculatorSubjectRow {

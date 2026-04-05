@@ -33,6 +33,22 @@ export const userGetInfo = async (userId, session) => {
   }
 };
 
+export const userGetUsage = async (userId, session) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.get(`${USER_API_URL}/${userId}/usage`, config);
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export const userGetAllList = async (session) => {
   try {
     const config = {
