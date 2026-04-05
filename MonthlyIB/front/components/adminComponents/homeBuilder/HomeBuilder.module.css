@@ -1,5 +1,5 @@
 .builderPage {
-  width: min(144rem, calc(100% - 3.2rem));
+  width: min(160rem, calc(100% - 3.2rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
 }
 
@@ -94,7 +94,7 @@
 /* 2-column layout: left panel + canvas */
 .builderSurface {
   display: grid;
-  grid-template-columns: 32rem minmax(0, 1fr);
+  grid-template-columns: 29rem minmax(0, 1fr);
   gap: 1.8rem;
   margin-top: 2.4rem;
   align-items: start;
