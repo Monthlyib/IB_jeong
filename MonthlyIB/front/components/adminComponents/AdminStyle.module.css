@@ -8,6 +8,9 @@
 .adminPage > section {
   width: 100%;
   max-width: none;
+}
+
+.adminPage > .adminSection {
   padding: 0;
 }
 
