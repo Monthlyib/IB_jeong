@@ -1161,7 +1161,7 @@ const HomeBuilder = () => {
               <h2>캔버스 미리보기</h2>
               <p>블록을 클릭하면 왼쪽 속성 탭에서 수정할 수 있습니다.</p>
             </div>
-            <span className={styles.canvasScaleBadge}>패널 폭 기준 미리보기</span>
+            <span className={styles.canvasScaleBadge}>확대 미리보기</span>
           </div>
 
           <div className={styles.canvasViewportWrap}>
@@ -1282,7 +1282,6 @@ const HomeBuilder = () => {
                                         <HomeBlockContent
                                           block={item.block}
                                           previewMode
-                                          compactPreview
                                         />
                                       ) : null}
                                     </div>
@@ -1343,11 +1342,11 @@ const HomeBuilder = () => {
                                       {isLockedBlock(item.block) ? "고정 블록" : "삭제"}
                                     </button>
                                   </div>
-                                  <div className={styles.blockPreview}>
-                                    <div className={styles.blockPreviewInner}>
-                                      <HomeBlockContent block={item.block} previewMode compactPreview />
+                                    <div className={styles.blockPreview}>
+                                      <div className={styles.blockPreviewInner}>
+                                      <HomeBlockContent block={item.block} previewMode />
+                                      </div>
                                     </div>
-                                  </div>
                                 </div>
                                 );
                               })
