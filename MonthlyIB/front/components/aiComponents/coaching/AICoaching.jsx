@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 // import { chapterOptions } from "@/components/aiComponents/chapterOptions";
 const subjects = ["Science", "Math", "Langauge A English", "Psychology", "Business", "History", "Geography", "Economics"];
@@ -38,7 +38,6 @@ const AICoaching = () => {
 
     const chatBoxRef = useRef(null);
     const latestInterestRef = useRef("");
-    const bottomRef = useRef(null);
     const isInitialRender = useRef(true);
     const router = useRouter();
     const { userInfo } = useUserInfo();
@@ -228,20 +227,22 @@ const AICoaching = () => {
         initConversation();
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!chatBoxRef.current) return;
-        // First render: jump directly to bottom without smooth animation
+
+        const chatBox = chatBoxRef.current;
+        const nextTop = chatBox.scrollHeight;
+
         if (isInitialRender.current) {
             isInitialRender.current = false;
-            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+            chatBox.scrollTop = nextTop;
             return;
         }
-        // Subsequent updates: smoothly scroll to the bottom sentinel
-        if (bottomRef.current) {
-            bottomRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
-        } else {
-            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-        }
+
+        chatBox.scrollTo({
+            top: nextTop,
+            behavior: "smooth",
+        });
     }, [messages, resetKey]);
 
     const handleOptionSelect = (option) => {
@@ -811,7 +812,6 @@ const AICoaching = () => {
                             </div>
                         </div>
                     )}
-                    <div ref={bottomRef} />
                 </div>
                 <div className={styles.inputArea}>
                     <input

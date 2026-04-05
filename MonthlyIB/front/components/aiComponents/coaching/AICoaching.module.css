@@ -46,6 +46,8 @@
     radial-gradient(circle at top right, rgba(107, 77, 135, 0.1), transparent 32%),
     linear-gradient(180deg, #fcfbff, #f5f0fb);
   box-shadow: 0 20px 45px rgba(57, 31, 82, 0.08);
+  overscroll-behavior: contain;
+  overflow-anchor: none;
 }
 
 .inputArea {
