@@ -445,21 +445,6 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
                       <StrictModeDroppable
                         droppableId={createChildDroppableId(previewMenu.key)}
                         type="CHILD_MENU"
-                        renderClone={(provided, _snapshot, rubric) => {
-                          const child = previewMenu.children[rubric.source.index];
-                          if (!child) {
-                            return null;
-                          }
-                          return (
-                            <ChildMenuPreviewRow
-                              child={child}
-                              isHidden={!child.visible}
-                              isDragging
-                              isClone
-                              provided={provided}
-                            />
-                          );
-                        }}
                       >
                         {(provided, snapshot) => (
                           <div
