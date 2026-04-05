@@ -7,11 +7,14 @@ const AdminScheduleModal = ({
   status,
   title,
   requestUsername,
+  subject,
+  setSubject,
   detail,
   setDetail,
   setStatus,
   onSubmitChange,
   onSubmitDelete,
+  showMailFields = false,
 }) => {
   const closeRef = useRef();
   return (
@@ -31,30 +34,31 @@ const AdminScheduleModal = ({
                 <div className={styles.tit} style={{ marginBottom: "5srem" }}>
                   {requestUsername} {title}
                 </div>
-                <div
-                  style={{
-                    position: "relative",
-                    textAlign: "left",
-                    fontSize: "2rem",
-                    marginBottom: "2rem",
-                  }}
-                >
-                  상세내용
+                {showMailFields && (
+                  <div className={styles.modalField}>
+                    <div className={styles.modalFieldLabel}>메일 제목</div>
+                    <input
+                      type="text"
+                      value={subject ?? ""}
+                      placeholder="메일 제목을 입력해주세요."
+                      onChange={(e) => {
+                        setSubject?.(e.target.value);
+                      }}
+                    />
+                  </div>
+                )}
+                <div className={styles.modalField}>
+                  <div className={styles.modalFieldLabel}>
+                    {showMailFields ? "메일 내용" : "상세내용"}
+                  </div>
+                  <textarea
+                    className={styles.modalTextarea}
+                    value={detail}
+                    onChange={(e) => {
+                      setDetail(e.target.value);
+                    }}
+                  />
                 </div>
-                <textarea
-                  style={{
-                    display: "block",
-                    width: "100%",
-                    height: "20rem",
-                    fontSize: "1.8rem",
-                    marginBottom: "3rem",
-                  }}
-                  type="text"
-                  value={detail}
-                  onChange={(e) => {
-                    setDetail(e.target.value);
-                  }}
-                />
                 {setStatus !== null && (
                   <>
                     <span style={{ fontSize: "2rem", marginRight: "2rem" }}>

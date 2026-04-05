@@ -24,6 +24,7 @@ const AdminScheduleItems = ({
   const [modal, setModal] = useState(false);
   const [mailModal, setMailModal] = useState(false);
   const [selectedTutoring, setSelectedTutoring] = useState(null);
+  const [subject, setSubject] = useState("");
   const [detail, setDetail] = useState("");
   const [status, setStatus] = useState("WAIT");
 
@@ -48,10 +49,20 @@ const AdminScheduleItems = ({
     );
   };
 
-  const onSubmitMail = () => {
+  const onSubmitMail = async () => {
     if (!selectedTutoring) return;
-    setMailModal(false);
-    mailPost(selectedTutoring.requestUserId, detail, userInfo);
+    if (!subject.trim() || !detail.trim()) {
+      alert("메일 제목과 내용을 모두 입력해주세요.");
+      return;
+    }
+
+    try {
+      await mailPost(selectedTutoring.requestUserId, subject, detail, userInfo);
+      setMailModal(false);
+      alert("메일을 전송했습니다.");
+    } catch (error) {
+      alert(error?.response?.data?.message || "메일 전송에 실패했습니다.");
+    }
   };
 
   const onSubmitDeleteTutoring = () => {
@@ -67,6 +78,7 @@ const AdminScheduleItems = ({
 
   const onClickMail = (tutoring) => {
     setSelectedTutoring(tutoring);
+    setSubject("");
     setDetail("");
     setMailModal(true);
   };
@@ -137,11 +149,14 @@ const AdminScheduleItems = ({
         title={"메일 보내기"}
         status={null}
         requestUsername={selectedTutoring?.requestUsername}
+        subject={subject}
+        setSubject={setSubject}
         detail={detail}
         setDetail={setDetail}
         setStatus={null}
         onSubmitChange={onSubmitMail}
         onSubmitDelete={null}
+        showMailFields={true}
       />
     </>
   );

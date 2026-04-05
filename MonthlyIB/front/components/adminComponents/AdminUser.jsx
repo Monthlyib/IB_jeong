@@ -39,6 +39,7 @@ const AdminUser = () => {
   const [modal, setModal] = useState(false);
   const [adminModal, setAdminModal] = useState(false);
   const [mailModal, setMailModal] = useState(false);
+  const [subject, setSubject] = useState("");
   const [detail, setDetail] = useState("");
   const [authority, setAuthority] = useState("");
   const [subscirbeDataList, setSubscribeDataList] = useState({});
@@ -124,14 +125,25 @@ const AdminUser = () => {
 
   const onClickMail = (userId) => {
     setSelectedUserId(userId);
+    setSubject("");
     setDetail("");
     setMailModal(true);
     getUserInfo(userId, userInfo);
   };
 
-  const onSubmitMail = () => {
-    setMailModal(false);
-    mailPost(userDetailInfo?.userId, detail, userInfo);
+  const onSubmitMail = async () => {
+    if (!subject.trim() || !detail.trim()) {
+      alert("메일 제목과 내용을 모두 입력해주세요.");
+      return;
+    }
+
+    try {
+      await mailPost(userDetailInfo?.userId, subject, detail, userInfo);
+      setMailModal(false);
+      alert("메일을 전송했습니다.");
+    } catch (error) {
+      alert(error?.response?.data?.message || "메일 전송에 실패했습니다.");
+    }
   };
 
   return (
@@ -237,11 +249,14 @@ const AdminUser = () => {
           status={null}
           title={"메일 보내기"}
           requestUsername={userDetailInfo?.username}
+          subject={subject}
+          setSubject={setSubject}
           detail={detail}
           setDetail={setDetail}
           setStatus={null}
           onSubmitChange={onSubmitMail}
           onSubmitDelete={null}
+          showMailFields={true}
         />
       </div>
     </>
