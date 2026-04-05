@@ -24,6 +24,17 @@ aside.mo_gnb {
   list-style: none;
 }
 
+.navItemLabel {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+header nav > ul > li:hover .navItemLabel {
+  color: var(--primary01);
+}
+
 header nav > ul > li .gnb2 {
   display: none;
   position: absolute;
@@ -41,6 +52,16 @@ header nav > ul > li .gnb2 li {
 }
 
 header nav > ul > li .gnb2 li a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.2rem 1.2rem;
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: #333;
+}
+
+.submenuLabel {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -346,6 +367,14 @@ header .util a:last-child:hover {
     font-size: 1.6rem;
     font-weight: 500;
     line-height: 1.2;
+  }
+
+  .mobileMenuCategory {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
   }
 
   .mo_gnb .mo_menu_wrap .mo_menu_left .mo_menu_item.active .tit {

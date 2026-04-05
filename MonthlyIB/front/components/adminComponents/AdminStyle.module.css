@@ -618,6 +618,86 @@
   text-align: center;
 }
 
+.headerNavDialog {
+  width: min(136rem, calc(100vw - 4rem));
+}
+
+.headerNavBody {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+  padding: 2.4rem 3rem 3rem;
+  overflow: auto;
+}
+
+.headerNavActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.headerNavMenuList,
+.headerNavChildList {
+  display: grid;
+  gap: 1.4rem;
+}
+
+.headerNavMenuCard,
+.headerNavChildCard {
+  display: grid;
+  gap: 1.4rem;
+  padding: 1.8rem;
+  border: 1px solid #ece4f5;
+  border-radius: 2rem;
+  background: #fff;
+}
+
+.headerNavMenuHeader,
+.headerNavChildHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.2rem;
+}
+
+.headerNavMenuHeader strong,
+.headerNavChildHeader strong {
+  color: #261d36;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.headerNavKey {
+  margin-top: 0.6rem;
+  color: #7b718e;
+  font-size: 1.25rem;
+  line-height: 1.6;
+  word-break: break-all;
+}
+
+.headerNavActionGroup {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.headerNavMenuGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.headerNavBooleanRow {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+.headerNavChildren {
+  display: grid;
+  gap: 1rem;
+}
+
 .dashboard_mid_card .title {
   display: flex;
   align-items: center;
@@ -1528,7 +1608,8 @@
   }
 
   .calculatorBandRow,
-  .calculatorInlineFields {
+  .calculatorInlineFields,
+  .headerNavMenuGrid {
     grid-template-columns: 1fr;
   }
 
@@ -1561,8 +1642,16 @@
   }
 
   .calculatorSubjectActions,
-  .calculatorLevelToggleGroup {
+  .calculatorLevelToggleGroup,
+  .headerNavActionGroup,
+  .headerNavBooleanRow {
     justify-content: flex-start;
+  }
+
+  .headerNavMenuHeader,
+  .headerNavChildHeader {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .dashboard_mid_card .subtitle,

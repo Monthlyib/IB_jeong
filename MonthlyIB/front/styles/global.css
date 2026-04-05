@@ -389,7 +389,18 @@ header nav > ul > li > a {
   font-weight: 700;
 }
 
+.navItemLabel {
+  display: block;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: inherit;
+}
+
 header nav > ul > li:hover > a {
+  color: var(--primary01);
+}
+
+header nav > ul > li:hover .navItemLabel {
   color: var(--primary01);
 }
 

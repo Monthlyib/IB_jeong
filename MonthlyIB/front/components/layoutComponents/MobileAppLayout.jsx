@@ -2,21 +2,65 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars, faTimes } from "@fortawesome/free-solid-svg-icons";
 import styles from "./AppLayout.module.css";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useUserInfo, useUserStore } from "@/store/user";
 
-const MobileAppLayout = ({ asideModal, setAsideModal }) => {
+const renderMobileLink = (menu, className, onNavigate) => {
+  if (menu.external && menu.href) {
+    return (
+      <a
+        href={menu.href}
+        target="_blank"
+        rel="noreferrer noopener"
+        className={className}
+        onClick={onNavigate}
+      >
+        {menu.label}
+      </a>
+    );
+  }
+
+  if (menu.href) {
+    return (
+      <Link href={menu.href} className={className} onClick={onNavigate}>
+        {menu.label}
+      </Link>
+    );
+  }
+
+  return <span className={className}>{menu.label}</span>;
+};
+
+const MobileAppLayout = ({ asideModal, setAsideModal, menus = [] }) => {
   const router = useRouter();
-  const [menuModal, setMenuModal] = useState(1);
   const { userInfo, signOut } = useUserInfo();
   const { getUserInfo, userDetailInfo } = useUserStore();
+  const visibleMenus = useMemo(() => menus || [], [menus]);
+  const [menuModal, setMenuModal] = useState("");
 
   useEffect(() => {
     if (userInfo?.userId) getUserInfo(userInfo.userId, userInfo);
   }, [userInfo]);
+
+  useEffect(() => {
+    const firstMenuKey =
+      visibleMenus.find((menu) => menu.children?.length > 0)?.key ??
+      visibleMenus[0]?.key ??
+      "";
+
+    const hasCurrentMenu = visibleMenus.some((menu) => menu.key === menuModal);
+    if (!hasCurrentMenu) {
+      setMenuModal(firstMenuKey);
+    }
+  }, [menuModal, visibleMenus]);
+
+  const activeMenu =
+    visibleMenus.find((menu) => menu.key === menuModal) ??
+    visibleMenus.find((menu) => menu.children?.length > 0) ??
+    null;
 
   const onLoggedOut = useCallback(() => {
     signOut();
@@ -30,91 +74,14 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
     router.push("/login");
   }, [router, setAsideModal, signOut]);
 
-  const mbModal = {
-    1: (
-      <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
-        <div className={styles.mo_sub_item}>
-          <Link href="/ib" className={styles.tit}>
-            <span>월간 IB</span>
-          </Link>
-        </div>
-      </div>
-    ),
-    2: (
-      <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
-        <div className={styles.mo_sub_item}>
-          <Link href="/course" className={styles.tit}>
-            전체강의
-          </Link>
-        </div>
-      </div>
-    ),
-    3: (
-      <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
-        <div className={styles.mo_sub_item}>
-          <Link href="/board/" className={styles.tit}>
-            IB 입시뉴스
-          </Link>
-        </div>
-        <div className={styles.mo_sub_item}>
-          <Link href="/board/calculator" className={styles.tit}>
-            합격예측 계산기
-          </Link>
-        </div>
-        <div className={styles.mo_sub_item}>
-          <Link href="/board/download" className={styles.tit}>
-            자료실
-          </Link>
-        </div>
-        <div className={styles.mo_sub_item}>
-          <Link href="/board/free" className={styles.tit}>
-            자유게시판
-          </Link>
-        </div>
-      </div>
-    ),
-    4: (
-      <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
-        <div className={styles.mo_sub_item}>
-          <Link href="/tutoring" className={styles.tit}>
-            튜터링
-          </Link>
-        </div>
-        <div className={styles.mo_sub_item}>
-          <Link href="/question" className={styles.tit}>
-            질문하기
-          </Link>
-        </div>
-      </div>
-    ),
-    5: (
-      <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
-        <div className={styles.mo_sub_item}>
-          <Link href="/learningtest" className={styles.tit}>
-            학습유형테스트
-          </Link>
-        </div>
-      </div>
-    ),
-    6: (
-      <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
-        <div className={styles.mo_sub_item}>
-          <Link
-            href="http://monthlyib.co.kr/contact"
-            target="_blank"
-            rel="noreferrer noopener"
-            className={styles.tit}
-          >
-            학원 현장강의
-          </Link>
-        </div>
-      </div>
-    ),
-  };
+  const handleMenuNavigate = useCallback(() => {
+    setAsideModal(false);
+  }, [setAsideModal]);
 
   const onClickBtn = useCallback(() => {
     setAsideModal((prev) => !prev);
-  }, []);
+  }, [setAsideModal]);
+
   return (
     <>
       <div className={styles.mo_header_wrap}>
@@ -145,7 +112,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
             <>
               <div className={styles.util_wrap}>
                 <div className={styles.util_user_cont}>
-                  <Link href="/mypage">
+                  <Link href="/mypage" onClick={handleMenuNavigate}>
                     <figure>
                       <Image
                         src={
@@ -173,14 +140,20 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
               </div>
               <div className={styles.util_sub}>
                 {userDetailInfo?.subscribe ? (
-                  <Link href="/mypage" className={styles.util_plan_active}>
+                  <Link
+                    href="/mypage"
+                    className={styles.util_plan_active}
+                    onClick={handleMenuNavigate}
+                  >
                     <span>구독중</span>
                     <span>
                       D-<b>23</b>
                     </span>
                   </Link>
                 ) : (
-                  <Link href="/plan">구독하기</Link>
+                  <Link href="/plan" onClick={handleMenuNavigate}>
+                    구독하기
+                  </Link>
                 )}
 
                 <Link href="/" onClick={onLoggedOut}>
@@ -209,18 +182,10 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
                 </button>
               </div>
               <div className={styles.util_sub}>
-                <Link
-                  href="/login"
-                  onClick={handleLoginRedirect}
-                >
+                <Link href="/login" onClick={handleLoginRedirect}>
                   로그인
                 </Link>
-                <Link
-                  href="/signup"
-                  onClick={() => {
-                    setAsideModal(false);
-                  }}
-                >
+                <Link href="/signup" onClick={handleMenuNavigate}>
                   회원가입
                 </Link>
               </div>
@@ -231,78 +196,51 @@ const MobileAppLayout = ({ asideModal, setAsideModal }) => {
             style={{ backgroundColor: "white" }}
           >
             <div className={styles.mo_menu_left} style={{ height: "100vh" }}>
-              <div
-                className={
-                  menuModal === 1
-                    ? `${styles.mo_menu_item} ${styles.active}`
-                    : styles.mo_menu_item
-                }
-              >
-                <div className={styles.tit} onClick={() => setMenuModal(1)}>
-                  월간 IB
-                </div>
-              </div>
-              <div
-                className={
-                  menuModal === 2
-                    ? `${styles.mo_menu_item} ${styles.active}`
-                    : styles.mo_menu_item
-                }
-              >
-                <div className={styles.tit} onClick={() => setMenuModal(2)}>
-                  강의
-                </div>
-              </div>
-              <div
-                className={
-                  menuModal === 3
-                    ? `${styles.mo_menu_item} ${styles.active}`
-                    : styles.mo_menu_item
-                }
-              >
-                <div className={styles.tit} onClick={() => setMenuModal(3)}>
-                  자료실
-                </div>
-              </div>
-              <div
-                className={
-                  menuModal === 4
-                    ? `${styles.mo_menu_item} ${styles.active}`
-                    : styles.mo_menu_item
-                }
-              >
-                <div className={styles.tit} onClick={() => setMenuModal(4)}>
-                  튜터링
-                </div>
-              </div>
-              <div
-                className={
-                  menuModal === 5
-                    ? `${styles.mo_menu_item} ${styles.active}`
-                    : styles.mo_menu_item
-                }
-              >
-                <div
-                  className={styles.tit}
-                  style={{ fontSize: "1.5rem" }}
-                  onClick={() => setMenuModal(5)}
-                >
-                  학습유형테스트
-                </div>
-              </div>
-              <div
-                className={
-                  menuModal === 6
-                    ? `${styles.mo_menu_item} ${styles.active}`
-                    : styles.mo_menu_item
-                }
-              >
-                <div className={styles.tit} onClick={() => setMenuModal(6)}>
-                  학원 현장강의
-                </div>
-              </div>
+              {visibleMenus.map((menu) => {
+                const hasChildren = menu.children?.length > 0;
+                return (
+                  <div
+                    key={menu.key}
+                    className={
+                      hasChildren && menuModal === menu.key
+                        ? `${styles.mo_menu_item} ${styles.active}`
+                        : styles.mo_menu_item
+                    }
+                  >
+                    {hasChildren ? (
+                      <button
+                        type="button"
+                        className={`${styles.tit} ${styles.mobileMenuCategory}`}
+                        onClick={() => setMenuModal(menu.key)}
+                      >
+                        {menu.label}
+                      </button>
+                    ) : (
+                      renderMobileLink(menu, styles.tit, handleMenuNavigate)
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div className={styles.mo_menu_right}>{mbModal[menuModal]}</div>
+            <div className={styles.mo_menu_right}>
+              {activeMenu?.children?.length ? (
+                <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
+                  {activeMenu.children.map((child) => (
+                    <div className={styles.mo_sub_item} key={child.key}>
+                      {renderMobileLink(child, styles.tit, handleMenuNavigate)}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className={`${styles.mo_sub_wrap} ${styles.active}`}>
+                  <div className={styles.mo_sub_item}>
+                    <span className={styles.tit}>
+                      선택한 메뉴에 하위 항목이 없습니다.
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </aside>

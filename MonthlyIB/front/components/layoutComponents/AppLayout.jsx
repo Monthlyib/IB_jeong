@@ -3,17 +3,60 @@
 import Link from "next/link";
 import Image from "next/image";
 import styles from "./AppLayout.module.css";
-import Resource from "./Resource";
 import UserProfile from "./UserProfile";
 import LoginForm from "./LoginForm";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import MobileAppLayout from "./MobileAppLayout";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useUserInfo } from "@/store/user";
 import { adjustWindowSize } from "@/utils/utils";
 import { getCookie } from "@/apis/cookies";
+import { openAPIGetHeaderNavigation } from "@/apis/headerNavigationAPI";
+import {
+  buildDefaultHeaderNavigationConfig,
+  getVisibleHeaderMenus,
+} from "@/utils/headerNavigationUtils";
+
+const renderTopLevelMenu = (menu) => {
+  if (menu.external && menu.href) {
+    return (
+      <a href={menu.href} target="_blank" rel="noreferrer noopener">
+        {menu.label}
+      </a>
+    );
+  }
+
+  if (menu.href) {
+    return <Link href={menu.href}>{menu.label}</Link>;
+  }
+
+  return <span className={styles.navItemLabel}>{menu.label}</span>;
+};
+
+const renderSubMenu = (menu) => {
+  const content = (
+    <>
+      <span>{menu.label}</span>
+      <FontAwesomeIcon icon={faChevronRight} className={styles.icon} />
+    </>
+  );
+
+  if (menu.external && menu.href) {
+    return (
+      <a href={menu.href} target="_blank" rel="noreferrer noopener">
+        {content}
+      </a>
+    );
+  }
+
+  if (menu.href) {
+    return <Link href={menu.href}>{content}</Link>;
+  }
+
+  return <span className={styles.submenuLabel}>{menu.label}</span>;
+};
 
 const AppLayout = ({ children, disable }) => {
   const pathName = usePathname();
@@ -23,16 +66,19 @@ const AppLayout = ({ children, disable }) => {
   const [windowSize, setWindowSize] = useState({
     width: undefined,
   });
+  const [headerNavigationConfig, setHeaderNavigationConfig] = useState(
+    buildDefaultHeaderNavigationConfig()
+  );
 
   const { userInfo, signOut } = useUserInfo();
 
   const onMouseOverMenu = useCallback(() => {
     setMouseOverMenu(true);
-  }, [mouseOverMenu]);
+  }, []);
 
   const onMouseLeaveMenu = useCallback(() => {
     setMouseOverMenu(false);
-  }, [mouseOverMenu]);
+  }, []);
 
   useEffect(() => {
     adjustWindowSize(setWindowSize);
@@ -44,6 +90,38 @@ const AppLayout = ({ children, disable }) => {
       signOut();
     }
   }, [signOut, userInfo]);
+
+  useEffect(() => {
+    let ignore = false;
+
+    const fetchHeaderNavigation = async () => {
+      const response = await openAPIGetHeaderNavigation();
+      if (ignore) {
+        return;
+      }
+
+      setHeaderNavigationConfig(
+        response?.data?.config ?? buildDefaultHeaderNavigationConfig()
+      );
+    };
+
+    fetchHeaderNavigation();
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (windowSize.width > 1024 && asideModal) {
+      setAsideModal(false);
+    }
+  }, [asideModal, windowSize.width]);
+
+  const visibleMenus = useMemo(
+    () => getVisibleHeaderMenus(headerNavigationConfig),
+    [headerNavigationConfig]
+  );
 
   return (
     <>
@@ -63,55 +141,18 @@ const AppLayout = ({ children, disable }) => {
 
             <nav onMouseOver={onMouseOverMenu} onMouseLeave={onMouseLeaveMenu}>
               <ul style={{ listStyle: "none" }}>
-                <li>
-                  <Link href="/aitools">AI Tools</Link>
-                </li>
-                <li>
-                  <Link href="/ib">월간 IB</Link>
-                </li>
-                <li>
-                  <Link href="/course">영상강의</Link>
-                </li>
-                <li>
-                  <Resource />
-                </li>
-                <li>
-                  <Link href="/tutoring">튜터링 예약</Link>
-                  <ul className={styles.gnb2} style={{ listStyle: "none" }}>
-                    <li>
-                      <Link href="/tutoring">
-                        <span>튜터링 예약</span>
-                        <FontAwesomeIcon
-                          icon={faChevronRight}
-                          className={styles.icon}
-                        />
-                      </Link>
-                    </li>
-                    <li>
-                      <Link href="/question">
-                        <span>질문하기</span>
-                        <FontAwesomeIcon
-                          icon={faChevronRight}
-                          className={styles.icon}
-                        />
-                      </Link>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <Link href="/learningtest">학습유형 테스트</Link>
-                </li>
-                {/* AI Tools 메인페이지 네비게이션 추가 */}
-
-                <li>
-                  <Link
-                    href="http://monthlyib.co.kr/contact"
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    학원 현장강의
-                  </Link>
-                </li>
+                {visibleMenus.map((menu) => (
+                  <li key={menu.key}>
+                    {renderTopLevelMenu(menu)}
+                    {menu.children?.length > 0 && (
+                      <ul className={styles.gnb2} style={{ listStyle: "none" }}>
+                        {menu.children.map((child) => (
+                          <li key={child.key}>{renderSubMenu(child)}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
               </ul>
             </nav>
             {userInfo?.userStatus === "ACTIVE" ? (
@@ -123,10 +164,8 @@ const AppLayout = ({ children, disable }) => {
           <MobileAppLayout
             asideModal={asideModal}
             setAsideModal={setAsideModal}
+            menus={visibleMenus}
           />
-          {windowSize.width > 1024 &&
-            asideModal === true &&
-            setAsideModal(false)}
         </header>
       )}
 

@@ -14,6 +14,7 @@
 
 ### Added
 
+- `/adminpage`에서 데스크톱 헤더와 모바일 메뉴를 함께 수정할 수 있는 GNB 관리 카드와 메뉴 편집 모달을 추가했습니다.
 - `/question` 목록과 `/question/[id]` 상세에서 어드민 전용 작성자 표시를 추가했습니다.
 - `/course/[id]`, `/course/player/[id]`에 수강 진도율, 이어보기, 처음부터 보기 UI를 추가했습니다.
 - `/course/write`에서 유튜브 링크 외에 동영상 파일 업로드 레슨 작성/수정을 지원하도록 확장했습니다.
@@ -28,6 +29,7 @@
 
 ### Changed
 
+- 헤더 GNB와 모바일 사이드 메뉴가 서버 설정을 우선 읽고, 설정이 없을 때만 기존 하드코드 메뉴를 fallback으로 사용하도록 정리했습니다.
 - `/aitools/coaching`의 영어 과목명을 `Language A English`로 바로잡고, 영어 모드 안내 문구 오타도 함께 수정했습니다.
 - `/question`, `/mypage`, `/adminpage` 질문 목록 페이지네이션을 서버 `pageInfo` 기준으로 정리했습니다.
 - `/course/player/[id]` 좌측 커리큘럼 토글과 플레이어 UI 가독성을 보완했습니다.
