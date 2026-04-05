@@ -34,6 +34,11 @@ const reorderItems = (items, startIndex, endIndex) => {
   return nextItems;
 };
 
+const mergeDraggableStyle = (style, extra = {}) => ({
+  ...(style || {}),
+  ...extra,
+});
+
 const StrictModeDroppable = ({ children, ...props }) => {
   const [enabled, setEnabled] = useState(false);
 
@@ -57,6 +62,7 @@ const TopMenuPreviewChip = ({
   isActive = false,
   isHidden = false,
   isDragging = false,
+  isClone = false,
   provided = {},
   onClick,
 }) => (
@@ -64,12 +70,14 @@ const TopMenuPreviewChip = ({
     ref={provided.innerRef}
     role="button"
     tabIndex={0}
-    style={provided.draggableProps?.style}
+    style={mergeDraggableStyle(provided.draggableProps?.style, {
+      zIndex: isDragging ? 20 : undefined,
+    })}
     className={`${styles.headerNavPreviewMenu} ${
       isActive ? styles.headerNavPreviewMenuActive : ""
     } ${isHidden ? styles.headerNavPreviewMenuHidden : ""} ${
       isDragging ? styles.headerNavPreviewMenuDragging : ""
-    }`}
+    } ${isClone ? styles.headerNavPreviewDragClone : ""}`}
     {...(provided.draggableProps || {})}
     {...(provided.dragHandleProps || {})}
     onClick={onClick}
@@ -87,13 +95,25 @@ const TopMenuPreviewChip = ({
   </div>
 );
 
-const ChildMenuPreviewRow = ({ child, isHidden = false, isDragging = false, provided = {} }) => (
+const ChildMenuPreviewRow = ({
+  child,
+  isHidden = false,
+  isDragging = false,
+  isClone = false,
+  provided = {},
+}) => (
   <div
     ref={provided.innerRef}
-    style={provided.draggableProps?.style}
+    style={mergeDraggableStyle(provided.draggableProps?.style, {
+      width: "100%",
+      boxSizing: "border-box",
+      zIndex: isDragging ? 20 : undefined,
+    })}
     className={`${styles.headerNavPreviewChildItem} ${
       isHidden ? styles.headerNavPreviewMenuHidden : ""
-    } ${isDragging ? styles.headerNavPreviewMenuDragging : ""}`}
+    } ${isDragging ? styles.headerNavPreviewMenuDragging : ""} ${
+      isClone ? styles.headerNavPreviewDragClone : ""
+    }`}
     {...(provided.draggableProps || {})}
     {...(provided.dragHandleProps || {})}
   >
@@ -364,6 +384,7 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
                             isActive={previewMenuKey === menu.key}
                             isHidden={!menu.visible}
                             isDragging
+                            isClone
                             provided={provided}
                           />
                         );
@@ -434,6 +455,7 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
                               child={child}
                               isHidden={!child.visible}
                               isDragging
+                              isClone
                               provided={provided}
                             />
                           );
