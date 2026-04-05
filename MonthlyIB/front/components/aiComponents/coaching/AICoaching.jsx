@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 // import { chapterOptions } from "@/components/aiComponents/chapterOptions";
-const subjects = ["Science", "Math", "Langauge A English", "Psychology", "Business", "History", "Geography", "Economics"];
-const ENGLISH_SUBJECT = "Langauge A English";
+const subjects = ["Science", "Math", "Language A English", "Psychology", "Business", "History", "Geography", "Economics"];
+const ENGLISH_SUBJECT = "Language A English";
 const ENGLISH_TEXT_TYPES = ["Literature", "Language"]; // step 2 for English
 const ENGLISH_MODES = [
     { key: "generative", label: "✨ 새로운 질문 생성하기 (Generative)" },
@@ -67,7 +67,7 @@ const AICoaching = () => {
 
         // Reset chat messages to minimal prompts for the chosen mode
         setMessages([
-            { sender: "bot", text: "Langauge A English · Language 모드로 다시 시작합니다." },
+            { sender: "bot", text: "Language A English · Language 모드로 다시 시작합니다." },
             { sender: "bot", text: guideMsg },
         ]);
     };

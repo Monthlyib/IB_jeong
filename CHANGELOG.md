@@ -18,6 +18,7 @@
 
 ### Changed
 
+- `/aitools/coaching`의 영어 과목명을 `Language A English`로 바로잡고, 영어 모드 안내 문구 오타도 함께 수정했습니다.
 - `/question`, `/mypage`, `/adminpage` 질문 목록 페이지네이션을 서버 `pageInfo` 기준으로 정리했습니다.
 - `/course/player/[id]` 좌측 커리큘럼 토글과 플레이어 UI 가독성을 보완했습니다.
 - 홈 빌더의 블록 삽입/재정렬 UX를 placeholder와 밀림 동작이 보이도록 반복 개선했습니다.
