@@ -137,6 +137,9 @@
 .panel,
 .canvasPanel {
   min-width: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
   border: 1px solid #e9e1f2;
   border-radius: 2.4rem;
   background: #fff;
@@ -154,6 +157,7 @@
 .canvasPanel {
   display: flex;
   flex-direction: column;
+  justify-self: stretch;
   padding: 1.6rem;
   overflow: visible;
   min-width: 0;
