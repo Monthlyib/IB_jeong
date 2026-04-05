@@ -83,6 +83,9 @@ const CoursePlayer = ({ pageId }) => {
   const youtubeContainerRef = useRef(null);
   const youtubePlayerRef = useRef(null);
   const youtubePlayerReadyRef = useRef(false);
+  const youtubeVideoIdRef = useRef("");
+  const desiredYoutubeVideoIdRef = useRef("");
+  const desiredYoutubeStartSecondsRef = useRef(0);
   const currentTimeRef = useRef(0);
   const durationRef = useRef(0);
   const saveInFlightRef = useRef(false);
@@ -354,8 +357,24 @@ const CoursePlayer = ({ pageId }) => {
       return;
     }
 
+    desiredYoutubeStartSecondsRef.current = safeSeconds;
     setStartAtSeconds(safeSeconds);
-    setPlayerVersion((prev) => prev + 1);
+  }, []);
+
+  const destroyYoutubePlayer = useCallback(() => {
+    youtubePlayerReadyRef.current = false;
+    youtubeVideoIdRef.current = "";
+    desiredYoutubeVideoIdRef.current = "";
+    desiredYoutubeStartSecondsRef.current = 0;
+
+    const player = youtubePlayerRef.current;
+    youtubePlayerRef.current = null;
+
+    if (player?.destroy) {
+      player.destroy();
+    }
+
+    youtubeContainerRef.current?.replaceChildren();
   }, []);
 
   const switchLesson = useCallback(
@@ -489,97 +508,128 @@ const CoursePlayer = ({ pageId }) => {
   }, [persistCurrentLessonProgress]);
 
   useEffect(() => {
+    return () => {
+      destroyYoutubePlayer();
+    };
+  }, [destroyYoutubePlayer]);
+
+  useEffect(() => {
     if (!currentLesson) {
-      return undefined;
+      return;
     }
 
     currentTimeRef.current = startAtSeconds || 0;
     durationRef.current = 0;
+    desiredYoutubeStartSecondsRef.current = Math.max(
+      0,
+      Math.floor(Number(startAtSeconds) || 0)
+    );
 
     if (!isYouTubeVideoUrl(currentLesson.videoFileUrl)) {
-      const existingPlayer = youtubePlayerRef.current;
-      youtubePlayerRef.current = null;
-      if (existingPlayer?.destroy) {
-        existingPlayer.destroy();
-      }
-      youtubePlayerReadyRef.current = false;
-      youtubeContainerRef.current?.replaceChildren();
-      return undefined;
+      destroyYoutubePlayer();
+      return;
     }
 
     const videoId = extractYouTubeVideoId(currentLesson.videoFileUrl);
     if (!videoId || !youtubeContainerRef.current) {
-      return undefined;
+      return;
     }
 
-    let cancelled = false;
-    let playerInstance = null;
+    desiredYoutubeVideoIdRef.current = videoId;
 
-    loadYoutubeIframeApi().then((YT) => {
+    let cancelled = false;
+
+    const syncYoutubePlayer = async () => {
+      const YT = await loadYoutubeIframeApi();
       if (cancelled || !youtubeContainerRef.current) {
         return;
       }
 
+      const safeStartSeconds = desiredYoutubeStartSecondsRef.current;
       const existingPlayer = youtubePlayerRef.current;
-      youtubePlayerRef.current = null;
-      if (existingPlayer?.destroy) {
-        existingPlayer.destroy();
+
+      if (!existingPlayer) {
+        youtubePlayerReadyRef.current = false;
+        youtubeContainerRef.current.replaceChildren();
+        const playerMountNode = document.createElement("div");
+        youtubeContainerRef.current.appendChild(playerMountNode);
+
+        youtubePlayerRef.current = new YT.Player(playerMountNode, {
+          videoId,
+          playerVars: {
+            enablejsapi: 1,
+            playsinline: 1,
+            rel: 0,
+            modestbranding: 1,
+            origin: window.location.origin,
+            start: safeStartSeconds,
+          },
+          events: {
+            onReady: (event) => {
+              if (cancelled) {
+                event.target.destroy?.();
+                return;
+              }
+
+              youtubePlayerReadyRef.current = true;
+              youtubeVideoIdRef.current = desiredYoutubeVideoIdRef.current || videoId;
+              durationRef.current = Math.floor(event.target.getDuration() || 0);
+
+              const desiredVideoId = desiredYoutubeVideoIdRef.current;
+              const desiredStartSeconds = desiredYoutubeStartSecondsRef.current;
+
+              if (desiredVideoId && desiredVideoId !== videoId) {
+                event.target.loadVideoById({
+                  videoId: desiredVideoId,
+                  startSeconds: desiredStartSeconds,
+                });
+                return;
+              }
+
+              if (desiredStartSeconds > 0) {
+                event.target.seekTo(desiredStartSeconds, true);
+              }
+            },
+            onStateChange: (event) => {
+              durationRef.current = Math.floor(event.target.getDuration() || 0);
+
+              if (event.data === YT.PlayerState.ENDED) {
+                currentTimeRef.current = durationRef.current;
+                persistCurrentLessonProgress({ markComplete: true });
+              }
+            },
+          },
+        });
+        return;
       }
-      youtubePlayerReadyRef.current = false;
 
-      youtubeContainerRef.current.replaceChildren();
-      const playerMountNode = document.createElement("div");
-      youtubeContainerRef.current.appendChild(playerMountNode);
+      if (!youtubePlayerReadyRef.current) {
+        return;
+      }
 
-      playerInstance = new YT.Player(playerMountNode, {
-        videoId,
-        playerVars: {
-          enablejsapi: 1,
-          playsinline: 1,
-          rel: 0,
-          modestbranding: 1,
-          origin: window.location.origin,
-          start: Math.max(0, Math.floor(startAtSeconds || 0)),
-        },
-        events: {
-          onReady: (event) => {
-            if (cancelled) {
-              event.target.destroy?.();
-              return;
-            }
-            youtubePlayerReadyRef.current = true;
-            durationRef.current = Math.floor(event.target.getDuration() || 0);
-          },
-          onStateChange: (event) => {
-            durationRef.current = Math.floor(event.target.getDuration() || 0);
+      if (youtubeVideoIdRef.current !== videoId) {
+        youtubeVideoIdRef.current = videoId;
+        existingPlayer.loadVideoById({
+          videoId,
+          startSeconds: safeStartSeconds,
+        });
+        return;
+      }
 
-            if (event.data === YT.PlayerState.ENDED) {
-              currentTimeRef.current = durationRef.current;
-              persistCurrentLessonProgress({ markComplete: true });
-            }
-          },
-        },
-      });
+      const currentPlaybackTime = Math.floor(existingPlayer.getCurrentTime?.() || 0);
+      if (Math.abs(currentPlaybackTime - safeStartSeconds) > 1) {
+        existingPlayer.seekTo(safeStartSeconds, true);
+      }
+    };
 
-      youtubePlayerRef.current = playerInstance;
+    syncYoutubePlayer().catch((error) => {
+      console.error("YouTube 플레이어 동기화 중 오류 발생:", error);
     });
 
     return () => {
       cancelled = true;
-      youtubePlayerReadyRef.current = false;
-      const playerToDestroy = playerInstance || youtubePlayerRef.current;
-      youtubePlayerRef.current = null;
-      if (playerToDestroy?.destroy) {
-        playerToDestroy.destroy();
-      }
-      youtubeContainerRef.current?.replaceChildren();
     };
-  }, [
-    currentLesson,
-    persistCurrentLessonProgress,
-    playerVersion,
-    startAtSeconds,
-  ]);
+  }, [currentLesson, destroyYoutubePlayer, persistCurrentLessonProgress, startAtSeconds]);
 
   const playerContent = useMemo(() => {
     if (!currentLesson) {
