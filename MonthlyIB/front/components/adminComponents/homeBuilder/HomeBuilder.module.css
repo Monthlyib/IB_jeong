@@ -603,6 +603,12 @@
   transform: scale(0.985);
 }
 
+.dragClone {
+  opacity: 0.98 !important;
+  transform: rotate(1deg);
+  box-shadow: 0 22px 48px rgba(32, 20, 49, 0.22);
+}
+
 .blockDropPlaceholder {
   min-width: 0;
   border: 2px dashed rgba(81, 52, 108, 0.4);

@@ -711,7 +711,28 @@ const HomeBuilder = () => {
                   <p>열을 선택한 뒤 클릭하거나 캔버스로 드래그하세요.</p>
                 </div>
               </div>
-              <StrictModeDroppable droppableId={PALETTE_DROPPABLE_ID} type="BLOCK">
+              <StrictModeDroppable
+                droppableId={PALETTE_DROPPABLE_ID}
+                type="BLOCK"
+                renderClone={(provided, _snapshot, rubric) => {
+                  const item = palette[rubric.source.index];
+                  if (!item) {
+                    return null;
+                  }
+                  return (
+                    <button
+                      ref={provided.innerRef}
+                      type="button"
+                      className={`${styles.paletteButton} ${styles.dragClone}`}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <span>{item.label}</span>
+                      <small>{item.description}</small>
+                    </button>
+                  );
+                }}
+              >
                 {(provided) => (
                   <div
                     className={styles.paletteList}
@@ -991,7 +1012,54 @@ const HomeBuilder = () => {
 
           <div className={styles.canvasViewportWrap}>
             <div className={styles.canvasScaleWrap}>
-              <StrictModeDroppable droppableId={ROWS_DROPPABLE_ID} type="ROW">
+              <StrictModeDroppable
+                droppableId={ROWS_DROPPABLE_ID}
+                type="ROW"
+                renderClone={(provided, _snapshot, rubric) => {
+                  const row = layout.rows[rubric.source.index];
+                  if (!row) {
+                    return null;
+                  }
+                  const rowLocked = isLockedRow(row);
+                  return (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      style={provided.draggableProps.style}
+                      className={`${styles.canvasRow} ${styles.dragClone}`}
+                    >
+                      <div className={`${styles.rowHeader} ${!rowLocked ? styles.rowHeaderDraggable : ""}`}>
+                        <div className={styles.rowHeaderLeft}>
+                          <div
+                            className={styles.dragHandle}
+                            {...(!rowLocked ? provided.dragHandleProps : {})}
+                          >
+                            ↕
+                          </div>
+                          <div className={styles.rowMeta}>
+                            <span>Row</span>
+                            <strong>
+                              {HOME_LAYOUT_OPTIONS.find((item) => item.value === row.layout)?.label}
+                            </strong>
+                          </div>
+                        </div>
+                        <div className={styles.rowHeaderRight}>
+                          <select value={row.layout} disabled>
+                            {HOME_LAYOUT_OPTIONS.map((option) => (
+                              <option key={option.value} value={option.value}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                          <button type="button" className={styles.dangerButton} disabled>
+                            {rowLocked ? "고정 행" : "행 삭제"}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }}
+              >
                 {(rowsProvided) => (
                   <div
                     className={styles.canvasRows}
@@ -1071,6 +1139,46 @@ const HomeBuilder = () => {
                                     key={column.id}
                                     droppableId={createColumnDroppableId(row.id, column.id)}
                                     type="BLOCK"
+                                    renderClone={(provided, _snapshot, rubric) => {
+                                      const block = column.blocks[rubric.source.index];
+                                      if (!block) {
+                                        return null;
+                                      }
+                                      return (
+                                        <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...(!isLockedBlock(block)
+                                            ? provided.dragHandleProps
+                                            : {})}
+                                          style={provided.draggableProps.style}
+                                          className={`${styles.canvasBlock} ${styles.dragClone}`}
+                                        >
+                                          <div className={styles.blockHeader}>
+                                            <div>
+                                              <span>{block.type}</span>
+                                              <strong>
+                                                {BLOCK_LIBRARY.find(
+                                                  (blockItem) => blockItem.type === block.type
+                                                )?.label || block.type}
+                                              </strong>
+                                            </div>
+                                            <button
+                                              type="button"
+                                              className={styles.dangerButton}
+                                              disabled
+                                            >
+                                              {isLockedBlock(block) ? "고정 블록" : "삭제"}
+                                            </button>
+                                          </div>
+                                          <div className={styles.blockPreview}>
+                                            <div className={styles.blockPreviewInner}>
+                                              <HomeBlockContent block={block} previewMode />
+                                            </div>
+                                          </div>
+                                        </div>
+                                      );
+                                    }}
                                   >
                                     {(columnProvided, columnSnapshot) => (
                                       <div
