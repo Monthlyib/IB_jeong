@@ -1221,6 +1221,7 @@ div.review_stars svg.active:hover ~ svg.empty {
 }
 
 .youtubePlayer,
+.youtubePlayerHost,
 .playerEmpty {
   width: 100%;
   height: 100%;

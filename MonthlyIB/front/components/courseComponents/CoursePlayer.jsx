@@ -497,11 +497,13 @@ const CoursePlayer = ({ pageId }) => {
     durationRef.current = 0;
 
     if (!isYouTubeVideoUrl(currentLesson.videoFileUrl)) {
-      if (youtubePlayerRef.current?.destroy) {
-        youtubePlayerRef.current.destroy();
-      }
+      const existingPlayer = youtubePlayerRef.current;
       youtubePlayerRef.current = null;
+      if (existingPlayer?.destroy) {
+        existingPlayer.destroy();
+      }
       youtubePlayerReadyRef.current = false;
+      youtubeContainerRef.current?.replaceChildren();
       return undefined;
     }
 
@@ -511,27 +513,40 @@ const CoursePlayer = ({ pageId }) => {
     }
 
     let cancelled = false;
+    let playerInstance = null;
 
     loadYoutubeIframeApi().then((YT) => {
       if (cancelled || !youtubeContainerRef.current) {
         return;
       }
 
-      if (youtubePlayerRef.current?.destroy) {
-        youtubePlayerRef.current.destroy();
+      const existingPlayer = youtubePlayerRef.current;
+      youtubePlayerRef.current = null;
+      if (existingPlayer?.destroy) {
+        existingPlayer.destroy();
       }
       youtubePlayerReadyRef.current = false;
 
-      youtubePlayerRef.current = new YT.Player(youtubeContainerRef.current, {
+      youtubeContainerRef.current.replaceChildren();
+      const playerMountNode = document.createElement("div");
+      youtubeContainerRef.current.appendChild(playerMountNode);
+
+      playerInstance = new YT.Player(playerMountNode, {
         videoId,
         playerVars: {
+          enablejsapi: 1,
           playsinline: 1,
           rel: 0,
           modestbranding: 1,
+          origin: window.location.origin,
           start: Math.max(0, Math.floor(startAtSeconds || 0)),
         },
         events: {
           onReady: (event) => {
+            if (cancelled) {
+              event.target.destroy?.();
+              return;
+            }
             youtubePlayerReadyRef.current = true;
             durationRef.current = Math.floor(event.target.getDuration() || 0);
           },
@@ -545,15 +560,19 @@ const CoursePlayer = ({ pageId }) => {
           },
         },
       });
+
+      youtubePlayerRef.current = playerInstance;
     });
 
     return () => {
       cancelled = true;
       youtubePlayerReadyRef.current = false;
-      if (youtubePlayerRef.current?.destroy) {
-        youtubePlayerRef.current.destroy();
-      }
+      const playerToDestroy = playerInstance || youtubePlayerRef.current;
       youtubePlayerRef.current = null;
+      if (playerToDestroy?.destroy) {
+        playerToDestroy.destroy();
+      }
+      youtubeContainerRef.current?.replaceChildren();
     };
   }, [
     currentLesson,
@@ -569,11 +588,9 @@ const CoursePlayer = ({ pageId }) => {
 
     if (isYouTubeVideoUrl(currentLesson.videoFileUrl)) {
       return (
-        <div
-          key={`${currentLesson.subChapterId}-${playerVersion}`}
-          ref={youtubeContainerRef}
-          className={styles.youtubePlayer}
-        />
+        <div className={styles.youtubePlayer}>
+          <div ref={youtubeContainerRef} className={styles.youtubePlayerHost} />
+        </div>
       );
     }
 
