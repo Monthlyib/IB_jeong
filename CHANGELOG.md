@@ -6,6 +6,7 @@
 
 ### Changed
 
+- `/adminpage/home-builder`에서 모듈 팔레트 드롭 시점에 브라우저별 `dataTransfer` 식별값이 비어 블록이 추가되지 않던 문제를 보완해, 팔레트 타입을 상태와 `text/plain` fallback으로 함께 관리하도록 정리했습니다.
 - `/adminpage/home-builder`에서 `react-beautiful-dnd`가 불안정하던 팔레트→캔버스 복사 드래그 경로를 네이티브 드래그로 분리해, 모듈 팔레트의 블록을 다시 컬럼에 바로 끌어 넣을 수 있도록 복구했습니다.
 - `/adminpage/home-builder`에서 캔버스 영역이 더 크게 보이도록 빌더 전체 폭을 한 번 더 확장하고, 좌측 패널 폭과 캔버스 내부 패딩을 줄였으며, 전역 `section` 패딩이 `builderSurface`에 남아 있던 부분도 함께 정리했습니다.
 - `/adminpage/home-builder`의 캔버스 블록 미리보기를 `compactPreview` 축소 렌더 대신 일반 미리보기 크기로 보여주도록 바꿔, 실제 캔버스가 더 넓고 크게 보이도록 조정했습니다.

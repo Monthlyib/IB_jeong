@@ -191,7 +191,8 @@ const getRowIdFromDraggableId = (draggableId) =>
 const readPaletteDragType = (event) => {
   const raw = event.dataTransfer?.getData(PALETTE_DRAG_MIME);
   if (!raw) {
-    return null;
+    const fallback = event.dataTransfer?.getData("text/plain");
+    return fallback || null;
   }
 
   try {
@@ -235,6 +236,7 @@ const HomeBuilder = () => {
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [nativePaletteTarget, setNativePaletteTarget] = useState(null);
+  const [draggingPaletteType, setDraggingPaletteType] = useState(null);
 
   // 왼쪽 패널 탭: "palette" | "inspector"
   const [leftTab, setLeftTab] = useState("palette");
@@ -504,6 +506,7 @@ const HomeBuilder = () => {
       return;
     }
 
+    setDraggingPaletteType(item.type);
     event.dataTransfer.effectAllowed = "copy";
     event.dataTransfer.setData(
       PALETTE_DRAG_MIME,
@@ -514,10 +517,11 @@ const HomeBuilder = () => {
 
   const handlePaletteDragEnd = () => {
     setNativePaletteTarget(null);
+    setDraggingPaletteType(null);
   };
 
   const handleColumnPaletteDragOver = (event, rowId, columnId) => {
-    const paletteType = readPaletteDragType(event);
+    const paletteType = draggingPaletteType || readPaletteDragType(event);
     if (!paletteType) {
       return;
     }
@@ -534,13 +538,14 @@ const HomeBuilder = () => {
   };
 
   const handleColumnPaletteDrop = (event, rowId, columnId) => {
-    const paletteType = readPaletteDragType(event);
+    const paletteType = draggingPaletteType || readPaletteDragType(event);
     if (!paletteType) {
       return;
     }
 
     event.preventDefault();
     setNativePaletteTarget(null);
+    setDraggingPaletteType(null);
 
     const paletteItem = palette.find((item) => item.type === paletteType);
     if (!paletteItem) {
