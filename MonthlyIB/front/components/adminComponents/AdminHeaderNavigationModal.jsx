@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import styles from "./AdminStyle.module.css";
@@ -71,8 +72,10 @@ const TopMenuPreviewChip = ({
     {...(provided.dragHandleProps || {})}
     onClick={onClick}
   >
-    <span>{menu.label || "새 메뉴"}</span>
-    {menu.children?.length ? <small>{menu.children.length}</small> : null}
+    <span className={styles.headerNavPreviewMenuText}>{menu.label || "새 메뉴"}</span>
+    {menu.children?.length ? (
+      <span className={styles.headerNavPreviewMenuArrow}>▾</span>
+    ) : null}
   </button>
 );
 
@@ -329,7 +332,14 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
               <div className={styles.headerNavPreviewShell}>
                 <div className={styles.headerNavPreviewDesktopCard}>
                   <div className={styles.headerNavPreviewBar}>
-                    <div className={styles.headerNavPreviewLogo}>Monthly IB</div>
+                    <div className={styles.headerNavPreviewLogoWrap}>
+                      <Image
+                        src="/img/common/logo.png"
+                        alt="Monthly IB Logo"
+                        width={40}
+                        height={48}
+                      />
+                    </div>
                     <StrictModeDroppable
                       droppableId={HEADER_TOP_DROPPABLE_ID}
                       direction="horizontal"
@@ -382,7 +392,13 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
                         </div>
                       )}
                     </StrictModeDroppable>
-                    <div className={styles.headerNavPreviewUtility}>구독플랜</div>
+                    <div className={styles.headerNavPreviewRight}>
+                      <div className={styles.headerNavPreviewProfile}>
+                        <div className={styles.headerNavPreviewAvatar}>ib</div>
+                        <span>admin님</span>
+                      </div>
+                      <div className={styles.headerNavPreviewUtility}>구독플랜</div>
+                    </div>
                   </div>
 
                   <div className={styles.headerNavPreviewDropdown}>
