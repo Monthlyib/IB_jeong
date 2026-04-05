@@ -59,11 +59,10 @@ const findBlockLocation = (layout, blockId) => {
   return null;
 };
 
-const PALETTE_DROPPABLE_ID = "builder-palette";
 const ROWS_DROPPABLE_ID = "builder-rows";
-const PALETTE_DRAGGABLE_PREFIX = "palette:";
 const ROW_DRAGGABLE_PREFIX = "row:";
 const BLOCK_DRAGGABLE_PREFIX = "block:";
+const PALETTE_DRAG_MIME = "application/monthlyib-home-builder-palette";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -179,11 +178,6 @@ const parseColumnDroppableId = (droppableId) => {
   };
 };
 
-const getPaletteTypeFromDraggableId = (draggableId) =>
-  draggableId.startsWith(PALETTE_DRAGGABLE_PREFIX)
-    ? draggableId.slice(PALETTE_DRAGGABLE_PREFIX.length)
-    : null;
-
 const getBlockIdFromDraggableId = (draggableId) =>
   draggableId.startsWith(BLOCK_DRAGGABLE_PREFIX)
     ? draggableId.slice(BLOCK_DRAGGABLE_PREFIX.length)
@@ -193,6 +187,20 @@ const getRowIdFromDraggableId = (draggableId) =>
   draggableId.startsWith(ROW_DRAGGABLE_PREFIX)
     ? draggableId.slice(ROW_DRAGGABLE_PREFIX.length)
     : null;
+
+const readPaletteDragType = (event) => {
+  const raw = event.dataTransfer?.getData(PALETTE_DRAG_MIME);
+  if (!raw) {
+    return null;
+  }
+
+  try {
+    const parsed = JSON.parse(raw);
+    return parsed?.kind === "palette" ? parsed.type : null;
+  } catch (_error) {
+    return null;
+  }
+};
 
 const StrictModeDroppable = ({ children, ...props }) => {
   const [enabled, setEnabled] = useState(false);
@@ -226,6 +234,7 @@ const HomeBuilder = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [nativePaletteTarget, setNativePaletteTarget] = useState(null);
 
   // 왼쪽 패널 탭: "palette" | "inspector"
   const [leftTab, setLeftTab] = useState("palette");
@@ -488,6 +497,71 @@ const HomeBuilder = () => {
       event.target.value = "";
     }
   };
+
+  const handlePaletteDragStart = (event, item) => {
+    if (item.disabled) {
+      event.preventDefault();
+      return;
+    }
+
+    event.dataTransfer.effectAllowed = "copy";
+    event.dataTransfer.setData(
+      PALETTE_DRAG_MIME,
+      JSON.stringify({ kind: "palette", type: item.type })
+    );
+    event.dataTransfer.setData("text/plain", item.type);
+  };
+
+  const handlePaletteDragEnd = () => {
+    setNativePaletteTarget(null);
+  };
+
+  const handleColumnPaletteDragOver = (event, rowId, columnId) => {
+    const paletteType = readPaletteDragType(event);
+    if (!paletteType) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+
+    if (
+      nativePaletteTarget?.rowId !== rowId ||
+      nativePaletteTarget?.columnId !== columnId
+    ) {
+      setNativePaletteTarget({ rowId, columnId });
+    }
+  };
+
+  const handleColumnPaletteDrop = (event, rowId, columnId) => {
+    const paletteType = readPaletteDragType(event);
+    if (!paletteType) {
+      return;
+    }
+
+    event.preventDefault();
+    setNativePaletteTarget(null);
+
+    const paletteItem = palette.find((item) => item.type === paletteType);
+    if (!paletteItem) {
+      return;
+    }
+
+    if (paletteItem.disabled) {
+      alert("이 블록은 한 번만 배치할 수 있습니다.");
+      return;
+    }
+
+    let insertedBlockId = null;
+    setLayout((current) => {
+      const result = insertPaletteBlock(current, paletteType, rowId, columnId);
+      insertedBlockId = result.insertedBlockId;
+      return result.layout;
+    });
+    setSelectedBlockId(insertedBlockId);
+    setSelectedColumnTarget({ rowId, columnId });
+  };
+
   const handleDragEnd = (result) => {
     const { destination, source, draggableId, type } = result;
 
@@ -515,35 +589,12 @@ const HomeBuilder = () => {
       return;
     }
 
-    if (type !== "BLOCK" || destination.droppableId === PALETTE_DROPPABLE_ID) {
+    if (type !== "BLOCK") {
       return;
     }
 
     const targetLocation = parseColumnDroppableId(destination.droppableId);
     if (!targetLocation) {
-      return;
-    }
-
-    if (source.droppableId === PALETTE_DROPPABLE_ID) {
-      const paletteType = getPaletteTypeFromDraggableId(draggableId);
-      if (!paletteType) {
-        return;
-      }
-
-      let insertedBlockId = null;
-      setLayout((current) => {
-        const result = insertPaletteBlock(
-          current,
-          paletteType,
-          targetLocation.rowId,
-          targetLocation.columnId,
-          destination.index
-        );
-        insertedBlockId = result.insertedBlockId;
-        return result.layout;
-      });
-      setSelectedBlockId(insertedBlockId);
-      setSelectedColumnTarget(targetLocation);
       return;
     }
 
@@ -704,73 +755,33 @@ const HomeBuilder = () => {
                   <p>열을 선택한 뒤 클릭하거나 캔버스로 드래그하세요.</p>
                 </div>
               </div>
-              <StrictModeDroppable
-                droppableId={PALETTE_DROPPABLE_ID}
-                type="BLOCK"
-                renderClone={(provided, _snapshot, rubric) => {
-                  const item = palette[rubric.source.index];
-                  if (!item) {
-                    return null;
-                  }
-                  return (
-                    <button
-                      ref={provided.innerRef}
-                      type="button"
-                      className={`${styles.paletteButton} ${styles.dragClone}`}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <span>{item.label}</span>
-                      <small>{item.description}</small>
-                    </button>
-                  );
-                }}
-              >
-                {(provided) => (
-                  <div
-                    className={styles.paletteList}
-                    ref={provided.innerRef}
-                    {...provided.droppableProps}
+              <div className={styles.paletteList}>
+                {palette.map((item) => (
+                  <button
+                    key={item.type}
+                    type="button"
+                    draggable={!item.disabled}
+                    disabled={item.disabled}
+                    className={styles.paletteButton}
+                    onDragStart={(event) => handlePaletteDragStart(event, item)}
+                    onDragEnd={handlePaletteDragEnd}
+                    onClick={() => {
+                      if (!selectedColumnTarget) {
+                        alert("먼저 블록을 넣을 열을 선택하세요.");
+                        return;
+                      }
+                      addBlockToColumn(
+                        item.type,
+                        selectedColumnTarget.rowId,
+                        selectedColumnTarget.columnId
+                      );
+                    }}
                   >
-                    {palette.map((item, index) => (
-                      <Draggable
-                        key={item.type}
-                        draggableId={`${PALETTE_DRAGGABLE_PREFIX}${item.type}`}
-                        index={index}
-                        isDragDisabled={item.disabled}
-                      >
-                        {(draggableProvided, snapshot) => (
-                          <button
-                            ref={draggableProvided.innerRef}
-                            type="button"
-                            disabled={item.disabled}
-                            className={`${styles.paletteButton} ${
-                              snapshot.isDragging ? styles.blockDragging : ""
-                            }`}
-                            {...draggableProvided.draggableProps}
-                            {...draggableProvided.dragHandleProps}
-                            onClick={() => {
-                              if (!selectedColumnTarget) {
-                                alert("먼저 블록을 넣을 열을 선택하세요.");
-                                return;
-                              }
-                              addBlockToColumn(
-                                item.type,
-                                selectedColumnTarget.rowId,
-                                selectedColumnTarget.columnId
-                              );
-                            }}
-                          >
-                            <span>{item.label}</span>
-                            <small>{item.description}</small>
-                          </button>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </StrictModeDroppable>
+                    <span>{item.label}</span>
+                    <small>{item.description}</small>
+                  </button>
+                ))}
+              </div>
             </>
           )}
 
@@ -1182,8 +1193,18 @@ const HomeBuilder = () => {
                                             ? styles.canvasColumnActive
                                             : ""
                                         } ${
-                                          columnSnapshot.isDraggingOver ? styles.canvasColumnPreview : ""
+                                          columnSnapshot.isDraggingOver ||
+                                          (nativePaletteTarget?.rowId === row.id &&
+                                            nativePaletteTarget?.columnId === column.id)
+                                            ? styles.canvasColumnPreview
+                                            : ""
                                         }`}
+                                        onDragOver={(event) =>
+                                          handleColumnPaletteDragOver(event, row.id, column.id)
+                                        }
+                                        onDrop={(event) =>
+                                          handleColumnPaletteDrop(event, row.id, column.id)
+                                        }
                                         onClick={() =>
                                           setSelectedColumnTarget({ rowId: row.id, columnId: column.id })
                                         }
