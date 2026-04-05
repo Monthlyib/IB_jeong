@@ -1,9 +1,16 @@
+import Link from "next/link";
 import styles from "../Main.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
 import MainSwiper from "../MainSwiper";
 
-const MainHeroSection = () => {
+const HERO_PREVIEW_CARDS = [
+  { href: "/course", top: "LESSON", mid: "L", bottom: "영상강의" },
+  { href: "/board/download", top: "STUDY", mid: "S", bottom: "Study Material" },
+  { href: "/tutoring", top: "TUTORING", mid: "T", bottom: "튜터링 예약" },
+];
+
+const MainHeroSection = ({ previewMode = false }) => {
   return (
     <section className={styles.main_wrap}>
       <div className={styles.left_cont}>
@@ -24,7 +31,20 @@ const MainHeroSection = () => {
       </div>
       <div className={styles.right_cont}>
         <div className={styles.main_project_swiper}>
-          <MainSwiper />
+          {previewMode ? (
+            <div className={styles.previewSwiperTrack}>
+              {HERO_PREVIEW_CARDS.map((card) => (
+                <Link key={card.href} href={card.href} className={`${styles.previewSlide} ${styles.pr_wrap}`}>
+                  <div className={styles.pr_top}>{card.top}</div>
+                  <div className={styles.pr_md}>{card.mid}</div>
+                  <div className={styles.pr_bt}>{card.bottom}</div>
+                  <div className={styles.pr_dim}></div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <MainSwiper />
+          )}
         </div>
       </div>
     </section>

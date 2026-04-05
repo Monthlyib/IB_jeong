@@ -106,7 +106,7 @@
     overflow: hidden;
 }
 
-.main_project_swiper a.pr_wrap {
+.main_project_swiper .pr_wrap {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -147,13 +147,29 @@
     transition: .5s all;
 }
 
-.main_project_swiper a:hover.pr_wrap .pr_dim {
+.main_project_swiper .pr_wrap:hover .pr_dim {
     height: 100%;
     transition: .5s all;
 }
 
-.main_project_swiper a:hover.pr_wrap .pr_bt {
+.main_project_swiper .pr_wrap:hover .pr_bt {
     text-decoration: underline;
+}
+
+.previewSwiperTrack {
+    display: flex;
+    gap: 2rem;
+    overflow: hidden;
+}
+
+.previewSlide {
+    width: 26rem;
+    height: 286px;
+    background: #51346C;
+    border-radius: 1rem;
+    overflow: hidden;
+    flex: 0 0 26rem;
+    z-index: 0;
 }
 
 @media screen and (max-width: 1024px) {
@@ -182,6 +198,11 @@
 
     .main_project_swiper .swiper-slide {
         width: 24rem;
+    }
+
+    .previewSlide {
+        width: 24rem;
+        flex-basis: 24rem;
     }
 }
 
