@@ -3,12 +3,12 @@
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: 2.8rem;
 }
 
 .layoutRow {
   display: grid;
-  gap: 2.4rem;
+  gap: 1.8rem;
 }
 
 .layout_one {
@@ -27,7 +27,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 2.4rem;
+  gap: 1.8rem;
 }
 
 .blockShell {
