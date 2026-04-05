@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import styles from "./AdminStyle.module.css";
 import {
   createHeaderNavigationDraftMenu,
@@ -8,18 +9,114 @@ import {
   reindexHeaderNavigationMenus,
 } from "@/utils/headerNavigationUtils";
 
-const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
-  const [draft, setDraft] = useState(normalizeHeaderNavigationConfig(config));
+const HEADER_TOP_DROPPABLE_ID = "header-top-level";
+const HEADER_CHILD_DROPPABLE_PREFIX = "header-child:";
+const HEADER_TOP_DRAGGABLE_PREFIX = "header-top:";
+const HEADER_CHILD_DRAGGABLE_PREFIX = "header-child-item:";
+
+const createChildDroppableId = (menuKey) =>
+  `${HEADER_CHILD_DROPPABLE_PREFIX}${menuKey}`;
+
+const createTopDraggableId = (menuKey) => `${HEADER_TOP_DRAGGABLE_PREFIX}${menuKey}`;
+const createChildDraggableId = (menuKey, childKey) =>
+  `${HEADER_CHILD_DRAGGABLE_PREFIX}${menuKey}:${childKey}`;
+
+const parseChildDroppableId = (droppableId) =>
+  droppableId.startsWith(HEADER_CHILD_DROPPABLE_PREFIX)
+    ? droppableId.slice(HEADER_CHILD_DROPPABLE_PREFIX.length)
+    : null;
+
+const reorderItems = (items, startIndex, endIndex) => {
+  const nextItems = [...items];
+  const [moved] = nextItems.splice(startIndex, 1);
+  nextItems.splice(endIndex, 0, moved);
+  return nextItems;
+};
+
+const StrictModeDroppable = ({ children, ...props }) => {
+  const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
-    setDraft(normalizeHeaderNavigationConfig(config));
+    const frame = requestAnimationFrame(() => setEnabled(true));
+    return () => {
+      cancelAnimationFrame(frame);
+      setEnabled(false);
+    };
+  }, []);
+
+  if (!enabled) {
+    return null;
+  }
+
+  return <Droppable {...props}>{children}</Droppable>;
+};
+
+const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
+  const [draft, setDraft] = useState(normalizeHeaderNavigationConfig(config));
+  const [previewMenuKey, setPreviewMenuKey] = useState(
+    normalizeHeaderNavigationConfig(config).menus[0]?.key ?? ""
+  );
+
+  useEffect(() => {
+    const normalized = normalizeHeaderNavigationConfig(config);
+    setDraft(normalized);
+    setPreviewMenuKey(normalized.menus[0]?.key ?? "");
   }, [config]);
+
+  useEffect(() => {
+    const hasPreviewMenu = draft.menus.some((menu) => menu.key === previewMenuKey);
+    if (!hasPreviewMenu) {
+      setPreviewMenuKey(draft.menus[0]?.key ?? "");
+    }
+  }, [draft.menus, previewMenuKey]);
 
   const updateMenus = (updater) => {
     setDraft((prev) => ({
       ...prev,
       menus: reindexHeaderNavigationMenus(updater(prev.menus)),
     }));
+  };
+
+  const handleDragEnd = (result) => {
+    const { destination, source, type } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
+    ) {
+      return;
+    }
+
+    if (type === "TOP_MENU") {
+      updateMenus((menus) => reorderItems(menus, source.index, destination.index));
+      return;
+    }
+
+    if (type !== "CHILD_MENU") {
+      return;
+    }
+
+    const sourceMenuKey = parseChildDroppableId(source.droppableId);
+    const destinationMenuKey = parseChildDroppableId(destination.droppableId);
+
+    if (!sourceMenuKey || !destinationMenuKey || sourceMenuKey !== destinationMenuKey) {
+      return;
+    }
+
+    updateMenus((menus) =>
+      menus.map((menu) =>
+        menu.key === sourceMenuKey
+          ? {
+              ...menu,
+              children: reorderItems(menu.children || [], source.index, destination.index),
+            }
+          : menu
+      )
+    );
   };
 
   const updateMenu = (menuKey, field, value) => {
@@ -137,6 +234,9 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
     );
   };
 
+  const previewMenu =
+    draft.menus.find((menu) => menu.key === previewMenuKey) ?? draft.menus[0] ?? null;
+
   return (
     <div className={styles.calculatorConfigModal}>
       <div className={styles.calculatorConfigBackdrop} onClick={onClose}>
@@ -174,7 +274,129 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
             </div>
           </div>
 
+          <DragDropContext onDragEnd={handleDragEnd}>
           <div className={styles.headerNavBody}>
+            <div className={styles.headerNavPreviewCard}>
+              <div className={styles.headerNavPreviewHeader}>
+                <div>
+                  <span className={styles.adminEyebrow}>Live Preview</span>
+                  <h4>헤더 미리보기</h4>
+                  <p>
+                    상위 메뉴는 헤더 바에서, 하위 메뉴는 드롭다운 패널에서 직접 드래그해 순서를 바꿀 수 있습니다.
+                  </p>
+                </div>
+              </div>
+
+              <div className={styles.headerNavPreviewShell}>
+                <div className={styles.headerNavPreviewBar}>
+                  <div className={styles.headerNavPreviewLogo}>Monthly IB</div>
+                  <StrictModeDroppable
+                    droppableId={HEADER_TOP_DROPPABLE_ID}
+                    direction="horizontal"
+                    type="TOP_MENU"
+                  >
+                    {(provided) => (
+                      <div
+                        className={styles.headerNavPreviewMenus}
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                      >
+                        {draft.menus.map((menu, index) => (
+                          <Draggable
+                            key={menu.key}
+                            draggableId={createTopDraggableId(menu.key)}
+                            index={index}
+                          >
+                            {(draggableProvided, snapshot) => (
+                              <button
+                                ref={draggableProvided.innerRef}
+                                type="button"
+                                className={`${styles.headerNavPreviewMenu} ${
+                                  previewMenuKey === menu.key ? styles.headerNavPreviewMenuActive : ""
+                                } ${!menu.visible ? styles.headerNavPreviewMenuHidden : ""} ${
+                                  snapshot.isDragging ? styles.headerNavPreviewMenuDragging : ""
+                                }`}
+                                {...draggableProvided.draggableProps}
+                                {...draggableProvided.dragHandleProps}
+                                onClick={() => setPreviewMenuKey(menu.key)}
+                              >
+                                <span>{menu.label || "새 메뉴"}</span>
+                                {menu.children?.length ? (
+                                  <small>{menu.children.length}</small>
+                                ) : null}
+                              </button>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </StrictModeDroppable>
+                  <div className={styles.headerNavPreviewUtility}>구독플랜</div>
+                </div>
+
+                <div className={styles.headerNavPreviewDropdown}>
+                  <div className={styles.headerNavPreviewDropdownHeader}>
+                    <strong>{previewMenu?.label || "메뉴 선택"}</strong>
+                    <span>
+                      {previewMenu?.children?.length
+                        ? "하위 메뉴를 드래그해 순서를 바꾸세요."
+                        : "하위 메뉴가 없는 단일 링크 메뉴입니다."}
+                    </span>
+                  </div>
+
+                  {previewMenu?.children?.length ? (
+                    <StrictModeDroppable
+                      droppableId={createChildDroppableId(previewMenu.key)}
+                      type="CHILD_MENU"
+                    >
+                      {(provided) => (
+                        <div
+                          className={styles.headerNavPreviewChildList}
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                        >
+                          {previewMenu.children.map((child, childIndex) => (
+                            <Draggable
+                              key={child.key}
+                              draggableId={createChildDraggableId(
+                                previewMenu.key,
+                                child.key
+                              )}
+                              index={childIndex}
+                            >
+                              {(draggableProvided, snapshot) => (
+                                <div
+                                  ref={draggableProvided.innerRef}
+                                  className={`${styles.headerNavPreviewChildItem} ${
+                                    !child.visible ? styles.headerNavPreviewMenuHidden : ""
+                                  } ${
+                                    snapshot.isDragging
+                                      ? styles.headerNavPreviewMenuDragging
+                                      : ""
+                                  }`}
+                                  {...draggableProvided.draggableProps}
+                                  {...draggableProvided.dragHandleProps}
+                                >
+                                  <span>{child.label || "새 하위 메뉴"}</span>
+                                  <small>{child.external ? "외부 링크" : child.href || "/"}</small>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                        </div>
+                      )}
+                    </StrictModeDroppable>
+                  ) : (
+                    <div className={styles.calculatorEmpty}>
+                      현재 선택된 메뉴에는 하위 메뉴가 없습니다.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
             <div className={styles.headerNavActions}>
               <button
                 type="button"
@@ -400,6 +622,7 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
               )}
             </div>
           </div>
+          </DragDropContext>
         </div>
       </div>
     </div>
