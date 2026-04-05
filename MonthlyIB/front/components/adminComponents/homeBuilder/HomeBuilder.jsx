@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import styles from "./HomeBuilder.module.css";
 import {
   BLOCK_LIBRARY,
@@ -11,7 +12,6 @@ import {
   createDefaultBlock,
   createDefaultHomeLayout,
   createEmptyColumn,
-  createId,
   createRow,
   getColumnCountForLayout,
   getPaletteAvailability,
@@ -59,9 +59,11 @@ const findBlockLocation = (layout, blockId) => {
   return null;
 };
 
-const DRAG_SCROLL_EDGE = 120;
-const DRAG_SCROLL_MAX_STEP = 28;
-const DRAG_PREVIEW_SCALE = 0.84;
+const PALETTE_DROPPABLE_ID = "builder-palette";
+const ROWS_DROPPABLE_ID = "builder-rows";
+const PALETTE_DRAGGABLE_PREFIX = "palette:";
+const ROW_DRAGGABLE_PREFIX = "row:";
+const BLOCK_DRAGGABLE_PREFIX = "block:";
 
 const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
 
@@ -69,6 +71,12 @@ const isLockedBlock = (block) => block?.type === "existingHero";
 
 const isLockedRow = (row) =>
   row?.columns?.some((column) => column.blocks?.some((block) => isLockedBlock(block)));
+
+const getMinimumInsertIndex = (column) =>
+  column?.blocks?.[0] && isLockedBlock(column.blocks[0]) ? 1 : 0;
+
+const normalizeInsertIndex = (column, insertIndex, maxLength = column?.blocks?.length ?? 0) =>
+  clamp(insertIndex, getMinimumInsertIndex(column), maxLength);
 
 const adjustRowColumns = (row, nextLayout) => {
   const nextCount = getColumnCountForLayout(nextLayout);
@@ -131,14 +139,13 @@ const moveBlock = (layout, source, target) => {
 
   const [movingBlock] = sourceColumn.blocks.splice(sourceIndex, 1);
   let insertIndex = typeof target.blockIndex === "number" ? target.blockIndex : targetColumn.blocks.length;
+  const minimumInsertIndex = getMinimumInsertIndex(targetColumn);
 
   if (source.rowId === target.rowId && source.columnId === target.columnId && sourceIndex < insertIndex) {
     insertIndex -= 1;
   }
 
-  if (insertIndex < 0) {
-    insertIndex = 0;
-  }
+  insertIndex = clamp(insertIndex, minimumInsertIndex, targetColumn.blocks.length);
 
   targetColumn.blocks.splice(insertIndex, 0, movingBlock);
   return next;
@@ -159,6 +166,52 @@ const deleteBlockFromLayout = (layout, rowId, columnId, blockId) => {
   return next;
 };
 
+const createColumnDroppableId = (rowId, columnId) => `column:${rowId}:${columnId}`;
+
+const parseColumnDroppableId = (droppableId) => {
+  const parts = droppableId.split(":");
+  if (parts.length !== 3 || parts[0] !== "column") {
+    return null;
+  }
+  return {
+    rowId: parts[1],
+    columnId: parts[2],
+  };
+};
+
+const getPaletteTypeFromDraggableId = (draggableId) =>
+  draggableId.startsWith(PALETTE_DRAGGABLE_PREFIX)
+    ? draggableId.slice(PALETTE_DRAGGABLE_PREFIX.length)
+    : null;
+
+const getBlockIdFromDraggableId = (draggableId) =>
+  draggableId.startsWith(BLOCK_DRAGGABLE_PREFIX)
+    ? draggableId.slice(BLOCK_DRAGGABLE_PREFIX.length)
+    : null;
+
+const getRowIdFromDraggableId = (draggableId) =>
+  draggableId.startsWith(ROW_DRAGGABLE_PREFIX)
+    ? draggableId.slice(ROW_DRAGGABLE_PREFIX.length)
+    : null;
+
+const StrictModeDroppable = ({ children, ...props }) => {
+  const [enabled, setEnabled] = useState(false);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setEnabled(true));
+    return () => {
+      cancelAnimationFrame(frame);
+      setEnabled(false);
+    };
+  }, []);
+
+  if (!enabled) {
+    return null;
+  }
+
+  return <Droppable {...props}>{children}</Droppable>;
+};
+
 const HomeBuilder = () => {
   const router = useRouter();
   const { userInfo } = useUserInfo();
@@ -173,11 +226,6 @@ const HomeBuilder = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [draggingRowId, setDraggingRowId] = useState(null);
-  const [draggingBlockId, setDraggingBlockId] = useState(null);
-  const [draggingPaletteType, setDraggingPaletteType] = useState(null);
-  const [blockDropPreview, setBlockDropPreview] = useState(null);
-  const dragPreviewRef = useRef(null);
 
   // 왼쪽 패널 탭: "palette" | "inspector"
   const [leftTab, setLeftTab] = useState("palette");
@@ -229,42 +277,13 @@ const HomeBuilder = () => {
     }
   }, [router, userInfo]);
 
-  useEffect(() => {
-    return () => {
-      if (dragPreviewRef.current?.isConnected) {
-        dragPreviewRef.current.remove();
-      }
-      dragPreviewRef.current = null;
-    };
-  }, []);
-
   const selectedBlockLocation = useMemo(
     () => findBlockLocation(layout, selectedBlockId),
     [layout, selectedBlockId]
   );
   const selectedBlock = selectedBlockLocation?.block || null;
   const selectedBlockLocked = isLockedBlock(selectedBlock);
-  const draggingBlockLocation = useMemo(
-    () => (draggingBlockId ? findBlockLocation(layout, draggingBlockId) : null),
-    [layout, draggingBlockId]
-  );
-  const isInsertDragging = Boolean(draggingBlockId || draggingPaletteType);
-  const draggingPreviewBlock = useMemo(() => {
-    if (draggingBlockLocation?.block) {
-      return draggingBlockLocation.block;
-    }
-    if (draggingPaletteType) {
-      return createDefaultBlock(draggingPaletteType);
-    }
-    return null;
-  }, [draggingBlockLocation, draggingPaletteType]);
   const palette = useMemo(() => getPaletteAvailability(layout), [layout]);
-
-  const getMinimumInsertIndex = (column) =>
-    column?.blocks?.[0] && isLockedBlock(column.blocks[0]) ? 1 : 0;
-
-  const normalizeInsertIndex = (column, insertIndex, maxLength = column?.blocks?.length ?? 0) =>
-    clamp(insertIndex, getMinimumInsertIndex(column), maxLength);
 
   const updateSelectedBlock = (nextProps) => {
     if (!selectedBlockLocation) {
@@ -476,305 +495,90 @@ const HomeBuilder = () => {
       event.target.value = "";
     }
   };
+  const handleDragEnd = (result) => {
+    const { destination, source, draggableId, type } = result;
 
-  const handlePaletteDragStart = (event, type) => {
-    setBlockDropPreview(null);
-    setDraggingPaletteType(type);
-    setDraggingBlockId(null);
-    setDraggingRowId(null);
-    syncDragPreview(event, event.currentTarget);
-    event.dataTransfer.setData(
-      "application/monthlyib-home",
-      JSON.stringify({ kind: "palette", type })
-    );
-  };
-
-  const syncDragPreview = (event, element) => {
-    if (!element || typeof document === "undefined") {
+    if (!destination) {
       return;
     }
 
-    if (dragPreviewRef.current?.isConnected) {
-      dragPreviewRef.current.remove();
-    }
-
-    const rect = element.getBoundingClientRect();
-    const clone = element.cloneNode(true);
-    clone.style.position = "fixed";
-    clone.style.top = "-9999px";
-    clone.style.left = "-9999px";
-    clone.style.width = `${rect.width}px`;
-    clone.style.pointerEvents = "none";
-    clone.style.opacity = "0.96";
-    clone.style.transform = `scale(${DRAG_PREVIEW_SCALE})`;
-    clone.style.transformOrigin = "top left";
-    clone.style.boxShadow = "0 18px 42px rgba(32, 20, 49, 0.24)";
-    clone.style.zIndex = "9999";
-    document.body.appendChild(clone);
-    dragPreviewRef.current = clone;
-    event.dataTransfer.setDragImage(
-      clone,
-      Math.min(72, (rect.width * DRAG_PREVIEW_SCALE) / 2),
-      Math.min(44, (rect.height * DRAG_PREVIEW_SCALE) / 2)
-    );
-  };
-
-  const handleDragEnd = () => {
-    setDraggingRowId(null);
-    setDraggingBlockId(null);
-    setDraggingPaletteType(null);
-    setBlockDropPreview(null);
-    if (dragPreviewRef.current?.isConnected) {
-      dragPreviewRef.current.remove();
-    }
-    dragPreviewRef.current = null;
-  };
-
-  const autoScrollByPointer = (clientY) => {
-    if (typeof window === "undefined") {
-      return;
-    }
-
-    if (clientY < DRAG_SCROLL_EDGE) {
-      const ratio = (DRAG_SCROLL_EDGE - clientY) / DRAG_SCROLL_EDGE;
-      window.scrollBy({ top: -Math.ceil(ratio * DRAG_SCROLL_MAX_STEP), behavior: "auto" });
-      return;
-    }
-
-    const distanceToBottom = window.innerHeight - clientY;
-    if (distanceToBottom < DRAG_SCROLL_EDGE) {
-      const ratio = (DRAG_SCROLL_EDGE - distanceToBottom) / DRAG_SCROLL_EDGE;
-      window.scrollBy({ top: Math.ceil(ratio * DRAG_SCROLL_MAX_STEP), behavior: "auto" });
-    }
-  };
-
-  const handleWorkspaceDragOver = (event) => {
-    autoScrollByPointer(event.clientY);
-  };
-
-  const getBlockInsertIndex = (event, blockIndex) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const isLowerHalf = event.clientY >= rect.top + rect.height / 2;
-    return isLowerHalf ? blockIndex + 1 : blockIndex;
-  };
-
-  const updateBlockPreview = (event, rowId, columnId, blockIndex = null) => {
-    const payload = readDragPayload(event);
-    if (!payload || (payload.kind !== "block" && payload.kind !== "palette")) {
-      return;
-    }
-
-    const column = findColumn(layout, rowId, columnId).column;
-    const nextIndex =
-      typeof blockIndex === "number"
-        ? getBlockInsertIndex(event, blockIndex)
-        : (column?.blocks?.length ?? 0);
-
-    setBlockDropPreview({
-      rowId,
-      columnId,
-      blockIndex: normalizeInsertIndex(column, nextIndex),
-    });
-  };
-
-  const getRenderableBlocks = (rowId, columnId, blocks) => {
-    const previewActive =
-      isInsertDragging &&
-      blockDropPreview?.rowId === rowId &&
-      blockDropPreview?.columnId === columnId;
-    const hasDropPreview = Boolean(isInsertDragging && blockDropPreview);
-    const draggingInColumn =
-      draggingBlockLocation?.rowId === rowId &&
-      draggingBlockLocation?.columnId === columnId;
-
-    const visibleBlocks = draggingInColumn && hasDropPreview
-      ? blocks.filter((block) => block.id !== draggingBlockId)
-      : blocks;
-
-    const items = visibleBlocks.map((block) => ({
-      kind: "block",
-      key: block.id,
-      block,
-    }));
-
-    if (!previewActive) {
-      return items;
-    }
-
-    let insertIndex = blockDropPreview.blockIndex ?? visibleBlocks.length;
     if (
-      draggingInColumn &&
-      typeof draggingBlockLocation?.blockIndex === "number" &&
-      draggingBlockLocation.blockIndex < insertIndex
+      destination.droppableId === source.droppableId &&
+      destination.index === source.index
     ) {
-      insertIndex -= 1;
-    }
-
-    insertIndex = normalizeInsertIndex(
-      { blocks: visibleBlocks },
-      insertIndex,
-      visibleBlocks.length
-    );
-    items.splice(insertIndex, 0, {
-      kind: "placeholder",
-      key: `placeholder-${rowId}-${columnId}-${insertIndex}`,
-      block: draggingPreviewBlock,
-    });
-
-    return items;
-  };
-
-  const handleRowDragStart = (event, rowId) => {
-    const currentRow = layout.rows.find((row) => row.id === rowId);
-    if (isLockedRow(currentRow)) {
-      event.preventDefault();
-      return;
-    }
-    const rowPreviewElement =
-      event.currentTarget?.closest?.(`.${styles.canvasRow}`) || event.currentTarget;
-    syncDragPreview(event, rowPreviewElement);
-    setBlockDropPreview(null);
-    setDraggingRowId(rowId);
-    setDraggingBlockId(null);
-    setDraggingPaletteType(null);
-    event.dataTransfer.setData(
-      "application/monthlyib-home",
-      JSON.stringify({ kind: "row", rowId })
-    );
-  };
-
-  const handleBlockDragStart = (event, rowId, columnId, blockId) => {
-    const currentBlock = findBlockLocation(layout, blockId)?.block;
-    if (isLockedBlock(currentBlock)) {
-      event.preventDefault();
-      return;
-    }
-    syncDragPreview(event, event.currentTarget);
-    setBlockDropPreview(null);
-    setDraggingBlockId(blockId);
-    setDraggingRowId(null);
-    setDraggingPaletteType(null);
-    event.dataTransfer.setData(
-      "application/monthlyib-home",
-      JSON.stringify({ kind: "block", rowId, columnId, blockId })
-    );
-  };
-
-  const readDragPayload = (event) => {
-    try {
-      return JSON.parse(
-        event.dataTransfer.getData("application/monthlyib-home")
-      );
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const handleDropOnRow = (event, targetRowId) => {
-    event.preventDefault();
-    const payload = readDragPayload(event);
-    if (payload?.kind !== "row") {
-      return;
-    }
-    const sourceRow = layout.rows.find((row) => row.id === payload.rowId);
-    const targetRow = layout.rows.find((row) => row.id === targetRowId);
-    if (isLockedRow(sourceRow) || isLockedRow(targetRow)) {
-      return;
-    }
-    setBlockDropPreview(null);
-    setLayout((current) => moveRow(current, payload.rowId, targetRowId));
-  };
-
-  const handleDropOnColumn = (event, rowId, columnId) => {
-    event.preventDefault();
-    const payload = readDragPayload(event);
-    if (!payload) {
       return;
     }
 
-    if (payload.kind === "palette") {
-      const column = findColumn(layout, rowId, columnId).column;
-      const targetIndex =
-        blockDropPreview?.rowId === rowId && blockDropPreview?.columnId === columnId
-          ? blockDropPreview.blockIndex
-          : normalizeInsertIndex(column, column?.blocks?.length ?? 0);
+    if (type === "ROW") {
+      const sourceRowId = getRowIdFromDraggableId(draggableId);
+      const targetRow = layout.rows[destination.index];
+      const sourceRow = layout.rows[source.index];
 
-      let insertedBlockId = null;
-      setLayout((current) => {
-        const result = insertPaletteBlock(current, payload.type, rowId, columnId, targetIndex);
-        insertedBlockId = result.insertedBlockId;
-        return result.layout;
-      });
-      setSelectedBlockId(insertedBlockId);
-      setSelectedColumnTarget({ rowId, columnId });
-      setBlockDropPreview(null);
+      if (!sourceRowId || !targetRow || isLockedRow(sourceRow) || isLockedRow(targetRow)) {
+        return;
+      }
+
+      setLayout((current) => moveRow(current, sourceRowId, targetRow.id));
       return;
     }
 
-    if (payload.kind === "block") {
-      const column = findColumn(layout, rowId, columnId).column;
-      const targetIndex = blockDropPreview?.rowId === rowId &&
-        blockDropPreview?.columnId === columnId
-        ? blockDropPreview.blockIndex
-        : (column?.blocks?.length ?? 0);
-
-      setLayout((current) =>
-        moveBlock(current, payload, {
-          rowId,
-          columnId,
-          blockIndex: targetIndex,
-        })
-      );
-      setBlockDropPreview(null);
-      setSelectedBlockId(payload.blockId);
-      setSelectedColumnTarget({ rowId, columnId });
-    }
-  };
-
-  const handleDropOnBlock = (event, rowId, columnId, blockIndex) => {
-    event.preventDefault();
-    event.stopPropagation();
-    const payload = readDragPayload(event);
-    if (!payload || (payload.kind !== "block" && payload.kind !== "palette")) {
+    if (type !== "BLOCK" || destination.droppableId === PALETTE_DROPPABLE_ID) {
       return;
     }
 
-    const targetIndex =
-      blockDropPreview?.rowId === rowId && blockDropPreview?.columnId === columnId
-        ? blockDropPreview.blockIndex
-        : getBlockInsertIndex(event, blockIndex);
+    const targetLocation = parseColumnDroppableId(destination.droppableId);
+    if (!targetLocation) {
+      return;
+    }
 
-    const column = findColumn(layout, rowId, columnId).column;
-    const normalizedTargetIndex = normalizeInsertIndex(column, targetIndex);
+    if (source.droppableId === PALETTE_DROPPABLE_ID) {
+      const paletteType = getPaletteTypeFromDraggableId(draggableId);
+      if (!paletteType) {
+        return;
+      }
 
-    if (payload.kind === "palette") {
       let insertedBlockId = null;
       setLayout((current) => {
         const result = insertPaletteBlock(
           current,
-          payload.type,
-          rowId,
-          columnId,
-          normalizedTargetIndex
+          paletteType,
+          targetLocation.rowId,
+          targetLocation.columnId,
+          destination.index
         );
         insertedBlockId = result.insertedBlockId;
         return result.layout;
       });
       setSelectedBlockId(insertedBlockId);
-      setSelectedColumnTarget({ rowId, columnId });
-      setBlockDropPreview(null);
+      setSelectedColumnTarget(targetLocation);
+      return;
+    }
+
+    const blockId = getBlockIdFromDraggableId(draggableId);
+    const sourceLocation = parseColumnDroppableId(source.droppableId);
+    const currentBlock = blockId ? findBlockLocation(layout, blockId)?.block : null;
+
+    if (!blockId || !sourceLocation || isLockedBlock(currentBlock)) {
       return;
     }
 
     setLayout((current) =>
-      moveBlock(current, payload, {
-        rowId,
-        columnId,
-        blockIndex: normalizedTargetIndex,
-      })
+      moveBlock(
+        current,
+        {
+          rowId: sourceLocation.rowId,
+          columnId: sourceLocation.columnId,
+          blockId,
+        },
+        {
+          rowId: targetLocation.rowId,
+          columnId: targetLocation.columnId,
+          blockIndex: destination.index,
+        }
+      )
     );
-    setBlockDropPreview(null);
-    setSelectedBlockId(payload.blockId);
+    setSelectedBlockId(blockId);
+    setSelectedColumnTarget(targetLocation);
   };
 
   if (!userInfo?.authority) {
@@ -800,7 +604,7 @@ const HomeBuilder = () => {
   }
 
   return (
-    <main className={styles.builderPage} onDragOverCapture={handleWorkspaceDragOver}>
+    <main className={styles.builderPage}>
       <section className={styles.builderHero}>
         <div className={styles.builderHeroCopy}>
           <span className={styles.builderEyebrow}>Monthly IB Home Builder</span>
@@ -855,7 +659,8 @@ const HomeBuilder = () => {
         </div>
       </section>
 
-      <section className={styles.builderSurface}>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <section className={styles.builderSurface}>
         {/* ── 왼쪽 통합 패널 ── */}
         <aside className={styles.panel}>
           {/* 탭 */}
@@ -906,32 +711,52 @@ const HomeBuilder = () => {
                   <p>열을 선택한 뒤 클릭하거나 캔버스로 드래그하세요.</p>
                 </div>
               </div>
-              <div className={styles.paletteList}>
-                {palette.map((item) => (
-                  <button
-                    key={item.type}
-                    type="button"
-                    draggable={!item.disabled}
-                    disabled={item.disabled}
-                    className={styles.paletteButton}
-                    onDragStart={(event) => handlePaletteDragStart(event, item.type)}
-                    onClick={() => {
-                      if (!selectedColumnTarget) {
-                        alert("먼저 블록을 넣을 열을 선택하세요.");
-                        return;
-                      }
-                      addBlockToColumn(
-                        item.type,
-                        selectedColumnTarget.rowId,
-                        selectedColumnTarget.columnId
-                      );
-                    }}
+              <StrictModeDroppable droppableId={PALETTE_DROPPABLE_ID} type="BLOCK">
+                {(provided) => (
+                  <div
+                    className={styles.paletteList}
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
                   >
-                    <span>{item.label}</span>
-                    <small>{item.description}</small>
-                  </button>
-                ))}
-              </div>
+                    {palette.map((item, index) => (
+                      <Draggable
+                        key={item.type}
+                        draggableId={`${PALETTE_DRAGGABLE_PREFIX}${item.type}`}
+                        index={index}
+                        isDragDisabled={item.disabled}
+                      >
+                        {(draggableProvided, snapshot) => (
+                          <button
+                            ref={draggableProvided.innerRef}
+                            type="button"
+                            disabled={item.disabled}
+                            className={`${styles.paletteButton} ${
+                              snapshot.isDragging ? styles.blockDragging : ""
+                            }`}
+                            {...draggableProvided.draggableProps}
+                            {...draggableProvided.dragHandleProps}
+                            onClick={() => {
+                              if (!selectedColumnTarget) {
+                                alert("먼저 블록을 넣을 열을 선택하세요.");
+                                return;
+                              }
+                              addBlockToColumn(
+                                item.type,
+                                selectedColumnTarget.rowId,
+                                selectedColumnTarget.columnId
+                              );
+                            }}
+                          >
+                            <span>{item.label}</span>
+                            <small>{item.description}</small>
+                          </button>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </StrictModeDroppable>
             </>
           )}
 
@@ -1166,203 +991,225 @@ const HomeBuilder = () => {
 
           <div className={styles.canvasViewportWrap}>
             <div className={styles.canvasScaleWrap}>
-              <div className={styles.canvasRows}>
-                {layout.rows.map((row) => {
-                  const rowLocked = isLockedRow(row);
-                  return (
+              <StrictModeDroppable droppableId={ROWS_DROPPABLE_ID} type="ROW">
+                {(rowsProvided) => (
                   <div
-                    key={row.id}
-                    className={styles.canvasRow}
-                    onDragOver={(event) => event.preventDefault()}
-                    onDrop={(event) => handleDropOnRow(event, row.id)}
+                    className={styles.canvasRows}
+                    ref={rowsProvided.innerRef}
+                    {...rowsProvided.droppableProps}
                   >
-                    <div
-                      className={`${styles.rowHeader} ${!rowLocked ? styles.rowHeaderDraggable : ""} ${
-                        draggingRowId === row.id ? styles.rowDragging : ""
-                      }`}
-                      draggable={!rowLocked}
-                      onDragStart={(event) => handleRowDragStart(event, row.id)}
-                      onDragEnd={handleDragEnd}
-                    >
-                      <div className={styles.rowHeaderLeft}>
-                        <div className={styles.dragHandle}>↕</div>
-                        <div className={styles.rowMeta}>
-                          <span>Row</span>
-                          <strong>{HOME_LAYOUT_OPTIONS.find((item) => item.value === row.layout)?.label}</strong>
-                        </div>
-                      </div>
-                      <div className={styles.rowHeaderRight}>
-                        <select
-                          value={row.layout}
-                          disabled={rowLocked}
-                          onClick={(event) => event.stopPropagation()}
-                          onChange={(event) => updateRowLayout(row.id, event.target.value)}
+                    {layout.rows.map((row, rowIndex) => {
+                      const rowLocked = isLockedRow(row);
+                      return (
+                        <Draggable
+                          key={row.id}
+                          draggableId={`${ROW_DRAGGABLE_PREFIX}${row.id}`}
+                          index={rowIndex}
+                          isDragDisabled={rowLocked}
                         >
-                          {HOME_LAYOUT_OPTIONS.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
-                        <button
-                          type="button"
-                          className={styles.dangerButton}
-                          disabled={rowLocked}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            deleteRow(row.id);
-                          }}
-                        >
-                          {rowLocked ? "고정 행" : "행 삭제"}
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className={`${styles.rowGrid} ${styles[`rowGrid_${row.layout}`]}`}>
-                      {row.columns.map((column, columnIndex) => (
-                        <div
-                          key={column.id}
-                          className={`${styles.canvasColumn} ${
-                            selectedColumnTarget?.columnId === column.id ? styles.canvasColumnActive : ""
-                          } ${
-                            blockDropPreview?.rowId === row.id &&
-                            blockDropPreview?.columnId === column.id
-                              ? styles.canvasColumnPreview
-                              : ""
-                          }`}
-                          onClick={() => setSelectedColumnTarget({ rowId: row.id, columnId: column.id })}
-                          onDragOver={(event) => {
-                            event.preventDefault();
-                            updateBlockPreview(event, row.id, column.id);
-                          }}
-                          onDrop={(event) => handleDropOnColumn(event, row.id, column.id)}
-                        >
-                          <div className={styles.columnHeader}>
-                            <div>
-                              <strong>{columnIndex + 1}열</strong>
-                              <span>{column.blocks.length} blocks</span>
-                            </div>
-                            <button
-                              type="button"
-                              className={styles.columnAction}
-                              onClick={() => setSelectedColumnTarget({ rowId: row.id, columnId: column.id })}
+                          {(rowProvided, rowSnapshot) => (
+                            <div
+                              ref={rowProvided.innerRef}
+                              {...rowProvided.draggableProps}
+                              style={rowProvided.draggableProps.style}
+                              className={`${styles.canvasRow} ${
+                                rowSnapshot.isDragging ? styles.rowDragging : ""
+                              }`}
                             >
-                              선택
-                            </button>
-                          </div>
-
-                          <div className={styles.columnBlocks}>
-                            {getRenderableBlocks(row.id, column.id, column.blocks).length === 0 ? (
-                              <div className={styles.emptyColumn}>
-                                여기에 모듈을 드롭하거나 왼쪽 팔레트에서 추가하세요.
-                              </div>
-                            ) : (
-                              getRenderableBlocks(row.id, column.id, column.blocks).map((item, blockIndex) => {
-                                if (item.kind === "placeholder") {
-                                  return (
+                              <div
+                                className={`${styles.rowHeader} ${
+                                  !rowLocked ? styles.rowHeaderDraggable : ""
+                                }`}
+                              >
+                                <div className={styles.rowHeaderLeft}>
                                   <div
-                                    key={item.key}
-                                    className={styles.blockDropPlaceholder}
+                                    className={styles.dragHandle}
+                                    {...(!rowLocked ? rowProvided.dragHandleProps : {})}
                                   >
-                                    <div className={styles.blockDropPlaceholderHeader}>
-                                      <div>
-                                        <span>
-                                          {item.block?.type || "block"}
-                                        </span>
-                                        <strong>
-                                          {BLOCK_LIBRARY.find(
-                                            (blockItem) => blockItem.type === item.block?.type
-                                          )?.label || "배치 예정"}
-                                        </strong>
-                                      </div>
-                                      <em>여기에 배치</em>
-                                    </div>
-                                    <div className={styles.blockDropPlaceholderPreview}>
-                                      {item.block ? (
-                                        <HomeBlockContent
-                                          block={item.block}
-                                          previewMode
-                                        />
-                                      ) : null}
-                                    </div>
+                                    ↕
                                   </div>
-                                  );
-                                }
-
-                                const actualBlockIndex =
-                                  findBlockLocation(layout, item.block.id)?.blockIndex ?? blockIndex;
-
-                                return (
-                                <div
-                                  key={item.block.id}
-                                  className={`${styles.canvasBlock} ${
-                                    selectedBlockId === item.block.id ? styles.canvasBlockSelected : ""
-                                  } ${!isLockedBlock(item.block) ? styles.canvasBlockDraggable : ""} ${
-                                    draggingBlockId === item.block.id ? styles.blockDragging : ""
-                                  }`}
-                                  draggable={!isLockedBlock(item.block)}
-                                  onDragStart={(event) =>
-                                    handleBlockDragStart(event, row.id, column.id, item.block.id)
-                                  }
-                                  onDragEnd={handleDragEnd}
-                                  onDragOver={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    updateBlockPreview(event, row.id, column.id, actualBlockIndex);
-                                  }}
-                                  onDrop={(event) =>
-                                    handleDropOnBlock(event, row.id, column.id, actualBlockIndex)
-                                  }
-                                  onClick={() => {
-                                    setSelectedBlockId(item.block.id);
-                                    setSelectedColumnTarget({ rowId: row.id, columnId: column.id });
-                                  }}
-                                >
-                                  <div className={styles.blockHeader}>
-                                    <div>
-                                      <span>{item.block.type}</span>
-                                      <strong>
-                                        {BLOCK_LIBRARY.find((blockItem) => blockItem.type === item.block.type)?.label || item.block.type}
-                                      </strong>
-                                    </div>
-                                    <button
-                                      type="button"
-                                      className={styles.dangerButton}
-                                      disabled={isLockedBlock(item.block)}
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        setLayout((current) =>
-                                          deleteBlockFromLayout(current, row.id, column.id, item.block.id)
-                                        );
-                                        if (selectedBlockId === item.block.id) {
-                                          setSelectedBlockId(null);
-                                        }
-                                      }}
-                                    >
-                                      {isLockedBlock(item.block) ? "고정 블록" : "삭제"}
-                                    </button>
+                                  <div className={styles.rowMeta}>
+                                    <span>Row</span>
+                                    <strong>
+                                      {
+                                        HOME_LAYOUT_OPTIONS.find((item) => item.value === row.layout)
+                                          ?.label
+                                      }
+                                    </strong>
                                   </div>
-                                    <div className={styles.blockPreview}>
-                                      <div className={styles.blockPreviewInner}>
-                                      <HomeBlockContent block={item.block} previewMode />
-                                      </div>
-                                    </div>
                                 </div>
-                                );
-                              })
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                                <div className={styles.rowHeaderRight}>
+                                  <select
+                                    value={row.layout}
+                                    disabled={rowLocked}
+                                    onClick={(event) => event.stopPropagation()}
+                                    onChange={(event) => updateRowLayout(row.id, event.target.value)}
+                                  >
+                                    {HOME_LAYOUT_OPTIONS.map((option) => (
+                                      <option key={option.value} value={option.value}>
+                                        {option.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <button
+                                    type="button"
+                                    className={styles.dangerButton}
+                                    disabled={rowLocked}
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      deleteRow(row.id);
+                                    }}
+                                  >
+                                    {rowLocked ? "고정 행" : "행 삭제"}
+                                  </button>
+                                </div>
+                              </div>
+
+                              <div className={`${styles.rowGrid} ${styles[`rowGrid_${row.layout}`]}`}>
+                                {row.columns.map((column, columnIndex) => (
+                                  <StrictModeDroppable
+                                    key={column.id}
+                                    droppableId={createColumnDroppableId(row.id, column.id)}
+                                    type="BLOCK"
+                                  >
+                                    {(columnProvided, columnSnapshot) => (
+                                      <div
+                                        ref={columnProvided.innerRef}
+                                        {...columnProvided.droppableProps}
+                                        className={`${styles.canvasColumn} ${
+                                          selectedColumnTarget?.columnId === column.id
+                                            ? styles.canvasColumnActive
+                                            : ""
+                                        } ${
+                                          columnSnapshot.isDraggingOver ? styles.canvasColumnPreview : ""
+                                        }`}
+                                        onClick={() =>
+                                          setSelectedColumnTarget({ rowId: row.id, columnId: column.id })
+                                        }
+                                      >
+                                        <div className={styles.columnHeader}>
+                                          <div>
+                                            <strong>{columnIndex + 1}열</strong>
+                                            <span>{column.blocks.length} blocks</span>
+                                          </div>
+                                          <button
+                                            type="button"
+                                            className={styles.columnAction}
+                                            onClick={() =>
+                                              setSelectedColumnTarget({
+                                                rowId: row.id,
+                                                columnId: column.id,
+                                              })
+                                            }
+                                          >
+                                            선택
+                                          </button>
+                                        </div>
+
+                                        <div className={styles.columnBlocks}>
+                                          {column.blocks.length === 0 ? (
+                                            <div className={styles.emptyColumn}>
+                                              여기에 모듈을 드롭하거나 왼쪽 팔레트에서 추가하세요.
+                                            </div>
+                                          ) : null}
+
+                                          {column.blocks.map((block, blockIndex) => (
+                                            <Draggable
+                                              key={block.id}
+                                              draggableId={`${BLOCK_DRAGGABLE_PREFIX}${block.id}`}
+                                              index={blockIndex}
+                                              isDragDisabled={isLockedBlock(block)}
+                                            >
+                                              {(blockProvided, blockSnapshot) => (
+                                                <div
+                                                  ref={blockProvided.innerRef}
+                                                  {...blockProvided.draggableProps}
+                                                  {...(!isLockedBlock(block)
+                                                    ? blockProvided.dragHandleProps
+                                                    : {})}
+                                                  style={blockProvided.draggableProps.style}
+                                                  className={`${styles.canvasBlock} ${
+                                                    selectedBlockId === block.id
+                                                      ? styles.canvasBlockSelected
+                                                      : ""
+                                                  } ${
+                                                    !isLockedBlock(block)
+                                                      ? styles.canvasBlockDraggable
+                                                      : ""
+                                                  } ${
+                                                    blockSnapshot.isDragging
+                                                      ? styles.blockDragging
+                                                      : ""
+                                                  }`}
+                                                  onClick={() => {
+                                                    setSelectedBlockId(block.id);
+                                                    setSelectedColumnTarget({
+                                                      rowId: row.id,
+                                                      columnId: column.id,
+                                                    });
+                                                  }}
+                                                >
+                                                  <div className={styles.blockHeader}>
+                                                    <div>
+                                                      <span>{block.type}</span>
+                                                      <strong>
+                                                        {BLOCK_LIBRARY.find(
+                                                          (blockItem) => blockItem.type === block.type
+                                                        )?.label || block.type}
+                                                      </strong>
+                                                    </div>
+                                                    <button
+                                                      type="button"
+                                                      className={styles.dangerButton}
+                                                      disabled={isLockedBlock(block)}
+                                                      onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        setLayout((current) =>
+                                                          deleteBlockFromLayout(
+                                                            current,
+                                                            row.id,
+                                                            column.id,
+                                                            block.id
+                                                          )
+                                                        );
+                                                        if (selectedBlockId === block.id) {
+                                                          setSelectedBlockId(null);
+                                                        }
+                                                      }}
+                                                    >
+                                                      {isLockedBlock(block) ? "고정 블록" : "삭제"}
+                                                    </button>
+                                                  </div>
+                                                  <div className={styles.blockPreview}>
+                                                    <div className={styles.blockPreviewInner}>
+                                                      <HomeBlockContent block={block} previewMode />
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </Draggable>
+                                          ))}
+                                          {columnProvided.placeholder}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </StrictModeDroppable>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </Draggable>
+                      );
+                    })}
+                    {rowsProvided.placeholder}
                   </div>
-                );
-                })}
-              </div>
+                )}
+              </StrictModeDroppable>
             </div>
           </div>
         </section>
       </section>
+      </DragDropContext>
     </main>
   );
 };

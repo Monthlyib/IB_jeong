@@ -436,8 +436,8 @@
   background: rgba(81, 52, 108, 0.08);
   color: var(--primary01);
   font-size: 1.6rem;
-  cursor: inherit;
-  pointer-events: none;
+  cursor: grab;
+  pointer-events: auto;
 }
 
 .rowMeta span {
