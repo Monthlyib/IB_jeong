@@ -1,6 +1,8 @@
 .adminPage {
   width: min(144rem, calc(100% - 4rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
+  padding-top: 0;
+  min-height: auto;
 }
 
 .adminPage > section {
