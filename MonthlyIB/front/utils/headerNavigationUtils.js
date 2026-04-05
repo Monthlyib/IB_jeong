@@ -153,6 +153,13 @@ const ensureUniqueKey = (baseKey, usedKeys, fallbackIndex) => {
   return candidate;
 };
 
+export const reindexHeaderNavigationMenus = (menus, depth = 0) =>
+  (Array.isArray(menus) ? menus : []).map((menu, index) => ({
+    ...menu,
+    order: index,
+    children: depth === 0 ? reindexHeaderNavigationMenus(menu.children, depth + 1) : [],
+  }));
+
 const normalizeMenuList = (menus, depth = 0) => {
   const usedKeys = new Set();
   const nextMenus = (Array.isArray(menus) ? menus : [])
@@ -202,7 +209,7 @@ export const normalizeHeaderNavigationConfig = (config) => {
   }
 
   return {
-    menus: normalizedMenus,
+    menus: reindexHeaderNavigationMenus(normalizedMenus),
   };
 };
 

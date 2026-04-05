@@ -5,6 +5,7 @@ import styles from "./AdminStyle.module.css";
 import {
   createHeaderNavigationDraftMenu,
   normalizeHeaderNavigationConfig,
+  reindexHeaderNavigationMenus,
 } from "@/utils/headerNavigationUtils";
 
 const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
@@ -17,7 +18,7 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
   const updateMenus = (updater) => {
     setDraft((prev) => ({
       ...prev,
-      menus: updater(prev.menus),
+      menus: reindexHeaderNavigationMenus(updater(prev.menus)),
     }));
   };
 
@@ -128,7 +129,12 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
   };
 
   const handleSave = async () => {
-    await onSave(normalizeHeaderNavigationConfig(draft));
+    await onSave(
+      normalizeHeaderNavigationConfig({
+        ...draft,
+        menus: reindexHeaderNavigationMenus(draft.menus),
+      })
+    );
   };
 
   return (
