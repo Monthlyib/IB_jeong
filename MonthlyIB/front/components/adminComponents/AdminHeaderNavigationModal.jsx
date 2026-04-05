@@ -60,9 +60,10 @@ const TopMenuPreviewChip = ({
   provided = {},
   onClick,
 }) => (
-  <button
+  <div
     ref={provided.innerRef}
-    type="button"
+    role="button"
+    tabIndex={0}
     style={provided.draggableProps?.style}
     className={`${styles.headerNavPreviewMenu} ${
       isActive ? styles.headerNavPreviewMenuActive : ""
@@ -72,12 +73,18 @@ const TopMenuPreviewChip = ({
     {...(provided.draggableProps || {})}
     {...(provided.dragHandleProps || {})}
     onClick={onClick}
+    onKeyDown={(event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onClick?.();
+      }
+    }}
   >
     <span className={styles.headerNavPreviewMenuText}>{menu.label || "새 메뉴"}</span>
     {menu.children?.length ? (
       <span className={styles.headerNavPreviewMenuArrow}>▾</span>
     ) : null}
-  </button>
+  </div>
 );
 
 const ChildMenuPreviewRow = ({ child, isHidden = false, isDragging = false, provided = {} }) => (
