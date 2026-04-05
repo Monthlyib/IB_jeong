@@ -3,6 +3,34 @@ import { tokenRequireApi } from "./refreshToken";
 
 const OPEN_API_URL = "open-api";
 
+const getErrorMessage = async (res, fallbackMessage) => {
+  try {
+    const json = await res.json();
+    return json?.message || fallbackMessage;
+  } catch (error) {
+    return fallbackMessage;
+  }
+};
+
+const applyLoginCookies = (loginData) => {
+  if (!loginData || loginData.userStatus !== "ACTIVE") {
+    return;
+  }
+
+  setCookie("accessToken", loginData.accessToken, {
+    path: "/",
+    sameSite: "lax",
+  });
+  setCookie("refreshToken", loginData.refreshToken, {
+    path: "/",
+    sameSite: "lax",
+  });
+  setCookie("authority", loginData.authority, {
+    path: "/",
+    sameSite: "lax",
+  });
+};
+
 const resolveFieldValue = (value) => {
   if (typeof value === "string") {
     return value;
@@ -210,87 +238,92 @@ export const openAPILogin = async (username, password) => {
 };
 
 export const openAPISocialLoginCheck = async (oauthAccessToken, loginType) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/social`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          oauthAccessToken,
-          loginType,
-        }),
-      }
-    );
-    if (!res.ok) {
-      throw new Error(`Failed POST Status: ${res.status}`);
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/social`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        oauthAccessToken,
+        loginType,
+      }),
     }
-    const json = await res.json();
-    if (json.data.userStatus === "ACTIVE") {
-      setCookie("accessToken", json.data.accessToken, {
-        path: "/",
-        sameSite: "lax",
-      });
-      setCookie("refreshToken", json.data.refreshToken, {
-        path: "/",
-        sameSite: "lax",
-      });
-      setCookie("authority", json.data.authority, {
-        path: "/",
-        sameSite: "lax",
-      });
-    }
+  );
 
-    return json;
-  } catch (error) {
-    console.error(error);
+  if (!res.ok) {
+    const message = await getErrorMessage(
+      res,
+      "소셜 로그인에 실패했습니다."
+    );
+    throw new Error(message);
   }
+
+  const json = await res.json();
+  applyLoginCookies(json?.data);
+  return json;
 };
 
 export const openAPINaverLogin = async (authorizationCode, state) => {
-  try {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/naver`,
-      {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          grantType: "authorization_code",
-          clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID,
-          authorizationCode,
-          state,
-        }),
-      }
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/naver`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        grantType: "authorization_code",
+        clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID,
+        authorizationCode,
+        state,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const message = await getErrorMessage(
+      res,
+      "네이버 로그인에 실패했습니다."
     );
-    if (!res.ok && res?.status === 400) {
-      const json = await res.json();
-      return json;
-    }
-    const json = await res.json();
-    if (json.data.userStatus === "ACTIVE") {
-      setCookie("accessToken", json.data.accessToken, {
-        path: "/",
-        sameSite: "lax",
-      });
-      setCookie("refreshToken", json.data.refreshToken, {
-        path: "/",
-        sameSite: "lax",
-      });
-      setCookie("authority", json.data.authority, {
-        path: "/",
-        sameSite: "lax",
-      });
-    }
-    return json;
-  } catch (error) {
-    console.error(error);
+    throw new Error(message);
   }
+
+  const json = await res.json();
+  applyLoginCookies(json?.data);
+  return json;
+};
+
+export const openAPIGoogleLogin = async (authorizationCode, redirectUri) => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/login/google`,
+    {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        authorizationCode,
+        redirectUri,
+      }),
+    }
+  );
+
+  if (!res.ok) {
+    const message = await getErrorMessage(
+      res,
+      "Google 로그인에 실패했습니다."
+    );
+    throw new Error(message);
+  }
+
+  const json = await res.json();
+  applyLoginCookies(json?.data);
+  return json;
 };
 
 export const monthlyIBGetList = async (keyWord, page) => {

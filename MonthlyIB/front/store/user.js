@@ -1,5 +1,6 @@
 import { removeCookie } from "@/apis/cookies";
 import {
+  openAPIGoogleLogin,
   openAPILogin,
   openAPINaverLogin,
   openAPISocialLoginCheck,
@@ -14,18 +15,103 @@ import {
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+const SOCIAL_ONBOARDING_STORAGE_KEY = "socialOnboarding";
+
+const readPendingSocialAuth = () => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const stored = window.sessionStorage.getItem(SOCIAL_ONBOARDING_STORAGE_KEY);
+  if (!stored) {
+    return null;
+  }
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    window.sessionStorage.removeItem(SOCIAL_ONBOARDING_STORAGE_KEY);
+    return null;
+  }
+};
+
+const writePendingSocialAuth = (payload) => {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  if (!payload) {
+    window.sessionStorage.removeItem(SOCIAL_ONBOARDING_STORAGE_KEY);
+    return;
+  }
+
+  window.sessionStorage.setItem(
+    SOCIAL_ONBOARDING_STORAGE_KEY,
+    JSON.stringify(payload)
+  );
+};
+
+const clearPendingSocialAuthState = () => {
+  useSocialOnboardingStore.getState().clearPendingSocialAuth();
+};
+
+const handleSocialLoginResult = (set, res) => {
+  const loginData = res?.data;
+  if (!loginData) {
+    throw new Error(res?.message || "소셜 로그인 응답이 올바르지 않습니다.");
+  }
+
+  if (loginData.userStatus === "ACTIVE") {
+    clearPendingSocialAuthState();
+    set({ userInfo: loginData });
+    return res;
+  }
+
+  if (loginData.userStatus === "WAIT_INFO") {
+    useSocialOnboardingStore.getState().setPendingSocialAuth({
+      userId: loginData.userId,
+      email: loginData.email,
+      accessToken: loginData.accessToken,
+      refreshToken: loginData.refreshToken,
+      authority: loginData.authority,
+      userStatus: loginData.userStatus,
+    });
+    set({ userInfo: {} });
+    return res;
+  }
+
+  throw new Error("처리할 수 없는 소셜 로그인 상태입니다.");
+};
+
+export const useSocialOnboardingStore = create((set) => ({
+  pendingSocialAuth: readPendingSocialAuth(),
+  hydratePendingSocialAuth: () => {
+    set({ pendingSocialAuth: readPendingSocialAuth() });
+  },
+  setPendingSocialAuth: (payload) => {
+    writePendingSocialAuth(payload);
+    set({ pendingSocialAuth: payload });
+  },
+  clearPendingSocialAuth: () => {
+    writePendingSocialAuth(null);
+    set({ pendingSocialAuth: null });
+  },
+}));
+
 export const useUserInfo = create(
   persist(
     (set) => ({
       userInfo: {},
-      loading : false,
+      loading: false,
       signIn: async (username, password) => {
         try {
           const res = await openAPILogin(username, password);
+          clearPendingSocialAuthState();
           set({ userInfo: res.data });
           return res;
         } catch (error) {
           console.error(error);
+          throw error;
         }
       },
       signOut: () => {
@@ -34,6 +120,7 @@ export const useUserInfo = create(
         removeCookie("accessToken");
         removeCookie("refreshToken");
         removeCookie("authority");
+        clearPendingSocialAuthState();
       },
       socialSignIn: async (oauthAccessToken, loginType) => {
         try {
@@ -41,17 +128,28 @@ export const useUserInfo = create(
             oauthAccessToken,
             loginType
           );
-          set({ userInfo: res.data });
+          return handleSocialLoginResult(set, res);
         } catch (error) {
           console.error(error);
+          throw error;
         }
       },
       signInNaver: async (authorizationCode, state) => {
         try {
           const res = await openAPINaverLogin(authorizationCode, state);
-          set({ userInfo: res.data });
+          return handleSocialLoginResult(set, res);
         } catch (error) {
           console.error(error);
+          throw error;
+        }
+      },
+      signInGoogle: async (authorizationCode, redirectUri) => {
+        try {
+          const res = await openAPIGoogleLogin(authorizationCode, redirectUri);
+          return handleSocialLoginResult(set, res);
+        } catch (error) {
+          console.error(error);
+          throw error;
         }
       },
       updateUserInfo: (res) => {
@@ -117,10 +215,12 @@ export const useUserStore = create((set, get) => ({
   signIn: async (username, password) => {
     try {
       const res = await openAPILogin(username, password);
+      clearPendingSocialAuthState();
       set({ userInfo: res.data });
       return res;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   signOut: () => {
@@ -129,6 +229,7 @@ export const useUserStore = create((set, get) => ({
     removeCookie("accessToken");
     removeCookie("refreshToken");
     removeCookie("authority");
+    clearPendingSocialAuthState();
   },
 
   reviseUserInfo: async (

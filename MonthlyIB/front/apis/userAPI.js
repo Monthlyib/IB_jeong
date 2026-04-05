@@ -144,6 +144,9 @@ export const userRegisterWithSocialInfo = async (
   consent_marketing
 ) => {
   try {
+    if (!accessToken) {
+      throw new Error("소셜 로그인 인증 정보가 없습니다.");
+    }
     const config = {
       headers: {
         "Content-Type": "application/json",
@@ -171,6 +174,14 @@ export const userRegisterWithSocialInfo = async (
     return res.data;
   } catch (error) {
     console.error(error);
+    const message =
+      error?.response?.data?.message ||
+      error?.message ||
+      "소셜 회원 정보 저장에 실패했습니다.";
+    return {
+      result: { status: error?.response?.status || 500 },
+      message,
+    };
   }
 };
 

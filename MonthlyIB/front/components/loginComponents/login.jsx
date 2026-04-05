@@ -7,7 +7,7 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUserInfo } from "@/store/user";
 
-const googleLink = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}.apps.googleusercontent.com&redirect_uri=${process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL}&response_type=token&scope=email profile`;
+const GOOGLE_LOGIN_STATE_KEY = "monthlyib.google.login.state";
 
 const kakaoLink = `https://kauth.kakao.com/oauth/authorize?client_id=${process.env.NEXT_PUBLIC_KAKAO_CLIENT_ID}&redirect_uri=${process.env.NEXT_PUBLIC_KAKAO_REDIRECT_URL}&response_type=code`;
 
@@ -19,6 +19,35 @@ function Login() {
 
   const { signIn } = useUserInfo();
   const router = useRouter();
+
+  const createGoogleLoginUrl = useCallback((state) => {
+    const params = new URLSearchParams({
+      client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+      redirect_uri: process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL,
+      response_type: "code",
+      scope: "openid email profile",
+      state,
+      prompt: "select_account",
+    });
+
+    return `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
+  }, []);
+
+  const handleGoogleLogin = useCallback(
+    (e) => {
+      e.preventDefault();
+      const state =
+        typeof window !== "undefined" && window.crypto?.randomUUID
+          ? window.crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+      if (typeof window !== "undefined") {
+        window.sessionStorage.setItem(GOOGLE_LOGIN_STATE_KEY, state);
+        window.location.href = createGoogleLoginUrl(state);
+      }
+    },
+    [createGoogleLoginUrl]
+  );
 
   const onChangeId = useCallback((e) => {
     setId(e.target.value);
@@ -80,7 +109,7 @@ function Login() {
             <h3>간편 로그인</h3>
             <ul style={{ listStyle: "none" }}>
               <li>
-                <Link href={googleLink}>
+                <a href={process.env.NEXT_PUBLIC_GOOGLE_REDIRECT_URL} onClick={handleGoogleLogin}>
                   <figure>
                     <Image
                       src={"/img/common/ico_google.png"}
@@ -90,7 +119,7 @@ function Login() {
                     />
                   </figure>
                   <span>Google</span>
-                </Link>
+                </a>
               </li>
               <li>
                 <Link href={naverLink}>

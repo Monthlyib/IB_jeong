@@ -11,15 +11,13 @@ import {
   openAPIRegister,
   openAPIVerifyUsername,
 } from "@/apis/openAPI";
-import { useUserInfo } from "@/store/user";
+import { useSocialOnboardingStore, useUserInfo } from "@/store/user";
 
 const SignUp = () => {
   const searchParams = useSearchParams();
-  const userId = searchParams.get("id");
-  const paramEmail = searchParams.get("email");
-  const accessToken = searchParams.get("access_token");
-  const authCode = searchParams.get("auth_code");
-  const socialType = searchParams.get("social");
+  const legacyUserId = searchParams.get("id");
+  const legacyEmail = searchParams.get("email");
+  const legacyAccessToken = searchParams.get("access_token");
   const checkBoxes = [
     {
       id: "1",
@@ -32,7 +30,20 @@ const SignUp = () => {
   ];
 
   const router = useRouter();
-  const { userInfo, signIn, socialSignIn } = useUserInfo();
+  const { userInfo, signIn } = useUserInfo();
+  const pendingSocialAuth = useSocialOnboardingStore(
+    (state) => state.pendingSocialAuth
+  );
+  const hydratePendingSocialAuth = useSocialOnboardingStore(
+    (state) => state.hydratePendingSocialAuth
+  );
+  const clearPendingSocialAuth = useSocialOnboardingStore(
+    (state) => state.clearPendingSocialAuth
+  );
+
+  const userId = pendingSocialAuth?.userId ?? legacyUserId;
+  const paramEmail = pendingSocialAuth?.email ?? legacyEmail;
+  const accessToken = pendingSocialAuth?.accessToken ?? legacyAccessToken;
 
   const pattern = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,25}$/;
 
@@ -56,6 +67,10 @@ const SignUp = () => {
   const [consent_marketing, setMarketing] = useState(false);
 
   const [verifyEmail, setVerifyEmail] = useState(false);
+
+  useEffect(() => {
+    hydratePendingSocialAuth();
+  }, [hydratePendingSocialAuth]);
 
   useEffect(() => {
     if (userInfo?.userStatus === "ACTIVE") {
@@ -165,6 +180,12 @@ const SignUp = () => {
   const onSubmitForm = async (e) => {
     e.preventDefault();
     if (userId) {
+      if (!accessToken) {
+        alert("소셜 로그인 인증이 만료되었습니다. 다시 로그인 해주세요.");
+        clearPendingSocialAuth();
+        router.push("/login");
+        return;
+      }
       const res = await userRegisterWithSocialInfo(
         userId,
         accessToken,
@@ -177,10 +198,14 @@ const SignUp = () => {
         country,
         consent_marketing
       );
-      if (res.result.status === 200) {
-        // socialSignIn(authCode, socialType);
+      if (res?.result?.status === 200) {
+        clearPendingSocialAuth();
         alert("회원가입이 완료되었습니다. 다시 로그인 해주세요.");
         router.push("/login");
+      } else if (res?.message) {
+        alert(res.message);
+      } else {
+        alert("회원가입 처리 중 문제가 발생했습니다.");
       }
     } else
       openAPIRegister(
