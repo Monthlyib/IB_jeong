@@ -51,6 +51,45 @@ const StrictModeDroppable = ({ children, ...props }) => {
   return <Droppable {...props}>{children}</Droppable>;
 };
 
+const TopMenuPreviewChip = ({
+  menu,
+  isActive = false,
+  isHidden = false,
+  isDragging = false,
+  provided = {},
+  onClick,
+}) => (
+  <button
+    ref={provided.innerRef}
+    type="button"
+    className={`${styles.headerNavPreviewMenu} ${
+      isActive ? styles.headerNavPreviewMenuActive : ""
+    } ${isHidden ? styles.headerNavPreviewMenuHidden : ""} ${
+      isDragging ? styles.headerNavPreviewMenuDragging : ""
+    }`}
+    {...(provided.draggableProps || {})}
+    {...(provided.dragHandleProps || {})}
+    onClick={onClick}
+  >
+    <span>{menu.label || "새 메뉴"}</span>
+    {menu.children?.length ? <small>{menu.children.length}</small> : null}
+  </button>
+);
+
+const ChildMenuPreviewRow = ({ child, isHidden = false, isDragging = false, provided = {} }) => (
+  <div
+    ref={provided.innerRef}
+    className={`${styles.headerNavPreviewChildItem} ${
+      isHidden ? styles.headerNavPreviewMenuHidden : ""
+    } ${isDragging ? styles.headerNavPreviewMenuDragging : ""}`}
+    {...(provided.draggableProps || {})}
+    {...(provided.dragHandleProps || {})}
+  >
+    <span>{child.label || "새 하위 메뉴"}</span>
+    <small>{child.external ? "외부 링크" : child.href || "/"}</small>
+  </div>
+);
+
 const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
   const [draft, setDraft] = useState(normalizeHeaderNavigationConfig(config));
   const [previewMenuKey, setPreviewMenuKey] = useState(
@@ -288,99 +327,54 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
               </div>
 
               <div className={styles.headerNavPreviewShell}>
-                <div className={styles.headerNavPreviewBar}>
-                  <div className={styles.headerNavPreviewLogo}>Monthly IB</div>
-                  <StrictModeDroppable
-                    droppableId={HEADER_TOP_DROPPABLE_ID}
-                    direction="horizontal"
-                    type="TOP_MENU"
-                  >
-                    {(provided) => (
-                      <div
-                        className={styles.headerNavPreviewMenus}
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                      >
-                        {draft.menus.map((menu, index) => (
-                          <Draggable
-                            key={menu.key}
-                            draggableId={createTopDraggableId(menu.key)}
-                            index={index}
-                          >
-                            {(draggableProvided, snapshot) => (
-                              <button
-                                ref={draggableProvided.innerRef}
-                                type="button"
-                                className={`${styles.headerNavPreviewMenu} ${
-                                  previewMenuKey === menu.key ? styles.headerNavPreviewMenuActive : ""
-                                } ${!menu.visible ? styles.headerNavPreviewMenuHidden : ""} ${
-                                  snapshot.isDragging ? styles.headerNavPreviewMenuDragging : ""
-                                }`}
-                                {...draggableProvided.draggableProps}
-                                {...draggableProvided.dragHandleProps}
-                                onClick={() => setPreviewMenuKey(menu.key)}
-                              >
-                                <span>{menu.label || "새 메뉴"}</span>
-                                {menu.children?.length ? (
-                                  <small>{menu.children.length}</small>
-                                ) : null}
-                              </button>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                      </div>
-                    )}
-                  </StrictModeDroppable>
-                  <div className={styles.headerNavPreviewUtility}>구독플랜</div>
-                </div>
-
-                <div className={styles.headerNavPreviewDropdown}>
-                  <div className={styles.headerNavPreviewDropdownHeader}>
-                    <strong>{previewMenu?.label || "메뉴 선택"}</strong>
-                    <span>
-                      {previewMenu?.children?.length
-                        ? "하위 메뉴를 드래그해 순서를 바꾸세요."
-                        : "하위 메뉴가 없는 단일 링크 메뉴입니다."}
-                    </span>
-                  </div>
-
-                  {previewMenu?.children?.length ? (
+                <div className={styles.headerNavPreviewDesktopCard}>
+                  <div className={styles.headerNavPreviewBar}>
+                    <div className={styles.headerNavPreviewLogo}>Monthly IB</div>
                     <StrictModeDroppable
-                      droppableId={createChildDroppableId(previewMenu.key)}
-                      type="CHILD_MENU"
+                      droppableId={HEADER_TOP_DROPPABLE_ID}
+                      direction="horizontal"
+                      type="TOP_MENU"
+                      renderClone={(provided, _snapshot, rubric) => {
+                        const menu = draft.menus[rubric.source.index];
+                        if (!menu) {
+                          return null;
+                        }
+                        return (
+                          <TopMenuPreviewChip
+                            menu={menu}
+                            isActive={previewMenuKey === menu.key}
+                            isHidden={!menu.visible}
+                            isDragging
+                            provided={provided}
+                          />
+                        );
+                      }}
                     >
-                      {(provided) => (
+                      {(provided, snapshot) => (
                         <div
-                          className={styles.headerNavPreviewChildList}
+                          className={`${styles.headerNavPreviewMenus} ${
+                            snapshot.isDraggingOver
+                              ? styles.headerNavPreviewMenusActive
+                              : ""
+                          }`}
                           ref={provided.innerRef}
                           {...provided.droppableProps}
                         >
-                          {previewMenu.children.map((child, childIndex) => (
+                          {draft.menus.map((menu, index) => (
                             <Draggable
-                              key={child.key}
-                              draggableId={createChildDraggableId(
-                                previewMenu.key,
-                                child.key
-                              )}
-                              index={childIndex}
+                              key={menu.key}
+                              draggableId={createTopDraggableId(menu.key)}
+                              index={index}
                             >
-                              {(draggableProvided, snapshot) => (
-                                <div
-                                  ref={draggableProvided.innerRef}
-                                  className={`${styles.headerNavPreviewChildItem} ${
-                                    !child.visible ? styles.headerNavPreviewMenuHidden : ""
-                                  } ${
-                                    snapshot.isDragging
-                                      ? styles.headerNavPreviewMenuDragging
-                                      : ""
-                                  }`}
-                                  {...draggableProvided.draggableProps}
-                                  {...draggableProvided.dragHandleProps}
-                                >
-                                  <span>{child.label || "새 하위 메뉴"}</span>
-                                  <small>{child.external ? "외부 링크" : child.href || "/"}</small>
-                                </div>
+                              {(draggableProvided, draggableSnapshot) => (
+                                <TopMenuPreviewChip
+                                  menu={menu}
+                                  isActive={previewMenuKey === menu.key}
+                                  isHidden={!menu.visible}
+                                  isDragging={draggableSnapshot.isDragging}
+                                  provided={draggableProvided}
+                                  onClick={() => setPreviewMenuKey(menu.key)}
+                                />
                               )}
                             </Draggable>
                           ))}
@@ -388,11 +382,124 @@ const AdminHeaderNavigationModal = ({ config, onClose, onSave, saving }) => {
                         </div>
                       )}
                     </StrictModeDroppable>
-                  ) : (
-                    <div className={styles.calculatorEmpty}>
-                      현재 선택된 메뉴에는 하위 메뉴가 없습니다.
+                    <div className={styles.headerNavPreviewUtility}>구독플랜</div>
+                  </div>
+
+                  <div className={styles.headerNavPreviewDropdown}>
+                    <div className={styles.headerNavPreviewDropdownHeader}>
+                      <strong>{previewMenu?.label || "메뉴 선택"}</strong>
+                      <span>
+                        {previewMenu?.children?.length
+                          ? "하위 메뉴를 드래그해 순서를 바꾸세요."
+                          : "하위 메뉴가 없는 단일 링크 메뉴입니다."}
+                      </span>
                     </div>
-                  )}
+
+                    {previewMenu?.children?.length ? (
+                      <StrictModeDroppable
+                        droppableId={createChildDroppableId(previewMenu.key)}
+                        type="CHILD_MENU"
+                        renderClone={(provided, _snapshot, rubric) => {
+                          const child = previewMenu.children[rubric.source.index];
+                          if (!child) {
+                            return null;
+                          }
+                          return (
+                            <ChildMenuPreviewRow
+                              child={child}
+                              isHidden={!child.visible}
+                              isDragging
+                              provided={provided}
+                            />
+                          );
+                        }}
+                      >
+                        {(provided, snapshot) => (
+                          <div
+                            className={`${styles.headerNavPreviewChildList} ${
+                              snapshot.isDraggingOver
+                                ? styles.headerNavPreviewChildListActive
+                                : ""
+                            }`}
+                            ref={provided.innerRef}
+                            {...provided.droppableProps}
+                          >
+                            {previewMenu.children.map((child, childIndex) => (
+                              <Draggable
+                                key={child.key}
+                                draggableId={createChildDraggableId(
+                                  previewMenu.key,
+                                  child.key
+                                )}
+                                index={childIndex}
+                              >
+                                {(draggableProvided, snapshot) => (
+                                  <ChildMenuPreviewRow
+                                    child={child}
+                                    isHidden={!child.visible}
+                                    isDragging={snapshot.isDragging}
+                                    provided={draggableProvided}
+                                  />
+                                )}
+                              </Draggable>
+                            ))}
+                            {provided.placeholder}
+                          </div>
+                        )}
+                      </StrictModeDroppable>
+                    ) : (
+                      <div className={styles.calculatorEmpty}>
+                        현재 선택된 메뉴에는 하위 메뉴가 없습니다.
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className={styles.headerNavPreviewMobileCard}>
+                  <div className={styles.headerNavPreviewMobileFrame}>
+                    <div className={styles.headerNavPreviewMobileTop}>
+                      <div className={styles.headerNavPreviewMobileBurger}>☰</div>
+                      <div className={styles.headerNavPreviewMobileTitle}>Monthly IB</div>
+                      <div className={styles.headerNavPreviewMobilePlan}>구독</div>
+                    </div>
+                    <div className={styles.headerNavPreviewMobileBody}>
+                      <div className={styles.headerNavPreviewMobileLeft}>
+                        {draft.menus.map((menu) => (
+                          <button
+                            key={`mobile-${menu.key}`}
+                            type="button"
+                            className={`${styles.headerNavPreviewMobileCategory} ${
+                              previewMenuKey === menu.key
+                                ? styles.headerNavPreviewMobileCategoryActive
+                                : ""
+                            } ${!menu.visible ? styles.headerNavPreviewMenuHidden : ""}`}
+                            onClick={() => setPreviewMenuKey(menu.key)}
+                          >
+                            {menu.label || "새 메뉴"}
+                          </button>
+                        ))}
+                      </div>
+                      <div className={styles.headerNavPreviewMobileRight}>
+                        {previewMenu?.children?.length ? (
+                          previewMenu.children.map((child) => (
+                            <div
+                              key={`mobile-child-${child.key}`}
+                              className={`${styles.headerNavPreviewMobileItem} ${
+                                !child.visible ? styles.headerNavPreviewMenuHidden : ""
+                              }`}
+                            >
+                              <span>{child.label || "새 하위 메뉴"}</span>
+                              <small>{child.external ? "외부" : "내부"}</small>
+                            </div>
+                          ))
+                        ) : (
+                          <div className={styles.headerNavPreviewMobileEmpty}>
+                            하위 메뉴가 없으면 모바일에서는 단일 링크로 동작합니다.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
