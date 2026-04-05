@@ -1,15 +1,19 @@
 .builderPage {
-  width: min(160rem, calc(100% - 3.2rem));
+  width: min(172rem, calc(100% - 3.2rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
 }
 
 /* Override global section { max-width: 110rem } for builder elements */
-.builderPage section,
+.builderPage > section,
 .builderHero,
 .builderActionsBar,
 .builderSurface {
   max-width: none;
-  width: auto;
+  width: 100%;
+}
+
+.builderPage > .builderSurface {
+  padding: 0;
 }
 
 .builderHero {
@@ -94,8 +98,8 @@
 /* 2-column layout: left panel + canvas */
 .builderSurface {
   display: grid;
-  grid-template-columns: 29rem minmax(0, 1fr);
-  gap: 1.8rem;
+  grid-template-columns: 24rem minmax(0, 1fr);
+  gap: 1.4rem;
   margin-top: 2.4rem;
   align-items: start;
   min-width: 0;
@@ -140,7 +144,7 @@
 }
 
 .panel {
-  padding: 2rem;
+  padding: 1.6rem;
   position: sticky;
   top: calc(var(--appHeaderHeight, 7.2rem) + 2rem);
   max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
@@ -150,7 +154,7 @@
 .canvasPanel {
   display: flex;
   flex-direction: column;
-  padding: 2rem;
+  padding: 1.6rem;
   overflow: visible;
   min-width: 0;
 }
@@ -377,8 +381,8 @@
 
 .canvasRows {
   display: grid;
-  gap: 1.6rem;
-  padding: 2rem;
+  gap: 1.2rem;
+  padding: 1.2rem;
   min-width: 0;
   box-sizing: border-box;
 }
@@ -481,7 +485,7 @@
 .rowGrid {
   display: grid;
   gap: 1.2rem;
-  padding: 1.6rem;
+  padding: 1.2rem;
   min-width: 0;
 }
 
