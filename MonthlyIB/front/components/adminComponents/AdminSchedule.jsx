@@ -155,12 +155,21 @@ const AdminSchedule = () => {
   };
 
   const renderSortLabel = (key) => {
-    if (sortConfig.key !== key) {
-      return `${SORT_LABELS[key]} ↕`;
-    }
-    return `${SORT_LABELS[key]} ${
-      sortConfig.direction === "asc" ? "↑" : "↓"
-    }`;
+    const arrow =
+      sortConfig.key !== key
+        ? "↕"
+        : sortConfig.direction === "asc"
+          ? "↑"
+          : "↓";
+
+    return (
+      <>
+        <span className={styles.tableHeaderLabel}>{SORT_LABELS[key]}</span>
+        <span className={styles.tableHeaderArrow} aria-hidden="true">
+          {arrow}
+        </span>
+      </>
+    );
   };
 
   return (
@@ -222,7 +231,9 @@ const AdminSchedule = () => {
           >
             {renderSortLabel("tutoringStatus")}
           </button>
-          <div className={styles.tableHeaderStatic}>Tools</div>
+          <div className={styles.tableHeaderStatic}>
+            <span className={styles.tableHeaderLabel}>Tools</span>
+          </div>
         </div>
 
         <AdminScheduleItems

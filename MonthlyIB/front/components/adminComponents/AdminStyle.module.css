@@ -909,6 +909,10 @@
 
 .tableHeaderButton,
 .tableHeaderStatic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.6rem;
   min-width: 0;
   padding: 0;
   border: 0;
@@ -919,6 +923,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .tableHeaderButton {
@@ -933,6 +939,24 @@
 .tableTools {
   justify-self: end;
   text-align: right;
+}
+
+.tableHeaderStatic:last-child {
+  justify-content: flex-end;
+}
+
+.tableHeaderLabel {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tableHeaderArrow {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+  letter-spacing: 0;
 }
 
 .tableBody,

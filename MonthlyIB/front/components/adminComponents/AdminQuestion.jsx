@@ -60,12 +60,24 @@ const AdminQuestion = () => {
       </div>
 
       <div className={`${styles.question_subtitle} ${styles.questionGrid}`}>
-        <div className={styles.tableHeaderStatic}>ID</div>
-        <div className={styles.tableHeaderStatic}>Name</div>
-        <div className={styles.tableHeaderStatic}>Date</div>
-        <div className={styles.tableHeaderStatic}>Subject</div>
-        <div className={styles.tableHeaderStatic}>Status</div>
-        <div className={styles.tableHeaderStatic}>Tools</div>
+        <div className={styles.tableHeaderStatic}>
+          <span className={styles.tableHeaderLabel}>ID</span>
+        </div>
+        <div className={styles.tableHeaderStatic}>
+          <span className={styles.tableHeaderLabel}>Name</span>
+        </div>
+        <div className={styles.tableHeaderStatic}>
+          <span className={styles.tableHeaderLabel}>Date</span>
+        </div>
+        <div className={styles.tableHeaderStatic}>
+          <span className={styles.tableHeaderLabel}>Subject</span>
+        </div>
+        <div className={styles.tableHeaderStatic}>
+          <span className={styles.tableHeaderLabel}>Status</span>
+        </div>
+        <div className={styles.tableHeaderStatic}>
+          <span className={styles.tableHeaderLabel}>Tools</span>
+        </div>
       </div>
 
       {questionPageInfo?.totalElements > 0 && (
