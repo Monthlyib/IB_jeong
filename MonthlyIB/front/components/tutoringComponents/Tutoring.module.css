@@ -309,6 +309,43 @@
   cursor: pointer;
 }
 
+.templateManageButtonDesktop {
+  flex-shrink: 0;
+}
+
+.templateManageButtonMobile {
+  display: none;
+}
+
+.mobileBookingHeader {
+  display: none;
+}
+
+.mobileStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.6rem;
+  border-radius: 1.6rem;
+  background: #fff;
+  border: 1px solid rgba(98, 62, 133, 0.12);
+  box-shadow: 0 1rem 2.4rem rgba(52, 37, 82, 0.06);
+}
+
+.mobileStatusBadge span {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #7a7090;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.mobileStatusBadge strong {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--primary01);
+}
+
 .templateModalBackdrop {
   position: fixed;
   inset: 0;
@@ -589,6 +626,10 @@
   color: #5d437f;
 }
 
+.bookingForm {
+  display: block;
+}
+
 @media screen and (max-width: 1024px) {
   /**************
        Tutor
@@ -651,6 +692,10 @@
 
   .templateSubmit {
     width: 100%;
+  }
+
+  .bookingForm {
+    display: block;
   }
 }
 
@@ -731,5 +776,354 @@
     padding: 0.6rem 0.9rem;
     margin-right: 0.6rem;
     margin-bottom: 0.6rem;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .sc_main_wrap {
+    padding: 0 1.6rem 3.6rem;
+  }
+
+  .sc_main_wrap .sc_main_cont {
+    gap: 1.6rem;
+    max-width: none;
+    padding: 1.6rem;
+    border-radius: 2.4rem;
+    background: #f4f2f8;
+  }
+
+  .mobileBookingHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 0.2rem;
+  }
+
+  .templateManageButtonDesktop {
+    display: none;
+  }
+
+  .templateManageButtonMobile {
+    display: inline-flex;
+    width: auto;
+    min-width: 0;
+    height: 4.6rem;
+    margin-top: 0;
+    padding: 0 1.4rem;
+    border-radius: 1.4rem;
+    font-size: 1.35rem;
+    gap: 0.8rem;
+    box-shadow: none;
+    white-space: nowrap;
+  }
+
+  .sc_main_wrap .sc_left_cont {
+    width: 100%;
+    margin-bottom: 0;
+    padding: 1.6rem;
+    border-radius: 2rem;
+    background: #fff;
+    box-shadow: 0 1.4rem 3rem rgba(21, 14, 34, 0.06);
+  }
+
+  .sc_main_wrap .sc_left_cont h6,
+  .sc_main_wrap .sc_right_cont .sc_time_wrap h6,
+  .sc_main_wrap .sc_right_cont .sc_description h6 {
+    margin-bottom: 1.4rem;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #231836;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar {
+    height: auto;
+    min-height: 34rem;
+    padding: 0 1.2rem 1rem;
+    border-radius: 1.8rem;
+    box-shadow: none;
+    font-size: 1.6rem;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__navigation) {
+    height: auto;
+    margin: 0;
+    padding: 1.2rem 0 0.8rem;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__navigation button) {
+    min-width: 3.4rem;
+    height: 3.4rem;
+    border-radius: 1rem;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #231836;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__navigation__label) {
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__month-view__weekdays) {
+    margin-bottom: 0.8rem;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__month-view__weekdays__weekday) {
+    padding: 0.6rem 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #665c7a;
+    text-decoration: none;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__month-view__weekdays__weekday abbr) {
+    text-decoration: none;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__tile) {
+    height: 4.2rem;
+    max-width: 100%;
+    border-radius: 1.2rem;
+    font-size: 1.55rem;
+    font-weight: 500;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__tile--now) {
+    background: #fff36a;
+    color: #111;
+  }
+
+  .sc_main_wrap .sc_left_cont .calendar :global(.react-calendar__tile--active) {
+    background: var(--primary01) !important;
+    color: #fff !important;
+  }
+
+  .sc_main_wrap .calendar_info {
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    padding: 1.4rem 0 0;
+  }
+
+  .sc_main_wrap .calendar_info .calendar_item {
+    margin-right: 0;
+    padding: 0.8rem 1rem;
+    border-radius: 999px;
+    background: #f7f4fb;
+    border: 1px solid rgba(98, 62, 133, 0.08);
+  }
+
+  .sc_main_wrap .calendar_info .calendar_item span {
+    font-size: 1.25rem;
+  }
+
+  .sc_main_wrap .calendar_info .calendar_item .label {
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-right: 0.7rem;
+    border-radius: 0.4rem;
+  }
+
+  .sc_main_wrap .sc_right_cont {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .sc_main_wrap .sc_right_cont .sc_time_wrap {
+    margin-bottom: 0;
+    padding: 1.6rem;
+    border-bottom: none;
+    border-radius: 2rem;
+    background: #fff;
+    box-shadow: 0 1.4rem 3rem rgba(21, 14, 34, 0.06);
+  }
+
+  .sc_main_wrap .sc_right_cont .sc_time_select ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .sc_main_wrap .sc_right_cont .sc_time_select ul li {
+    height: 5rem;
+    border-radius: 1.4rem;
+    background: #f7f6fa;
+  }
+
+  .sc_main_wrap .sc_right_cont .sc_time_select ul li.active {
+    background: rgba(98, 62, 133, 0.08);
+  }
+
+  .sc_main_wrap .sc_right_cont .sc_time_select ul li button {
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .selectedSlotsWrap {
+    margin-top: 1rem;
+  }
+
+  .slotChip {
+    gap: 0.6rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 999px;
+    margin-right: 0.7rem;
+    margin-bottom: 0.7rem;
+    border-color: rgba(98, 62, 133, 0.12);
+    background: #f8f5fd;
+    box-shadow: none;
+    font-size: 1.25rem;
+  }
+
+  .chipRemoveBtn {
+    font-size: 1.5rem;
+    color: #6b5f80;
+  }
+
+  .bookingForm {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .sc_main_wrap .sc_right_cont .sc_description {
+    padding: 1.6rem;
+    border-radius: 2rem;
+    background: #fff;
+    box-shadow: 0 1.4rem 3rem rgba(21, 14, 34, 0.06);
+  }
+
+  .sc_main_wrap .sc_right_cont .sc_description textarea {
+    height: 18rem;
+    padding: 1.6rem 1.4rem;
+    border-radius: 1.6rem;
+    background: #f7f6fa;
+    font-size: 1.45rem;
+    line-height: 1.65;
+  }
+
+  .quotaWarning {
+    margin: -0.4rem 0 0;
+    font-size: 1.35rem;
+  }
+
+  .center_btn_wrap {
+    margin-bottom: 0;
+  }
+
+  .center_btn_wrap button,
+  .center_btn_wrap button:disabled {
+    height: 5.8rem;
+    border-radius: 1.6rem;
+    font-size: 1.7rem;
+  }
+
+  .sc_main_wrap .center_btn_wrap button svg {
+    margin-right: 0.9rem;
+  }
+
+  .sc_main_wrap .sc_over {
+    display: none;
+  }
+
+  .templateModalBackdrop {
+    padding:
+      calc(var(--appHeaderHeight, 7.2rem) + 1rem)
+      1.2rem
+      1.2rem;
+  }
+
+  .templateModal {
+    width: calc(100vw - 2.4rem);
+    max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 2.2rem);
+    padding: 2rem 1.6rem 1.8rem;
+    border-radius: 2.2rem;
+  }
+
+  .templateHeader {
+    gap: 1.4rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .templateHeader h3 {
+    margin: 0.6rem 0;
+    font-size: 2.3rem;
+    line-height: 1.2;
+  }
+
+  .templateHeader p {
+    font-size: 1.4rem;
+    line-height: 1.55;
+  }
+
+  .templateEyebrow {
+    padding: 0.7rem 1rem;
+    font-size: 1.05rem;
+    letter-spacing: 0.12em;
+  }
+
+  .templateCloseButton {
+    width: 4.2rem;
+    height: 4.2rem;
+    border-radius: 1.2rem;
+    font-size: 2rem;
+  }
+
+  .templateGuideCard {
+    padding: 1.6rem;
+    border-radius: 1.6rem;
+  }
+
+  .templateGuideTitle,
+  .templateField span {
+    font-size: 1.4rem;
+  }
+
+  .templateTokenItem {
+    gap: 1rem;
+  }
+
+  .templateTokenItem code {
+    min-width: 8.6rem;
+    min-height: 3.4rem;
+    font-size: 1.25rem;
+  }
+
+  .templateTokenItem strong,
+  .templateTokenItem span,
+  .templateGuideList li,
+  .templateRecipientSummary,
+  .templatePreview p,
+  .templateFeedback {
+    font-size: 1.3rem;
+  }
+
+  .templateRecipientModes {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .templateRecipientMode,
+  .templateRecipientModeActive,
+  .templateField input {
+    min-height: 4.8rem;
+    font-size: 1.35rem;
+  }
+
+  .templateField textarea {
+    min-height: 15rem;
+    font-size: 1.4rem;
+  }
+
+  .templatePreview {
+    padding: 1.6rem;
+    border-radius: 1.6rem;
+  }
+
+  .templateSubmit {
+    min-width: 0;
+    height: 5rem;
+    font-size: 1.45rem;
   }
 }

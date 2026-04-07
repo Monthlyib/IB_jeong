@@ -115,6 +115,9 @@ const TutoringComponents = () => {
   const isSelectionOverRemaining =
     !isUnlimitedTutoring && selectedSlots.length > remainingTutoringCount;
   const isActiveUser = userInfo?.userStatus === "ACTIVE";
+  const remainingTutoringLabel = isUnlimitedTutoring
+    ? "무한"
+    : `${remainingTutoringCount}회`;
   const timeTable = useMemo(
     () => buildTimeTable(date, tutoringDateSimpleList, selectedSlots),
     [date, tutoringDateSimpleList, selectedSlots]
@@ -389,7 +392,7 @@ const TutoringComponents = () => {
           {isAdmin && (
             <button
               type="button"
-              className={styles.templateManageButton}
+              className={`${styles.templateManageButton} ${styles.templateManageButtonDesktop}`}
               onClick={() => setIsTemplateModalOpen(true)}
             >
               <FontAwesomeIcon icon={faPenToSquare} />
@@ -400,6 +403,24 @@ const TutoringComponents = () => {
 
         <div className={styles.sc_main_wrap}>
           <div className={styles.sc_main_cont}>
+            <div className={styles.mobileBookingHeader}>
+              <div className={styles.mobileStatusBadge}>
+                <span>남은 예약</span>
+                <strong>{remainingTutoringLabel}</strong>
+              </div>
+
+              {isAdmin && (
+                <button
+                  type="button"
+                  className={`${styles.templateManageButton} ${styles.templateManageButtonMobile}`}
+                  onClick={() => setIsTemplateModalOpen(true)}
+                >
+                  <FontAwesomeIcon icon={faPenToSquare} />
+                  메일 양식 수정
+                </button>
+              )}
+            </div>
+
             <div className={styles.sc_left_cont}>
               <h6>날짜 선택</h6>
 
@@ -535,7 +556,7 @@ const TutoringComponents = () => {
               </div>
 
               {/* 예약 상세 설명 입력 폼 */}
-              <form onSubmit={onSubmit}>
+              <form className={styles.bookingForm} onSubmit={onSubmit}>
                 <div className={styles.sc_description}>
                   <h6>예약 상세설명</h6>
                   <textarea
@@ -568,7 +589,7 @@ const TutoringComponents = () => {
                 <span>
                   남은예약 :{" "}
                   <b className="count">
-                    {isUnlimitedTutoring ? "무한" : remainingTutoringCount}
+                    {remainingTutoringLabel}
                   </b>
                 </span>
               </div>
