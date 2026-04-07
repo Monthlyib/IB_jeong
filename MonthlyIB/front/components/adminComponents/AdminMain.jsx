@@ -17,6 +17,7 @@ import AdminSubscribe from "./AdminSubscribe";
 import AdminCalculatorRecommendations from "./AdminCalculatorRecommendations";
 import AdminHeaderNavigation from "./AdminHeaderNavigation";
 import AdminMailJobs from "./AdminMailJobs";
+import AdminFinance from "./AdminFinance";
 import { useSubscribeStore } from "@/store/subscribe";
 import { useTutoringStore } from "@/store/tutoring";
 import { getCookie } from "@/apis/cookies";
@@ -119,6 +120,19 @@ const AdminMain = () => {
             number={questionMetrics.total}
             icon={faComments}
           />
+        </div>
+      </section>
+
+      <section className={styles.adminSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <span className={styles.sectionEyebrow}>Finance</span>
+            <h2>운영 수익 분석</h2>
+          </div>
+        </div>
+
+        <div className={styles.dashboard_single_wrap}>
+          <AdminFinance />
         </div>
       </section>
 

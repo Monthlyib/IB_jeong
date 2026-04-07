@@ -228,6 +228,331 @@
   overflow: hidden;
 }
 
+.financeAdminCard {
+  gap: 2rem;
+}
+
+.financeSectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.financeSectionHeader h3 {
+  color: #241b34;
+  font-size: 2.6rem;
+  font-weight: 700;
+}
+
+.financeSectionHeader p {
+  margin-top: 0.8rem;
+  max-width: 72rem;
+  color: #716681;
+  font-size: 1.45rem;
+  line-height: 1.7;
+}
+
+.financeSectionActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+
+.financeStatusPill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 4.2rem;
+  padding: 0 1.4rem;
+  border-radius: 999px;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.financeStatusLive {
+  background: rgba(77, 163, 122, 0.12);
+  color: #338057;
+}
+
+.financeStatusWarning {
+  background: rgba(234, 179, 8, 0.12);
+  color: #a66411;
+}
+
+.financeStatusMuted {
+  background: rgba(81, 52, 108, 0.08);
+  color: #6b5c81;
+}
+
+.financeStatusFailed {
+  background: rgba(220, 38, 38, 0.1);
+  color: #be3a3a;
+}
+
+.financeWarningBanner {
+  padding: 1.4rem 1.6rem;
+  border: 1px solid rgba(211, 93, 93, 0.24);
+  border-radius: 1.6rem;
+  background: #fff6f6;
+  color: #b24d4d;
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.financeSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.financeSummaryCard {
+  padding: 1.7rem;
+  border: 1px solid #ebe2f5;
+  border-radius: 1.8rem;
+  background: #fbf9ff;
+}
+
+.financeSummaryCard span {
+  display: block;
+  color: #827895;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.financeSummaryCard strong {
+  display: block;
+  margin-top: 1.1rem;
+  color: #241b34;
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.financeSummaryMuted {
+  background: #f8f6fb;
+}
+
+.financeSummaryMuted strong {
+  color: #8c839b;
+}
+
+.financeChartShell {
+  padding: 2rem;
+  border: 1px solid #ede5f7;
+  border-radius: 2.2rem;
+  background: #fff;
+}
+
+.financeChartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.6rem;
+  margin-bottom: 1.4rem;
+}
+
+.financeChartHeader h4 {
+  color: #251c35;
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+.financeChartHeader p {
+  margin-top: 0.6rem;
+  color: #7d738f;
+  font-size: 1.3rem;
+}
+
+.financeChartMeta {
+  color: #5c4a75;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.financeChart {
+  width: 100%;
+  height: 32rem;
+}
+
+.financeFootnote {
+  color: #827894;
+  font-size: 1.35rem;
+  line-height: 1.6;
+}
+
+.financeSkeleton {
+  display: grid;
+  place-items: center;
+  min-height: 28rem;
+  color: #7b718e;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.financeModal {
+  position: fixed;
+  inset: 0;
+  z-index: 10030;
+}
+
+.financeModalBackdrop {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding:
+    calc(var(--appHeaderHeight, 7.2rem) + 2rem)
+    2rem
+    2rem;
+  background: rgba(23, 14, 35, 0.38);
+  backdrop-filter: blur(10px);
+  overflow-y: auto;
+}
+
+.financeModalDialog {
+  width: min(126rem, calc(100vw - 4rem));
+  max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
+  display: flex;
+  flex-direction: column;
+  border-radius: 2.8rem;
+  background: #fff;
+  box-shadow: 0 28px 60px rgba(29, 19, 42, 0.24);
+  overflow: hidden;
+}
+
+.financeModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  padding: 2.6rem 3rem;
+  border-bottom: 1px solid #eee6f6;
+}
+
+.financeModalHeader h3 {
+  margin-top: 1rem;
+  color: #241b34;
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.financeModalHeader p {
+  margin-top: 0.8rem;
+  color: #786d8b;
+  font-size: 1.45rem;
+  line-height: 1.65;
+}
+
+.financeModalActions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.financeMonthSelect {
+  min-height: 4.6rem;
+  min-width: 15rem;
+  padding: 0 1.2rem;
+  border: 1px solid #ddd2ed;
+  border-radius: 1.4rem;
+  background: #fff;
+  color: #3e3153;
+  font-size: 1.4rem;
+}
+
+.financeModalBody {
+  display: grid;
+  gap: 1.6rem;
+  padding: 2.4rem 3rem 3rem;
+  overflow: auto;
+}
+
+.financeDetailMeta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.financeMetaBox {
+  padding: 1.6rem;
+  border: 1px solid #ece3f5;
+  border-radius: 1.8rem;
+  background: #fbf9ff;
+}
+
+.financeMetaBox span {
+  display: block;
+  color: #847a96;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.financeMetaBox strong {
+  display: block;
+  margin-top: 0.8rem;
+  color: #241b34;
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.financeBreakdownGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.6rem;
+}
+
+.financeBreakdownCard {
+  display: grid;
+  gap: 1.2rem;
+  padding: 2rem;
+  border: 1px solid #ede5f7;
+  border-radius: 2rem;
+  background: #fff;
+}
+
+.financeBreakdownHeader h4 {
+  color: #241b34;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.financeBreakdownTable {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.financeBreakdownRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1rem 1.2rem;
+  border-radius: 1.4rem;
+  background: #fbf9ff;
+}
+
+.financeBreakdownRow span {
+  min-width: 0;
+  color: #675b7b;
+  font-size: 1.35rem;
+}
+
+.financeBreakdownRow strong {
+  flex-shrink: 0;
+  color: #2a203a;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
 .calculatorAdminDescription {
   margin-top: 1.4rem;
   color: #6f6484;
