@@ -66,7 +66,13 @@ const SignUp = () => {
   const [termError, setTermError] = useState(true);
   const [consent_marketing, setMarketing] = useState(false);
 
-  const [verifyEmail, setVerifyEmail] = useState(false);
+  const [verifyEmail, setVerifyEmail] = useState(Boolean(paramEmail));
+  const [verifyRequested, setVerifyRequested] = useState(false);
+  const [verifyMessage, setVerifyMessage] = useState("");
+  const [verifyMessageType, setVerifyMessageType] = useState("");
+  const [isSendingVerifyEmail, setIsSendingVerifyEmail] = useState(false);
+  const [isCheckingVerifyCode, setIsCheckingVerifyCode] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     hydratePendingSocialAuth();
@@ -106,6 +112,10 @@ const SignUp = () => {
 
   const onChangeEmail = useCallback((e) => {
     email.current = e.target.value;
+    setVerifyEmail(false);
+    setVerifyRequested(false);
+    setVerifyMessage("");
+    setVerifyMessageType("");
   }, []);
   const onChangeVerifyNum = useCallback((e) => {
     verifyNum.current = e.target.value;
@@ -141,6 +151,7 @@ const SignUp = () => {
 
   const onChangeUsername = useCallback((e) => {
     setUsername(e.target.value);
+    setCheckDuplication(null);
   }, []);
 
   const onChangePassword = useCallback((e) => {
@@ -156,34 +167,148 @@ const SignUp = () => {
     [password]
   );
 
-  const onClickVerifyEmail = useCallback(() => {
-    openAPIVerifyEmail(email);
+  const onClickVerifyEmail = useCallback(async () => {
+    const resolvedEmail = email.current?.trim();
+
+    if (!resolvedEmail) {
+      setVerifyMessage("이메일을 입력해주세요.");
+      setVerifyMessageType("error");
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+
+    setIsSendingVerifyEmail(true);
+    setVerifyEmail(false);
+    setVerifyRequested(false);
+    setVerifyMessage("");
+    setVerifyMessageType("");
+
+    try {
+      const res = await openAPIVerifyEmail(email);
+
+      if (res?.result?.status === 200) {
+        setVerifyRequested(true);
+        setVerifyMessage("인증번호를 발송했습니다. 이메일을 확인해주세요.");
+        setVerifyMessageType("success");
+        alert("인증번호를 발송했습니다.");
+        return;
+      }
+
+      const message =
+        res?.message || "인증 메일 발송에 실패했습니다. 다시 시도해주세요.";
+      setVerifyMessage(message);
+      setVerifyMessageType("error");
+      alert(message);
+    } catch (error) {
+      const message =
+        error?.message || "인증 메일 발송에 실패했습니다. 다시 시도해주세요.";
+      setVerifyMessage(message);
+      setVerifyMessageType("error");
+      alert(message);
+    } finally {
+      setIsSendingVerifyEmail(false);
+    }
   }, [email]);
 
   const onClickVerifyEmailNum = useCallback(async () => {
-    const res = await openAPIVerifyNum(email, verifyNum);
-    if (res?.result.status === 200) setVerifyEmail(true);
-    else if (res?.message === "잘못된 인증 번호 입니다.") {
+    if (!verifyNum.current?.trim()) {
+      setVerifyMessage("인증번호를 입력해주세요.");
+      setVerifyMessageType("error");
+      alert("인증번호를 입력해주세요.");
+      return;
+    }
+
+    setIsCheckingVerifyCode(true);
+    try {
+      const res = await openAPIVerifyNum(email, verifyNum);
+      if (res?.result?.status === 200) {
+        setVerifyEmail(true);
+        setVerifyMessage("이메일 인증이 완료되었습니다.");
+        setVerifyMessageType("success");
+        alert("이메일 인증이 완료되었습니다.");
+        return;
+      }
+
+      const message = res?.message || "다시 시도해주세요.";
       setVerifyEmail(false);
-      alert("잘못된 인증 번호 입니다.");
-    } else {
-      alert("다시 시도해주세요.");
+      setVerifyMessage(message);
+      setVerifyMessageType("error");
+      alert(message);
+    } catch (error) {
+      const message =
+        error?.message || "이메일 인증에 실패했습니다. 다시 시도해주세요.";
+      setVerifyEmail(false);
+      setVerifyMessage(message);
+      setVerifyMessageType("error");
+      alert(message);
+    } finally {
+      setIsCheckingVerifyCode(false);
     }
   }, [email]);
 
   const onClickDuplicationCheck = useCallback(async () => {
-    const res = await openAPIVerifyUsername(username);
-    if (res?.result.status === 200) setCheckDuplication(true);
-    else if (res?.message === "USER EXIST") setCheckDuplication(false);
+    if (!username.trim()) {
+      alert("아이디를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const res = await openAPIVerifyUsername(username);
+      if (res?.result?.status === 200) {
+        setCheckDuplication(true);
+      } else if (res?.message === "USER EXIST") {
+        setCheckDuplication(false);
+        alert("이미 사용 중인 아이디입니다.");
+      } else {
+        setCheckDuplication(false);
+        alert(res?.message || "아이디 확인 중 문제가 발생했습니다.");
+      }
+    } catch (error) {
+      console.error(error);
+      setCheckDuplication(false);
+      alert("아이디 확인 중 문제가 발생했습니다.");
+    }
   }, [username]);
 
   const onSubmitForm = async (e) => {
     e.preventDefault();
+    const isSocialSignUp = Boolean(userId);
+    const isPasswordValid = isSocialSignUp ? true : pattern.test(password);
+    const isPasswordConfirmed =
+      isSocialSignUp ? true : passwordCheck !== "" && passwordError === false;
+    const canSubmit = isSocialSignUp
+      ? checkDuplication === true && termError === false && country !== ""
+      : checkDuplication === true &&
+        isPasswordValid &&
+        isPasswordConfirmed &&
+        termError === false &&
+        verifyEmail === true &&
+        country !== "";
+
+    if (!canSubmit) {
+      if (checkDuplication !== true) {
+        alert("아이디 중복 확인을 완료해주세요.");
+      } else if (!isSocialSignUp && !isPasswordValid) {
+        alert("비밀번호 형식을 확인해주세요.");
+      } else if (!isSocialSignUp && !isPasswordConfirmed) {
+        alert("비밀번호 확인이 일치하지 않습니다.");
+      } else if (!verifyEmail && !isSocialSignUp) {
+        alert("이메일 인증을 완료해주세요.");
+      } else if (country === "") {
+        alert("국가를 선택해주세요.");
+      } else if (termError) {
+        alert("필수 약관에 동의해주세요.");
+      }
+      return;
+    }
+
+    setIsSubmitting(true);
     if (userId) {
       if (!accessToken) {
         alert("소셜 로그인 인증이 만료되었습니다. 다시 로그인 해주세요.");
         clearPendingSocialAuth();
         router.push("/login");
+        setIsSubmitting(false);
         return;
       }
       const res = await userRegisterWithSocialInfo(
@@ -207,8 +332,12 @@ const SignUp = () => {
       } else {
         alert("회원가입 처리 중 문제가 발생했습니다.");
       }
-    } else
-      openAPIRegister(
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      const res = await openAPIRegister(
         username,
         password,
         name,
@@ -219,10 +348,45 @@ const SignUp = () => {
         address,
         country,
         verifyNum,
-        consent_marketing,
-        signIn
+        consent_marketing
       );
+
+      if (res?.result?.status === 200) {
+        try {
+          await signIn(username, password);
+          alert("회원가입이 완료되었습니다.");
+          router.replace("/");
+        } catch (signInError) {
+          console.error(signInError);
+          alert(
+            "회원가입은 완료되었지만 자동 로그인에 실패했습니다. 다시 로그인 해주세요."
+          );
+          router.push("/login");
+        }
+        return;
+      }
+
+      alert(res?.message || "회원가입 처리 중 문제가 발생했습니다.");
+    } catch (error) {
+      console.error(error);
+      alert(error?.message || "회원가입 처리 중 문제가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const isSocialSignUp = Boolean(userId);
+  const isPasswordValid = isSocialSignUp ? true : pattern.test(password);
+  const isPasswordConfirmed =
+    isSocialSignUp ? true : passwordCheck !== "" && passwordError === false;
+  const canSubmit = isSocialSignUp
+    ? checkDuplication === true && termError === false && country !== ""
+    : checkDuplication === true &&
+      isPasswordValid &&
+      isPasswordConfirmed &&
+      termError === false &&
+      verifyEmail === true &&
+      country !== "";
 
   return (
     <>
@@ -327,17 +491,23 @@ const SignUp = () => {
                 defaultValue={email.current}
                 onChange={onChangeEmail}
                 disabled={
-                  paramEmail === null && verifyEmail === false ? false : true
+                  Boolean(paramEmail) ||
+                  verifyEmail ||
+                  isSendingVerifyEmail ||
+                  isSubmitting
                 }
               />
               <button
                 type="button"
                 onClick={onClickVerifyEmail}
                 disabled={
-                  paramEmail === null && verifyEmail === false ? false : true
+                  Boolean(paramEmail) ||
+                  verifyEmail ||
+                  isSendingVerifyEmail ||
+                  isSubmitting
                 }
               >
-                인증번호 발송
+                {isSendingVerifyEmail ? "발송 중..." : "인증번호 발송"}
               </button>
             </div>
           </div>
@@ -350,19 +520,40 @@ const SignUp = () => {
                 maxLength="6"
                 onChange={onChangeVerifyNum}
                 disabled={
-                  paramEmail === null && verifyEmail === false ? false : true
+                  Boolean(paramEmail) ||
+                  verifyEmail ||
+                  !verifyRequested ||
+                  isCheckingVerifyCode ||
+                  isSubmitting
                 }
               />
               <button
                 type="button"
                 onClick={onClickVerifyEmailNum}
                 disabled={
-                  paramEmail === null && verifyEmail === false ? false : true
+                  Boolean(paramEmail) ||
+                  verifyEmail ||
+                  !verifyRequested ||
+                  isCheckingVerifyCode ||
+                  isSubmitting
                 }
               >
-                확인
+                {isCheckingVerifyCode ? "확인 중..." : "확인"}
               </button>
             </div>
+            {verifyMessage ? (
+              <div className={styles.frm_msg_cont}>
+                <span
+                  className={`${styles.frm_msg} ${
+                    verifyMessageType === "success"
+                      ? styles.good
+                      : styles.frm_msg_war
+                  }`}
+                >
+                  {verifyMessage}
+                </span>
+              </div>
+            ) : null}
           </div>
           <div className={styles.inputbox_cont}>
             <input
@@ -514,15 +705,9 @@ const SignUp = () => {
             <button
               type="submit"
               className={styles.login_btn}
-              disabled={
-                checkDuplication === true &&
-                passwordError === false &&
-                termError === false
-                  ? false
-                  : true
-              }
+              disabled={!canSubmit || isSubmitting}
             >
-              가입하기
+              {isSubmitting ? "처리 중..." : "가입하기"}
             </button>
           </div>
         </form>

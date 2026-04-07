@@ -127,7 +127,12 @@ const Validate = () => {
 
     setIsSendingVerifyEmail(true);
     try {
-      await openAPIVerifyEmail(email);
+      const res = await openAPIVerifyEmail(email);
+      if (res?.result?.status !== 200) {
+        throw new Error(
+          res?.message || "인증번호 발송에 실패했습니다. 다시 시도해주세요."
+        );
+      }
       setVerifyRequested(true);
       setVerifyEmail(false);
       alert("인증번호를 발송했습니다.");

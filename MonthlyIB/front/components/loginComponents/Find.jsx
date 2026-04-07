@@ -26,18 +26,30 @@ const Find = () => {
     verifyNum.current = e.target.value;
   };
 
-  const onClickVerifyEmail = () => {
-    openAPIVerifyEmail(email);
-  };
+  const onClickVerifyEmail = useCallback(async () => {
+    try {
+      const res = await openAPIVerifyEmail(email);
+      if (res?.result?.status === 200) {
+        alert("인증번호를 발송했습니다.");
+        return;
+      }
+      alert(
+        res?.message || "인증번호 발송에 실패했습니다. 다시 시도해주세요."
+      );
+    } catch (error) {
+      console.error(error);
+      alert("인증번호 발송에 실패했습니다. 다시 시도해주세요.");
+    }
+  }, [email]);
 
   const onClickVerifyEmailNum = useCallback(async () => {
     const res = await openAPIVerifyNum(email, verifyNum);
-    if (res?.result.status === 200) {
+    if (res?.result?.status === 200) {
       setVerifyEmail(true);
       username.current = res?.data?.username;
-    } else if (res?.message === "잘못된 인증 번호 입니다.") {
+    } else if (res?.message) {
       setVerifyEmail(false);
-      alert("잘못된 인증 번호 입니다.");
+      alert(res.message);
     } else {
       alert("다시 시도해주세요.");
     }
@@ -47,12 +59,12 @@ const Find = () => {
     async (e) => {
       e.preventDefault();
       const res = await openAPIVerifyNum(email, verifyNum, true);
-      if (res?.result.status === 200) {
+      if (res?.result?.status === 200) {
         setVerifyEmail(true);
         alert("비밀번호가 초기화 되었습니다. 메일을 확인해주세요.");
-      } else if (res?.message === "잘못된 인증 번호 입니다.") {
+      } else if (res?.message) {
         setVerifyEmail(false);
-        alert("잘못된 인증 번호 입니다.");
+        alert(res.message);
       } else {
         alert("다시 시도해주세요.");
       }

@@ -12,6 +12,41 @@ const getErrorMessage = async (res, fallbackMessage) => {
   }
 };
 
+const readJsonSafely = async (res) => {
+  try {
+    return await res.json();
+  } catch (error) {
+    return null;
+  }
+};
+
+const normalizeFetchResponse = async (res, fallbackMessage) => {
+  const json = await readJsonSafely(res);
+
+  if (json) {
+    return json;
+  }
+
+  if (res.ok) {
+    return {
+      result: {
+        status: res.status,
+        message: "Success",
+      },
+      data: null,
+    };
+  }
+
+  return {
+    result: {
+      status: res.status,
+      message: "Error",
+    },
+    message: fallbackMessage,
+    data: null,
+  };
+};
+
 const applyLoginCookies = (loginData) => {
   if (!loginData || loginData.userStatus !== "ACTIVE") {
     return;
@@ -51,12 +86,13 @@ export const openAPIVerifyUsername = async (username) => {
         body: JSON.stringify({ username }),
       }
     );
-    if (!res.ok && res?.status === 400) {
-      return res.json();
-    }
-    return res.json();
+    return normalizeFetchResponse(
+      res,
+      "아이디 중복 확인 중 문제가 발생했습니다."
+    );
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };
 
@@ -73,9 +109,13 @@ export const openAPIVerifyEmail = async (email) => {
         body: JSON.stringify({ email: resolvedEmail }),
       }
     );
-    return res.json();
+    return normalizeFetchResponse(
+      res,
+      "인증 메일 발송에 실패했습니다. 다시 시도해주세요."
+    );
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -97,12 +137,13 @@ export const openAPIVerifyNum = async (email, verifyNum, pwdReset = false) => {
         }),
       }
     );
-    if (!res.ok && res?.status === 400) {
-      return res.json();
-    }
-    return res.json();
+    return normalizeFetchResponse(
+      res,
+      "인증번호 확인에 실패했습니다. 다시 시도해주세요."
+    );
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -117,12 +158,11 @@ export const openAPIRegister = async (
   address,
   country,
   verifyNum,
-  consent_marketing,
-  signIn
+  consent_marketing
 ) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}open-api/register`,
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/register`,
       {
         method: "POST",
         headers: {
@@ -145,12 +185,14 @@ export const openAPIRegister = async (
         }),
       }
     );
-    if (res.ok) {
-      signIn(username, password);
-      console.log("success");
-    }
+
+    return normalizeFetchResponse(
+      res,
+      "회원가입 처리 중 문제가 발생했습니다. 다시 시도해주세요."
+    );
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
