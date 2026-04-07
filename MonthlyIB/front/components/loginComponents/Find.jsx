@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import styles from "./Find.module.css";
 import Link from "next/link";
-import { openAPIVerifyEmail, openAPIVerifyNum } from "@/apis/openAPI";
+import { openAPIFindPwd, openAPIVerifyEmail, openAPIVerifyNum } from "@/apis/openAPI";
 
 const Find = () => {
   const [modal, setModal] = useState(0);
@@ -10,7 +10,6 @@ const Find = () => {
   const username = useRef("");
   const email = useRef("");
   const verifyNum = useRef("");
-  const [id, setId] = useState("");
 
   useEffect(() => {
     setVerifyEmail(false);
@@ -21,6 +20,9 @@ const Find = () => {
 
   const onChangeEmail = (e) => {
     email.current = e.target.value;
+  };
+  const onChangeUsername = (e) => {
+    username.current = e.target.value;
   };
   const onChangeVerifyNum = (e) => {
     verifyNum.current = e.target.value;
@@ -40,13 +42,15 @@ const Find = () => {
       console.error(error);
       alert("인증번호 발송에 실패했습니다. 다시 시도해주세요.");
     }
-  }, [email]);
+  }, [email, modal]);
 
   const onClickVerifyEmailNum = useCallback(async () => {
     const res = await openAPIVerifyNum(email, verifyNum);
     if (res?.result?.status === 200) {
       setVerifyEmail(true);
-      username.current = res?.data?.username;
+      if (modal === 0 && res?.data?.username) {
+        username.current = res.data.username;
+      }
     } else if (res?.message) {
       setVerifyEmail(false);
       alert(res.message);
@@ -58,7 +62,7 @@ const Find = () => {
   const onClickRestPwd = useCallback(
     async (e) => {
       e.preventDefault();
-      const res = await openAPIVerifyNum(email, verifyNum, true);
+      const res = await openAPIFindPwd(username, email, verifyNum);
       if (res?.result?.status === 200) {
         setVerifyEmail(true);
         alert("비밀번호가 초기화 되었습니다. 메일을 확인해주세요.");
@@ -69,7 +73,7 @@ const Find = () => {
         alert("다시 시도해주세요.");
       }
     },
-    [email]
+    [email, username, verifyNum]
   );
 
   const onSubmitForm = async (e) => {
@@ -160,7 +164,13 @@ const Find = () => {
           <div id="cm2" className="cm_tab_cont find_cont">
             <div className="tab_box_wrap">
               <div className={styles.inputbox_cont}>
-                <input type="text" id="uid" name="uid" placeholder="아이디" />
+                <input
+                  type="text"
+                  id="uid"
+                  name="uid"
+                  placeholder="아이디"
+                  onChange={onChangeUsername}
+                />
               </div>
 
               <div className={styles.inputbox_cont}>

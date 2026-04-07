@@ -233,24 +233,29 @@ export const openAPIReissueToken = async (userId) => {
   }
 };
 
-export const openAPIFindPwd = async () => {
+export const openAPIFindPwd = async (username, email, verifyNum) => {
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/pwd-email`,
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_API_URL}/reset-password`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({
+          username: resolveFieldValue(username),
+          email: resolveFieldValue(email),
+          verifyNum: resolveFieldValue(verifyNum),
+        }),
       }
     );
-
-    if (res.ok) {
-      console.log("succes");
-    }
+    return normalizeFetchResponse(
+      res,
+      "비밀번호 초기화에 실패했습니다. 다시 시도해주세요."
+    );
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
