@@ -1538,6 +1538,84 @@
   box-sizing: border-box;
 }
 
+.hiddenFileInput {
+  display: none !important;
+}
+
+.attachmentSection {
+  width: 100%;
+  margin-bottom: 2rem;
+  padding: 1.8rem;
+  border: 1px solid #e3d9ef;
+  border-radius: 1.6rem;
+  background: #faf8fd;
+  box-sizing: border-box;
+}
+
+.attachmentToolbar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.6rem;
+  flex-wrap: wrap;
+}
+
+.attachmentHint {
+  margin-top: 0.6rem;
+  color: #7a708d;
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+
+.attachmentSummary {
+  margin-top: 1.4rem;
+  color: #51346c;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.attachmentList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1.4rem;
+}
+
+.attachmentItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+  padding: 1.2rem 1.4rem;
+  border-radius: 1.2rem;
+  border: 1px solid #e6dff0;
+  background: #fff;
+}
+
+.attachmentMeta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+  color: #514266;
+  font-size: 1.4rem;
+}
+
+.attachmentName {
+  max-width: 34rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: #241b34;
+}
+
+.attachmentEmpty {
+  margin-top: 1.4rem;
+  color: #8f85a3;
+  font-size: 1.4rem;
+}
+
 .toggle_switch {
   position: relative;
   display: inline-block;
@@ -1882,6 +1960,35 @@
   font-weight: 400;
   color: #fff;
   border-radius: 1rem;
+}
+
+.md .admin_box .attachmentTrigger,
+.md .md_box .attachmentTrigger {
+  width: auto;
+  min-width: 12.8rem;
+  height: 4.6rem;
+  padding: 0 1.6rem;
+  background: rgba(81, 52, 108, 0.08);
+  color: #51346c;
+  border: 1px solid #d8caea;
+  border-radius: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.md .admin_box .attachmentRemoveButton,
+.md .md_box .attachmentRemoveButton {
+  width: auto;
+  min-width: 6.8rem;
+  height: 3.6rem;
+  padding: 0 1.2rem;
+  background: transparent;
+  color: #8a5cae;
+  border: 1px solid #dac9ee;
+  border-radius: 999px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  flex-shrink: 0;
 }
 .md .admin_box .btn_wrap {
   display: flex;

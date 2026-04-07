@@ -13,7 +13,7 @@ import AdminScheduleModal from "./AdminSchedulemodal";
 import Paginatation from "../layoutComponents/Paginatation";
 import { useSubscribeStore } from "@/store/subscribe";
 import { getKnitSubscribeDataList } from "@/utils/utils";
-import { mailPost } from "@/apis/mail";
+import { mailPost, validateMailAttachments } from "@/apis/mail";
 
 const PAGE_SIZE_OPTIONS = [5, 10, 20];
 
@@ -41,6 +41,8 @@ const AdminUser = () => {
   const [mailModal, setMailModal] = useState(false);
   const [subject, setSubject] = useState("");
   const [detail, setDetail] = useState("");
+  const [attachments, setAttachments] = useState([]);
+  const [mailSubmitting, setMailSubmitting] = useState(false);
   const [authority, setAuthority] = useState("");
   const [subscirbeDataList, setSubscribeDataList] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
@@ -136,8 +138,24 @@ const AdminUser = () => {
     setSelectedUserId(userId);
     setSubject("");
     setDetail("");
+    setAttachments([]);
+    setMailSubmitting(false);
     setMailModal(true);
     getUserInfo(userId, userInfo);
+  };
+
+  const onAddAttachments = (nextFiles) => {
+    const nextAttachments = [...attachments, ...nextFiles];
+    const validation = validateMailAttachments(nextAttachments);
+    if (!validation.valid) {
+      alert(validation.message);
+      return;
+    }
+    setAttachments(nextAttachments);
+  };
+
+  const onRemoveAttachment = (index) => {
+    setAttachments((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
   };
 
   const onSubmitMail = async () => {
@@ -146,12 +164,22 @@ const AdminUser = () => {
       return;
     }
 
+    const validation = validateMailAttachments(attachments);
+    if (!validation.valid) {
+      alert(validation.message);
+      return;
+    }
+
     try {
-      await mailPost(userDetailInfo?.userId, subject, detail, userInfo);
+      setMailSubmitting(true);
+      await mailPost(userDetailInfo?.userId, subject, detail, attachments, userInfo);
       setMailModal(false);
+      setAttachments([]);
       alert("메일을 전송했습니다.");
     } catch (error) {
       alert(error?.response?.data?.message || "메일 전송에 실패했습니다.");
+    } finally {
+      setMailSubmitting(false);
     }
   };
 
@@ -268,6 +296,11 @@ const AdminUser = () => {
           onSubmitChange={onSubmitMail}
           onSubmitDelete={null}
           showMailFields={true}
+          attachments={attachments}
+          onAddAttachments={onAddAttachments}
+          onRemoveAttachment={onRemoveAttachment}
+          mailSubmitting={mailSubmitting}
+          submitDisabled={mailSubmitting || !subject.trim() || !detail.trim()}
         />
       </div>
     </>

@@ -1,5 +1,11 @@
 import { useRef } from "react";
 import styles from "./AdminStyle.module.css";
+import {
+  MAIL_ATTACHMENT_ACCEPT,
+  MAIL_ATTACHMENT_MAX_COUNT,
+  MAIL_ATTACHMENT_MAX_TOTAL_SIZE,
+  formatMailAttachmentSize,
+} from "@/apis/mail";
 
 const AdminScheduleModal = ({
   modal,
@@ -15,8 +21,18 @@ const AdminScheduleModal = ({
   onSubmitChange,
   onSubmitDelete,
   showMailFields = false,
+  attachments = [],
+  onAddAttachments,
+  onRemoveAttachment,
+  mailSubmitting = false,
+  submitDisabled = false,
 }) => {
   const closeRef = useRef();
+  const fileInputRef = useRef(null);
+  const totalAttachmentSize = attachments.reduce(
+    (sum, attachment) => sum + (attachment?.size ?? 0),
+    0
+  );
   return (
     <>
       {modal === true && (
@@ -59,6 +75,72 @@ const AdminScheduleModal = ({
                     }}
                   />
                 </div>
+                {showMailFields && (
+                  <div className={styles.attachmentSection}>
+                    <div className={styles.attachmentToolbar}>
+                      <div>
+                        <div className={styles.modalFieldLabel}>첨부파일</div>
+                        <div className={styles.attachmentHint}>
+                          이미지/문서 파일만 가능, 최대 {MAIL_ATTACHMENT_MAX_COUNT}개,
+                          총 {formatMailAttachmentSize(MAIL_ATTACHMENT_MAX_TOTAL_SIZE)}
+                        </div>
+                      </div>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        accept={MAIL_ATTACHMENT_ACCEPT}
+                        className={styles.hiddenFileInput}
+                        onChange={(e) => {
+                          const nextFiles = Array.from(e.target.files || []);
+                          onAddAttachments?.(nextFiles);
+                          e.target.value = "";
+                        }}
+                      />
+                      <button
+                        type="button"
+                        className={styles.attachmentTrigger}
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        파일 선택
+                      </button>
+                    </div>
+
+                    <div className={styles.attachmentSummary}>
+                      {attachments.length}개 선택됨 · 총{" "}
+                      {formatMailAttachmentSize(totalAttachmentSize)}
+                    </div>
+
+                    {attachments.length > 0 ? (
+                      <div className={styles.attachmentList}>
+                        {attachments.map((attachment, index) => (
+                          <div
+                            key={`${attachment.name}-${attachment.size}-${index}`}
+                            className={styles.attachmentItem}
+                          >
+                            <div className={styles.attachmentMeta}>
+                              <span className={styles.attachmentName}>
+                                {attachment.name}
+                              </span>
+                              <span>{formatMailAttachmentSize(attachment.size)}</span>
+                            </div>
+                            <button
+                              type="button"
+                              className={styles.attachmentRemoveButton}
+                              onClick={() => onRemoveAttachment?.(index)}
+                            >
+                              제거
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className={styles.attachmentEmpty}>
+                        선택된 첨부파일이 없습니다.
+                      </div>
+                    )}
+                  </div>
+                )}
                 {setStatus !== null && (
                   <>
                     <span style={{ fontSize: "2rem", marginRight: "2rem" }}>
@@ -79,8 +161,9 @@ const AdminScheduleModal = ({
                   type="button"
                   className={styles.ok}
                   onClick={onSubmitChange}
+                  disabled={submitDisabled}
                 >
-                  확인
+                  {mailSubmitting ? "전송 중..." : "확인"}
                 </button>
                 {onSubmitDelete !== null && (
                   <>

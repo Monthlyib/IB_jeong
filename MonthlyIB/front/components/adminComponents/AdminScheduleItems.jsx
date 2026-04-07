@@ -5,7 +5,7 @@ import { faPen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useUserInfo } from "@/store/user";
 import { useTutoringStore } from "@/store/tutoring";
-import { mailPost } from "@/apis/mail";
+import { mailPost, validateMailAttachments } from "@/apis/mail";
 import AdminScheduleModal from "./AdminSchedulemodal";
 
 const formatTime = (hour, minute) => {
@@ -26,6 +26,8 @@ const AdminScheduleItems = ({
   const [selectedTutoring, setSelectedTutoring] = useState(null);
   const [subject, setSubject] = useState("");
   const [detail, setDetail] = useState("");
+  const [attachments, setAttachments] = useState([]);
+  const [mailSubmitting, setMailSubmitting] = useState(false);
   const [status, setStatus] = useState("WAIT");
 
   const { userInfo } = useUserInfo();
@@ -56,12 +58,28 @@ const AdminScheduleItems = ({
       return;
     }
 
+    const validation = validateMailAttachments(attachments);
+    if (!validation.valid) {
+      alert(validation.message);
+      return;
+    }
+
     try {
-      await mailPost(selectedTutoring.requestUserId, subject, detail, userInfo);
+      setMailSubmitting(true);
+      await mailPost(
+        selectedTutoring.requestUserId,
+        subject,
+        detail,
+        attachments,
+        userInfo
+      );
       setMailModal(false);
+      setAttachments([]);
       alert("메일을 전송했습니다.");
     } catch (error) {
       alert(error?.response?.data?.message || "메일 전송에 실패했습니다.");
+    } finally {
+      setMailSubmitting(false);
     }
   };
 
@@ -80,7 +98,23 @@ const AdminScheduleItems = ({
     setSelectedTutoring(tutoring);
     setSubject("");
     setDetail("");
+    setAttachments([]);
+    setMailSubmitting(false);
     setMailModal(true);
+  };
+
+  const onAddAttachments = (nextFiles) => {
+    const nextAttachments = [...attachments, ...nextFiles];
+    const validation = validateMailAttachments(nextAttachments);
+    if (!validation.valid) {
+      alert(validation.message);
+      return;
+    }
+    setAttachments(nextAttachments);
+  };
+
+  const onRemoveAttachment = (index) => {
+    setAttachments((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
   };
 
   return (
@@ -157,6 +191,11 @@ const AdminScheduleItems = ({
         onSubmitChange={onSubmitMail}
         onSubmitDelete={null}
         showMailFields={true}
+        attachments={attachments}
+        onAddAttachments={onAddAttachments}
+        onRemoveAttachment={onRemoveAttachment}
+        mailSubmitting={mailSubmitting}
+        submitDisabled={mailSubmitting || !subject.trim() || !detail.trim()}
       />
     </>
   );
