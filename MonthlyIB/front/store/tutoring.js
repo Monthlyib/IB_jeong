@@ -22,14 +22,15 @@ export const useTutoringStore = create((set, get) => ({
     try {
       const res = await TutoringGetDateSimple(date, session);
       set({ tutoringDateSimpleList: res.data });
-      console.log(res.data);
+      return res.data;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   postTutoring: async (requestUserId, date, hour, minute, detail, session) => {
     try {
-      await TutoringPostItem(
+      return await TutoringPostItem(
         requestUserId,
         date,
         hour,
@@ -39,6 +40,7 @@ export const useTutoringStore = create((set, get) => ({
       );
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   reviseTutoring: async (tutoringId, detail, tutoringStatus, session, page) => {

@@ -2,6 +2,9 @@ import { tokenRequireApi } from "./refreshToken";
 
 const TUTORING_API_URL = "api/tutoring";
 
+const getApiErrorMessage = (error, fallbackMessage) =>
+  error?.response?.data?.message || fallbackMessage;
+
 export const TutoringDeleteItem = async (tutoringId, session) => {
   try {
     const config = {
@@ -85,6 +88,12 @@ export const TutoringGetDateSimple = async (date, session) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw new Error(
+      getApiErrorMessage(
+        error,
+        "예약 가능 시간을 불러오지 못했습니다. 잠시 후 다시 시도해주세요."
+      )
+    );
   }
 };
 
@@ -128,9 +137,16 @@ export const TutoringPostItem = async (
       },
     };
     const data = { requestUserId, date, hour, minute, detail };
-    await tokenRequireApi.post(`${TUTORING_API_URL}`, data, config);
+    const res = await tokenRequireApi.post(`${TUTORING_API_URL}`, data, config);
+    return res.data;
   } catch (error) {
     console.error(error);
+    throw new Error(
+      getApiErrorMessage(
+        error,
+        "튜터링 예약에 실패했습니다. 잠시 후 다시 시도해주세요."
+      )
+    );
   }
 };
 

@@ -450,9 +450,14 @@ footer {
   width: 54rem;
 }
 
-.width_content.scheduling .header_tit_wrap {
-  width: 110rem;
+.width_content.scheduling .header_flex {
+  max-width: 118rem;
   margin: 0 auto;
+}
+
+.width_content.scheduling .header_tit_wrap {
+  width: auto;
+  margin: 0;
 }
 
 .header_flex {
