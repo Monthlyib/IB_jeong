@@ -313,17 +313,22 @@
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 3.2rem;
+  padding:
+    calc(var(--appHeaderHeight, 7.2rem) + 2rem)
+    2rem
+    2rem;
   background: rgba(28, 20, 43, 0.46);
   backdrop-filter: blur(6px);
-  z-index: 2000;
+  z-index: 10010;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .templateModal {
-  width: min(88rem, calc(100vw - 4.8rem));
-  max-height: calc(100vh - 6.4rem);
+  width: min(88rem, calc(100vw - 4rem));
+  max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
   overflow-y: auto;
   border: 1px solid rgba(98, 62, 133, 0.12);
   border-radius: 2.8rem;
@@ -619,12 +624,15 @@
   }
 
   .templateModalBackdrop {
-    padding: 1.6rem;
+    padding:
+      calc(var(--appHeaderHeight, 7.2rem) + 1.2rem)
+      1.6rem
+      1.6rem;
   }
 
   .templateModal {
     width: min(100%, calc(100vw - 3.2rem));
-    max-height: calc(100vh - 3.2rem);
+    max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 2.8rem);
     padding: 2.4rem;
   }
 
