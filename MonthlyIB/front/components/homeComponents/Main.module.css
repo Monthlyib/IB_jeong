@@ -230,3 +230,87 @@
         line-height: 1.5;
     }
 }
+
+@media screen and (max-width: 480px) {
+    .main_wrap {
+        gap: 1.4rem;
+    }
+
+    .main_wrap .left_cont {
+        margin-bottom: 0.4rem;
+    }
+
+    .main_wrap .left_cont span {
+        margin-bottom: 0.4rem;
+        font-size: 1.25rem;
+        letter-spacing: 0.08em;
+    }
+
+    .main_wrap .left_cont h2 {
+        font-size: 2.7rem;
+        margin-bottom: 1.8rem;
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+    }
+
+    .main_wrap .left_cont p {
+        font-size: 1.35rem;
+        line-height: 1.6;
+        margin-bottom: 1.8rem;
+    }
+
+    .main_wrap .left_cont p br {
+        display: none;
+    }
+
+    .controller {
+        width: 8rem;
+    }
+
+    .controller button {
+        width: 3.6rem;
+        height: 3.6rem;
+        border-radius: 999px;
+    }
+
+    .controller button svg {
+        font-size: 1.4rem;
+    }
+
+    .main_project_swiper {
+        height: 20.8rem;
+    }
+
+    .main_project_swiper .swiper-slide,
+    .previewSlide {
+        width: 19.6rem;
+        flex-basis: 19.6rem;
+        border-radius: 1.6rem;
+    }
+
+    .previewSwiperTrack {
+        gap: 1rem;
+    }
+
+    .main_project_swiper .pr_wrap {
+        padding: 1.2rem;
+    }
+
+    .main_project_swiper .pr_wrap .pr_top {
+        font-size: 1.3rem;
+    }
+
+    .main_project_swiper .pr_wrap .pr_md {
+        font-size: 8.6rem;
+        text-shadow: 3px 3px 4px rgba(0, 0, 0, 0.22);
+    }
+
+    .main_project_swiper .pr_wrap .pr_bt {
+        font-size: 1.3rem;
+        line-height: 1.35;
+    }
+
+    .main_project_swiper .pr_wrap .pr_dim {
+        height: 4.4rem;
+    }
+}
