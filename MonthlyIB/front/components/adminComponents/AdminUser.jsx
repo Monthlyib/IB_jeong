@@ -217,7 +217,7 @@ const AdminUser = () => {
         userInfo
       );
       closeMailModal();
-      alert("메일을 전송했습니다.");
+      alert("메일 전송 요청을 접수했습니다. 백그라운드에서 발송됩니다.");
     } catch (error) {
       alert(error?.response?.data?.message || "메일 전송에 실패했습니다.");
     } finally {
