@@ -90,7 +90,7 @@ function Login() {
           <span>Member Login</span>
           <h2>로그인</h2>
         </div>
-        <form onSubmit={onSubmitForm}>
+        <form className={styles.login_form} onSubmit={onSubmitForm}>
           <input
             type="text"
             name="user-id"

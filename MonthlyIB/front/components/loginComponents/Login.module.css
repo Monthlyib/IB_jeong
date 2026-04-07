@@ -59,6 +59,10 @@ Login
   padding: 7.2rem 0 0;
 }
 
+.login_form {
+  width: 100%;
+}
+
 .login span {
   display: block;
   color: #888;
@@ -253,5 +257,110 @@ button.login_btn {
 
   .simple_login ul {
     width: 100%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .width_content.login {
+    min-height: auto;
+    padding: calc(var(--appHeaderHeight, 7.2rem) + 1.6rem) 1.6rem 4rem;
+  }
+
+  .login .header_tit_wrap {
+    padding: 0 0 2.2rem;
+  }
+
+  .login span {
+    font-size: 1.3rem;
+    line-height: 1.2;
+    letter-spacing: 0.08em;
+  }
+
+  .login h2 {
+    font-size: 2.9rem;
+    line-height: 1.08;
+    margin-bottom: 0;
+    letter-spacing: -0.04em;
+  }
+
+  .login_form {
+    padding: 2rem 1.6rem 1.8rem;
+    border-radius: 2.4rem;
+    background: #fbfaff;
+    border: 1px solid rgba(81, 52, 108, 0.08);
+    box-shadow: 0 1.6rem 3.6rem rgba(21, 14, 34, 0.08);
+  }
+
+  .login input {
+    font-size: 1.55rem;
+    border-radius: 1.6rem;
+    padding: 2rem 1.4rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .login input::placeholder {
+    font-size: 1.5rem;
+  }
+
+  .login input:nth-child(2) {
+    margin-bottom: 1.1rem;
+  }
+
+  .login_error {
+    margin: 0.2rem 0 1.2rem;
+    font-size: 1.35rem;
+    line-height: 1.45;
+  }
+
+  .login button.login_btn {
+    font-size: 1.8rem;
+    border-radius: 1.6rem;
+    padding: 2rem 0;
+    margin-bottom: 1.4rem;
+  }
+
+  .login .bottom_option {
+    margin-bottom: 2.6rem;
+    gap: 1rem;
+  }
+
+  .login .bottom_option a {
+    font-size: 1.35rem;
+  }
+
+  .simple_login:before,
+  .simple_login:after {
+    top: 0.9rem;
+    width: calc(50% - 5.8rem);
+  }
+
+  .simple_login h3 {
+    font-size: 1.45rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .simple_login ul {
+    justify-content: center;
+    gap: 1.6rem;
+  }
+
+  .simple_login ul li a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .simple_login ul li a figure {
+    width: 5rem;
+    height: 5rem;
+    border-radius: 1.4rem;
+    margin-bottom: 0.7rem;
+    background: #fff;
+    box-shadow: 0 0.8rem 1.8rem rgba(21, 14, 34, 0.06);
+  }
+
+  .simple_login ul li a span {
+    font-size: 1.25rem;
+    font-weight: 500;
   }
 }
