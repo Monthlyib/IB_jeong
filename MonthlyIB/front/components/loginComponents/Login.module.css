@@ -120,6 +120,19 @@ button.login_btn {
   background: var(--primary03);
 }
 
+.login button.login_btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.login_error {
+  margin: 0 0 1.6rem;
+  color: #d73c52;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
 .login .bottom_option {
   display: flex;
   justify-content: space-between;

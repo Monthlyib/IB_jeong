@@ -16,6 +16,8 @@ export const naverLink = `https://nid.naver.com/oauth2.0/authorize?response_type
 function Login() {
   const [username, setId] = useState("");
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { signIn } = useUserInfo();
   const router = useRouter();
@@ -50,24 +52,33 @@ function Login() {
   );
 
   const onChangeId = useCallback((e) => {
+    setLoginError("");
     setId(e.target.value);
   }, []);
 
   const onChangePassword = useCallback((e) => {
+    setLoginError("");
     setPassword(e.target.value);
   }, []);
 
   const onSubmitForm = useCallback(
     async (e) => {
       e.preventDefault();
-      const res = await signIn(username, password);
-      if (res?.result.status !== 200) {
-        alert(res?.message);
-      } else {
+      setLoginError("");
+      setIsSubmitting(true);
+
+      try {
+        await signIn(username, password);
         router.push("/");
+      } catch (error) {
+        setLoginError(
+          error?.message || "로그인에 실패했습니다. 다시 시도해주세요."
+        );
+      } finally {
+        setIsSubmitting(false);
       }
     },
-    [username, password]
+    [router, signIn, username, password]
   );
 
   return (
@@ -96,8 +107,17 @@ function Login() {
             required
             placeholder="비밀번호"
           />
-          <button type="submit" className={styles.login_btn}>
-            로그인
+          {loginError ? (
+            <p className={styles.login_error} aria-live="polite">
+              {loginError}
+            </p>
+          ) : null}
+          <button
+            type="submit"
+            className={styles.login_btn}
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "로그인 중..." : "로그인"}
           </button>
 
           <div className={styles.bottom_option}>

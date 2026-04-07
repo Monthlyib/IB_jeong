@@ -110,7 +110,6 @@ export const useUserInfo = create(
           set({ userInfo: res.data });
           return res;
         } catch (error) {
-          console.error(error);
           throw error;
         }
       },
@@ -219,7 +218,6 @@ export const useUserStore = create((set, get) => ({
       set({ userInfo: res.data });
       return res;
     } catch (error) {
-      console.error(error);
       throw error;
     }
   },

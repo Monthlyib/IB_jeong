@@ -12,6 +12,14 @@ const getErrorMessage = async (res, fallbackMessage) => {
   }
 };
 
+const getAxiosErrorMessage = (error, fallbackMessage) => {
+  return (
+    error?.response?.data?.message ||
+    error?.message ||
+    fallbackMessage
+  );
+};
+
 const readJsonSafely = async (res) => {
   try {
     return await res.json();
@@ -276,6 +284,9 @@ export const openAPILogin = async (username, password) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw new Error(
+      getAxiosErrorMessage(error, "로그인에 실패했습니다. 다시 시도해주세요.")
+    );
   }
 };
 
