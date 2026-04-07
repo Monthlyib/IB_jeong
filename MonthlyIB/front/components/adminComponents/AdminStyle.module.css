@@ -1304,6 +1304,7 @@
     minmax(10rem, 1fr)
     minmax(7rem, 0.75fr)
     minmax(8rem, 0.75fr)
+    minmax(10rem, 0.95fr)
     minmax(7rem, 0.7fr);
 }
 
@@ -1405,6 +1406,92 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
+}
+
+.calendarSyncStack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.calendarSyncBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.calendarSyncBadgeSynced {
+  background: #eff8ef;
+  color: #2f6a3d;
+}
+
+.calendarSyncBadgePending {
+  background: #fff5e8;
+  color: #9b6128;
+}
+
+.calendarSyncBadgeFailed {
+  background: #fff0f1;
+  color: #b24f66;
+}
+
+.calendarSyncLink {
+  color: #5c4782;
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.modalInfoCard {
+  display: grid;
+  gap: 0.8rem;
+  width: 100%;
+  margin-top: 1.6rem;
+  padding: 1.6rem;
+  border: 1px solid #ebe2f5;
+  border-radius: 1.6rem;
+  background: #fbf9ff;
+  text-align: left;
+}
+
+.modalMetaText {
+  color: #7d7290;
+  font-size: 1.3rem;
+  line-height: 1.6;
+}
+
+.calendarSyncError {
+  color: #a14a60;
+  font-size: 1.3rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
+.modalActionRow {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.modalSecondaryButton {
+  min-height: 4.2rem;
+  padding: 0 1.4rem;
+  border: 1px solid #d8ccec;
+  border-radius: 1.2rem;
+  background: #fff;
+  color: #44315d;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.modalSecondaryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .emptyTableState {

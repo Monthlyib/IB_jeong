@@ -14,6 +14,7 @@ import {
   revokeMailInlineImagePreviews,
   validateMailAttachments,
 } from "@/apis/mail";
+import { TutoringSyncCalendarItem } from "@/apis/tutoringAPI";
 import AdminScheduleModal from "./AdminSchedulemodal";
 
 const formatTime = (hour, minute) => {
@@ -21,6 +22,15 @@ const formatTime = (hour, minute) => {
   const normalizedMinute = String(minute ?? 0).padStart(2, "0");
   return `${normalizedHour}:${normalizedMinute}`;
 };
+
+const CALENDAR_STATUS_LABELS = {
+  PENDING: "연동 대기",
+  SYNCED: "연동 완료",
+  FAILED: "연동 실패",
+};
+
+const getCalendarStatusLabel = (status) =>
+  CALENDAR_STATUS_LABELS[status] ?? "미연동";
 
 const AdminScheduleItems = ({
   tutoringDateList,
@@ -37,10 +47,11 @@ const AdminScheduleItems = ({
   const [attachments, setAttachments] = useState([]);
   const [inlineImages, setInlineImages] = useState([]);
   const [mailSubmitting, setMailSubmitting] = useState(false);
+  const [calendarSyncSubmitting, setCalendarSyncSubmitting] = useState(false);
   const [status, setStatus] = useState("WAIT");
 
   const { userInfo } = useUserInfo();
-  const { reviseTutoring, deleteTutoring } = useTutoringStore();
+  const { reviseTutoring, deleteTutoring, getTutoringDateList } = useTutoringStore();
 
   useEffect(() => {
     if (!selectedTutoring) return;
@@ -109,6 +120,31 @@ const AdminScheduleItems = ({
     deleteTutoring(selectedTutoring.tutoringId, userInfo, currentPage);
   };
 
+  const onSubmitCalendarSync = async () => {
+    if (!selectedTutoring) return;
+
+    try {
+      setCalendarSyncSubmitting(true);
+      const res = await TutoringSyncCalendarItem(
+        selectedTutoring.tutoringId,
+        userInfo
+      );
+      const nextTutoring = res?.data;
+      if (nextTutoring) {
+        setSelectedTutoring(nextTutoring);
+      }
+      await getTutoringDateList("", "", Math.max(currentPage - 1, 0), userInfo);
+      alert("Google Calendar 재동기화 요청을 접수했습니다.");
+    } catch (error) {
+      alert(
+        error?.response?.data?.message ||
+          "Google Calendar 재동기화에 실패했습니다."
+      );
+    } finally {
+      setCalendarSyncSubmitting(false);
+    }
+  };
+
   const onClickEdit = (tutoring) => {
     setSelectedTutoring(tutoring);
     setModal(true);
@@ -171,7 +207,37 @@ const AdminScheduleItems = ({
                   {formatTime(tutoring.hour, tutoring.minute)}
                 </div>
                 <div className={styles.scheduleCell}>
-                  {tutoring.tutoringStatus === "WAIT" ? "대기" : "확정"}
+                  {tutoring.tutoringStatus === "WAIT"
+                    ? "대기"
+                    : tutoring.tutoringStatus === "CANCEL"
+                      ? "취소"
+                      : "확정"}
+                </div>
+                <div className={styles.scheduleCell}>
+                  <div className={styles.calendarSyncStack}>
+                    <span
+                      className={`${styles.calendarSyncBadge} ${
+                        tutoring.googleCalendarSyncStatus === "FAILED"
+                          ? styles.calendarSyncBadgeFailed
+                          : tutoring.googleCalendarSyncStatus === "PENDING"
+                            ? styles.calendarSyncBadgePending
+                            : styles.calendarSyncBadgeSynced
+                      }`}
+                      title={tutoring.googleCalendarLastError || ""}
+                    >
+                      {getCalendarStatusLabel(tutoring.googleCalendarSyncStatus)}
+                    </span>
+                    {tutoring.googleCalendarHtmlLink ? (
+                      <a
+                        href={tutoring.googleCalendarHtmlLink}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.calendarSyncLink}
+                      >
+                        일정 열기
+                      </a>
+                    ) : null}
+                  </div>
                 </div>
                 <div className={`${styles.scheduleCell} ${styles.scheduleTools}`}>
                   <FontAwesomeIcon
@@ -213,6 +279,12 @@ const AdminScheduleItems = ({
         setStatus={setStatus}
         onSubmitChange={onSubmitChangeTutoring}
         onSubmitDelete={onSubmitDeleteTutoring}
+        calendarSyncStatus={selectedTutoring?.googleCalendarSyncStatus}
+        calendarSyncError={selectedTutoring?.googleCalendarLastError}
+        calendarHtmlLink={selectedTutoring?.googleCalendarHtmlLink}
+        calendarSyncedAt={selectedTutoring?.googleCalendarSyncedAt}
+        onSubmitCalendarSync={onSubmitCalendarSync}
+        calendarSyncSubmitting={calendarSyncSubmitting}
       />
 
       <AdminScheduleModal

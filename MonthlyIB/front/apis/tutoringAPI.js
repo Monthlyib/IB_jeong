@@ -134,6 +134,26 @@ export const TutoringPostItem = async (
   }
 };
 
+export const TutoringSyncCalendarItem = async (tutoringId, session) => {
+  try {
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: session?.accessToken,
+      },
+    };
+    const res = await tokenRequireApi.post(
+      `${TUTORING_API_URL}/${tutoringId}/calendar-sync`,
+      {},
+      config
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 const TUTORING_EMAIL_TEMPLATE_API_URL = `${TUTORING_API_URL}/email-template`;
 
 export const getTutoringEmailTemplate = async (session) => {

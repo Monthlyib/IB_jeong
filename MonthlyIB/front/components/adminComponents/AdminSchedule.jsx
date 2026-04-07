@@ -14,6 +14,7 @@ const SORT_LABELS = {
   date: "Date",
   time: "Time",
   tutoringStatus: "Status",
+  googleCalendarSyncStatus: "Calendar",
 };
 
 const STATUS_ORDER = {
@@ -231,6 +232,9 @@ const AdminSchedule = () => {
           >
             {renderSortLabel("tutoringStatus")}
           </button>
+          <div className={styles.tableHeaderStatic}>
+            <span className={styles.tableHeaderLabel}>Calendar</span>
+          </div>
           <div className={styles.tableHeaderStatic}>
             <span className={styles.tableHeaderLabel}>Tools</span>
           </div>

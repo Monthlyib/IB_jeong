@@ -33,6 +33,12 @@ const AdminScheduleModal = ({
   onClose,
   mailSubmitting = false,
   submitDisabled = false,
+  calendarSyncStatus,
+  calendarSyncError,
+  calendarHtmlLink,
+  calendarSyncedAt,
+  onSubmitCalendarSync,
+  calendarSyncSubmitting = false,
 }) => {
   const closeRef = useRef();
   const fileInputRef = useRef(null);
@@ -171,6 +177,64 @@ const AdminScheduleModal = ({
                     )}
                   </div>
                 )}
+                {!showMailFields && (
+                  <div className={styles.modalInfoCard}>
+                    <div className={styles.modalFieldLabel}>Google Calendar</div>
+                    <div className={styles.calendarSyncStack}>
+                      <span
+                        className={`${styles.calendarSyncBadge} ${
+                          calendarSyncStatus === "FAILED"
+                            ? styles.calendarSyncBadgeFailed
+                            : calendarSyncStatus === "PENDING"
+                              ? styles.calendarSyncBadgePending
+                              : styles.calendarSyncBadgeSynced
+                        }`}
+                      >
+                        {calendarSyncStatus === "FAILED"
+                          ? "연동 실패"
+                          : calendarSyncStatus === "PENDING"
+                            ? "연동 대기"
+                            : calendarSyncStatus === "SYNCED"
+                              ? "연동 완료"
+                              : "미연동"}
+                      </span>
+                      {calendarHtmlLink ? (
+                        <a
+                          href={calendarHtmlLink}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className={styles.calendarSyncLink}
+                        >
+                          Google Calendar 열기
+                        </a>
+                      ) : null}
+                    </div>
+                    {calendarSyncedAt ? (
+                      <div className={styles.modalMetaText}>
+                        마지막 동기화: {String(calendarSyncedAt).replace("T", " ")}
+                      </div>
+                    ) : null}
+                    {calendarSyncError ? (
+                      <div className={styles.calendarSyncError}>
+                        {calendarSyncError}
+                      </div>
+                    ) : null}
+                    {onSubmitCalendarSync ? (
+                      <div className={styles.modalActionRow}>
+                        <button
+                          type="button"
+                          className={styles.modalSecondaryButton}
+                          onClick={onSubmitCalendarSync}
+                          disabled={calendarSyncSubmitting}
+                        >
+                          {calendarSyncSubmitting
+                            ? "재동기화 중..."
+                            : "캘린더 재동기화"}
+                        </button>
+                      </div>
+                    ) : null}
+                  </div>
+                )}
                 {setStatus !== null && (
                   <>
                     <span style={{ fontSize: "2rem", marginRight: "2rem" }}>
@@ -182,6 +246,7 @@ const AdminScheduleModal = ({
                     >
                       <option value="WAIT">대기</option>
                       <option value="CONFIRM">확정</option>
+                      <option value="CANCEL">취소</option>
                     </select>
                   </>
                 )}
