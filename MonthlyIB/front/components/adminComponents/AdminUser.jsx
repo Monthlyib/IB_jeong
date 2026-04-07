@@ -15,6 +15,7 @@ import { useSubscribeStore } from "@/store/subscribe";
 import { getKnitSubscribeDataList } from "@/utils/utils";
 import {
   createMailInlineImageEntries,
+  dispatchAdminMailJobsRefresh,
   isMailContentEmpty,
   mailPost,
   prepareMailHtmlContent,
@@ -217,6 +218,7 @@ const AdminUser = () => {
         userInfo
       );
       closeMailModal();
+      dispatchAdminMailJobsRefresh();
       alert("메일 전송 요청을 접수했습니다. 백그라운드에서 발송됩니다.");
     } catch (error) {
       alert(error?.response?.data?.message || "메일 전송에 실패했습니다.");

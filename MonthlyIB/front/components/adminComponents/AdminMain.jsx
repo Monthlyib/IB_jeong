@@ -16,6 +16,7 @@ import AdminQuestion from "./AdminQuestion";
 import AdminSubscribe from "./AdminSubscribe";
 import AdminCalculatorRecommendations from "./AdminCalculatorRecommendations";
 import AdminHeaderNavigation from "./AdminHeaderNavigation";
+import AdminMailJobs from "./AdminMailJobs";
 import { useSubscribeStore } from "@/store/subscribe";
 import { useTutoringStore } from "@/store/tutoring";
 import { getCookie } from "@/apis/cookies";
@@ -146,6 +147,19 @@ const AdminMain = () => {
         <div className={styles.dashboard_support_wrap}>
           <AdminQuestion />
           <AdminSubscribe />
+        </div>
+      </section>
+
+      <section className={styles.adminSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <span className={styles.sectionEyebrow}>Mail</span>
+            <h2>메일 전송 상태</h2>
+          </div>
+        </div>
+
+        <div className={styles.dashboard_single_wrap}>
+          <AdminMailJobs />
         </div>
       </section>
 

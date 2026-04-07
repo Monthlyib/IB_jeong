@@ -1,6 +1,7 @@
 import { tokenRequireApi } from "./refreshToken";
 
 const MAIL_API_URL = "api/mail";
+export const ADMIN_MAIL_JOBS_REFRESH_EVENT = "admin:mail-jobs-refresh";
 export const MAIL_ATTACHMENT_MAX_COUNT = 5;
 export const MAIL_ATTACHMENT_MAX_TOTAL_SIZE = 10 * 1024 * 1024;
 export const MAIL_ATTACHMENT_ACCEPT =
@@ -231,4 +232,23 @@ export const mailPost = async (
   };
   const response = await tokenRequireApi.post(`${MAIL_API_URL}`, formData, config);
   return response.data;
+};
+
+export const mailGetJobs = async (session) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: session?.accessToken,
+    },
+  };
+
+  const response = await tokenRequireApi.get(`${MAIL_API_URL}/jobs`, config);
+  return response.data;
+};
+
+export const dispatchAdminMailJobsRefresh = () => {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.dispatchEvent(new CustomEvent(ADMIN_MAIL_JOBS_REFRESH_EVENT));
 };

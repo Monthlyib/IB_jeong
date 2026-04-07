@@ -1665,6 +1665,91 @@
   font-size: 1.4rem;
 }
 
+.mailJobsDescription {
+  margin-top: 1.2rem;
+  color: #7a708d;
+  font-size: 1.4rem;
+  line-height: 1.6;
+}
+
+.mailJobList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-top: 2rem;
+}
+
+.mailJobItem {
+  padding: 1.6rem 1.8rem;
+  border: 1px solid #e8def2;
+  border-radius: 1.8rem;
+  background: #fbf9ff;
+}
+
+.mailJobRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.mailJobSubject {
+  min-width: 0;
+  color: #241b34;
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.5;
+  word-break: keep-all;
+}
+
+.mailJobStatus {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8.8rem;
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mailJobStatusQUEUED {
+  background: rgba(81, 52, 108, 0.09);
+  color: #51346c;
+}
+
+.mailJobStatusSENT {
+  background: rgba(34, 131, 93, 0.12);
+  color: #1f7a56;
+}
+
+.mailJobStatusFAILED {
+  background: rgba(219, 86, 86, 0.12);
+  color: #c24646;
+}
+
+.mailJobMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem 1.4rem;
+  margin-top: 1rem;
+  color: #7b718e;
+  font-size: 1.35rem;
+  line-height: 1.5;
+}
+
+.mailJobError {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  border-radius: 1.2rem;
+  background: rgba(219, 86, 86, 0.08);
+  color: #b54848;
+  font-size: 1.35rem;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+
 .toggle_switch {
   position: relative;
   display: inline-block;
