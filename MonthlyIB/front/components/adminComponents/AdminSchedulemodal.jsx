@@ -1,4 +1,5 @@
 import { useRef } from "react";
+import dynamic from "next/dynamic";
 import styles from "./AdminStyle.module.css";
 import {
   MAIL_ATTACHMENT_ACCEPT,
@@ -6,6 +7,10 @@ import {
   MAIL_ATTACHMENT_MAX_TOTAL_SIZE,
   formatMailAttachmentSize,
 } from "@/apis/mail";
+
+const AdminMailEditor = dynamic(() => import("./AdminMailEditor"), {
+  ssr: false,
+});
 
 const AdminScheduleModal = ({
   modal,
@@ -24,6 +29,8 @@ const AdminScheduleModal = ({
   attachments = [],
   onAddAttachments,
   onRemoveAttachment,
+  onPrepareInlineImages,
+  onClose,
   mailSubmitting = false,
   submitDisabled = false,
 }) => {
@@ -33,6 +40,15 @@ const AdminScheduleModal = ({
     (sum, attachment) => sum + (attachment?.size ?? 0),
     0
   );
+
+  const closeModal = () => {
+    if (onClose) {
+      onClose();
+      return;
+    }
+    setModal(false);
+  };
+
   return (
     <>
       {modal === true && (
@@ -40,7 +56,7 @@ const AdminScheduleModal = ({
           <div
             className={styles.md_box_flex}
             ref={closeRef}
-            onClick={(e) => closeRef.current === e.target && setModal(false)}
+            onClick={(e) => closeRef.current === e.target && closeModal()}
           >
             <div
               className={styles.admin_box}
@@ -67,13 +83,27 @@ const AdminScheduleModal = ({
                   <div className={styles.modalFieldLabel}>
                     {showMailFields ? "메일 내용" : "상세내용"}
                   </div>
-                  <textarea
-                    className={styles.modalTextarea}
-                    value={detail}
-                    onChange={(e) => {
-                      setDetail(e.target.value);
-                    }}
-                  />
+                  {showMailFields ? (
+                    <div className={styles.mailEditorField}>
+                      <AdminMailEditor
+                        className={styles.mailEditor}
+                        value={detail}
+                        onChange={setDetail}
+                        onPrepareInlineImages={onPrepareInlineImages}
+                      />
+                      <div className={styles.mailEditorHint}>
+                        이미지를 드래그하거나 붙여넣으면 본문 안에 바로 삽입됩니다.
+                      </div>
+                    </div>
+                  ) : (
+                    <textarea
+                      className={styles.modalTextarea}
+                      value={detail}
+                      onChange={(e) => {
+                        setDetail(e.target.value);
+                      }}
+                    />
+                  )}
                 </div>
                 {showMailFields && (
                   <div className={styles.attachmentSection}>
@@ -81,7 +111,7 @@ const AdminScheduleModal = ({
                       <div>
                         <div className={styles.modalFieldLabel}>첨부파일</div>
                         <div className={styles.attachmentHint}>
-                          이미지/문서 파일만 가능, 최대 {MAIL_ATTACHMENT_MAX_COUNT}개,
+                          본문 이미지와 첨부파일을 합쳐 최대 {MAIL_ATTACHMENT_MAX_COUNT}개,
                           총 {formatMailAttachmentSize(MAIL_ATTACHMENT_MAX_TOTAL_SIZE)}
                         </div>
                       </div>

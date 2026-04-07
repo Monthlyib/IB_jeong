@@ -1538,6 +1538,55 @@
   box-sizing: border-box;
 }
 
+.mailEditorField {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.mailEditor {
+  width: 100%;
+}
+
+.mailEditor :global(.ql-toolbar.ql-snow) {
+  border: 1px solid #d7ccea;
+  border-radius: 1.4rem 1.4rem 0 0;
+  background: #f9f6fd;
+}
+
+.mailEditor :global(.ql-container.ql-snow) {
+  border: 1px solid #d7ccea;
+  border-top: none;
+  border-radius: 0 0 1.4rem 1.4rem;
+  background: #fff;
+}
+
+.mailEditor :global(.ql-editor) {
+  min-height: 24rem;
+  color: #241b34;
+  font-size: 1.6rem;
+  line-height: 1.8;
+}
+
+.mailEditor :global(.ql-editor p),
+.mailEditor :global(.ql-editor li) {
+  word-break: keep-all;
+}
+
+.mailEditor :global(.ql-editor img) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1.6rem 0;
+  border-radius: 1.4rem;
+}
+
+.mailEditorHint {
+  color: #7a708d;
+  font-size: 1.3rem;
+  line-height: 1.5;
+}
+
 .hiddenFileInput {
   display: none !important;
 }

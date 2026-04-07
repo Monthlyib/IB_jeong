@@ -5,7 +5,14 @@ import { faPen, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useState } from "react";
 import { useUserInfo } from "@/store/user";
 import { useTutoringStore } from "@/store/tutoring";
-import { mailPost, validateMailAttachments } from "@/apis/mail";
+import {
+  createMailInlineImageEntries,
+  isMailContentEmpty,
+  mailPost,
+  prepareMailHtmlContent,
+  revokeMailInlineImagePreviews,
+  validateMailAttachments,
+} from "@/apis/mail";
 import AdminScheduleModal from "./AdminSchedulemodal";
 
 const formatTime = (hour, minute) => {
@@ -27,6 +34,7 @@ const AdminScheduleItems = ({
   const [subject, setSubject] = useState("");
   const [detail, setDetail] = useState("");
   const [attachments, setAttachments] = useState([]);
+  const [inlineImages, setInlineImages] = useState([]);
   const [mailSubmitting, setMailSubmitting] = useState(false);
   const [status, setStatus] = useState("WAIT");
 
@@ -38,6 +46,15 @@ const AdminScheduleItems = ({
     setDetail(selectedTutoring.detail ?? "");
     setStatus(selectedTutoring.tutoringStatus ?? "WAIT");
   }, [selectedTutoring]);
+
+  const clearMailComposer = () => {
+    revokeMailInlineImagePreviews(inlineImages);
+    setSubject("");
+    setDetail("");
+    setAttachments([]);
+    setInlineImages([]);
+    setMailSubmitting(false);
+  };
 
   const onSubmitChangeTutoring = () => {
     if (!selectedTutoring) return;
@@ -53,12 +70,13 @@ const AdminScheduleItems = ({
 
   const onSubmitMail = async () => {
     if (!selectedTutoring) return;
-    if (!subject.trim() || !detail.trim()) {
+    if (!subject.trim() || isMailContentEmpty(detail)) {
       alert("메일 제목과 내용을 모두 입력해주세요.");
       return;
     }
 
-    const validation = validateMailAttachments(attachments);
+    const { activeInlineImages } = prepareMailHtmlContent(detail, inlineImages);
+    const validation = validateMailAttachments(attachments, activeInlineImages);
     if (!validation.valid) {
       alert(validation.message);
       return;
@@ -71,10 +89,10 @@ const AdminScheduleItems = ({
         subject,
         detail,
         attachments,
+        activeInlineImages,
         userInfo
       );
-      setMailModal(false);
-      setAttachments([]);
+      closeMailModal();
       alert("메일을 전송했습니다.");
     } catch (error) {
       alert(error?.response?.data?.message || "메일 전송에 실패했습니다.");
@@ -96,10 +114,7 @@ const AdminScheduleItems = ({
 
   const onClickMail = (tutoring) => {
     setSelectedTutoring(tutoring);
-    setSubject("");
-    setDetail("");
-    setAttachments([]);
-    setMailSubmitting(false);
+    clearMailComposer();
     setMailModal(true);
   };
 
@@ -115,6 +130,27 @@ const AdminScheduleItems = ({
 
   const onRemoveAttachment = (index) => {
     setAttachments((prev) => prev.filter((_, currentIndex) => currentIndex !== index));
+  };
+
+  const onPrepareInlineImages = (files) => {
+    const nextInlineImages = createMailInlineImageEntries(files);
+    const validation = validateMailAttachments(attachments, [
+      ...inlineImages,
+      ...nextInlineImages,
+    ]);
+    if (!validation.valid) {
+      revokeMailInlineImagePreviews(nextInlineImages);
+      alert(validation.message);
+      return null;
+    }
+
+    setInlineImages((prev) => [...prev, ...nextInlineImages]);
+    return nextInlineImages;
+  };
+
+  const closeMailModal = () => {
+    clearMailComposer();
+    setMailModal(false);
   };
 
   return (
@@ -180,6 +216,7 @@ const AdminScheduleItems = ({
       <AdminScheduleModal
         modal={mailModal}
         setModal={setMailModal}
+        onClose={closeMailModal}
         title={"메일 보내기"}
         status={null}
         requestUsername={selectedTutoring?.requestUsername}
@@ -194,8 +231,9 @@ const AdminScheduleItems = ({
         attachments={attachments}
         onAddAttachments={onAddAttachments}
         onRemoveAttachment={onRemoveAttachment}
+        onPrepareInlineImages={onPrepareInlineImages}
         mailSubmitting={mailSubmitting}
-        submitDisabled={mailSubmitting || !subject.trim() || !detail.trim()}
+        submitDisabled={mailSubmitting || !subject.trim() || isMailContentEmpty(detail)}
       />
     </>
   );
