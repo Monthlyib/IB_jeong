@@ -267,3 +267,79 @@
     padding: 0.8rem 2rem;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .width_content.member {
+    min-height: auto;
+    padding: calc(var(--appHeaderHeight, 7.2rem) + 1.4rem) 1.6rem 4rem;
+  }
+
+  .member .header_tit_wrap {
+    padding: 0 0 2.2rem;
+  }
+
+  .header_tit_wrap span {
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .header_tit_wrap h2 {
+    font-size: 2.8rem;
+    line-height: 1.08;
+  }
+
+  .select_cont {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.8rem;
+  }
+
+  .select_cont select,
+  .select_cont input,
+  .inputbox_cont input {
+    width: 100%;
+    margin-left: 0;
+    font-size: 1.55rem;
+    padding: 1.9rem 1.3rem;
+    border-radius: 1.5rem;
+  }
+
+  .inputbox_cont .input_btn_wrap input {
+    padding-right: 11rem;
+  }
+
+  .inputbox_cont button {
+    top: 0.5rem;
+    right: 0.5rem;
+    min-width: 7.8rem;
+    padding: 1.8rem 1.2rem;
+    border-radius: 1.2rem;
+    font-size: 1.35rem;
+  }
+
+  .frm_agree_cont {
+    margin: 1.8rem 0 2rem;
+  }
+
+  .frm_agree_cont .frm_agree_all {
+    padding: 1rem 0;
+  }
+
+  .frm_agree_cont .frm_agree_all label {
+    font-size: 1.45rem;
+  }
+
+  .frm_agree_cont ul li .frm_agree_flex label,
+  .frm_agree_cont ul li.frm_agree_auth .frm_agree_flex label {
+    width: auto;
+    font-size: 1.3rem;
+    line-height: 1.45;
+  }
+
+  .center_btn_wrap button,
+  .center_btn_wrap button:disabled {
+    height: 5.8rem;
+    border-radius: 1.6rem;
+    font-size: 1.7rem;
+  }
+}

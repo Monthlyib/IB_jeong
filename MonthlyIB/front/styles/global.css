@@ -18,11 +18,15 @@
   /* Default */
   --shdow-df: 2px 2px 2px rgba(81, 52, 108, 0.3);
   --shadow-25: 2px 2px 4px rgba(0, 0, 0, 0.25);
+  --appHeaderHeight: 8rem;
+  --pageGutter: 2.4rem;
+  --pageGutterNarrow: 2rem;
+  --pageGutterCompact: 1.6rem;
 }
 
 * {
   box-sizing: border-box;
-  scroll-margin-top: 50px;
+  scroll-margin-top: calc(var(--appHeaderHeight) + 1.6rem);
 }
 
 html {
@@ -80,6 +84,7 @@ html,
 body {
   width: 100%;
   overflow-x: hidden;
+  max-width: 100%;
 }
 
 audio,
@@ -351,7 +356,7 @@ select {
 
 header {
   width: 100%;
-  height: 8rem;
+  height: var(--appHeaderHeight);
   background: #fff;
   z-index: 9995;
   position: fixed;
@@ -405,8 +410,10 @@ header nav > ul > li:hover .navItemLabel {
 }
 
 main {
-  padding-top: 8rem;
-  min-height: calc(100vh - 10rem - 10rem); /* 8rem 헤더, 6rem footer 가정 */
+  min-width: 0;
+  padding-top: var(--appHeaderHeight);
+  min-height: calc(100vh - var(--appHeaderHeight) - 10rem);
+  overflow-x: clip;
 }
 
 section {
@@ -443,7 +450,7 @@ footer {
 
 .width_content.scheduling {
   width: 100%;
-  padding: 8rem 0 0;
+  padding: var(--appHeaderHeight) 0 0;
 }
 
 .width_content.min_content {
@@ -852,13 +859,17 @@ a.disabled {
 }
 /*  TB, MO - 1024 */
 @media screen and (max-width: 1024px) {
+  :root {
+    --appHeaderHeight: 9.6rem;
+  }
+
   /**************
          Common
       **************/
 
   .width_content {
     width: 100%;
-    padding: 8rem 2.4rem 8.8rem;
+    padding: 8rem var(--pageGutter) 8.8rem;
   }
 
   .header_flex {
@@ -869,7 +880,7 @@ a.disabled {
     width: 100%;
     margin: 0 auto;
     height: auto;
-    padding: 4.4rem 2.4rem;
+    padding: 4.4rem var(--pageGutter);
   }
 
   section .swiper {
@@ -887,7 +898,7 @@ a.disabled {
      **************/
   footer {
     width: 100%;
-    padding: 3rem 2.4rem;
+    padding: 3rem var(--pageGutter);
   }
 }
 
@@ -987,16 +998,20 @@ a.disabled {
 
 /* MO - 640 */
 @media screen and (max-width: 640px) {
+  :root {
+    --pageGutter: 2rem;
+  }
+
   /**************
          Common
       **************/
   .width_content {
     min-height: 60rem;
-    padding: 6.4rem 2rem 6.4rem;
+    padding: 5.8rem var(--pageGutterNarrow) 6rem;
   }
 
   section {
-    padding: 4.4rem 2rem;
+    padding: 4rem var(--pageGutterNarrow);
   }
 
   .width_content.min_content {
@@ -1054,6 +1069,101 @@ a.disabled {
 }
 
 @media screen and (max-width: 480px) {
+  :root {
+    --pageGutter: 1.6rem;
+    --pageGutterNarrow: 1.6rem;
+    --pageGutterCompact: 1.2rem;
+  }
+
+  .width_content {
+    min-height: auto;
+    padding: 4.8rem var(--pageGutterCompact) 5.2rem;
+  }
+
+  section {
+    padding: 3.4rem var(--pageGutterCompact);
+  }
+
+  .header_flex {
+    gap: 1.2rem;
+    padding: 3.2rem 0 2.2rem;
+  }
+
+  .header_tit_wrap span {
+    padding-bottom: 0.2rem;
+    font-size: 1.25rem;
+    line-height: 1.2;
+    text-align: left;
+    letter-spacing: -0.01em;
+  }
+
+  .header_tit_wrap h2 {
+    font-size: 2.6rem;
+    line-height: 1.08;
+    letter-spacing: -0.04em;
+    text-align: left;
+  }
+
+  .archive_tab {
+    max-width: none;
+    padding: 0 var(--pageGutterCompact);
+  }
+
+  .archive_tab a {
+    margin-right: 2rem;
+    padding: 1rem 0;
+    font-size: 1.5rem;
+  }
+
+  .inputbox_cont input {
+    font-size: 1.55rem;
+    padding: 1.9rem 1.3rem;
+    border-radius: 1.4rem;
+  }
+
+  .inputbox_cont .input_btn_wrap input {
+    padding: 1.9rem 11.2rem 1.9rem 1.3rem;
+  }
+
+  .inputbox_cont button {
+    top: 0.5rem;
+    right: 0.5rem;
+    min-width: 7.8rem;
+    padding: 1.8rem 1.2rem;
+    border-radius: 1.2rem;
+    font-size: 1.35rem;
+  }
+
+  .center_btn_wrap a,
+  .center_btn_wrap button {
+    height: 5.8rem;
+    border-radius: 1.6rem;
+    font-size: 1.7rem;
+  }
+
+  .ft_search {
+    height: 5.8rem;
+    padding: 0.5rem;
+    border-radius: 1.4rem;
+  }
+
+  .ft_search input {
+    font-size: 1.45rem;
+    padding-right: 9rem;
+  }
+
+  .ft_search input::placeholder {
+    font-size: 1.4rem;
+  }
+
+  .ft_search button {
+    top: 0.5rem;
+    right: 0.5rem;
+    height: 4.8rem;
+    border-radius: 1.2rem;
+    font-size: 1.3rem;
+  }
+
   .width_content.scheduling {
     padding: calc(var(--appHeaderHeight, 7.2rem) + 0.8rem) 0 0;
   }

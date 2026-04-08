@@ -299,3 +299,72 @@
     width: 100%;
   }
 }
+
+@media (max-width: 480px) {
+  .container {
+    padding: 2.4rem 1.6rem 3.6rem;
+    gap: 1.4rem;
+  }
+
+  .title {
+    margin: 1.2rem 0 0.8rem;
+    font-size: 2.5rem;
+    line-height: 1.12;
+  }
+
+  .description {
+    font-size: 1.4rem;
+    line-height: 1.65;
+  }
+
+  .infoSection,
+  .recordSection,
+  .feedbackSection,
+  .audioSection,
+  .previewSection {
+    padding: 1.4rem;
+    border-radius: 1.8rem;
+  }
+
+  .infoTitle,
+  .previewTitle,
+  .feedbackTitle,
+  .audioTitle {
+    margin-bottom: 1rem;
+    font-size: 1.6rem;
+  }
+
+  .infoRow,
+  .previewText,
+  .feedbackContent {
+    font-size: 1.35rem;
+  }
+
+  .embedPdf {
+    min-height: 46rem;
+  }
+
+  .timer {
+    font-size: 3.8rem;
+  }
+
+  .timerHint {
+    max-width: 28rem;
+    font-size: 1.3rem;
+    line-height: 1.55;
+  }
+
+  .actionRow {
+    gap: 0.8rem;
+  }
+
+  .viewScriptButton,
+  .recordButton,
+  .stopButton,
+  .feedbackButton,
+  .tutorButton {
+    min-height: 4.8rem;
+    border-radius: 1.3rem;
+    font-size: 1.35rem;
+  }
+}

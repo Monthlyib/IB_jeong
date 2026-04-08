@@ -2,7 +2,7 @@
   width: 110rem;
   max-width: 100%;
   margin: 0 auto;
-  padding: calc(var(--appHeaderHeight, 7.2rem) + 1.6rem) 2rem 4rem;
+  padding: 1.6rem 2rem 4rem;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;

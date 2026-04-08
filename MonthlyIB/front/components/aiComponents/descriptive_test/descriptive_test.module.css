@@ -1,7 +1,7 @@
 .container {
   width: min(100%, 110rem);
   margin: 0 auto;
-  padding: calc(var(--appHeaderHeight, 7.2rem) + 2rem) 2rem 5.2rem;
+  padding: 2rem 2rem 5.2rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -269,10 +269,12 @@
   position: fixed;
   inset: 0;
   background-color: rgba(21, 15, 30, 0.52);
-  z-index: 1000;
+  z-index: 10010;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
+  padding: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) 1.4rem 1.4rem;
+  overflow-y: auto;
 }
 
 .modalContent {
@@ -344,7 +346,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) 1.4rem 4rem;
+    padding: 1.6rem 1.4rem 4rem;
   }
 
   .heroCard,
@@ -373,5 +375,72 @@
   .adminButton,
   .startButton {
     width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1.2rem 1.6rem 3.6rem;
+    gap: 1.4rem;
+  }
+
+  .heroCard,
+  .formCard,
+  .modalContent {
+    padding: 1.6rem;
+    border-radius: 1.8rem;
+  }
+
+  .title {
+    margin: 1.2rem 0 0.8rem;
+    font-size: 2.7rem;
+    line-height: 1.08;
+  }
+
+  .subtitle {
+    font-size: 1.4rem;
+    line-height: 1.65;
+  }
+
+  .adminActions {
+    gap: 0.8rem;
+  }
+
+  .adminButton {
+    width: 100%;
+    min-height: 4.8rem;
+    border-radius: 1.4rem;
+    font-size: 1.35rem;
+    justify-content: center;
+  }
+
+  .formTitle {
+    margin-top: 0.6rem;
+    font-size: 2.2rem;
+  }
+
+  .formNote,
+  .fieldHint {
+    font-size: 1.3rem;
+    line-height: 1.55;
+  }
+
+  .selectWrapper label,
+  .statusValue {
+    font-size: 1.4rem;
+  }
+
+  .selectWrapper select {
+    min-height: 5rem;
+    padding: 1.2rem 4.2rem 1.2rem 1.4rem;
+    border-radius: 1.4rem;
+    font-size: 1.45rem;
+  }
+
+  .startButton {
+    max-width: none;
+    min-height: 4.8rem;
+    margin-top: 2rem;
+    font-size: 1.5rem;
   }
 }

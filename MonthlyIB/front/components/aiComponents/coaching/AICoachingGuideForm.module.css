@@ -10,7 +10,7 @@
   --card: #ffffff;
   width: min(110rem, calc(100% - 4rem));
   max-width: 100%;
-  margin: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) auto 4rem;
+  margin: 1.2rem auto 4rem;
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
 }

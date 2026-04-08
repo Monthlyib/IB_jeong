@@ -1549,6 +1549,110 @@ div.review_stars svg.active:hover ~ svg.empty {
   }
 }
 
+@media screen and (max-width: 480px) {
+  .coursePage {
+    width: calc(100vw - 2rem);
+    padding-top: 1rem;
+    padding-bottom: 4rem;
+  }
+
+  .courseHeroCard,
+  .course_sectionCard,
+  .course_info_top {
+    padding: 1.6rem;
+    border-radius: 1.8rem;
+  }
+
+  .courseHeroTitle {
+    font-size: 2.4rem;
+    line-height: 1.12;
+  }
+
+  .courseHeroSummary {
+    font-size: 1.4rem;
+    line-height: 1.65;
+  }
+
+  .courseMetaChip {
+    padding: 0.8rem 1.1rem;
+    font-size: 1.2rem;
+  }
+
+  .course_nav {
+    top: calc(var(--appHeaderHeight, 7.2rem) + 0.8rem);
+    padding: 0.8rem;
+    border-radius: 1.6rem;
+  }
+
+  .course_nav ul li button {
+    padding: 1.2rem 1rem;
+    border-radius: 1.2rem;
+    font-size: 1.35rem;
+  }
+
+  .course_tit_header h3 {
+    font-size: 2.2rem;
+  }
+
+  .course_content {
+    padding-top: 1.8rem;
+  }
+
+  .course_contentInner {
+    font-size: 1.45rem;
+    line-height: 1.72;
+  }
+
+  .courseCurriItemHeader {
+    padding: 1.4rem;
+    gap: 1rem;
+  }
+
+  .courseCurriItemHeader span {
+    font-size: 1.6rem;
+  }
+
+  .course_curri_wrap > ul > li > ul {
+    padding: 0 1.4rem 1.4rem 4.2rem;
+  }
+
+  .courseLessonActions,
+  .playerLessonActions,
+  .playerQuickActions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .review_aver {
+    padding: 1.6rem;
+    border-radius: 1.8rem;
+  }
+
+  .review_aver_left {
+    padding: 1.6rem;
+    border-radius: 1.6rem;
+  }
+
+  .review_aver_point svg {
+    font-size: 2.8rem;
+  }
+
+  .review_aver_point b {
+    font-size: 2.6rem;
+  }
+
+  .comment_content_wrap .comment_content_flex textarea {
+    min-height: 8rem;
+    border-radius: 1.2rem;
+    font-size: 1.35rem;
+  }
+
+  .comment_content_wrap .comment_content_flex button {
+    min-height: 4.8rem;
+    border-radius: 1.2rem;
+  }
+}
+
 .empty_stars {
   font-size: 1.5rem;
 }

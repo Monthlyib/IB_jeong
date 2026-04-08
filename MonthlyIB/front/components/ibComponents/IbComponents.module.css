@@ -290,3 +290,86 @@
     width: 100%;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .ibwrite_wrapper {
+    justify-content: stretch;
+    align-items: stretch;
+    padding: 2.8rem 0 1.2rem;
+  }
+
+  .ibwrite_wrapper button,
+  .btn_write {
+    width: 100%;
+    height: 4.8rem;
+    border-radius: 1.4rem;
+    justify-content: center;
+    gap: 0.8rem;
+  }
+
+  .ib_archive_cont {
+    gap: 1.6rem;
+  }
+
+  .ib_item,
+  .ib_item:nth-child(3n) {
+    width: 100%;
+    margin-right: 0;
+    margin-bottom: 0;
+  }
+
+  .ib_item div figure {
+    height: 24rem;
+    margin-bottom: 1rem;
+    border-radius: 1.6rem;
+    overflow: hidden;
+  }
+
+  .ib_item div .ib_txt {
+    font-size: 1.6rem;
+    line-height: 1.45;
+  }
+
+  .right_btn {
+    padding-bottom: 0;
+  }
+
+  .write_wrap {
+    padding-top: 2rem;
+  }
+
+  .write_wrap .write_tit {
+    height: auto;
+    font-size: 2.4rem;
+    line-height: 1.2;
+  }
+
+  .write_wrap .write_content {
+    min-height: 40rem;
+    margin-top: 1.6rem;
+    padding: 1.6rem;
+    border-radius: 1.6rem;
+    font-size: 1.5rem;
+  }
+
+  .write_wrap .write_block {
+    margin-top: 1.8rem;
+  }
+
+  .write_btn_area {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .write_btn_area a.cancel {
+    margin-right: 0;
+  }
+
+  .write_btn_area a,
+  .write_btn_area button {
+    width: 100%;
+    height: 4.8rem;
+    line-height: 4.8rem;
+    border-radius: 1.4rem;
+  }
+}

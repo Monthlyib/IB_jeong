@@ -146,11 +146,12 @@
   position: fixed;
   inset: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 2rem;
+  padding: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) 1.4rem 1.4rem;
   background-color: rgba(17, 10, 30, 0.45);
-  z-index: 1000;
+  z-index: 10010;
+  overflow-y: auto;
 }
 
 .modalContent {
@@ -221,5 +222,57 @@
   .startButton {
     width: 100%;
     justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 2.4rem 1.6rem 3.6rem;
+  }
+
+  .introSection {
+    margin-bottom: 1.8rem;
+  }
+
+  .title {
+    margin: 1.2rem 0 1rem;
+    font-size: 2.5rem;
+    line-height: 1.12;
+  }
+
+  .description {
+    font-size: 1.45rem;
+    line-height: 1.65;
+  }
+
+  .adminActions {
+    justify-content: stretch;
+    gap: 0.8rem;
+  }
+
+  .adminButton,
+  .startButton {
+    width: 100%;
+    min-width: 0;
+    min-height: 4.8rem;
+    border-radius: 1.4rem;
+    font-size: 1.35rem;
+  }
+
+  .noticeCard,
+  .selectWrapper,
+  .modalContent {
+    padding: 1.4rem;
+    border-radius: 1.8rem;
+  }
+
+  .noticeTitle {
+    font-size: 1.55rem;
+  }
+
+  .noticeText,
+  .selectWrapper label,
+  .selectWrapper select {
+    font-size: 1.35rem;
   }
 }

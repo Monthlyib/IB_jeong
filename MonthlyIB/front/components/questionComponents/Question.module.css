@@ -801,3 +801,125 @@ div.review_stars svg.active:hover ~ svg.empty {
     padding: 2rem;
   }
 }
+
+@media screen and (max-width: 480px) {
+  .question .header_flex {
+    gap: 1rem;
+    padding: 2.8rem 0 2rem;
+  }
+
+  .question_header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .question_wrap .question_item a {
+    padding: 1.6rem;
+  }
+
+  .question_wrap .question_item a .q_flex_top p {
+    font-size: 1.55rem;
+  }
+
+  .question_wrap .question_item a .q_flex_bottom {
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .width_content.question {
+    padding: calc(var(--appHeaderHeight, 7.2rem) + 1.2rem) 1.6rem 4rem;
+  }
+
+  .dt_question_wrap {
+    border-radius: 1.8rem;
+  }
+
+  .dt_question_wrap .dt_question {
+    padding: 1.6rem;
+  }
+
+  .dt_question_wrap .dt_question .dt_question_top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .dt_question_wrap .dt_question .dt_question_title {
+    min-height: 0;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .dt_question_wrap .dt_question .dt_question_title > span {
+    top: 0;
+    font-size: 2rem;
+  }
+
+  .dt_question_title_menu {
+    position: static;
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .dt_question_wrap .dt_question .dt_question_title h2 {
+    font-size: 1.95rem;
+    line-height: 1.35;
+  }
+
+  .dt_question_content {
+    margin: 1.6rem 0 0;
+    font-size: 1.6rem;
+    line-height: 1.7;
+  }
+
+  .dt_question_wrap .dt_answer_exist,
+  .dt_question_wrap .dt_answer {
+    padding: 1.6rem;
+  }
+
+  .dt_question_wrap .dt_answer_exist .dt_answer_top,
+  .dt_question_wrap .dt_answer .dt_answer_top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+
+  .archive_bottom_btn {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .archive_bottom_btn .left_area,
+  .archive_bottom_btn .right_area {
+    width: 100%;
+  }
+
+  .archive_bottom_btn .btn_area {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem;
+    width: 100%;
+  }
+
+  .archive_bottom_btn .btn_area a,
+  .archive_bottom_btn .btn_area a:first-of-type {
+    width: 100%;
+    margin: 0;
+  }
+
+  .dt_question_flex .dt_question_right .dt_question_profile {
+    position: static;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.2rem;
+    padding: 1.6rem;
+  }
+
+  .shot_bn {
+    margin: 3rem 0 0;
+    border-radius: 1.6rem;
+  }
+}

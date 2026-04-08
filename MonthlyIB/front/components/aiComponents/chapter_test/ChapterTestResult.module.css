@@ -2,7 +2,7 @@
   width: 110rem;
   max-width: 100%;
   margin: 0 auto;
-  padding: calc(var(--appHeaderHeight, 7.2rem) + 2rem) 2rem 5rem;
+  padding: 2rem 2rem 5rem;
 }
 
 .summaryCard,

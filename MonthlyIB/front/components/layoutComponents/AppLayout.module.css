@@ -172,7 +172,8 @@ header .util a:last-child:hover {
    **************/
   header .header_wrap {
     width: 100%;
-    height: 9.6rem;
+    height: var(--appHeaderHeight, 9.6rem);
+    padding: 0 clamp(1.6rem, 4vw, 2.4rem);
   }
 
   header .pc_header_wrap {
@@ -185,21 +186,33 @@ header .util a:last-child:hover {
     align-items: center;
     width: 100%;
     height: 100%;
-    padding: 0 2.4rem;
+    padding: 0 clamp(1.6rem, 4vw, 2.4rem);
+    gap: 1rem;
   }
 
   header .mo_header_wrap .btn_sidemenu {
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    width: 8rem;
+    width: 5.2rem;
     height: 4.8rem;
+    flex-shrink: 0;
+    border-radius: 1.4rem;
+    background: #f7f3fc;
     cursor: pointer;
   }
 
   header .mo_header_wrap .btn_sidemenu svg {
-    font-size: 2.4rem;
+    font-size: 2.2rem;
     color: var(--primary01);
+  }
+
+  header .mo_header_wrap > a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 4rem;
+    flex-shrink: 0;
   }
 
   header .mo_header_wrap .nav_logo_m {
@@ -207,12 +220,20 @@ header .util a:last-child:hover {
   }
 
   header .mo_header_wrap .util {
-    width: 8rem;
+    width: auto;
+    min-width: 0;
+    display: flex;
+    justify-content: flex-end;
   }
 
   header .mo_header_wrap .util a {
-    width: 100%;
+    width: auto;
+    min-height: 4.8rem;
     padding: 0 1.4rem;
+    border-radius: 1.4rem;
+    font-size: 1.4rem;
+    line-height: 4.8rem;
+    white-space: nowrap;
   }
 
   header .util a:last-child {
@@ -226,10 +247,11 @@ header .util a:last-child:hover {
     position: fixed;
     left: 0;
     top: 0;
-    width: 32rem;
-    height: 100%;
+    width: min(32rem, calc(100vw - 2.4rem));
+    height: 100dvh;
     background: #fff;
     z-index: 9999;
+    box-shadow: 0 2rem 5rem rgba(22, 15, 34, 0.22);
   }
 
   .mo_gnb.active {
@@ -359,7 +381,8 @@ header .util a:last-child:hover {
 
   .mo_gnb .mo_menu_wrap {
     display: flex;
-    height: 100%;
+    flex: 1;
+    min-height: 0;
   }
 
   .mo_gnb .mo_menu_wrap .mo_menu_left {
@@ -367,6 +390,7 @@ header .util a:last-child:hover {
     background: #fafafa;
     padding: 0.2rem 0;
     overflow-y: auto;
+    min-height: 0;
   }
 
   .mo_gnb .mo_menu_wrap .mo_menu_left .mo_menu_item {
@@ -410,6 +434,7 @@ header .util a:last-child:hover {
     width: calc(100% - 14.2rem);
     padding: 0.2rem 0;
     overflow-y: scroll;
+    min-height: 0;
   }
 
   .mo_gnb .mo_menu_wrap .mo_menu_right .mo_sub_wrap {
@@ -500,6 +525,10 @@ header .util a:last-child:hover {
     padding: 0 2rem;
   }
 
+  .mo_gnb {
+    width: min(31rem, calc(100vw - 1.6rem));
+  }
+
   .mo_gnb .mo_gnb_header .util_sub {
     height: auto;
   }
@@ -510,5 +539,95 @@ header .util a:last-child:hover {
 
   .mo_gnb .mo_gnb_header .util_admin_row {
     padding: 0.8rem 1.6rem 0;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  header .mo_header_wrap {
+    padding: 0 1.6rem;
+  }
+
+  header .mo_header_wrap .btn_sidemenu {
+    width: 4.8rem;
+    height: 4.6rem;
+    border-radius: 1.2rem;
+  }
+
+  header .mo_header_wrap .btn_sidemenu svg {
+    font-size: 2rem;
+  }
+
+  header .mo_header_wrap .util a {
+    min-height: 4.4rem;
+    padding: 0 1.2rem;
+    border-radius: 1.2rem;
+    font-size: 1.3rem;
+    line-height: 4.4rem;
+  }
+
+  .mo_gnb {
+    width: calc(100vw - 1.2rem);
+  }
+
+  .mo_gnb .mo_gnb_header .util_wrap {
+    padding: 1.6rem 1.2rem;
+  }
+
+  .mo_gnb .mo_gnb_header .util_wrap .util_user_cont figure {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .mo_gnb .mo_gnb_header .util_wrap .util_user_cont .util_name {
+    font-size: 1.25rem;
+    margin-left: 0.8rem;
+  }
+
+  .mo_gnb .mo_gnb_header .util_wrap .util_user_cont .util_name b,
+  .mo_gnb .mo_gnb_header .util_wrap .util_user_cont a.util_login {
+    font-size: 1.6rem;
+  }
+
+  .mo_gnb .mo_gnb_header .util_sub a {
+    min-height: 4.4rem;
+    font-size: 1.4rem;
+  }
+
+  .mo_gnb .mo_gnb_header .util_admin_row {
+    padding: 0.8rem 1.2rem 0;
+  }
+
+  .mo_gnb .mo_gnb_header .util_admin_row a {
+    min-height: 4rem;
+    border-radius: 1rem;
+    font-size: 1.35rem;
+  }
+
+  .mo_gnb .mo_menu_wrap .mo_menu_left {
+    width: 12.6rem;
+  }
+
+  .mo_gnb .mo_menu_wrap .mo_menu_left .mo_menu_item.active:before {
+    top: 1.7rem;
+    width: 1.6rem;
+    height: 0.4rem;
+  }
+
+  .mo_gnb .mo_menu_wrap .mo_menu_left .mo_menu_item .tit {
+    padding: 1.2rem 1.3rem;
+    font-size: 1.45rem;
+  }
+
+  .mo_gnb .mo_menu_wrap .mo_menu_left .mo_menu_item.active .tit {
+    padding-left: 2.4rem;
+  }
+
+  .mo_gnb .mo_menu_wrap .mo_menu_right {
+    width: calc(100% - 12.6rem);
+  }
+
+  .mo_gnb .mo_menu_wrap .mo_menu_right .mo_sub_wrap .mo_sub_item .tit {
+    padding: 1.2rem 1.3rem;
+    font-size: 1.4rem;
   }
 }

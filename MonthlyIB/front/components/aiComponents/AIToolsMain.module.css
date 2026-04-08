@@ -334,3 +334,101 @@
     min-height: auto;
   }
 }
+
+@media (max-width: 480px) {
+  .container {
+    padding: 2.4rem 1.6rem 3.6rem;
+  }
+
+  .heroCopy,
+  .heroPanel,
+  .highlightCard,
+  .toolCard {
+    padding: 1.5rem;
+    border-radius: 1.8rem;
+  }
+
+  .eyebrow,
+  .sectionEyebrow,
+  .heroPanelBadge,
+  .cardBadge {
+    padding: 0.55rem 0.95rem;
+    font-size: 0.98rem;
+  }
+
+  .heroTitle {
+    margin: 1.2rem 0 1rem;
+    font-size: 2.6rem;
+    line-height: 1.08;
+  }
+
+  .heroDescription {
+    font-size: 1.4rem;
+    line-height: 1.65;
+  }
+
+  .primaryButton,
+  .secondaryButton {
+    min-width: 0;
+    min-height: 4.8rem;
+    border-radius: 1.4rem;
+    font-size: 1.35rem;
+  }
+
+  .heroPanelTitle {
+    font-size: 1.9rem;
+  }
+
+  .flowItem {
+    padding: 1rem 1.1rem;
+    border-radius: 1.4rem;
+  }
+
+  .flowIcon {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1.2rem;
+    font-size: 1.6rem;
+  }
+
+  .flowTitle {
+    font-size: 1.4rem;
+  }
+
+  .flowText {
+    font-size: 1.28rem;
+  }
+
+  .highlightSection,
+  .cardGrid {
+    gap: 1rem;
+  }
+
+  .highlightCard {
+    font-size: 1.3rem;
+    line-height: 1.55;
+  }
+
+  .sectionTitle {
+    font-size: 2.2rem;
+    line-height: 1.12;
+  }
+
+  .cardIcon {
+    width: 4.8rem;
+    height: 4.8rem;
+    margin-top: 1.2rem;
+    border-radius: 1.4rem;
+    font-size: 1.8rem;
+  }
+
+  .cardTitle {
+    margin-top: 1rem;
+    font-size: 1.8rem;
+  }
+
+  .cardDescription {
+    font-size: 1.35rem;
+    line-height: 1.65;
+  }
+}
