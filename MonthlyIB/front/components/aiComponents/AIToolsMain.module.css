@@ -1,8 +1,13 @@
 .container {
-  width: 110rem;
+  width: 126rem;
   max-width: 100%;
   margin: 0 auto;
   padding: 4rem 2rem 5rem;
+}
+
+.container > section {
+  width: 100%;
+  max-width: none;
 }
 
 .heroSection {
