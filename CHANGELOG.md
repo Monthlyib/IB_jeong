@@ -97,6 +97,7 @@
 ### Changed
 
 - `/aitools/io-practice/recording` 녹음 카드의 타이머, 안내문, 버튼이 겹치지 않도록 세로 레이아웃과 간격을 정리했습니다.
+- `/aitools/io-practice/recording`에서 녹음 종료 후 오디오 미리보기 `<audio>`가 렌더된 다음 blob URL을 다시 연결하도록 수정해 재생이 되지 않던 문제를 해결했습니다.
 - 헤더 GNB와 모바일 사이드 메뉴가 서버 설정을 우선 읽고, 설정이 없을 때만 기존 하드코드 메뉴를 fallback으로 사용하도록 정리했습니다.
 - `/aitools/coaching`의 영어 과목명을 `Language A English`로 바로잡고, 영어 모드 안내 문구 오타도 함께 수정했습니다.
 - `/question`, `/mypage`, `/adminpage` 질문 목록 페이지네이션을 서버 `pageInfo` 기준으로 정리했습니다.

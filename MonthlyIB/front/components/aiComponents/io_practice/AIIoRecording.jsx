@@ -225,6 +225,19 @@ const AIIoRecording = () => {
         };
     }, []);
 
+    useEffect(() => {
+        if (audioBlob) {
+            syncAudioPreview(audioBlob);
+            return;
+        }
+
+        revokeAudioPreviewUrl();
+        if (audioRef.current) {
+            audioRef.current.removeAttribute("src");
+            audioRef.current.load();
+        }
+    }, [audioBlob]);
+
     // 시간 포맷팅
     const formatTime = (seconds) => {
         const min = Math.floor(seconds / 60);
