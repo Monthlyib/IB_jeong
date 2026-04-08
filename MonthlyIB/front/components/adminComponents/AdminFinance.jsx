@@ -17,6 +17,7 @@ import { getCookie } from "@/apis/cookies";
 import {
   getAdminFinanceDetails,
   getAdminFinanceOverview,
+  postAdminFinanceSync,
 } from "@/apis/financeAPI";
 
 const NUMBER_FORMATTER = new Intl.NumberFormat("ko-KR");
@@ -74,6 +75,7 @@ const AdminFinance = () => {
   const [detail, setDetail] = useState(null);
   const [detailLoading, setDetailLoading] = useState(false);
   const [detailError, setDetailError] = useState("");
+  const [syncLoading, setSyncLoading] = useState(false);
 
   const session = useMemo(
     () => ({
@@ -161,6 +163,25 @@ const AdminFinance = () => {
     setDetailModalOpen(false);
   };
 
+  const triggerSync = async () => {
+    if (!session.accessToken || syncLoading) {
+      return;
+    }
+
+    try {
+      setSyncLoading(true);
+      const response = await postAdminFinanceSync(session);
+      alert(response?.message || "운영 수익 동기화를 시작했습니다. 잠시 후 다시 확인해주세요.");
+    } catch (error) {
+      console.error("Failed to trigger finance sync", error);
+      alert(
+        error?.response?.data?.message || "운영 수익 동기화를 시작하지 못했습니다."
+      );
+    } finally {
+      setSyncLoading(false);
+    }
+  };
+
   if (overviewLoading) {
     return (
       <div className={`${styles.dashboard_mid_card} ${styles.financeAdminCard}`}>
@@ -204,6 +225,14 @@ const AdminFinance = () => {
             <button
               type="button"
               className={styles.calculatorSecondaryButton}
+              onClick={triggerSync}
+              disabled={syncLoading}
+            >
+              {syncLoading ? "동기화 요청 중" : "지금 동기화"}
+            </button>
+            <button
+              type="button"
+              className={styles.calculatorSecondaryButton}
               onClick={openDetailModal}
             >
               세부 보기
@@ -228,20 +257,20 @@ const AdminFinance = () => {
             <span>총 운영비</span>
             <strong>{formatCurrency(overview?.totals?.totalOperatingCostKrw)}</strong>
           </div>
-          <div className={`${styles.financeSummaryCard} ${styles.financeSummaryMuted}`}>
+          <div className={styles.financeSummaryCard}>
             <span>매출</span>
-            <strong>준비중</strong>
+            <strong>{formatCurrency(overview?.totals?.revenueKrw)}</strong>
           </div>
-          <div className={`${styles.financeSummaryCard} ${styles.financeSummaryMuted}`}>
+          <div className={styles.financeSummaryCard}>
             <span>운영이익</span>
-            <strong>준비중</strong>
+            <strong>{formatCurrency(overview?.totals?.operatingProfitKrw)}</strong>
           </div>
         </div>
 
         <div className={styles.financeChartShell}>
           <div className={styles.financeChartHeader}>
             <div>
-              <h4>최근 12개월 운영비 추이</h4>
+              <h4>최근 12개월 운영 수익 추이</h4>
               <p>
                 마지막 동기화:{" "}
                 {overview?.lastSyncedAt
@@ -270,11 +299,28 @@ const AdminFinance = () => {
                 <Bar dataKey="openAiCostKrw" name="OpenAI 비용" fill="#b69ee3" radius={[8, 8, 0, 0]} />
                 <Line
                   type="monotone"
+                  dataKey="revenueKrw"
+                  name="매출"
+                  stroke="#2b9c66"
+                  strokeWidth={2.5}
+                  dot={{ r: 3 }}
+                />
+                <Line
+                  type="monotone"
                   dataKey="totalOperatingCostKrw"
                   name="총 운영비"
                   stroke="#2f2143"
                   strokeWidth={2.5}
                   dot={{ r: 3 }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="operatingProfitKrw"
+                  name="운영이익"
+                  stroke="#d05d7d"
+                  strokeWidth={2}
+                  strokeDasharray="6 4"
+                  dot={false}
                 />
               </ComposedChart>
             </ResponsiveContainer>
@@ -282,7 +328,7 @@ const AdminFinance = () => {
         </div>
 
         <div className={styles.financeFootnote}>
-          매출 및 운영이익은 결제 ledger 구축 이후 활성화됩니다.
+          매출과 운영이익은 Payment ledger 신호를 기준으로 집계됩니다.
         </div>
       </div>
 
@@ -369,9 +415,9 @@ const AdminFinance = () => {
                               tick={{ fill: "#75698a", fontSize: 11 }}
                               tickFormatter={formatCompactCurrency}
                             />
-                            <Tooltip formatter={renderTooltipValue} />
-                            <Legend />
-                            <Bar
+                          <Tooltip formatter={renderTooltipValue} />
+                          <Legend />
+                          <Bar
                               dataKey="awsCostKrw"
                               name="AWS 비용"
                               fill="#7f62a9"
@@ -385,10 +431,27 @@ const AdminFinance = () => {
                             />
                             <Line
                               type="monotone"
+                              dataKey="revenueKrw"
+                              name="매출"
+                              stroke="#2b9c66"
+                              strokeWidth={2}
+                              dot={false}
+                            />
+                            <Line
+                              type="monotone"
                               dataKey="totalOperatingCostKrw"
                               name="총 운영비"
                               stroke="#2f2143"
                               strokeWidth={2.5}
+                              dot={false}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="operatingProfitKrw"
+                              name="운영이익"
+                              stroke="#d05d7d"
+                              strokeWidth={2}
+                              strokeDasharray="6 4"
                               dot={false}
                             />
                           </ComposedChart>
@@ -434,10 +497,30 @@ const AdminFinance = () => {
                           )}
                         </div>
                       </div>
+
+                      <div className={styles.financeBreakdownCard}>
+                        <div className={styles.financeBreakdownHeader}>
+                          <h4>매출 breakdown</h4>
+                        </div>
+                        <div className={styles.financeBreakdownTable}>
+                          {(detail?.revenueBreakdown || []).length > 0 ? (
+                            (detail.revenueBreakdown || []).map((item) => (
+                              <div key={item.label} className={styles.financeBreakdownRow}>
+                                <span>{item.label}</span>
+                                <strong>{formatCurrency(item.krwAmount)}</strong>
+                              </div>
+                            ))
+                          ) : (
+                            <div className={styles.emptyTableState}>
+                              표시할 매출 breakdown이 없습니다.
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
                     <div className={styles.financeFootnote}>
-                      매출 및 운영이익은 결제 연동 준비 후 같은 화면에서 활성화됩니다.
+                      매출은 Payment ledger 신호만 반영되며, 관리자 수동 구독 추가는 포함되지 않습니다.
                     </div>
                   </>
                 )}

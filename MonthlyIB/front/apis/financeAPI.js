@@ -29,3 +29,14 @@ export const getAdminFinanceDetails = async (yearMonth, session) => {
   );
   return res.data?.data;
 };
+
+export const postAdminFinanceSync = async (session) => {
+  const config = {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: session?.accessToken,
+    },
+  };
+  const res = await tokenRequireApi.post(`${FINANCE_API_URL}/sync`, null, config);
+  return res.data?.data;
+};
