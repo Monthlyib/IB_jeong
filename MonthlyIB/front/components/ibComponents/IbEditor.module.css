@@ -1,0 +1,36 @@
+.editorShell {
+  margin-top: 2.8rem;
+}
+
+.editorFrame :global(.ql-toolbar.ql-snow),
+.editorFrame :global(.ql-container.ql-snow) {
+  border-color: #ddd4ea;
+}
+
+.editorFrame :global(.ql-toolbar.ql-snow) {
+  border-radius: 1.4rem 1.4rem 0 0;
+  background: #faf7ff;
+}
+
+.editorFrame :global(.ql-container.ql-snow) {
+  border-radius: 0 0 1.4rem 1.4rem;
+}
+
+.editorFrame :global(.ql-editor) {
+  min-height: 54rem;
+  color: #241b34;
+  font-size: 1.7rem;
+  line-height: 1.75;
+}
+
+.editorFrame :global(.ql-editor img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 1.2rem;
+}
+
+.uploadHint {
+  margin-top: 1rem;
+  font-size: 1.3rem;
+  color: #746a84;
+}

@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleXmark, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 import shortid from "shortid";
 import Image from "next/image";
-
-import { monthlyIBGetItem } from "@/apis/monthlyIbAPI";
 import { useIBStore } from "@/store/ib";
 import { useUserInfo } from "@/store/user";
 import { useRouter } from "next/navigation";
@@ -33,11 +31,7 @@ const IbItems = ({
     router.push(`/ibwrite?monthlyIbId=${num}`);
   };
   const onClickPost = async (num) => {
-    const res = await monthlyIBGetItem(num, userInfo);
-    console.log(res);
-    const url = res?.data.pdfFiles[0].fileUrl;
-    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
-    if (newWindow) newWindow.opener = null;
+    router.push(`/ib/${num}`);
   };
   return (
     <>

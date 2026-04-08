@@ -2,34 +2,37 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import dynamic from "next/dynamic";
+import Link from "next/link";
 
 import styles from "./IbComponents.module.css";
-import Link from "next/link";
 import {
+  getMonthlyIbPdfDownloadUrl,
   monthlyIBGetItem,
   monthlyIBPostItem,
   monthlyIBPostThumbnail,
-  monthlyIBPostPDFFile,
   monthlyIBReviseItem,
 } from "@/apis/monthlyIbAPI";
 import { useUserInfo } from "@/store/user";
 
+const DynamicIbEditor = dynamic(() => import("@/components/ibComponents/IbEditor"), {
+  ssr: false,
+});
+
+const EMPTY_EDITOR_HTML = "<p><br></p>";
+
 const IBPost = () => {
   const imageInput = useRef();
-  const fileInput = useRef();
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [havingFile, setHavingFile] = useState(false);
-  const [currentPdfUrl, setCurrentPdfUrl] = useState("");
-  const [currentPdfName, setCurrentPdfName] = useState("");
-  const [selectedPdfUrl, setSelectedPdfUrl] = useState("");
-  const [selectedPdfName, setSelectedPdfName] = useState("");
+  const [content, setContent] = useState(EMPTY_EDITOR_HTML);
+  const [existingPdfName, setExistingPdfName] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
   const router = useRouter();
   const { userInfo } = useUserInfo();
   const searchParams = useSearchParams();
   const monthlyIbIdParam = searchParams.get("monthlyIbId");
   const monthlyIbId = monthlyIbIdParam ? Number(monthlyIbIdParam) : null;
-
 
   useEffect(() => {
     let mounted = true;
@@ -42,11 +45,8 @@ const IBPost = () => {
       if (!mounted || !detail) return;
 
       setTitle(detail.title || "");
-      setContent(detail.content || "");
-      const existingPdf = detail.pdfFiles?.[0];
-      setCurrentPdfUrl(existingPdf?.fileUrl || "");
-      setCurrentPdfName(existingPdf?.fileName || "");
-      setHavingFile(Boolean(existingPdf?.fileUrl));
+      setContent(detail.content || EMPTY_EDITOR_HTML);
+      setExistingPdfName(detail.pdfFiles?.[0]?.fileName || "");
     };
 
     loadMonthlyIb();
@@ -56,178 +56,112 @@ const IBPost = () => {
     };
   }, [monthlyIbId, userInfo]);
 
-  useEffect(() => {
-    return () => {
-      if (selectedPdfUrl) {
-        URL.revokeObjectURL(selectedPdfUrl);
-      }
-    };
-  }, [selectedPdfUrl]);
-
   const onSubmitForm = useCallback(
     async (e) => {
       e.preventDefault();
-      if (monthlyIbId) {
-        let accessToken = userInfo?.accessToken;
-        const res = await monthlyIBReviseItem(monthlyIbId, title, content, userInfo);
-        if (res?.result.status === 200) {
-          if (imageInput.current) {
-            await monthlyIBPostThumbnail(
-              res?.data.monthlyIbId,
-              imageInput.current,
-              accessToken
-            );
+      if (!title.trim() || submitting) return;
+
+      try {
+        setSubmitting(true);
+        const accessToken = userInfo?.accessToken;
+
+        if (monthlyIbId) {
+          const res = await monthlyIBReviseItem(monthlyIbId, title, content, userInfo);
+          if (res?.result?.status === 200) {
+            if (imageInput.current) {
+              await monthlyIBPostThumbnail(res?.data?.monthlyIbId, imageInput.current, accessToken);
+            }
+            router.push(`/ib/${monthlyIbId}`);
+            return;
           }
-          if (fileInput.current) {
-            await monthlyIBPostPDFFile(
-              res?.data.monthlyIbId,
-              fileInput.current,
-              accessToken
-            );
+        } else {
+          const res = await monthlyIBPostItem(title, content, accessToken);
+          if (res?.result?.status === 200) {
+            if (imageInput.current) {
+              await monthlyIBPostThumbnail(res?.data?.monthlyIbId, imageInput.current, accessToken);
+            }
+            router.push(`/ib/${res?.data?.monthlyIbId}`);
+            return;
           }
-          router.push("/ib");
         }
-      } else {
-        let accessToken = userInfo?.accessToken;
-        let res = await monthlyIBPostItem(title, content, accessToken);
-        if (res?.result.status === 200) {
-          if (imageInput.current) {
-            await monthlyIBPostThumbnail(
-              res?.data.monthlyIbId,
-              imageInput.current,
-              accessToken
-            );
-          }
-          await monthlyIBPostPDFFile(
-            res?.data.monthlyIbId,
-            fileInput.current,
-            accessToken
-          );
-          router.push("/ib");
-        } else alert("잘못된 접근입니다.");
+
+        alert("월간 IB 저장에 실패했습니다.");
+      } catch (error) {
+        console.error(error);
+        alert(error?.response?.data?.message || "월간 IB 저장에 실패했습니다.");
+      } finally {
+        setSubmitting(false);
       }
     },
-    [content, monthlyIbId, router, title, userInfo]
+    [content, monthlyIbId, router, submitting, title, userInfo]
   );
 
   const onChangeTitle = (e) => {
     setTitle(e.target.value);
   };
 
-  const onChangeContent = (e) => {
-    setContent(e.target.value);
-  };
-
-  const changeFileName = (file) => {
-    const fileExtention = file.name.split(".")[1];
-    const oldFileName = file.name.split(".")[0];
-    const date = new Date();
-
-    var hours = ("0" + date.getHours()).slice(-2);
-    var minutes = ("0" + date.getMinutes()).slice(-2);
-    var seconds = ("0" + date.getSeconds()).slice(-2);
-    var timeString = hours + ":" + minutes + ":" + seconds;
-    const newFile = new File(
-      [file],
-      `${oldFileName}_${timeString}.${fileExtention}`,
-      {
-        type: file.type,
-      }
-    );
-    return newFile;
-  };
-
   const onClickImageUpload = (e) => {
-    imageInput.current = changeFileName(e.target.files[0]);
-  };
-
-  const onClickFileUpload = useCallback((e) => {
     const targetFile = e.target.files?.[0];
     if (!targetFile) return;
-
-    const renamedFile = changeFileName(targetFile);
-    fileInput.current = renamedFile;
-    setHavingFile(true);
-    setSelectedPdfName(renamedFile.name);
-    setSelectedPdfUrl((prev) => {
-      if (prev) {
-        URL.revokeObjectURL(prev);
-      }
-      return URL.createObjectURL(renamedFile);
-    });
-  }, []);
-
-  const downloadPdfUrl = selectedPdfUrl || currentPdfUrl;
-  const downloadPdfName = selectedPdfName || currentPdfName;
+    imageInput.current = targetFile;
+  };
 
   return (
-    <>
-      <main className="width_content">
-        <form onSubmit={onSubmitForm}>
-          <div className={styles.write_wrap}>
-            <input
-              type="text"
-              value={title}
-              onChange={onChangeTitle}
-              className={styles.write_tit}
-              placeholder="월간 IB 제목을 입력하세요!"
-            />
-            <textarea
-              value={content}
-              onChange={onChangeContent}
-              className={styles.write_content}
-              placeholder="월간 IB 본문을 입력하세요."
-            />
-          </div>
+    <main className="width_content">
+      <form onSubmit={onSubmitForm}>
+        <div className={styles.write_wrap}>
+          <input
+            type="text"
+            value={title}
+            onChange={onChangeTitle}
+            className={styles.write_tit}
+            placeholder="월간 IB 제목을 입력하세요!"
+          />
+          <DynamicIbEditor content={content} setContent={setContent} userInfo={userInfo} />
+        </div>
+
+        <div className={styles.write_block}>
+          <label>썸네일 등록 ( jpg, png, gif 파일 )</label>
+          <input
+            type="file"
+            name="image"
+            accept="image/jpg,image/png,image/jpeg,image/gif"
+            className={styles.write_img}
+            onChange={onClickImageUpload}
+          />
+        </div>
+
+        {monthlyIbId && (
           <div className={styles.write_block}>
-            <label>썸네일 등록 ( jpg, png, gif 파일 )</label>
-            <input
-              type="file"
-              name="image"
-              accept="image/jpg,image/png,image/jpeg,image/gif"
-              className={styles.write_img}
-              onChange={onClickImageUpload}
-            />
+            <label>PDF 다운로드</label>
+            <div className={styles.write_file_meta}>
+              <span>
+                {existingPdfName
+                  ? `기존 PDF가 있으면 그대로 내려받고, 본문이 있으면 최신 본문 기준으로 PDF를 생성합니다. (${existingPdfName})`
+                  : "현재 저장된 본문 기준으로 PDF를 생성해 내려받습니다."}
+              </span>
+              <a
+                href={getMonthlyIbPdfDownloadUrl(monthlyIbId)}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.download_pdf_button}
+              >
+                PDF 다운로드
+              </a>
+            </div>
           </div>
-          <div className={styles.write_block}>
-            <label>PDF 업로드 ( pdf 파일 )</label>
-            <input
-              type="file"
-              name="file"
-              accept="application/pdf"
-              className={styles.write_file}
-              onChange={onClickFileUpload}
-            />
-            {downloadPdfUrl && (
-              <div className={styles.write_file_meta}>
-                <span>{downloadPdfName || "등록된 PDF"}</span>
-                <a
-                  href={downloadPdfUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  download={downloadPdfName || undefined}
-                  className={styles.download_pdf_button}
-                >
-                  PDF 다운로드
-                </a>
-              </div>
-            )}
-          </div>
-          <div className={styles.write_btn_area}>
-            <Link href="/ib" className={styles.cancel}>
-              취소
-            </Link>
-            <button
-              className={styles.submit}
-              type="submit"
-              disabled={title.trim() === "" || havingFile !== true}
-            >
-              {monthlyIbId ? "수정" : "등록"}
-            </button>
-          </div>
-        </form>
-      </main>
-    </>
+        )}
+
+        <div className={styles.write_btn_area}>
+          <Link href="/ib" className={styles.cancel}>
+            취소
+          </Link>
+          <button className={styles.submit} type="submit" disabled={title.trim() === "" || submitting}>
+            {submitting ? "저장 중..." : monthlyIbId ? "수정" : "등록"}
+          </button>
+        </div>
+      </form>
+    </main>
   );
 };
 

@@ -1,6 +1,7 @@
 import { tokenRequireApi } from "./refreshToken";
 
 const MONTHLYIB_API_URL = "api/monthly-ib";
+const OPEN_MONTHLYIB_API_URL = "open-api/monthly-ib";
 
 export const monthlyIBPostThumbnail = async (
   monthlyIbId,
@@ -8,7 +9,7 @@ export const monthlyIBPostThumbnail = async (
   accessToken
 ) => {
   try {
-    const formData = new FormData(); // formData 생성
+    const formData = new FormData();
     formData.append("image", image);
     const config = {
       headers: {
@@ -23,6 +24,7 @@ export const monthlyIBPostThumbnail = async (
     );
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -30,7 +32,6 @@ export const monthlyIBPostPDFFile = async (monthlyIbId, file, accessToken) => {
   try {
     const formData = new FormData();
     formData.append("file", file);
-    console.log(formData);
     const config = {
       headers: {
         "Content-Type": "multipart/form-data",
@@ -42,8 +43,32 @@ export const monthlyIBPostPDFFile = async (monthlyIbId, file, accessToken) => {
       formData,
       config
     );
+    return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
+  }
+};
+
+export const monthlyIBUploadContentImage = async (image, accessToken) => {
+  try {
+    const formData = new FormData();
+    formData.append("image", image);
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: accessToken,
+      },
+    };
+    const res = await tokenRequireApi.post(
+      `${MONTHLYIB_API_URL}/content-image`,
+      formData,
+      config
+    );
+    return res.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };
 
@@ -60,6 +85,7 @@ export const monthlyIBPostItem = async (title, content, accessToken) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -80,6 +106,7 @@ export const monthlyIBReviseItem = async (monthlyIbId, title, content, session) 
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -99,6 +126,7 @@ export const monthlyIBGetItem = async (monthlyIbId, session) => {
     return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -113,5 +141,24 @@ export const monthlyIBDeleteItem = async (monthlyIbId, session) => {
     await tokenRequireApi.delete(`${MONTHLYIB_API_URL}/${monthlyIbId}`, config);
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
+
+export const monthlyIBGetPublicItem = async (monthlyIbId) => {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}${OPEN_MONTHLYIB_API_URL}/${monthlyIbId}`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
+    return await res.json();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getMonthlyIbPdfDownloadUrl = (monthlyIbId) =>
+  `${process.env.NEXT_PUBLIC_API_URL}${OPEN_MONTHLYIB_API_URL}/${monthlyIbId}/pdf`;
