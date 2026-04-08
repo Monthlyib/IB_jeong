@@ -47,7 +47,7 @@ export const monthlyIBPostPDFFile = async (monthlyIbId, file, accessToken) => {
   }
 };
 
-export const monthlyIBPostItem = async (title, accessToken) => {
+export const monthlyIBPostItem = async (title, content, accessToken) => {
   try {
     const config = {
       headers: {
@@ -55,7 +55,7 @@ export const monthlyIBPostItem = async (title, accessToken) => {
         Authorization: accessToken,
       },
     };
-    const data = { title };
+    const data = { title, content };
     const res = await tokenRequireApi.post(MONTHLYIB_API_URL, data, config);
     return res.data;
   } catch (error) {
@@ -63,7 +63,7 @@ export const monthlyIBPostItem = async (title, accessToken) => {
   }
 };
 
-export const monthlyIBReviseItem = async (monthlyIbId, title, session) => {
+export const monthlyIBReviseItem = async (monthlyIbId, title, content, session) => {
   try {
     const config = {
       headers: {
@@ -71,7 +71,7 @@ export const monthlyIBReviseItem = async (monthlyIbId, title, session) => {
         Authorization: session?.accessToken,
       },
     };
-    const data = { title };
+    const data = { title, content };
     const res = await tokenRequireApi.patch(
       `${MONTHLYIB_API_URL}/${monthlyIbId}`,
       data,

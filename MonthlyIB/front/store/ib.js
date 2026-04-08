@@ -36,9 +36,9 @@ export const useIBStore = create((set, get) => ({
       console.error(error);
     }
   },
-  reviseItem: async (monthlyIbId, title, userInfo) => {
+  reviseItem: async (monthlyIbId, title, content, userInfo) => {
     try {
-      const res = await monthlyIBReviseItem(monthlyIbId, title, userInfo);
+      const res = await monthlyIBReviseItem(monthlyIbId, title, content, userInfo);
       get().getIBItem(monthlyIbId, userInfo);
       return res;
     } catch (error) {

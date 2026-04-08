@@ -189,6 +189,42 @@
   font-size: 1.3rem;
 }
 
+.write_file_meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.2rem;
+  margin-top: 1.2rem;
+  padding: 1.2rem 1.4rem;
+  border: 1px solid #e6e0ef;
+  border-radius: 1.2rem;
+  background: #faf7ff;
+}
+
+.write_file_meta span {
+  min-width: 0;
+  font-size: 1.4rem;
+  color: #4d4658;
+  overflow-wrap: anywhere;
+}
+
+.download_pdf_button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0.9rem 1.4rem;
+  border-radius: 1rem;
+  background: var(--primary01);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.download_pdf_button:hover {
+  opacity: 0.92;
+}
+
 .write_btn_area {
   display: flex;
   justify-content: flex-end;
@@ -243,5 +279,14 @@
 
   .ib_item a figure {
     max-height: 20rem;
+  }
+
+  .write_file_meta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .download_pdf_button {
+    width: 100%;
   }
 }
