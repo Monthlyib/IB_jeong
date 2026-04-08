@@ -40,6 +40,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal, menus = [] }) => {
   const { getUserInfo, userDetailInfo } = useUserStore();
   const visibleMenus = useMemo(() => menus || [], [menus]);
   const [menuModal, setMenuModal] = useState("");
+  const isAdmin = userInfo?.authority === "ADMIN";
 
   useEffect(() => {
     if (userInfo?.userId) getUserInfo(userInfo.userId, userInfo);
@@ -151,7 +152,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal, menus = [] }) => {
                     </span>
                   </Link>
                 ) : (
-                  <Link href="/plan" onClick={handleMenuNavigate}>
+                  <Link href="/subscribe" onClick={handleMenuNavigate}>
                     구독하기
                   </Link>
                 )}
@@ -160,6 +161,13 @@ const MobileAppLayout = ({ asideModal, setAsideModal, menus = [] }) => {
                   로그아웃
                 </Link>
               </div>
+              {isAdmin && (
+                <div className={styles.util_admin_row}>
+                  <Link href="/adminpage" onClick={handleMenuNavigate}>
+                    관리자 페이지
+                  </Link>
+                </div>
+              )}
             </>
           ) : (
             <>
