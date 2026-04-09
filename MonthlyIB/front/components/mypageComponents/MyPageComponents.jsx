@@ -11,6 +11,7 @@ import MyPageCourseList from "./MyPageCourseList";
 import MyPageQuestionList from "./MyPageQuestionList";
 import MyPageScheduleList from "./MyPageScheduleList";
 import MyPageChangePayment from "./MyPageChangePayment";
+import AiHistoryPanel from "@/components/aiHistoryComponents/AiHistoryPanel";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Image from "next/image";
@@ -50,6 +51,14 @@ const MyPageComponents = () => {
     2: <MyPageArchiveList />,
     3: <MyPageScheduleList />,
     4: <MyPageQuestionList />,
+    5: (
+      <AiHistoryPanel
+        mode="me"
+        session={userInfo}
+        title="나의 AI 히스토리"
+        description="AI 코칭, IO 연습, 챕터 테스트, 서술형 평가 기록을 최신순으로 확인할 수 있습니다."
+      />
+    ),
   };
   return (
     <>
@@ -129,12 +138,20 @@ const MyPageComponents = () => {
                 >
                   나의 질문
                 </button>
+                <button
+                  onClick={() => setModal(5)}
+                  className={modal === 5 ? styles.active : ""}
+                >
+                  AI 히스토리
+                </button>
               </div>
 
-              <div className={styles.my_search_inner}>
-                <FontAwesomeIcon icon={faSearch} />
-                <input type="text" placeholder="검색" />
-              </div>
+              {modal !== 5 ? (
+                <div className={styles.my_search_inner}>
+                  <FontAwesomeIcon icon={faSearch} />
+                  <input type="text" placeholder="검색" />
+                </div>
+              ) : null}
               {mypageModal[modal]}
               {changePayment && (
                 <MyPageChangePayment

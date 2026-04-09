@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import styles from "./AdminStyle.module.css";
 import { userGetUsage, userReviseInfo } from "@/apis/userAPI";
 import { useUserInfo, useUserStore } from "@/store/user";
+import AiHistoryPanel from "@/components/aiHistoryComponents/AiHistoryPanel";
 
 const formatDateTime = (value) => {
   if (!value) return "기록 없음";
@@ -448,10 +449,23 @@ const AdminUserDetail = ({ userDetailInfo, setModal }) => {
                         </div>
                       )}
                     </div>
+
                   </>
                 ) : null}
               </section>
             )}
+
+            {userInfo?.authority === "ADMIN" ? (
+              <section className={styles.usageSection}>
+                <AiHistoryPanel
+                  mode="admin"
+                  userId={userDetailInfo?.userId}
+                  session={userInfo}
+                  title="AI 히스토리"
+                  description="이 학생의 AI 코칭, 테스트, 음성 피드백 기록을 최신순으로 확인할 수 있습니다."
+                />
+              </section>
+            ) : null}
           </div>
           <button
             type="button"
