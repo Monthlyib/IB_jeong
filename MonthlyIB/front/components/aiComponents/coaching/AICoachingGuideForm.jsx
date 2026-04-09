@@ -38,7 +38,7 @@ export default function AICoachingGuideForm() {
   const documentData = useMemo(() => normalizeGuideDocument(raw), [raw]);
 
   return (
-    <div className={styles.guideContainer} role="document" aria-label="IA Guide">
+    <main className={styles.guideContainer} role="document" aria-label="IA Guide">
       <header className={styles.guideHeader}>
         <div className={styles.headerCard}>
           <div className={styles.headerTopRow}>
@@ -64,7 +64,7 @@ export default function AICoachingGuideForm() {
         </div>
       </header>
 
-      <main className={styles.guideMain} role="main">
+      <div className={styles.guideMain}>
         {error && (
           <div className={styles.guideError} role="alert">
             {error}
@@ -155,8 +155,8 @@ export default function AICoachingGuideForm() {
             )}
           </div>
         )}
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }
 
