@@ -48,6 +48,7 @@ const AdminScheduleItems = ({
   const [inlineImages, setInlineImages] = useState([]);
   const [mailSubmitting, setMailSubmitting] = useState(false);
   const [calendarSyncSubmitting, setCalendarSyncSubmitting] = useState(false);
+  const [calendarSyncTargetId, setCalendarSyncTargetId] = useState(null);
   const [status, setStatus] = useState("WAIT");
 
   const { userInfo } = useUserInfo();
@@ -120,17 +121,18 @@ const AdminScheduleItems = ({
     deleteTutoring(selectedTutoring.tutoringId, userInfo, currentPage);
   };
 
-  const onSubmitCalendarSync = async () => {
-    if (!selectedTutoring) return;
+  const onSubmitCalendarSync = async (targetTutoring = selectedTutoring) => {
+    if (!targetTutoring) return;
 
     try {
       setCalendarSyncSubmitting(true);
+      setCalendarSyncTargetId(targetTutoring.tutoringId);
       const res = await TutoringSyncCalendarItem(
-        selectedTutoring.tutoringId,
+        targetTutoring.tutoringId,
         userInfo
       );
       const nextTutoring = res?.data;
-      if (nextTutoring) {
+      if (nextTutoring && selectedTutoring?.tutoringId === targetTutoring.tutoringId) {
         setSelectedTutoring(nextTutoring);
       }
       await getTutoringDateList("", "", Math.max(currentPage - 1, 0), userInfo);
@@ -142,6 +144,7 @@ const AdminScheduleItems = ({
       );
     } finally {
       setCalendarSyncSubmitting(false);
+      setCalendarSyncTargetId(null);
     }
   };
 
@@ -236,6 +239,20 @@ const AdminScheduleItems = ({
                       >
                         일정 열기
                       </a>
+                    ) : null}
+                    {(tutoring.googleCalendarSyncStatus === "FAILED" ||
+                      tutoring.googleCalendarSyncStatus == null) ? (
+                      <button
+                        type="button"
+                        className={styles.calendarSyncInlineButton}
+                        onClick={() => onSubmitCalendarSync(tutoring)}
+                        disabled={calendarSyncSubmitting}
+                      >
+                        {calendarSyncSubmitting &&
+                        calendarSyncTargetId === tutoring.tutoringId
+                          ? "재동기화 중..."
+                          : "재동기화"}
+                      </button>
                     ) : null}
                   </div>
                 </div>

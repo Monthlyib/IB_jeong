@@ -1773,6 +1773,23 @@
   text-decoration: underline;
 }
 
+.calendarSyncInlineButton {
+  min-height: 3.2rem;
+  padding: 0 1rem;
+  border: 1px solid #d8ccec;
+  border-radius: 999px;
+  background: #fff;
+  color: #4b3771;
+  font-size: 1.2rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.calendarSyncInlineButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .modalInfoCard {
   display: grid;
   gap: 0.8rem;
