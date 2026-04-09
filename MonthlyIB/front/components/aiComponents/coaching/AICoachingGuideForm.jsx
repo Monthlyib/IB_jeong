@@ -39,7 +39,7 @@ export default function AICoachingGuideForm() {
 
   return (
     <main className={styles.guideContainer} role="document" aria-label="IA Guide">
-      <header className={styles.guideHeader}>
+      <div className={styles.guideHeader}>
         <div className={styles.headerCard}>
           <div className={styles.headerTopRow}>
             <div className={styles.headerMain}>
@@ -62,7 +62,7 @@ export default function AICoachingGuideForm() {
             <MetaCard label="Selected Topic" value={documentData.topicTitle} />
           </div>
         </div>
-      </header>
+      </div>
 
       <div className={styles.guideMain}>
         {error && (
