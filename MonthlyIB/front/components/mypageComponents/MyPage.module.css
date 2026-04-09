@@ -1,3 +1,16 @@
+.mypagePage {
+  max-width: 128rem;
+  width: calc(100% - 4.8rem);
+  min-height: auto;
+}
+
+.mypagePage > section {
+  max-width: none;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
 .mypage_flex {
   display: flex;
   justify-content: space-between;
@@ -165,7 +178,8 @@
 }
 
 .mypage_flex .flex_right {
-  min-width: 82rem;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .mypage_flex .flex_right h2 {
@@ -1351,6 +1365,10 @@
 }
 
 @media screen and (max-width: 1024px) {
+  .mypagePage {
+    width: 100%;
+  }
+
   .mo_tit {
     display: flex;
     justify-content: center;

@@ -63,7 +63,7 @@ const MyPageComponents = () => {
   return (
     <>
       {Object.keys(userDetailInfo).length > 0 && (
-        <main className="width_content">
+        <main className={`width_content ${styles.mypagePage}`}>
           <div className={styles.mypage_flex}>
             <div className={styles.flex_left}>
               <div className={styles.my_profile_wrap}>
