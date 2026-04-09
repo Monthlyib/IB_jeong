@@ -1,0 +1,131 @@
+.page {
+  min-height: calc(100vh - var(--appHeaderHeight, 7.2rem));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--appHeaderHeight, 7.2rem) + 3.2rem) 2rem 5.6rem;
+}
+
+.card {
+  width: min(100%, 52rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  padding: 4rem 3.2rem;
+  border: 1px solid rgba(86, 58, 122, 0.12);
+  border-radius: 2.8rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, #f8f6fb 100%);
+  box-shadow: 0 2.4rem 6rem rgba(84, 59, 122, 0.12);
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.4rem;
+  border-radius: 999px;
+  border: 1px solid rgba(86, 58, 122, 0.12);
+  background: rgba(113, 86, 149, 0.08);
+  color: #5b417d;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.title {
+  color: #2b2138;
+  font-size: 3.2rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.message {
+  max-width: 40rem;
+  color: #675b78;
+  font-size: 1.7rem;
+  line-height: 1.7;
+}
+
+.error {
+  color: #b33852;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.2rem;
+  width: 100%;
+  margin-top: 0.8rem;
+}
+
+.button,
+.secondaryButton {
+  min-width: 16rem;
+  min-height: 5.4rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2rem;
+  border-radius: 1.6rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.button {
+  background: var(--primary01);
+  color: #fff;
+  box-shadow: 0 1.4rem 3rem rgba(86, 58, 122, 0.18);
+}
+
+.secondaryButton {
+  background: #fff;
+  color: #4f3b6c;
+  border: 1px solid rgba(86, 58, 122, 0.16);
+}
+
+.button:hover,
+.secondaryButton:hover {
+  transform: translateY(-1px);
+}
+
+.loaderWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5.2rem;
+}
+
+@media screen and (max-width: 480px) {
+  .page {
+    padding: calc(var(--appHeaderHeight, 7.2rem) + 2.4rem) 1.6rem 4rem;
+    align-items: flex-start;
+  }
+
+  .card {
+    gap: 1.4rem;
+    padding: 3.2rem 2rem;
+    border-radius: 2.2rem;
+  }
+
+  .title {
+    font-size: 2.6rem;
+  }
+
+  .message {
+    font-size: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .button,
+  .secondaryButton {
+    width: 100%;
+  }
+}

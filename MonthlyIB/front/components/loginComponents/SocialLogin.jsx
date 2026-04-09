@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { SyncLoader } from "react-spinners";
 import { getCookie } from "@/apis/cookies";
+import styles from "./SocialLogin.module.css";
 import {
   useSocialOnboardingStore,
   useUserInfo,
@@ -17,14 +18,16 @@ const SOCIAL_LABELS = {
   3: "NAVER",
 };
 
-const containerStyle = {
-  display: "flex",
-  flexDirection: "column",
-  margin: "50vh auto",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: "12px",
-  textAlign: "center",
+const normalizeSocialErrorMessage = (message) => {
+  if (!message) {
+    return "소셜 로그인에 실패했습니다. 다시 시도해주세요.";
+  }
+
+  if (message === "USER EXIST") {
+    return "이미 가입된 계정입니다. 기존 방식으로 로그인하거나 관리자에게 문의해주세요.";
+  }
+
+  return message;
 };
 
 const SocialLogin = ({ social }) => {
@@ -148,7 +151,7 @@ const SocialLogin = ({ social }) => {
         }
         console.error(error);
         setErrorMessage(
-          error?.message || "소셜 로그인에 실패했습니다. 다시 시도해주세요."
+          normalizeSocialErrorMessage(error?.message)
         );
       }
     };
@@ -169,20 +172,36 @@ const SocialLogin = ({ social }) => {
 
   if (errorMessage) {
     return (
-      <div style={containerStyle}>
-        <h3>{errorMessage}</h3>
-        <button type="button" onClick={() => router.replace("/login")}>
-          로그인으로 돌아가기
-        </button>
-      </div>
+      <main className={styles.page}>
+        <section className={styles.card}>
+          <span className={styles.eyebrow}>Social Login</span>
+          <h1 className={styles.title}>로그인을 완료하지 못했습니다.</h1>
+          <p className={`${styles.message} ${styles.error}`}>{errorMessage}</p>
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.button}
+              onClick={() => router.replace("/login")}
+            >
+              로그인으로 돌아가기
+            </button>
+          </div>
+        </section>
+      </main>
     );
   }
 
   return (
-    <div style={containerStyle}>
-      <h3>{statusMessage}</h3>
-      <SyncLoader />
-    </div>
+    <main className={styles.page}>
+      <section className={styles.card}>
+        <span className={styles.eyebrow}>Social Login</span>
+        <h1 className={styles.title}>계정을 확인하고 있습니다.</h1>
+        <p className={styles.message}>{statusMessage}</p>
+        <div className={styles.loaderWrap}>
+          <SyncLoader color="#5b417d" />
+        </div>
+      </section>
+    </main>
   );
 };
 
