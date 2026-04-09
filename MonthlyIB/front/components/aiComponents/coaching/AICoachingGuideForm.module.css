@@ -17,7 +17,8 @@
 
 .guideHeader {
   margin-bottom: 3.2rem;
-  position: static;
+  position: relative;
+  z-index: 2;
   isolation: isolate;
 }
 
@@ -147,6 +148,8 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .guideError,
@@ -170,8 +173,6 @@
   max-width: 100%;
   min-width: 0;
   padding: 3rem;
-  position: relative;
-  z-index: 0;
   border: 1px solid rgba(81, 52, 108, 0.12);
   border-radius: 3rem;
   background:
