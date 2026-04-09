@@ -10,7 +10,7 @@
   --card: #ffffff;
   width: min(110rem, calc(100% - 4rem));
   max-width: 100%;
-  margin: 1.2rem auto 4rem;
+  margin: 3.2rem auto 4rem;
   color: var(--ink);
   font-family: Georgia, "Times New Roman", serif;
 }
@@ -493,7 +493,7 @@
 @media (max-width: 760px) {
   .guideContainer {
     width: min(100%, calc(100% - 1.8rem));
-    margin-top: calc(var(--appHeaderHeight, 7.2rem) + 0.8rem);
+    margin: 1.6rem auto 2.4rem;
   }
 
   .headerCard,
