@@ -65,18 +65,26 @@ const AiHistoryPanel = ({
 
   useEffect(() => {
     setCurrentPage(0);
+    setSelectedHistoryId(null);
+    setDetailData(null);
+    setDetailError("");
   }, [toolType, userId, mode]);
 
   useEffect(() => {
     if (!isReady) {
       setItems([]);
       setPageInfo(null);
+      setSelectedHistoryId(null);
+      setDetailData(null);
+      setDetailError("");
       return;
     }
 
     const load = async () => {
       setListLoading(true);
       setListError("");
+      setItems([]);
+      setPageInfo(null);
       try {
         const response =
           mode === "admin"
@@ -124,6 +132,7 @@ const AiHistoryPanel = ({
     const loadDetail = async () => {
       setDetailLoading(true);
       setDetailError("");
+      setDetailData(null);
       try {
         const response =
           mode === "admin"
