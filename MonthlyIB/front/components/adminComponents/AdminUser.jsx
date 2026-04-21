@@ -229,7 +229,7 @@ const AdminUser = () => {
 
   return (
     <>
-      <div className={styles.dashboard_mid_card}>
+      <div className={`${styles.dashboard_mid_card} ${styles.managementCard}`}>
         <div className={styles.title}>사용자 관리</div>
 
         <div className={styles.tableToolbar}>
@@ -303,6 +303,7 @@ const AdminUser = () => {
             currentPage={currentPage}
             numShowContents={pageSize}
             onPageChange={handlePageChange}
+            compact
           />
         )}
 

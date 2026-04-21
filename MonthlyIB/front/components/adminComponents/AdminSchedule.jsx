@@ -175,7 +175,7 @@ const AdminSchedule = () => {
 
   return (
     <>
-      <div className={styles.dashboard_mid_card}>
+      <div className={`${styles.dashboard_mid_card} ${styles.managementCard}`}>
         <div className={styles.title}>스케줄링 관리</div>
 
         <div className={styles.tableToolbar}>

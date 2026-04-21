@@ -228,6 +228,11 @@
   overflow: hidden;
 }
 
+.managementCard {
+  height: 40rem;
+  min-height: 40rem;
+}
+
 .financeAdminCard {
   gap: 2rem;
 }
@@ -1688,6 +1693,18 @@
 .tableBody,
 .scheduleBody {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.4rem;
+  scrollbar-gutter: stable;
+}
+
+.tableBody {
+  margin-bottom: 0.6rem;
+}
+
+.scheduleBody {
+  margin-bottom: 0.6rem;
 }
 
 .tableRowWrap,
@@ -2643,6 +2660,11 @@
     padding: 1.8rem;
   }
 
+  .managementCard {
+    height: auto;
+    min-height: 0;
+  }
+
   .adminHeroCopy h1 {
     font-size: 3rem;
   }
@@ -2812,6 +2834,11 @@
   .dashboard_mid_card {
     padding: 1.6rem;
     border-radius: 2.2rem;
+  }
+
+  .managementCard {
+    height: auto;
+    min-height: 0;
   }
 
   .adminEyebrow,

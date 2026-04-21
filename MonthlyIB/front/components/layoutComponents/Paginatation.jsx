@@ -10,12 +10,13 @@ const Pagination = ({
   numShowContents,
   onPageChange,
   totalPages,
+  compact = false,
 }) => {
   const resolvedTotalPages =
     totalPages ?? Math.max(1, Math.ceil(contents.length / numShowContents));
   const pages = range(1, resolvedTotalPages + 1);
   return (
-    <div className={styles.page_cont}>
+    <div className={`${styles.page_cont} ${compact ? styles.compact : ""}`}>
       <ul style={{ listStyle: "none" }}>
         <li>
           <a

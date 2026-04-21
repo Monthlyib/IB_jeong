@@ -282,6 +282,7 @@ const AdminScheduleItems = ({
           currentPage={currentPage}
           numShowContents={numShowContents}
           onPageChange={onPageChange}
+          compact
         />
       )}
 
