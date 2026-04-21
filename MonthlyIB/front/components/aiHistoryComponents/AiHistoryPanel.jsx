@@ -182,8 +182,8 @@ const AiHistoryPanel = ({
       </div>
 
       {listLoading ? (
-        <div className={styles.feedback}>
-          <Loading />
+        <div className={styles.loadingBlock}>
+          <Loading variant="inline" label="AI 히스토리를 불러오는 중입니다." />
         </div>
       ) : listError ? (
         <div className={styles.feedback}>{listError}</div>
@@ -308,8 +308,8 @@ const AiHistoryPanel = ({
             </div>
 
             {detailLoading ? (
-              <div className={styles.feedback}>
-                <Loading />
+              <div className={styles.modalLoadingBlock}>
+                <Loading variant="inline" label="AI 히스토리 상세를 불러오는 중입니다." />
               </div>
             ) : detailError ? (
               <div className={styles.feedback}>{detailError}</div>
