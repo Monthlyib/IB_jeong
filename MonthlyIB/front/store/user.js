@@ -71,6 +71,9 @@ const handleSocialLoginResult = (set, res) => {
     useSocialOnboardingStore.getState().setPendingSocialAuth({
       userId: loginData.userId,
       email: loginData.email,
+      username: loginData.username,
+      nickname: loginData.nickname,
+      linkedProviders: loginData.linkedProviders ?? [],
       accessToken: loginData.accessToken,
       refreshToken: loginData.refreshToken,
       authority: loginData.authority,

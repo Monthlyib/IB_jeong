@@ -20,6 +20,14 @@ const formatDateTime = (value) => {
 const renderLimitLabel = (count, unlimited, suffix) =>
   unlimited ? `${suffix} 무한` : `${count ?? 0}${suffix}`;
 
+const formatLinkedProviders = (userDetailInfo) => {
+  const providers = userDetailInfo?.linkedProviders;
+  if (Array.isArray(providers) && providers.length > 0) {
+    return providers.join(" + ");
+  }
+  return userDetailInfo?.loginType ?? "-";
+};
+
 const AdminUserDetail = ({ userDetailInfo, setModal }) => {
   const closeRef = useRef();
   const [deleteCheckModal, setDeleteCheckModal] = useState(false);
@@ -268,10 +276,10 @@ const AdminUserDetail = ({ userDetailInfo, setModal }) => {
               />
             </div>
             <div className={styles.userInfos}>
-              <span>로그인 타입:</span>
+              <span>로그인 수단:</span>
               <input
                 type="text"
-                value={userDetailInfo?.loginType}
+                value={formatLinkedProviders(userDetailInfo)}
                 disabled={true}
               />
             </div>

@@ -100,10 +100,25 @@
   cursor: pointer;
 }
 
+.panel .cardList .cardButton {
+  display: block;
+  align-items: initial;
+  justify-content: initial;
+  height: auto;
+  min-height: 0;
+  background: #fff;
+  color: #26193d;
+}
+
 .cardButton:hover {
   border-color: rgba(95, 67, 134, 0.35);
   transform: translateY(-0.1rem);
   box-shadow: 0 1.6rem 3.6rem rgba(73, 53, 109, 0.12);
+}
+
+.panel .cardList .cardButton:hover {
+  background: #fff;
+  color: #26193d;
 }
 
 .cardHead {
@@ -218,6 +233,14 @@
   font-weight: 700;
 }
 
+.panel .pagination .paginationButtons button {
+  display: inline-flex;
+  width: auto;
+  height: auto;
+  background: #fff;
+  color: #4c376f;
+}
+
 .paginationButtons button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
@@ -281,6 +304,18 @@
   font-size: 1.8rem;
   line-height: 1;
   cursor: pointer;
+}
+
+.panel .modalBackdrop .closeButton {
+  display: inline-flex;
+  width: 4rem;
+  height: 4rem;
+  min-width: 4rem;
+  min-height: 4rem;
+  padding: 0;
+  background: rgba(95, 67, 134, 0.08);
+  color: #5f4386;
+  border-radius: 999px;
 }
 
 .modalMetaGrid {

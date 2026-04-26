@@ -53,6 +53,7 @@ const SignUp = () => {
   const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [country, setCountry] = useState("");
+  const [nameValue, setNameValue] = useState("");
   const name = useRef("");
   const email = useRef("");
   if (paramEmail) email.current = paramEmail;
@@ -77,6 +78,22 @@ const SignUp = () => {
   useEffect(() => {
     hydratePendingSocialAuth();
   }, [hydratePendingSocialAuth]);
+
+  useEffect(() => {
+    if (!pendingSocialAuth) {
+      return;
+    }
+
+    if (pendingSocialAuth.username) {
+      setUsername(pendingSocialAuth.username);
+      setCheckDuplication(true);
+    }
+
+    if (pendingSocialAuth.nickname) {
+      name.current = pendingSocialAuth.nickname;
+      setNameValue(pendingSocialAuth.nickname);
+    }
+  }, [pendingSocialAuth]);
 
   useEffect(() => {
     if (userInfo?.userStatus === "ACTIVE") {
@@ -147,6 +164,7 @@ const SignUp = () => {
 
   const onChangeName = useCallback((e) => {
     name.current = e.target.value;
+    setNameValue(e.target.value);
   }, []);
 
   const onChangeUsername = useCallback((e) => {
@@ -563,7 +581,7 @@ const SignUp = () => {
               autoComplete="off"
               required="Y"
               placeholder="이름"
-              defaultValue={name.current}
+              value={nameValue}
               onChange={onChangeName}
             />
           </div>
