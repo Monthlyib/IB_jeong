@@ -1,19 +1,11 @@
 "use client";
 import styles from "./Tutoring.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCalendarCheck,
-  faPenToSquare,
-  faXmark,
-} from "@fortawesome/free-solid-svg-icons";
+import { faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { useTutoringStore } from "@/store/tutoring";
 import { useUserInfo, useUserStore } from "@/store/user";
-import {
-  getTutoringEmailTemplate,
-  updateTutoringEmailTemplate,
-} from "@/apis/tutoringAPI";
 import { hasTutoringAccess } from "@/utils/subscribeUtils";
 import Loading from "@/components/Loading";
 
@@ -88,22 +80,10 @@ const TutoringComponents = () => {
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [detail, setDetail] = useState("");
   const [bookingLoading, setBookingLoading] = useState(false);
-  const [templateId, setTemplateId] = useState(null);
-  const [templateSubject, setTemplateSubject] = useState("");
-  const [templateBody, setTemplateBody] = useState("");
-  const [templateRecipientMode, setTemplateRecipientMode] = useState("BOTH");
-  const [templateRecipientEmail, setTemplateRecipientEmail] = useState(
-    "monthlyib@gmail.com"
-  );
-  const [templateLoading, setTemplateLoading] = useState(false);
-  const [templateSaving, setTemplateSaving] = useState(false);
-  const [templateFeedback, setTemplateFeedback] = useState("");
-  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
 
   const { tutoringDateSimpleList, getTutoringDateSimpleList, postTutoring } =
     useTutoringStore(); // 예약 관련 Store 가져오기
   const { activeSubscribeInfo, getActiveSubscribeInfo } = useUserStore(); // 구독 정보 가져오기
-  const isAdmin = userInfo?.authority === "ADMIN";
   const canBookTutoring = hasTutoringAccess(activeSubscribeInfo);
   const isUnlimitedTutoring = Boolean(activeSubscribeInfo?.unlimitedTutoring);
   const remainingTutoringCount = Number(activeSubscribeInfo?.tutoringCount || 0);
@@ -135,98 +115,12 @@ const TutoringComponents = () => {
       ? `선택한 예약 수가 남은 예약 ${remainingTutoringCount}회를 초과했습니다.`
       : "";
 
-  const previewMessage = useMemo(
-    () =>
-      (templateBody || "")
-        .replaceAll("{nickName}", "홍길동")
-        .replaceAll("{date}", "2026-04-08")
-        .replaceAll("{time}", "19:30"),
-    [templateBody]
-  );
-
-  const templateRecipientSummary = useMemo(() => {
-    if (templateRecipientMode === "USER") {
-      return "현재 설정: 신청자 이메일로만 발송";
-    }
-    if (templateRecipientMode === "FIXED") {
-      return `현재 설정: 고정 이메일(${templateRecipientEmail || "monthlyib@gmail.com"})로만 발송`;
-    }
-    return `현재 설정: 신청자 + 고정 이메일(${templateRecipientEmail || "monthlyib@gmail.com"}) 둘 다 발송`;
-  }, [templateRecipientEmail, templateRecipientMode]);
-
-  const templateVariables = useMemo(
-    () => [
-      {
-        key: "{nickName}",
-        label: "학생 이름",
-        example: "홍길동",
-      },
-      {
-        key: "{date}",
-        label: "예약 날짜",
-        example: "2026-04-08",
-      },
-      {
-        key: "{time}",
-        label: "예약 시간",
-        example: "19:30",
-      },
-    ],
-    []
-  );
-
   // 컴포넌트 마운트 시 구독 정보 불러오기
   useEffect(() => {
     if (!userInfo?.userId || !userInfo?.accessToken) return;
 
     getActiveSubscribeInfo(userInfo.userId, userInfo);
   }, [getActiveSubscribeInfo, userInfo]);
-
-  useEffect(() => {
-    const loadTemplate = async () => {
-      if (!isAdmin || !userInfo?.accessToken) return;
-
-      setTemplateLoading(true);
-      setTemplateFeedback("");
-
-      try {
-        const res = await getTutoringEmailTemplate(userInfo);
-        const activeTemplate = res?.data;
-        setTemplateId(activeTemplate?.id ?? null);
-        setTemplateSubject(activeTemplate?.subject ?? "");
-        setTemplateBody(activeTemplate?.bodyTemplate ?? "");
-        setTemplateRecipientMode(activeTemplate?.recipientMode ?? "BOTH");
-        setTemplateRecipientEmail(
-          activeTemplate?.recipientEmail ?? "monthlyib@gmail.com"
-        );
-      } catch (error) {
-        setTemplateFeedback("메일 양식을 불러오지 못했습니다.");
-      } finally {
-        setTemplateLoading(false);
-      }
-    };
-
-    loadTemplate();
-  }, [isAdmin, userInfo]);
-
-  useEffect(() => {
-    if (!isTemplateModalOpen) return undefined;
-
-    const handleEscClose = (event) => {
-      if (event.key === "Escape") {
-        setIsTemplateModalOpen(false);
-      }
-    };
-
-    const originalOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    window.addEventListener("keydown", handleEscClose);
-
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      window.removeEventListener("keydown", handleEscClose);
-    };
-  }, [isTemplateModalOpen]);
 
   const refreshTutoringBookingState = async (targetDate = date) => {
     const tasks = [];
@@ -332,47 +226,6 @@ const TutoringComponents = () => {
     }
   };
 
-  const onSubmitTemplate = async (e) => {
-    e.preventDefault();
-
-    if (!templateId) {
-      setTemplateFeedback("활성 메일 양식을 찾지 못했습니다.");
-      return;
-    }
-
-    if (!templateSubject.trim() || !templateBody.trim()) {
-      setTemplateFeedback("제목과 본문을 모두 입력해주세요.");
-      return;
-    }
-
-    setTemplateSaving(true);
-    setTemplateFeedback("");
-
-    try {
-      const res = await updateTutoringEmailTemplate(
-        templateId,
-        templateSubject.trim(),
-        templateBody.trim(),
-        templateRecipientMode,
-        templateRecipientEmail.trim() || "monthlyib@gmail.com",
-        userInfo
-      );
-      setTemplateSubject(res?.data?.subject ?? templateSubject.trim());
-      setTemplateBody(res?.data?.bodyTemplate ?? templateBody.trim());
-      setTemplateRecipientMode(res?.data?.recipientMode ?? templateRecipientMode);
-      setTemplateRecipientEmail(
-        res?.data?.recipientEmail ??
-          templateRecipientEmail.trim() ??
-          "monthlyib@gmail.com"
-      );
-      setTemplateFeedback("메일 양식을 저장했습니다.");
-    } catch (error) {
-      setTemplateFeedback("메일 양식 저장에 실패했습니다.");
-    } finally {
-      setTemplateSaving(false);
-    }
-  };
-
   // 날짜 선택 시, 해당 날짜의 예약 정보를 가져옴
   useEffect(() => {
     if (date && userInfo?.accessToken) {
@@ -389,16 +242,10 @@ const TutoringComponents = () => {
             <span>Scheduling Tutoring</span>
             <h2>튜터링 예약</h2>
           </div>
-          {isAdmin && (
-            <button
-              type="button"
-              className={`${styles.templateManageButton} ${styles.templateManageButtonDesktop}`}
-              onClick={() => setIsTemplateModalOpen(true)}
-            >
-              <FontAwesomeIcon icon={faPenToSquare} />
-              메일 양식 수정
-            </button>
-          )}
+          <div className={`${styles.emailNotice} ${styles.emailNoticeDesktop}`}>
+            <strong>예약 안내 메일</strong>
+            <span>확정 안내는 가입 이메일로 발송됩니다. 별도 수신 이메일 변경은 현재 지원하지 않습니다.</span>
+          </div>
         </div>
 
         <div className={styles.sc_main_wrap}>
@@ -409,16 +256,10 @@ const TutoringComponents = () => {
                 <strong>{remainingTutoringLabel}</strong>
               </div>
 
-              {isAdmin && (
-                <button
-                  type="button"
-                  className={`${styles.templateManageButton} ${styles.templateManageButtonMobile}`}
-                  onClick={() => setIsTemplateModalOpen(true)}
-                >
-                  <FontAwesomeIcon icon={faPenToSquare} />
-                  메일 양식 수정
-                </button>
-              )}
+              <div className={`${styles.emailNotice} ${styles.emailNoticeMobile}`}>
+                <strong>예약 안내 메일</strong>
+                <span>확정 안내는 가입 이메일로 발송됩니다. 별도 수신 이메일 변경은 현재 지원하지 않습니다.</span>
+              </div>
             </div>
 
             <div className={styles.sc_left_cont}>
@@ -597,151 +438,6 @@ const TutoringComponents = () => {
           </div>
         </div>
 
-        {isAdmin && isTemplateModalOpen && (
-          <div
-            className={styles.templateModalBackdrop}
-            onClick={() => setIsTemplateModalOpen(false)}
-          >
-            <div
-              className={styles.templateModal}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className={styles.templateHeader}>
-                <div>
-                  <span className={styles.templateEyebrow}>
-                    Admin Email Template
-                  </span>
-                  <h3>튜터링 확정 메일 양식</h3>
-                  <p>
-                    예약 확정 메일을 현재 `/tutoring` 페이지 톤에 맞춘 관리
-                    팝업에서 바로 수정할 수 있습니다.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  className={styles.templateCloseButton}
-                  onClick={() => setIsTemplateModalOpen(false)}
-                  aria-label="메일 양식 편집 닫기"
-                >
-                  <FontAwesomeIcon icon={faXmark} />
-                </button>
-              </div>
-
-              <div className={styles.templateGuide}>
-                <div className={styles.templateGuideCard}>
-                  <div className={styles.templateGuideTitle}>
-                    사용할 수 있는 변수
-                  </div>
-                  <div className={styles.templateTokenList}>
-                    {templateVariables.map((item) => (
-                      <div key={item.key} className={styles.templateTokenItem}>
-                        <code>{item.key}</code>
-                        <div>
-                          <strong>{item.label}</strong>
-                          <span>예시: {item.example}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={styles.templateGuideCard}>
-                  <div className={styles.templateGuideTitle}>작성 팁</div>
-                  <ul className={styles.templateGuideList}>
-                    <li>제목은 너무 길지 않게 유지하는 편이 메일함에서 잘 보입니다.</li>
-                    <li>본문에는 최소 한 번 이상 날짜와 시간을 넣어 예약 정보를 분명히 하세요.</li>
-                    <li>변수는 그대로 입력해야 실제 발송 시 값으로 치환됩니다.</li>
-                    <li>고정 이메일 기본값은 monthlyib@gmail.com 입니다.</li>
-                  </ul>
-                </div>
-              </div>
-
-              <form className={styles.templateForm} onSubmit={onSubmitTemplate}>
-                <label className={styles.templateField}>
-                  <span>메일 제목</span>
-                  <input
-                    type="text"
-                    value={templateSubject}
-                    onChange={(e) => setTemplateSubject(e.target.value)}
-                    placeholder="튜터링 예약 확정 메일 제목"
-                    disabled={templateLoading || templateSaving}
-                  />
-                </label>
-
-                <label className={styles.templateField}>
-                  <span>메일 본문</span>
-                  <textarea
-                    value={templateBody}
-                    onChange={(e) => setTemplateBody(e.target.value)}
-                    placeholder="치환 변수를 포함한 메일 본문을 입력하세요."
-                    disabled={templateLoading || templateSaving}
-                  />
-                </label>
-
-                <label className={styles.templateField}>
-                  <span>수신 방식</span>
-                  <div className={styles.templateRecipientModes}>
-                    {[
-                      { value: "USER", label: "신청자 이메일" },
-                      { value: "FIXED", label: "고정 이메일" },
-                      { value: "BOTH", label: "둘 다 발송" },
-                    ].map((option) => (
-                      <button
-                        key={option.value}
-                        type="button"
-                        className={
-                          templateRecipientMode === option.value
-                            ? styles.templateRecipientModeActive
-                            : styles.templateRecipientMode
-                        }
-                        onClick={() => setTemplateRecipientMode(option.value)}
-                        disabled={templateLoading || templateSaving}
-                      >
-                        {option.label}
-                      </button>
-                    ))}
-                  </div>
-                </label>
-
-                <label className={styles.templateField}>
-                  <span>고정 수신 이메일</span>
-                  <input
-                    type="email"
-                    value={templateRecipientEmail}
-                    onChange={(e) => setTemplateRecipientEmail(e.target.value)}
-                    placeholder="monthlyib@gmail.com"
-                    disabled={templateLoading || templateSaving}
-                  />
-                </label>
-
-                <div className={styles.templatePreview}>
-                  <div className={styles.templatePreviewLabel}>미리보기</div>
-                  <strong className={styles.templateRecipientSummary}>
-                    {templateRecipientSummary}
-                  </strong>
-                  <p>{previewMessage || "본문을 입력하면 미리보기가 표시됩니다."}</p>
-                </div>
-
-                <div className={styles.templateActions}>
-                  <button
-                    type="submit"
-                    className={styles.templateSubmit}
-                    disabled={templateLoading || templateSaving}
-                  >
-                    {templateSaving ? "저장 중..." : "메일 양식 저장"}
-                  </button>
-                  {(templateLoading || templateFeedback) && (
-                    <span className={styles.templateFeedback}>
-                      {templateLoading
-                        ? "메일 양식을 불러오는 중입니다."
-                        : templateFeedback}
-                    </span>
-                  )}
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
       </main>
     </>
   );
