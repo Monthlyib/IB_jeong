@@ -245,6 +245,11 @@
   /**************
        Join
     **************/
+  .width_content.min_content {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .width_content.member {
     padding: 6rem 2rem 6.4rem;
   }

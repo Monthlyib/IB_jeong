@@ -2,7 +2,7 @@
   width: 126rem;
   max-width: 100%;
   margin: 0 auto;
-  padding: 4rem 2rem 5rem;
+  padding: calc(var(--appHeaderHeight, 8rem) + 4rem) 2rem 5rem;
 }
 
 .container > section {
@@ -310,7 +310,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 3rem 1.4rem 4rem;
+    padding: calc(var(--appHeaderHeight, 7.4rem) + 3rem) 1.4rem 4rem;
   }
 
   .heroCopy,
@@ -337,7 +337,7 @@
 
 @media (max-width: 480px) {
   .container {
-    padding: 2.4rem 1.6rem 3.6rem;
+    padding: calc(var(--appHeaderHeight, 6.8rem) + 1.8rem) 1.6rem 3.6rem;
   }
 
   .heroCopy,
