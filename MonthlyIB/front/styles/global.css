@@ -39,6 +39,7 @@ html {
 
 body {
   margin: 0;
+  min-height: 100dvh;
   font-size: 10px;
   color: #000;
   line-height: 1.2rem;
@@ -56,6 +57,31 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+body.mobile-nav-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+.app_shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  width: 100%;
+  min-width: 0;
+}
+
+.app_content {
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.app_content > main,
+.app_content > [data-page-root] {
+  flex: 1 0 auto;
 }
 
 article,
@@ -412,7 +438,7 @@ header nav > ul > li:hover .navItemLabel {
 main {
   min-width: 0;
   padding-top: var(--appHeaderHeight);
-  min-height: calc(100vh - var(--appHeaderHeight) - 10rem);
+  min-height: calc(100dvh - 18rem);
   overflow-x: clip;
 }
 
@@ -426,8 +452,9 @@ section {
 
 footer {
   background: #1a1122;
+  flex-shrink: 0;
   width: 100%;
-  padding: 3rem 0;
+  padding: 4rem 0;
   text-align: center;
 }
 
@@ -444,8 +471,8 @@ footer {
   max-width: 110rem;
   width: 100%;
   margin: 0 auto;
-  min-height: 88rem;
-  padding: 8rem 0 8.8rem;
+  min-height: min(72rem, calc(100dvh - 18rem));
+  padding: var(--appHeaderHeight) 0 7.2rem;
 }
 
 .width_content.scheduling {
@@ -472,7 +499,7 @@ footer {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  padding: 7.2rem 0;
+  padding: 6rem 0 5.2rem;
 }
 
 .header_tit_wrap {
@@ -860,7 +887,7 @@ a.disabled {
 /*  TB, MO - 1024 */
 @media screen and (max-width: 1024px) {
   :root {
-    --appHeaderHeight: 9.6rem;
+    --appHeaderHeight: 7.4rem;
   }
 
   /**************
@@ -869,11 +896,12 @@ a.disabled {
 
   .width_content {
     width: 100%;
-    padding: 8rem var(--pageGutter) 8.8rem;
+    min-height: min(64rem, calc(100dvh - 16rem));
+    padding: calc(var(--appHeaderHeight) + 2.8rem) var(--pageGutter) 7.2rem;
   }
 
   .header_flex {
-    padding: 5.4rem 0 5.4rem;
+    padding: 4.2rem 0 4.4rem;
   }
 
   section {
@@ -898,7 +926,7 @@ a.disabled {
      **************/
   footer {
     width: 100%;
-    padding: 3rem var(--pageGutter);
+    padding: 3.6rem 0;
   }
 }
 
@@ -1000,14 +1028,15 @@ a.disabled {
 @media screen and (max-width: 640px) {
   :root {
     --pageGutter: 2rem;
+    --appHeaderHeight: 7rem;
   }
 
   /**************
          Common
       **************/
   .width_content {
-    min-height: 60rem;
-    padding: 5.8rem var(--pageGutterNarrow) 6rem;
+    min-height: min(58rem, calc(100dvh - 15rem));
+    padding: calc(var(--appHeaderHeight) + 1.8rem) var(--pageGutterNarrow) 5.6rem;
   }
 
   section {
@@ -1047,7 +1076,7 @@ a.disabled {
   }
 
   .width_content.archive {
-    padding: 6.4rem 2rem 6.4rem;
+    padding: calc(var(--appHeaderHeight) + 2rem) 2rem 5.8rem;
   }
 
   .archive .header_flex {
@@ -1070,6 +1099,7 @@ a.disabled {
 
 @media screen and (max-width: 480px) {
   :root {
+    --appHeaderHeight: 6.8rem;
     --pageGutter: 1.6rem;
     --pageGutterNarrow: 1.6rem;
     --pageGutterCompact: 1.2rem;
@@ -1077,7 +1107,7 @@ a.disabled {
 
   .width_content {
     min-height: auto;
-    padding: 4.8rem var(--pageGutterCompact) 5.2rem;
+    padding: calc(var(--appHeaderHeight) + 1.2rem) var(--pageGutterCompact) 4.8rem;
   }
 
   section {
@@ -1086,7 +1116,7 @@ a.disabled {
 
   .header_flex {
     gap: 1.2rem;
-    padding: 3.2rem 0 2.2rem;
+    padding: 2.6rem 0 2rem;
   }
 
   .header_tit_wrap span {

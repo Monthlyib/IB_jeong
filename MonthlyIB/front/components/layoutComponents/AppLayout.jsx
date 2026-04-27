@@ -142,6 +142,18 @@ const AppLayout = ({ children, disable }) => {
     }
   }, [asideModal, windowSize.width]);
 
+  useEffect(() => {
+    document.body.classList.toggle("mobile-nav-open", asideModal);
+
+    return () => {
+      document.body.classList.remove("mobile-nav-open");
+    };
+  }, [asideModal]);
+
+  useEffect(() => {
+    setAsideModal(false);
+  }, [pathName]);
+
   const visibleMenus = useMemo(
     () => getVisibleHeaderMenus(headerNavigationConfig),
     [headerNavigationConfig]

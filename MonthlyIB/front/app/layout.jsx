@@ -1,7 +1,7 @@
 import "@/styles/global.css";
 
-import Footer from "@/components/layoutComponents/Footer";
 import AppLayout from "@/components/layoutComponents/AppLayout";
+import Footer from "@/components/layoutComponents/Footer";
 
 
 export const metadata = {
@@ -11,14 +11,14 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <>
-      <html lang="ko">
-        <body>
+    <html lang="ko">
+      <body>
+        <div className="app_shell">
           <AppLayout />
-          {children}
+          <div className="app_content">{children}</div>
           <Footer />
-        </body>
-      </html>
-    </>
+        </div>
+      </body>
+    </html>
   );
 }

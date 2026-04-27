@@ -32,7 +32,10 @@ header .util a:last-child:hover {
 header .my_util {
   position: relative;
   display: flex;
-  margin-right: -14rem;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 1.8rem;
+  min-width: 0;
 }
 
 header .my_util .util_wrap {
@@ -40,6 +43,7 @@ header .my_util .util_wrap {
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  min-width: 0;
 }
 
 header .my_util .util_wrap .util_img figure {
@@ -65,10 +69,15 @@ header .my_util .util_wrap .util_name {
   justify-content: space-between;
   align-items: center;
   margin-left: 1.4rem;
+  min-width: 0;
 }
 
 header .my_util .util_wrap .util_name span {
   font-size: 1.4rem;
+  max-width: 13rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 header .my_util .util_wrap .util_name span b {
@@ -84,7 +93,7 @@ header .my_util .util_wrap .util_name .icon {
 
 header .my_util .util_box {
   position: absolute;
-  left: 0;
+  right: 0;
   top: calc(100% + 0.6rem);
   width: 15.2rem;
   height: auto;
@@ -92,6 +101,7 @@ header .my_util .util_box {
   border-radius: 1rem;
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.25);
   overflow: hidden;
+  z-index: 10002;
 }
 
 header .my_util .util_box ul {

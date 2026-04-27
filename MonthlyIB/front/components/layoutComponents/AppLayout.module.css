@@ -7,13 +7,29 @@ header .header_wrap {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  max-width: 110rem;
+  max-width: 120rem;
   width: 100%;
   height: 100%;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2.4rem;
+  gap: 2.4rem;
   z-index: 1;
   position: relative;
+}
+
+header .pc_header_wrap > a {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+header .pc_header_wrap nav {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+header .pc_header_wrap nav > ul {
+  justify-content: center;
 }
 
 header .mo_header_wrap,
@@ -44,7 +60,11 @@ header nav > ul > li .gnb2 {
   height: auto;
   background: #fff;
   border: 1px solid #d5d5d5;
+  border-radius: 1.2rem;
+  box-shadow: 0 1.6rem 3.6rem rgba(26, 17, 34, 0.14);
   padding: 0.8rem 0;
+  overflow: hidden;
+  z-index: 10001;
 }
 
 header nav > ul > li .gnb2 li {
@@ -130,8 +150,8 @@ header nav > ul > li .gnb2 > li:hover .gnb3 {
   width: 100%;
   height: 100%;
   background: black;
-  opacity: 0.1;
-  z-index: 1000;
+  opacity: 0.14;
+  z-index: 9994;
 }
 
 header .util {
@@ -187,17 +207,17 @@ header .util a:last-child:hover {
     width: 100%;
     height: 100%;
     padding: 0 clamp(1.6rem, 4vw, 2.4rem);
-    gap: 1rem;
+    gap: 0.8rem;
   }
 
   header .mo_header_wrap .btn_sidemenu {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 5.2rem;
-    height: 4.8rem;
+    width: 4.8rem;
+    height: 4.6rem;
     flex-shrink: 0;
-    border-radius: 1.4rem;
+    border-radius: 1.3rem;
     background: #f7f3fc;
     cursor: pointer;
   }
@@ -211,8 +231,13 @@ header .util a:last-child:hover {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 4rem;
+    min-width: 3.8rem;
     flex-shrink: 0;
+  }
+
+  header .mo_header_wrap > a img {
+    width: 3.7rem;
+    height: auto;
   }
 
   header .mo_header_wrap .nav_logo_m {
@@ -228,11 +253,11 @@ header .util a:last-child:hover {
 
   header .mo_header_wrap .util a {
     width: auto;
-    min-height: 4.8rem;
+    min-height: 4.4rem;
     padding: 0 1.4rem;
-    border-radius: 1.4rem;
+    border-radius: 1.25rem;
     font-size: 1.4rem;
-    line-height: 4.8rem;
+    line-height: 4.4rem;
     white-space: nowrap;
   }
 
@@ -250,8 +275,9 @@ header .util a:last-child:hover {
     width: min(32rem, calc(100vw - 2.4rem));
     height: 100dvh;
     background: #fff;
-    z-index: 9999;
+    z-index: 10000;
     box-shadow: 0 2rem 5rem rgba(22, 15, 34, 0.22);
+    overflow: hidden;
   }
 
   .mo_gnb.active {
@@ -259,6 +285,10 @@ header .util a:last-child:hover {
   }
 
   .mo_gnb .mo_gnb_header {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
     width: 100%;
     background: var(--primary01);
   }
@@ -383,6 +413,7 @@ header .util a:last-child:hover {
     display: flex;
     flex: 1;
     min-height: 0;
+    background: #fff;
   }
 
   .mo_gnb .mo_menu_wrap .mo_menu_left {
@@ -391,6 +422,7 @@ header .util a:last-child:hover {
     padding: 0.2rem 0;
     overflow-y: auto;
     min-height: 0;
+    overscroll-behavior: contain;
   }
 
   .mo_gnb .mo_menu_wrap .mo_menu_left .mo_menu_item {
@@ -435,6 +467,7 @@ header .util a:last-child:hover {
     padding: 0.2rem 0;
     overflow-y: scroll;
     min-height: 0;
+    overscroll-behavior: contain;
   }
 
   .mo_gnb .mo_menu_wrap .mo_menu_right .mo_sub_wrap {
@@ -548,8 +581,8 @@ header .util a:last-child:hover {
   }
 
   header .mo_header_wrap .btn_sidemenu {
-    width: 4.8rem;
-    height: 4.6rem;
+    width: 4.4rem;
+    height: 4.2rem;
     border-radius: 1.2rem;
   }
 
@@ -558,11 +591,11 @@ header .util a:last-child:hover {
   }
 
   header .mo_header_wrap .util a {
-    min-height: 4.4rem;
+    min-height: 4.2rem;
     padding: 0 1.2rem;
     border-radius: 1.2rem;
     font-size: 1.3rem;
-    line-height: 4.4rem;
+    line-height: 4.2rem;
   }
 
   .mo_gnb {

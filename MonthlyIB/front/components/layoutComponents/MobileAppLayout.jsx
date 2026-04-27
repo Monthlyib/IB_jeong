@@ -86,9 +86,15 @@ const MobileAppLayout = ({ asideModal, setAsideModal, menus = [] }) => {
   return (
     <>
       <div className={styles.mo_header_wrap}>
-        <div className={styles.btn_sidemenu}>
-          <FontAwesomeIcon icon={faBars} onClick={onClickBtn} />
-        </div>
+        <button
+          type="button"
+          className={styles.btn_sidemenu}
+          onClick={onClickBtn}
+          aria-label="메뉴 열기"
+          aria-expanded={asideModal}
+        >
+          <FontAwesomeIcon icon={faBars} />
+        </button>
 
         <Link href="/">
           <Image
@@ -106,6 +112,7 @@ const MobileAppLayout = ({ asideModal, setAsideModal, menus = [] }) => {
 
       <aside
         className={styles.mo_gnb}
+        aria-hidden={!asideModal}
         style={asideModal ? { display: "flex" } : { display: "none" }}
       >
         <div className={styles.mo_gnb_header}>
@@ -199,11 +206,8 @@ const MobileAppLayout = ({ asideModal, setAsideModal, menus = [] }) => {
               </div>
             </>
           )}
-          <div
-            className={styles.mo_menu_wrap}
-            style={{ backgroundColor: "white" }}
-          >
-            <div className={styles.mo_menu_left} style={{ height: "100vh" }}>
+          <div className={styles.mo_menu_wrap}>
+            <div className={styles.mo_menu_left}>
               {visibleMenus.map((menu) => {
                 const hasChildren = menu.children?.length > 0;
                 return (
