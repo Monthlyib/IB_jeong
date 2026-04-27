@@ -10,7 +10,8 @@ const PAGE_SIZE_OPTIONS = [5, 10, 20];
 const AdminQuestion = () => {
   const { questionList, questionPageInfo, getUserQuestionList } = useQuestionStore();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
+  const totalQuestions = questionPageInfo?.totalElements ?? questionList?.length ?? 0;
 
   useEffect(() => {
     const accessToken = getCookie("accessToken");
@@ -38,12 +39,12 @@ const AdminQuestion = () => {
   };
 
   return (
-    <div className={styles.dashboard_mid_card}>
+    <div className={`${styles.dashboard_mid_card} ${styles.tableCard}`}>
       <div className={styles.title}>질문 관리</div>
 
       <div className={styles.tableToolbar}>
         <div className={styles.tableMeta}>
-          <strong>{questionPageInfo?.totalElements ?? questionList?.length ?? 0}</strong>
+          <strong>{totalQuestions}</strong>
           <span>개의 질문</span>
         </div>
 
@@ -80,7 +81,7 @@ const AdminQuestion = () => {
         </div>
       </div>
 
-      {questionPageInfo?.totalElements > 0 && (
+      {totalQuestions > 0 ? (
         <AdminQuestionItems
           questionList={questionList}
           currentPage={currentPage}
@@ -88,6 +89,12 @@ const AdminQuestion = () => {
           onPageChange={handlePageChange}
           totalPages={questionPageInfo?.totalPages ?? 1}
         />
+      ) : (
+        <div className={styles.tableBody}>
+          <div className={styles.emptyTableState}>
+            표시할 질문 데이터가 없습니다.
+          </div>
+        </div>
       )}
     </div>
   );

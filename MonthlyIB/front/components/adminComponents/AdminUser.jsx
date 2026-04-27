@@ -55,7 +55,7 @@ const AdminUser = () => {
   const [authority, setAuthority] = useState("");
   const [subscirbeDataList, setSubscribeDataList] = useState({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [sortConfig, setSortConfig] = useState({
     key: null,
@@ -229,7 +229,7 @@ const AdminUser = () => {
 
   return (
     <>
-      <div className={`${styles.dashboard_mid_card} ${styles.managementCard}`}>
+      <div className={`${styles.dashboard_mid_card} ${styles.tableCard} ${styles.managementCard}`}>
         <div className={styles.title}>사용자 관리</div>
 
         <div className={styles.tableToolbar}>

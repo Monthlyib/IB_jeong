@@ -1,6 +1,6 @@
 .adminPage {
-  width: min(144rem, calc(100% - 4rem));
-  margin: calc(var(--appHeaderHeight, 7.2rem) + 2rem) auto 6rem;
+  width: min(166rem, calc(100% - 3.2rem));
+  margin: calc(var(--appHeaderHeight, 7.2rem) + 1.4rem) auto 5rem;
   padding-top: 0;
   min-height: auto;
 }
@@ -17,10 +17,10 @@
 .adminHero {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(28rem, 0.9fr);
-  gap: 2rem;
-  padding: 3rem;
+  gap: 1.6rem;
+  padding: 2.2rem 2.4rem;
   border: 1px solid rgba(81, 52, 108, 0.14);
-  border-radius: 2.8rem;
+  border-radius: 2.4rem;
   background:
     radial-gradient(circle at top left, rgba(81, 52, 108, 0.08), transparent 35%),
     linear-gradient(180deg, #fbf9ff 0%, #ffffff 100%);
@@ -48,36 +48,36 @@
 }
 
 .adminHeroCopy h1 {
-  margin: 1.6rem 0 1rem;
+  margin: 1.2rem 0 0.7rem;
   color: #221933;
-  font-size: 4rem;
+  font-size: 3.4rem;
   font-weight: 700;
   line-height: 1.14;
   word-break: keep-all;
 }
 
 .adminHeroCopy p {
-  max-width: 72rem;
+  max-width: 76rem;
   color: #685d7a;
-  font-size: 1.6rem;
-  line-height: 1.72;
+  font-size: 1.45rem;
+  line-height: 1.62;
   word-break: keep-all;
 }
 
 .adminHeroActions {
-  margin-top: 2rem;
+  margin-top: 1.4rem;
 }
 
 .adminHeroActions a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 4.8rem;
-  padding: 0 1.8rem;
+  min-height: 4.2rem;
+  padding: 0 1.6rem;
   border-radius: 999px;
   color: #fff;
   background: var(--primary01);
-  font-size: 1.45rem;
+  font-size: 1.35rem;
   font-weight: 700;
   box-shadow: 0 14px 30px rgba(81, 52, 108, 0.2);
 }
@@ -93,9 +93,9 @@
   flex-direction: column;
   justify-content: space-between;
   min-width: 0;
-  padding: 1.8rem;
+  padding: 1.4rem;
   border: 1px solid rgba(81, 52, 108, 0.12);
-  border-radius: 1.8rem;
+  border-radius: 1.6rem;
   background: rgba(255, 255, 255, 0.88);
 }
 
@@ -108,29 +108,29 @@
 }
 
 .adminMetaCard strong {
-  margin-top: 0.8rem;
+  margin-top: 0.7rem;
   color: #251c35;
-  font-size: 2.6rem;
+  font-size: 2.2rem;
   font-weight: 700;
   line-height: 1.25;
 }
 
 .adminSection {
-  margin-top: 2.4rem;
+  margin-top: 1.8rem;
 }
 
 .sectionHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  gap: 1.6rem;
-  margin-bottom: 1.6rem;
+  gap: 1.2rem;
+  margin-bottom: 1.1rem;
 }
 
 .sectionHeader h2 {
-  margin-top: 1rem;
+  margin-top: 0.7rem;
   color: #241b34;
-  font-size: 2.8rem;
+  font-size: 2.4rem;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -143,14 +143,16 @@
 
 .dashboard_mid_wrap {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.8rem;
+  grid-template-columns: minmax(42rem, 0.82fr) minmax(72rem, 1.18fr);
+  gap: 1.4rem;
+  align-items: stretch;
 }
 
 .dashboard_support_wrap {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.24fr);
-  gap: 1.8rem;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, 1.16fr);
+  gap: 1.4rem;
+  align-items: stretch;
 }
 
 .dashboard_single_wrap {
@@ -219,18 +221,22 @@
   display: flex;
   flex-direction: column;
   min-width: 0;
-  min-height: 44rem;
-  padding: 2.4rem;
+  min-height: 40rem;
+  padding: 1.8rem;
   border: 1px solid #e9e1f2;
-  border-radius: 2.4rem;
+  border-radius: 2.1rem;
   background: #fff;
   box-shadow: 0 16px 42px rgba(34, 23, 50, 0.05);
   overflow: hidden;
 }
 
+.tableCard {
+  min-height: 61rem;
+}
+
 .managementCard {
-  height: 68rem;
-  min-height: 68rem;
+  height: 63rem;
+  min-height: 63rem;
 }
 
 .financeAdminCard {
@@ -1415,7 +1421,7 @@
   justify-content: space-between;
   gap: 1rem;
   color: #241b34;
-  font-size: 2.6rem;
+  font-size: 2.2rem;
   font-weight: 700;
   line-height: 1.2;
 }
@@ -1423,7 +1429,7 @@
 .titleAction {
   flex-shrink: 0;
   color: var(--primary01);
-  font-size: 2.2rem;
+  font-size: 1.9rem;
   cursor: pointer;
 }
 
@@ -1436,10 +1442,10 @@
 
 .dashboard_mid_card .users,
 .dashboard_mid_card .users_inactive {
-  padding: 1.4rem 0;
-  font-size: 1.6rem;
+  padding: 1rem 0;
+  font-size: 1.4rem;
   display: grid;
-  gap: 1.2rem;
+  gap: 1rem;
   align-items: center;
   color: var(--primary01);
 }
@@ -1449,10 +1455,10 @@
 }
 
 .dashboard_mid_card .questions {
-  padding: 1.4rem 0;
-  font-size: 1.5rem;
+  padding: 1rem 0;
+  font-size: 1.35rem;
   display: grid;
-  gap: 1rem;
+  gap: 0.9rem;
   align-items: center;
   color: var(--primary01);
 }
@@ -1465,32 +1471,32 @@
 .dashboard_mid_card .subtitle,
 .dashboard_mid_card .schedule_subtitle,
 .dashboard_mid_card .question_subtitle {
-  margin-top: 1.8rem;
-  padding: 0 0 0.8rem;
+  margin-top: 0.8rem;
+  padding: 0 0 0.7rem;
   border-bottom: 1px solid #eee7f7;
   color: #8a809d;
 }
 
 .dashboard_mid_card .subtitle {
   display: grid;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .dashboard_mid_card .schedule_subtitle {
   display: grid;
-  gap: 1.2rem;
+  gap: 1rem;
 }
 
 .dashboard_mid_card .question_subtitle {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, 1fr) auto;
-  gap: 1rem;
+  gap: 0.9rem;
 }
 
 .dashboard_mid_card .question_subtitle > *,
 .dashboard_mid_card .subtitle > *,
 .dashboard_mid_card .schedule_subtitle > * {
-  font-size: 1.3rem;
+  font-size: 1.18rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1516,9 +1522,10 @@
 .dashboard_mid_card .users svg,
 .dashboard_mid_card .users_inactive svg,
 .dashboard_mid_card .schedule svg {
-  margin-right: 0.4rem;
+  margin-right: 0.25rem;
   padding: 0 0.2rem;
   color: var(--primary01);
+  font-size: 1.35rem;
 }
 
 .dashboard_mid_card .users_inactive svg {
@@ -1526,10 +1533,10 @@
 }
 
 .dashboard_mid_card .schedule {
-  padding: 1.4rem 0;
-  font-size: 1.5rem;
+  padding: 0.9rem 0;
+  font-size: 1.35rem;
   display: grid;
-  gap: 1.2rem;
+  gap: 1rem;
   align-items: center;
   color: var(--primary01);
 }
@@ -1588,9 +1595,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1.6rem;
-  margin-top: 1.8rem;
-  margin-bottom: 1.4rem;
+  gap: 1rem;
+  margin-top: 1.1rem;
+  margin-bottom: 0.9rem;
 }
 
 .tableMeta {
@@ -1598,44 +1605,44 @@
   align-items: baseline;
   gap: 0.6rem;
   color: #6f6483;
-  font-size: 1.45rem;
+  font-size: 1.3rem;
 }
 
 .tableMeta strong {
   color: #241b34;
-  font-size: 2rem;
+  font-size: 1.7rem;
   font-weight: 700;
 }
 
 .rowsPerPage {
   display: inline-flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.6rem;
   color: #6f6483;
-  font-size: 1.35rem;
+  font-size: 1.22rem;
   font-weight: 600;
 }
 
 .rowsPerPage select {
-  min-width: 12.6rem;
-  height: 4.2rem;
-  padding: 0 1.4rem;
+  min-width: 11.4rem;
+  height: 3.6rem;
+  padding: 0 1.1rem;
   border: 1px solid #ddd2ec;
   border-radius: 1.2rem;
   background: #fff;
   color: #241b34;
-  font-size: 1.4rem;
+  font-size: 1.28rem;
 }
 
 .scheduleGrid {
   grid-template-columns:
-    minmax(0, 1.15fr)
-    minmax(0, 1fr)
-    minmax(10rem, 1fr)
-    minmax(7rem, 0.75fr)
-    minmax(8rem, 0.75fr)
-    minmax(10rem, 0.95fr)
-    minmax(7rem, 0.7fr);
+    minmax(8.5rem, 1.05fr)
+    minmax(8rem, 0.95fr)
+    minmax(9.4rem, 0.95fr)
+    minmax(6.2rem, 0.6fr)
+    minmax(6.5rem, 0.6fr)
+    minmax(9rem, 0.9fr)
+    minmax(5.8rem, 0.55fr);
 }
 
 .tableHeaderButton,
@@ -1643,13 +1650,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: flex-start;
-  gap: 0.6rem;
+  gap: 0.45rem;
   min-width: 0;
   padding: 0;
   border: 0;
   background: transparent;
   color: #8a809d;
-  font-size: 1.3rem;
+  font-size: 1.18rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1695,16 +1702,16 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-right: 0.4rem;
+  padding-right: 0.35rem;
   scrollbar-gutter: stable;
 }
 
 .tableBody {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.35rem;
 }
 
 .scheduleBody {
-  margin-bottom: 0.6rem;
+  margin-bottom: 0.35rem;
 }
 
 .tableRowWrap,
@@ -1720,7 +1727,7 @@
 .scheduleCell {
   min-width: 0;
   color: var(--primary01);
-  font-size: 1.55rem;
+  font-size: 1.35rem;
   overflow-wrap: break-word;
   word-break: keep-all;
 }
@@ -1747,23 +1754,23 @@
 .scheduleTools {
   display: inline-flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: 0.5rem;
 }
 
 .calendarSyncStack {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.6rem;
+  gap: 0.35rem;
 }
 
 .calendarSyncBadge {
   display: inline-flex;
   align-items: center;
-  min-height: 3rem;
-  padding: 0 1rem;
+  min-height: 2.4rem;
+  padding: 0 0.75rem;
   border-radius: 999px;
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1785,19 +1792,19 @@
 
 .calendarSyncLink {
   color: #5c4782;
-  font-size: 1.25rem;
+  font-size: 1.08rem;
   font-weight: 700;
   text-decoration: underline;
 }
 
 .calendarSyncInlineButton {
-  min-height: 3.2rem;
-  padding: 0 1rem;
+  min-height: 2.6rem;
+  padding: 0 0.75rem;
   border: 1px solid #d8ccec;
   border-radius: 999px;
   background: #fff;
   color: #4b3771;
-  font-size: 1.2rem;
+  font-size: 1.08rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -1857,9 +1864,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 24rem;
+  min-height: 18rem;
   color: #877b99;
-  font-size: 1.55rem;
+  font-size: 1.4rem;
   text-align: center;
 }
 
@@ -2665,6 +2672,10 @@
     min-height: 0;
   }
 
+  .tableCard {
+    min-height: 0;
+  }
+
   .adminHeroCopy h1 {
     font-size: 3rem;
   }
@@ -2838,6 +2849,10 @@
 
   .managementCard {
     height: auto;
+    min-height: 0;
+  }
+
+  .tableCard {
     min-height: 0;
   }
 

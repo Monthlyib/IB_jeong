@@ -60,7 +60,7 @@ const AdminSubscribe = () => {
   const [unlimitedTutoring, setUnlimitedTutoring] = useState(false);
   const [unlimitedVideoLessons, setUnlimitedVideoLessons] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: null,
@@ -261,7 +261,7 @@ const AdminSubscribe = () => {
 
   return (
     <>
-      <div className={styles.dashboard_mid_card}>
+      <div className={`${styles.dashboard_mid_card} ${styles.tableCard}`}>
         <div className={styles.title}>
           구독상품 관리
           <FontAwesomeIcon
@@ -353,6 +353,7 @@ const AdminSubscribe = () => {
             currentPage={currentPage}
             numShowContents={pageSize}
             onPageChange={handlePageChange}
+            compact
           />
         )}
 

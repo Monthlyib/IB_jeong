@@ -69,6 +69,7 @@ const AdminQuestionItems = ({
           numShowContents={questionList?.length || 1}
           onPageChange={onPageChange}
           totalPages={totalPages}
+          compact
         />
       )}
 
