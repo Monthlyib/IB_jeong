@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowLeft, faDownload, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 
 import styles from "./IbDetail.module.css";
 import { getMonthlyIbPdfDownloadUrl, monthlyIBGetPublicItem } from "@/apis/monthlyIbAPI";
@@ -47,13 +49,13 @@ const IbDetail = ({ monthlyIbId }) => {
 
   if (!detail) {
     return (
-      <main className="width_content">
-        <div className={styles.page}>
-          <div className={styles.card}>
-            <div className={styles.bodyWrap}>
-              <h1>월간 IB를 찾을 수 없습니다.</h1>
-            </div>
-          </div>
+      <main className={styles.detailPage}>
+        <div className={styles.stateCard}>
+          <span>MONTHLY IB</span>
+          <h1>월간 IB를 찾을 수 없습니다.</h1>
+          <Link href="/ib" className={styles.actionButtonSecondary}>
+            목록으로 돌아가기
+          </Link>
         </div>
       </main>
     );
@@ -62,14 +64,14 @@ const IbDetail = ({ monthlyIbId }) => {
   const isLegacyPdfOnly = !hasMeaningfulContent && (detail?.pdfFiles?.length || 0) > 0;
 
   return (
-    <main className="width_content">
+    <main className={styles.detailPage}>
       <div className={styles.page}>
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <span>Monthly IB</span>
+            <span>MONTHLY IB FEATURE</span>
             <h1>{detail.title}</h1>
             <p>
-              월간 IB 아카이브를 화면에서 읽고, 현재 저장된 내용 기준으로 PDF를 내려받을 수 있습니다.
+              화면에서 읽기 좋은 아카이브 형식으로 정리했습니다. 필요하면 현재 본문 기준의 PDF도 바로 내려받을 수 있습니다.
             </p>
           </div>
 
@@ -80,13 +82,16 @@ const IbDetail = ({ monthlyIbId }) => {
               rel="noreferrer"
               className={styles.actionButton}
             >
+              <FontAwesomeIcon icon={faDownload} />
               PDF 다운로드
             </a>
             <Link href="/ib" className={styles.actionButtonSecondary}>
+              <FontAwesomeIcon icon={faArrowLeft} />
               목록으로
             </Link>
             {userInfo?.authority === "ADMIN" && (
               <Link href={`/ibwrite?monthlyIbId=${monthlyIbId}`} className={styles.actionButtonSecondary}>
+                <FontAwesomeIcon icon={faPenAlt} />
                 수정
               </Link>
             )}
@@ -107,6 +112,7 @@ const IbDetail = ({ monthlyIbId }) => {
           <div className={styles.bodyWrap}>
             {isLegacyPdfOnly && (
               <div className={styles.legacyNotice}>
+                <span>LEGACY PDF</span>
                 <h2>본문 없이 PDF만 등록된 문서입니다.</h2>
                 <p>
                   이 글은 기존 업로드 PDF를 그대로 유지하고 있습니다. 아래 내용은 비어 있으며,

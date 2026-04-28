@@ -1,94 +1,85 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./IbComponents.module.css";
 import IbItems from "./IbItems";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPenAlt } from "@fortawesome/free-solid-svg-icons";
+import { faMagnifyingGlass, faPenAlt } from "@fortawesome/free-solid-svg-icons";
 
 import Link from "next/link";
 
 import { useIBStore } from "@/store/ib";
 import { useUserInfo } from "@/store/user";
-import { adjustWindowSize } from "@/utils/utils";
 
 const IbComponents = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
 
-  const { ibPosts, getIBList } = useIBStore();
-    
-  const [windowSize, setWindowSize] = useState(0);
-
-  const searchKeyword = useRef();
-  const [searching, setSeraching] = useState(false);
+  const { ibPosts, ibPageInfo, loading, error, getIBList } = useIBStore();
 
   const { userInfo } = useUserInfo();
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
-  const onChange = (e) => {
-    searchKeyword.current = e.target.value;
-  };
-  const onClickSearchButton = () => {
-    setSeraching((prev) => !prev);
+
+  const onSubmitSearch = (e) => {
+    e.preventDefault();
+    setCurrentPage(1);
+    setSearchKeyword(searchInput.trim());
   };
 
   useEffect(() => {
-    const search =
-      searchKeyword.current === undefined ? "" : searchKeyword.current;
-    getIBList(currentPage, search);
-  }, [searching]);
-
-  useEffect(() => {
-    adjustWindowSize(setWindowSize);
-  }, []);
+    getIBList(currentPage, searchKeyword);
+  }, [currentPage, searchKeyword, getIBList]);
 
   return (
-    <>
-      <main className="width_content archive">
-        <div className="header_flex">
-          <div className="header_tit_wrap">
-            <span>Monthly IB</span>
-            <h2>월간 IB</h2>
-          </div>
+    <main className={styles.ibPage}>
+      <section className={styles.hero}>
+        <div className={styles.heroCopy}>
+          <span className={styles.kicker}>MONTHLY IB ARCHIVE</span>
+          <h1>월간 IB</h1>
+          <p>
+            IB 학습 전략, 입시 인사이트, 에세이 가이드를 한곳에 모아 읽는 Monthly IB 아카이브입니다.
+          </p>
+        </div>
 
-          <div className="ft_search">
+        <div className={styles.heroPanel}>
+          <form className={styles.searchForm} onSubmit={onSubmitSearch}>
+            <FontAwesomeIcon icon={faMagnifyingGlass} />
             <input
               type="text"
-              placeholder="월간IB 검색"
-              defaultValue={searchKeyword.current}
-              onChange={onChange}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  onClickSearchButton();
-                }
-              }}
+              placeholder="제목 또는 본문으로 검색"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
             />
-            <button onClick={onClickSearchButton}>검색</button>
-          </div>
-        </div>
+            <button type="submit">검색</button>
+          </form>
 
-        {userInfo?.authority === "ADMIN" && (
-          <div className={styles.right_btn}>
-            <Link href="/ibwrite" className={styles.btn_write}>
+          <div className={styles.heroMeta}>
+            <span>{ibPageInfo?.totalElements || 0}개의 글</span>
+            <span>{searchKeyword ? `"${searchKeyword}" 검색 결과` : "최신순 정렬"}</span>
+          </div>
+
+          {userInfo?.authority === "ADMIN" && (
+            <Link href="/ibwrite" className={styles.btnWrite}>
               <FontAwesomeIcon icon={faPenAlt} />
-              <span>글쓰기</span>
+              <span>새 글쓰기</span>
             </Link>
-          </div>
-        )}
-
-        <div className={styles.ib_archive_wrap}>
-          <div className={styles.ib_archive_cont}>
-            <IbItems
-              IBContents={ibPosts}
-              currentPage={currentPage}
-              numShowContents={6}
-              onPageChange={handlePageChange}
-            />
-          </div>
+          )}
         </div>
-      </main>
-    </>
+      </section>
+
+      <IbItems
+        IBContents={ibPosts}
+        currentPage={currentPage}
+        pageInfo={ibPageInfo}
+        loading={loading}
+        error={error}
+        searchKeyword={searchKeyword}
+        onPageChange={handlePageChange}
+      />
+    </main>
   );
 };
 

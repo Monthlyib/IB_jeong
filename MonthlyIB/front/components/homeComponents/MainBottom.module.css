@@ -54,9 +54,21 @@
   margin-bottom: 1.6rem;
 }
 
-.community_wrap h2 a {
+.profile_title_link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: inherit;
+  line-height: 1.2;
+}
+
+.profile_title_link svg {
   font-size: 1.8rem;
-  margin-left: 0.8rem;
+  transition: transform 160ms ease;
+}
+
+.profile_title_link:hover svg {
+  transform: translateX(0.4rem);
 }
 
 .cm_tab_cont {

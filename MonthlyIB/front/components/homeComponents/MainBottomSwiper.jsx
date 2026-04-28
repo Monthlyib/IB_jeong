@@ -10,7 +10,7 @@ import { faPlayCircle } from "@fortawesome/free-solid-svg-icons";
 import Image from "next/image";
 import shortid from "shortid";
 
-const MainBottomSwiper = ({ posts, type }) => {
+const MainBottomSwiper = ({ posts, type, navigationKey = "default" }) => {
   return (
     <Swiper
       modules={[Navigation]}
@@ -18,8 +18,8 @@ const MainBottomSwiper = ({ posts, type }) => {
       slidesPerView={1.5}
       loop={false}
       navigation={{
-        prevEl: ".community_left_btn",
-        nextEl: ".community_right_btn",
+        prevEl: `.community_${navigationKey}_left_btn`,
+        nextEl: `.community_${navigationKey}_right_btn`,
       }}
       breakpoints={
         type === "video"

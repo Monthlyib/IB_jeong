@@ -5,7 +5,7 @@ import Loading from "@/components/Loading";
 export default function IbPost() {
   return (
     <Suspense fallback={<Loading />}>
-      <IbComponents />;
+      <IbComponents />
     </Suspense>
   );
 }

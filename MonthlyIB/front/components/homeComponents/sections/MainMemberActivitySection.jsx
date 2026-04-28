@@ -9,6 +9,7 @@ import MainBottomSwiper from "../MainBottomSwiper";
 import { useCourseStore } from "@/store/course";
 import { useQuestionStore } from "@/store/question";
 import { useTutoringStore } from "@/store/tutoring";
+import { useUserInfo } from "@/store/user";
 
 const PREVIEW_EMPTY_STATES = [
   { text: "수강중인 강의가 없습니다.", href: "/course", label: "영상강의 이동" },
@@ -22,23 +23,32 @@ const MainMemberActivitySection = ({
 }) => {
   const [tab, setTab] = useState(0);
   const [currentPage] = useState(1);
+  const { userInfo } = useUserInfo();
   const { coursePosts, getUserCourseList } = useCourseStore();
   const { getUserQuestionList, questionList } = useQuestionStore();
   const { getTutoringDateList, tutoringDateList } = useTutoringStore();
+  const isLoggedIn = Boolean(userInfo?.userId && userInfo?.accessToken);
+  const profileLink = isLoggedIn ? "/mypage" : "/login";
 
   useEffect(() => {
     if (previewMode) {
       return;
     }
 
-    const localUserInfo = JSON.parse(localStorage.getItem("userInfo"));
-    const session = localUserInfo?.state?.userInfo;
-    if (session?.userId !== undefined) {
-      getUserCourseList(session.userId, currentPage - 1, session);
-      getTutoringDateList("", "", 0, session);
-      getUserQuestionList("", 1, "", session, 6);
+    if (isLoggedIn) {
+      getUserCourseList(userInfo.userId, currentPage - 1, userInfo);
+      getTutoringDateList("", "", 0, userInfo);
+      getUserQuestionList("", 1, "", userInfo, 6);
     }
-  }, [currentPage, getTutoringDateList, getUserCourseList, getUserQuestionList, previewMode]);
+  }, [
+    currentPage,
+    getTutoringDateList,
+    getUserCourseList,
+    getUserQuestionList,
+    isLoggedIn,
+    previewMode,
+    userInfo,
+  ]);
 
   const renderEmptyState = (emptyState) => (
     <div className={styles.no_item}>
@@ -59,8 +69,10 @@ const MainMemberActivitySection = ({
   return (
     <section className={styles.community_wrap}>
       <h2>
-        {title} <Link href="#" />
-        <FontAwesomeIcon icon={faAngleRight} />
+        <Link href={profileLink} className={styles.profile_title_link}>
+          <span>{title}</span>
+          <FontAwesomeIcon icon={faAngleRight} />
+        </Link>
       </h2>
       <div className={styles.cm_tab}>
         <button
@@ -95,15 +107,19 @@ const MainMemberActivitySection = ({
             id={tab === 0 ? "cm" : ""}
           >
             <div className={styles.controller}>
-              <button type="button" className="community_left_btn">
+              <button type="button" className="community_course_left_btn">
                 <FontAwesomeIcon icon={faAngleLeft} />
               </button>
-              <button type="button" className="community_right_btn">
+              <button type="button" className="community_course_right_btn">
                 <FontAwesomeIcon icon={faAngleRight} />
               </button>
             </div>
-            {coursePosts?.length > 0 ? (
-              <MainBottomSwiper posts={coursePosts} type="video" />
+            {isLoggedIn && coursePosts?.length > 0 ? (
+              <MainBottomSwiper
+                posts={coursePosts}
+                type="video"
+                navigationKey="course"
+              />
             ) : (
               renderEmptyState(PREVIEW_EMPTY_STATES[0])
             )}
@@ -113,17 +129,18 @@ const MainMemberActivitySection = ({
             id={tab === 1 ? "cm" : ""}
           >
             <div className={styles.controller}>
-              <button type="button" className="community_left_btn">
+              <button type="button" className="community_tutoring_left_btn">
                 <FontAwesomeIcon icon={faAngleLeft} />
               </button>
-              <button type="button" className="community_right_btn">
+              <button type="button" className="community_tutoring_right_btn">
                 <FontAwesomeIcon icon={faAngleRight} />
               </button>
             </div>
-            {tutoringDateList?.tutoring?.data?.length > 0 ? (
+            {isLoggedIn && tutoringDateList?.tutoring?.data?.length > 0 ? (
               <MainBottomSwiper
                 posts={tutoringDateList?.tutoring?.data}
                 type="tutoring"
+                navigationKey="tutoring"
               />
             ) : (
               <div className={styles.no_schedule}>
@@ -139,15 +156,19 @@ const MainMemberActivitySection = ({
             id={tab === 2 ? "cm" : ""}
           >
             <div className={styles.controller}>
-              <button type="button" className="community_left_btn">
+              <button type="button" className="community_question_left_btn">
                 <FontAwesomeIcon icon={faAngleLeft} />
               </button>
-              <button type="button" className="community_right_btn">
+              <button type="button" className="community_question_right_btn">
                 <FontAwesomeIcon icon={faAngleRight} />
               </button>
             </div>
-            {questionList?.length > 0 ? (
-              <MainBottomSwiper posts={questionList} type="question" />
+            {isLoggedIn && questionList?.length > 0 ? (
+              <MainBottomSwiper
+                posts={questionList}
+                type="question"
+                navigationKey="question"
+              />
             ) : (
               renderEmptyState(PREVIEW_EMPTY_STATES[2])
             )}
