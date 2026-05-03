@@ -392,7 +392,7 @@ const AiHistoryPanel = ({
                 ) : detailView?.isTopicGuide ? (
                   <TopicGuideHistoryDetail detailData={detailData} detailView={detailView} />
                 ) : (
-                  <DefaultHistoryDetail detailData={detailData} />
+                  <DefaultHistoryDetail detailData={detailData} detailView={detailView} />
                 )}
               </>
             ) : null}
@@ -403,32 +403,57 @@ const AiHistoryPanel = ({
   );
 };
 
-const DefaultHistoryDetail = ({ detailData }) => (
+const DefaultHistoryDetail = ({ detailData, detailView }) => (
   <div className={styles.detailsStack}>
-    <details className={styles.detailBox} open>
-      <summary>요약</summary>
-      <div className={styles.detailBody}>
-        <p className={styles.summaryText}>
-          {detailData.summary || "요약 정보가 없습니다."}
-        </p>
+    <section className={styles.historySection}>
+      <div className={styles.historySectionHeader}>
+        <span>요약</span>
+        <h4>{detailData.summary || detailData.title || "AI 히스토리 기록"}</h4>
+        <p>{getGenericActionDescription(detailData)}</p>
       </div>
-    </details>
+    </section>
+
+    <section className={styles.historySection}>
+      <div className={styles.historySectionHeader}>
+        <span>입력 원문</span>
+        <h4>사용자 요청 정보</h4>
+        <p>AI 호출에 사용된 입력값을 읽기 쉬운 카드 구조로 정리했습니다.</p>
+      </div>
+
+      <div className={styles.structuredPayloadCard}>
+        <ReadableValue value={detailView?.requestPayload} />
+      </div>
+    </section>
+
+    <section className={`${styles.historySection} ${styles.structuredResultSection}`}>
+      <div className={styles.historySectionHeader}>
+        <span>AI 응답 원문</span>
+        <h4>{getGenericResultTitle(detailData)}</h4>
+        <p>AI가 반환한 응답 원문을 결과 카드 형태로 정리했습니다.</p>
+      </div>
+
+      <div className={styles.structuredPayloadCard}>
+        <ReadableValue value={detailView?.responsePayload} />
+      </div>
+    </section>
 
     <details className={styles.detailBox}>
-      <summary>입력 원문</summary>
+      <summary>JSON 원본 보기</summary>
       <div className={styles.detailBody}>
-        <pre className={styles.codeBlock}>
-          {formatJsonText(detailData.requestPayloadJson)}
-        </pre>
-      </div>
-    </details>
-
-    <details className={styles.detailBox}>
-      <summary>AI 응답 원문</summary>
-      <div className={styles.detailBody}>
-        <pre className={styles.codeBlock}>
-          {formatJsonText(detailData.responsePayloadJson)}
-        </pre>
+        <div className={styles.rawGrid}>
+          <div>
+            <h5>입력 원문</h5>
+            <pre className={styles.codeBlock}>
+              {formatJsonText(detailData.requestPayloadJson)}
+            </pre>
+          </div>
+          <div>
+            <h5>AI 응답 원문</h5>
+            <pre className={styles.codeBlock}>
+              {formatJsonText(detailData.responsePayloadJson)}
+            </pre>
+          </div>
+        </div>
       </div>
     </details>
 
@@ -829,6 +854,44 @@ const normalizeRecommendTopics = (rawTopics) => {
       extra: null,
     };
   });
+};
+
+const getGenericResultTitle = (detailData) => {
+  switch (detailData.actionType) {
+    case "ENGLISH_CHAT":
+      return "English Coaching Response";
+    case "VOICE_FEEDBACK":
+      return "IO Voice Feedback";
+    case "QUIZ_START":
+      return "Chapter Test Session";
+    case "QUIZ_RESULT":
+      return "Chapter Test Result";
+    case "ANSWER_SUBMIT":
+      return "Submitted Descriptive Answer";
+    case "FEEDBACK_GENERATE":
+      return "Descriptive Feedback";
+    default:
+      return `${ACTION_LABELS[detailData.actionType] || "AI"} 결과`;
+  }
+};
+
+const getGenericActionDescription = (detailData) => {
+  switch (detailData.actionType) {
+    case "ENGLISH_CHAT":
+      return "영어 코칭 대화에서 사용한 프롬프트와 AI 응답을 카드형으로 확인합니다.";
+    case "VOICE_FEEDBACK":
+      return "IO 말하기 연습의 주제, 녹음 파일, 피드백 원문을 정리해 확인합니다.";
+    case "QUIZ_START":
+      return "챕터 테스트 시작 시 생성된 문항과 세션 정보를 정리해 확인합니다.";
+    case "QUIZ_RESULT":
+      return "챕터 테스트 제출 결과와 점수 정보를 정리해 확인합니다.";
+    case "ANSWER_SUBMIT":
+      return "서술형 답안 제출 원문과 채점 응답을 정리해 확인합니다.";
+    case "FEEDBACK_GENERATE":
+      return "서술형 피드백 생성 결과와 모범답안/평가 내용을 정리해 확인합니다.";
+    default:
+      return "입력 원문과 AI 응답 원문을 읽기 쉬운 카드 구조로 확인합니다.";
+  }
 };
 
 const normalizeTopicGuideHistory = (detailData, requestPayload, responsePayload) => {
