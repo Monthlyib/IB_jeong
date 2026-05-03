@@ -22,6 +22,10 @@ import {
   getPlayerUrl,
   resolveCourseEntryTarget,
 } from "./courseProgressUtils";
+import {
+  COURSE_THUMBNAIL_FALLBACK,
+  normalizeCourseThumbnailUrl,
+} from "./courseImageUtils";
 
 const stripHtml = (value = "") =>
   value
@@ -36,6 +40,7 @@ const CourseDetail = ({ pageId }) => {
   const { courseDetail, getCourseDetail } = useCourseStore();
   const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
   const [courseProgress, setCourseProgress] = useState(null);
+  const [thumbnailBroken, setThumbnailBroken] = useState(false);
   const accessToken = getCookie("accessToken");
 
   const courseContent = useRef(null);
@@ -90,6 +95,13 @@ const CourseDetail = ({ pageId }) => {
       ? `${plainText.slice(0, 160).trim()}...`
       : plainText;
   }, [courseDetail?.content]);
+  const courseThumbnailSrc = useMemo(
+    () => normalizeCourseThumbnailUrl(courseDetail?.videoLessonsIbThumbnailUrl),
+    [courseDetail?.videoLessonsIbThumbnailUrl]
+  );
+  const visibleThumbnailSrc = thumbnailBroken
+    ? COURSE_THUMBNAIL_FALLBACK
+    : courseThumbnailSrc;
 
   const scrollToSection = (sectionRef, tabIndex) => {
     const target = sectionRef.current;
@@ -106,6 +118,10 @@ const CourseDetail = ({ pageId }) => {
       getCourseDetail(pageId);
     }
   }, [getCourseDetail, pageId]);
+
+  useEffect(() => {
+    setThumbnailBroken(false);
+  }, [courseThumbnailSrc]);
 
   useEffect(() => {
     const savedUser = localStorage.getItem("userInfo");
@@ -207,14 +223,17 @@ const CourseDetail = ({ pageId }) => {
             <section className={styles.courseHero}>
               <figure className={styles.course_thumbnail}>
                 <Image
-                  src={
-                    courseDetail?.videoLessonsIbThumbnailUrl
-                      ? courseDetail.videoLessonsIbThumbnailUrl
-                      : "/img/common/user_profile.jpg"
-                  }
-                  width="100"
-                  height="100"
+                  src={visibleThumbnailSrc}
+                  fill
+                  sizes="(max-width: 980px) 100vw, (max-width: 1480px) 58vw, 78rem"
                   alt="강의 표지 사진"
+                  priority
+                  unoptimized
+                  onError={() => {
+                    if (visibleThumbnailSrc !== COURSE_THUMBNAIL_FALLBACK) {
+                      setThumbnailBroken(true);
+                    }
+                  }}
                 />
               </figure>
 

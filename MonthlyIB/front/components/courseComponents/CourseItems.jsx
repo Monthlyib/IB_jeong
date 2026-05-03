@@ -4,6 +4,7 @@ import Pagination from "./Pagination";
 import Link from "next/link";
 import Image from "next/image";
 import shortid from "shortid";
+import { normalizeCourseThumbnailUrl } from "./courseImageUtils";
 
 const CourseItems = async ({
   courseContents,
@@ -20,15 +21,12 @@ const CourseItems = async ({
             <Link href={`/course/${content.videoLessonsId}`}>
               <figure>
                 <Image
-                  src={
-                    content?.videoLessonsIbThumbnailUrl !== ""
-                      ? content?.videoLessonsIbThumbnailUrl
-                      : "/img/common/user_profile.jpg"
-                  }
+                  src={normalizeCourseThumbnailUrl(content?.videoLessonsIbThumbnailUrl)}
                   priority
                   width="100"
                   height="100"
                   alt="강의 표지 사진"
+                  unoptimized
                 />
               </figure>
               <div className={styles.course_txt}>
