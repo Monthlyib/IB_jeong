@@ -12,6 +12,7 @@ import Pagination from "../layoutComponents/Paginatation";
 import { getCookie } from "@/apis/cookies";
 import { useCourseStore } from "@/store/course";
 import { useUserStore } from "@/store/user";
+import { formatKoreaDateTime } from "@/utils/dateTime";
 
 const CourseReviewItems = ({
   coursePostReviewPosts,
@@ -64,8 +65,12 @@ const CourseReviewItems = ({
   };
 
   const onClickDelete = useCallback(
-    (videoLessonsReplyId) => {
-      deleteCourseReview(pageId, videoLessonsReplyId, { accessToken: session });
+    async (videoLessonsReplyId) => {
+      try {
+        await deleteCourseReview(pageId, videoLessonsReplyId, { accessToken: session });
+      } catch (error) {
+        alert(error?.response?.data?.message || "리뷰 삭제에 실패했습니다.");
+      }
     },
     [deleteCourseReview, pageId, session]
   );
@@ -87,25 +92,33 @@ const CourseReviewItems = ({
   };
 
   const onSubmit = useCallback(
-    (videoLessonsReplyId, content) => {
+    async (videoLessonsReplyId, content) => {
       if (typeof reviews.current === "object") {
         reviews.current = content;
       }
 
-      reviseCourseReview(
-        pageId,
-        videoLessonsReplyId,
-        reviews.current,
-        points,
-        userInfo
-      );
-      setModal(-1);
+      try {
+        await reviseCourseReview(
+          pageId,
+          videoLessonsReplyId,
+          reviews.current,
+          points,
+          userInfo
+        );
+        setModal(-1);
+      } catch (error) {
+        alert(error?.response?.data?.message || "리뷰 수정에 실패했습니다.");
+      }
     },
     [pageId, points, reviseCourseReview, userInfo]
   );
 
-  const onClickLike = (id) => {
-    voteCourseReview(pageId, id, userInfo);
+  const onClickLike = async (id) => {
+    try {
+      await voteCourseReview(pageId, id, userInfo);
+    } catch (error) {
+      alert(error?.response?.data?.message || "좋아요 처리에 실패했습니다.");
+    }
   };
 
   return (
@@ -161,7 +174,10 @@ const CourseReviewItems = ({
                       {`(${content.authorUsername})`}
                     </span>
                     <b>·</b>
-                    <span>{content.updateAt}</span>
+                    <span>
+                      {formatKoreaDateTime(content.updateAt || content.createAt) ||
+                        "시간 정보 없음"}
+                    </span>
                   </div>
                 </div>
               </div>

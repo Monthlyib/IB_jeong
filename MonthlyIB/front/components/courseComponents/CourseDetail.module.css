@@ -1550,6 +1550,13 @@ div.review_stars svg.active:hover ~ svg.empty {
   color: #5f4685;
 }
 
+.btn_write:disabled {
+  cursor: not-allowed;
+  border-color: rgba(91, 62, 132, 0.08);
+  background: #f2f0f5;
+  color: #9a91aa;
+}
+
 .btn_write svg {
   font-size: 1.4rem;
 }

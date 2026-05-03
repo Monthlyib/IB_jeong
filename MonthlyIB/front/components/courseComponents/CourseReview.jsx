@@ -9,6 +9,8 @@ import CourseReviewItems from "./CourseReviewItems";
 import CourseReviewPost from "./CourseReviewPost";
 import CourseReviewSummary from "./CourseReviewSummary";
 import { useUserStore } from "@/store/user";
+import { useUserInfo } from "@/store/user";
+import { parseServerDateTime } from "@/utils/dateTime";
 import { isActiveSubscribe } from "@/utils/subscribeUtils";
 
 const CourseReview = ({
@@ -26,6 +28,13 @@ const CourseReview = ({
   });
 
   const { activeSubscribeInfo, getUserSubscribeInfo } = useUserStore();
+  const { userInfo } = useUserInfo();
+  const reviews = useMemo(() => courseDetail?.reply?.data ?? [], [courseDetail?.reply?.data]);
+  const reviewTotalCount =
+    courseDetail?.reply?.pageInfo?.totalElements ?? reviews.length;
+  const hasMyReview = reviews.some(
+    (review) => Number(review.authorId) === Number(userInfo?.userId)
+  );
 
   useEffect(() => {
     const savedUser = localStorage.getItem("userInfo");
@@ -54,10 +63,18 @@ const CourseReview = ({
       return reviews.sort((a, b) => (b.star || 0) - (a.star || 0));
     }
 
-    return reviews.sort(
-      (a, b) => new Date(b.updateAt).getTime() - new Date(a.updateAt).getTime()
-    );
+    return reviews.sort((a, b) => {
+      const nextDate = parseServerDateTime(b.updateAt || b.createAt);
+      const currentDate = parseServerDateTime(a.updateAt || a.createAt);
+      return (nextDate?.getTime() || 0) - (currentDate?.getTime() || 0);
+    });
   }, [courseDetail?.reply?.data, menuClicked]);
+
+  useEffect(() => {
+    if (hasMyReview) {
+      setFormModal(false);
+    }
+  }, [hasMyReview]);
 
   return (
     <>
@@ -68,10 +85,15 @@ const CourseReview = ({
             <button
               type="button"
               className={styles.btn_write}
-              onClick={() => setFormModal(!formModal)}
+              disabled={hasMyReview}
+              onClick={() => {
+                if (!hasMyReview) {
+                  setFormModal(!formModal);
+                }
+              }}
             >
               <FontAwesomeIcon icon={faPenAlt} />
-              <span>리뷰쓰기</span>
+              <span>{hasMyReview ? "리뷰 작성 완료" : "리뷰쓰기"}</span>
             </button>
             {formModal && (
               <CourseReviewPost setFormModal={setFormModal} pageId={pageId} />
@@ -87,7 +109,7 @@ const CourseReview = ({
             <b>{reviewAvgPoint.toFixed(1)}</b>
           </div>
           <p>
-            리뷰 <span>{courseDetail?.reply?.data?.length || 0}</span>개
+            리뷰 <span>{reviewTotalCount}</span>개
           </p>
         </div>
         <CourseReviewSummary reviewPoint={reviewPoint} />
@@ -96,7 +118,7 @@ const CourseReview = ({
       <div className={styles.dt_review_wrap}>
         <div className={styles.dt_review_filter}>
           <h5>
-            리뷰 <span>{courseDetail?.reply?.data?.length || 0}</span>개
+            리뷰 <span>{reviewTotalCount}</span>개
           </h5>
           <div className={styles.dt_review_select}>
             <button

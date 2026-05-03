@@ -34,6 +34,7 @@ export const courseDeleteRelpyItem = async (videoLessonsReplyId, session) => {
     );
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -111,9 +112,11 @@ export const coursePostRelpyItem = async (
       content,
       star,
     };
-    await tokenRequireApi.post(`${COURSE_REPLY_API_URL}`, data, config);
+    const res = await tokenRequireApi.post(`${COURSE_REPLY_API_URL}`, data, config);
+    return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -133,6 +136,7 @@ export const courseVoteRelpyItem = async (videoLessonsReplyId, session) => {
     );
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 
@@ -257,9 +261,11 @@ export const courseReviseRelpyItem = async (
       content,
       star,
     };
-    await tokenRequireApi.patch(`${COURSE_REPLY_API_URL}`, data, config);
+    const res = await tokenRequireApi.patch(`${COURSE_REPLY_API_URL}`, data, config);
+    return res.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
 

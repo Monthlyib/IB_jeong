@@ -96,9 +96,10 @@ export const useCourseStore = create((set, get) => ({
         star,
         session
       );
-      get().getCourseDetail(videoLessonsId);
+      await get().getCourseDetail(videoLessonsId);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   deleteCourseItem: async (pageId, userInfo) => {
@@ -112,9 +113,10 @@ export const useCourseStore = create((set, get) => ({
   deleteCourseReview: async (videoLessonsId, videoLessonsReplyId, session) => {
     try {
       await courseDeleteRelpyItem(videoLessonsReplyId, session);
-      get().getCourseDetail(videoLessonsId);
+      await get().getCourseDetail(videoLessonsId);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   reviseCourseReview: async (
@@ -132,17 +134,19 @@ export const useCourseStore = create((set, get) => ({
         star,
         session
       );
-      get().getCourseDetail(videoLessonsId);
+      await get().getCourseDetail(videoLessonsId);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   voteCourseReview: async (videoLessonsId, videoLessonsReplyId, session) => {
     try {
       await courseVoteRelpyItem(videoLessonsReplyId, session);
-      get().getCourseDetail(videoLessonsId);
+      await get().getCourseDetail(videoLessonsId);
     } catch (error) {
       console.error(error);
+      throw error;
     }
   },
   getUserCourseList: async (userId, page, session) => {

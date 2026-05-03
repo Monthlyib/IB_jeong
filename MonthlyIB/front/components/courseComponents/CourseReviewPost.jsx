@@ -11,6 +11,7 @@ import { useUserInfo } from "@/store/user";
 const CourseReviewPost = ({ setFormModal, pageId }) => {
   const [content, setContent] = useState("");
   const [point, setPoint] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
 
   const { userInfo } = useUserInfo();
   const { postCourseReview } = useCourseStore();
@@ -32,18 +33,36 @@ const CourseReviewPost = ({ setFormModal, pageId }) => {
   };
 
   const onSubmit = useCallback(
-    (e) => {
+    async (e) => {
       e.preventDefault();
-      postCourseReview(
-        parseInt(pageId),
-        userInfo?.userId,
-        content,
-        point,
-        userInfo
-      );
-      setFormModal(false);
+
+      if (!point) {
+        alert("리뷰 평점을 선택해주세요.");
+        return;
+      }
+
+      if (!content.trim()) {
+        alert("리뷰 내용을 입력해주세요.");
+        return;
+      }
+
+      try {
+        setSubmitting(true);
+        await postCourseReview(
+          parseInt(pageId, 10),
+          userInfo?.userId,
+          content.trim(),
+          point,
+          userInfo
+        );
+        setFormModal(false);
+      } catch (error) {
+        alert(error?.response?.data?.message || "리뷰 작성에 실패했습니다.");
+      } finally {
+        setSubmitting(false);
+      }
     },
-    [content, point, pageId]
+    [content, point, pageId, postCourseReview, setFormModal, userInfo]
   );
 
   const onChangeContent = useCallback((e) => {
@@ -94,8 +113,8 @@ const CourseReviewPost = ({ setFormModal, pageId }) => {
                   />
                 </div>
               </div>
-              <button type="submit" className={styles.md_btn}>
-                작성
+              <button type="submit" className={styles.md_btn} disabled={submitting}>
+                {submitting ? "작성 중..." : "작성"}
               </button>
             </div>
           </div>
