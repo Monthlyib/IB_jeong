@@ -575,6 +575,10 @@
   margin: 0;
 }
 
+.course_curri_wrap > ul > li > ul.courseCurriSubListOpen {
+  display: block;
+}
+
 .course_curri_wrap > ul > li > ul li {
   position: relative;
   padding: 1rem 0 1rem 1.6rem;

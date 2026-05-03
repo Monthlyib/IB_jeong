@@ -44,7 +44,7 @@ const CourseCurriculum = ({
             </div>
           </button>
 
-          <ul className={modalOpen === index ? styles.active : ""}>
+          <ul className={modalOpen === index ? styles.courseCurriSubListOpen : ""}>
             {chapter.subChapters?.map((subChapter) => {
               const progress = progressMap[subChapter.chapterId];
 
