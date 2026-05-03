@@ -153,6 +153,11 @@ const AiHistoryPanel = ({
     loadDetail();
   }, [isReady, mode, selectedHistoryId, session]);
 
+  const detailView = useMemo(
+    () => (detailData ? buildHistoryDetailView(detailData) : null),
+    [detailData]
+  );
+
   if (!isReady) {
     return (
       <div className={styles.feedback}>
@@ -163,10 +168,6 @@ const AiHistoryPanel = ({
 
   const totalPages = pageInfo?.totalPages ?? 0;
   const currentPageNumber = (pageInfo?.page ?? currentPage) + 1;
-  const detailView = useMemo(
-    () => (detailData ? buildHistoryDetailView(detailData) : null),
-    [detailData]
-  );
 
   return (
     <div className={styles.panel}>
@@ -383,7 +384,12 @@ const AiHistoryPanel = ({
                   ) : null}
                 </div>
 
-                {detailView?.isTopicGuide ? (
+                {detailView?.isTopicRecommend ? (
+                  <TopicRecommendHistoryDetail
+                    detailData={detailData}
+                    detailView={detailView}
+                  />
+                ) : detailView?.isTopicGuide ? (
                   <TopicGuideHistoryDetail detailData={detailData} detailView={detailView} />
                 ) : (
                   <DefaultHistoryDetail detailData={detailData} />
@@ -429,6 +435,89 @@ const DefaultHistoryDetail = ({ detailData }) => (
     <AttachmentDetail detailData={detailData} />
   </div>
 );
+
+const TopicRecommendHistoryDetail = ({ detailData, detailView }) => {
+  const recommend = detailView.topicRecommend;
+
+  return (
+    <div className={styles.detailsStack}>
+      <section className={styles.historySection}>
+        <div className={styles.historySectionHeader}>
+          <span>요약</span>
+          <h4>{detailData.summary || "AI IA 주제 추천"}</h4>
+          <p>
+            입력한 과목과 관심사를 기준으로 생성된 IA 주제 후보를 카드형으로
+            확인합니다.
+          </p>
+        </div>
+      </section>
+
+      <section className={styles.historySection}>
+        <div className={styles.historySectionHeader}>
+          <span>입력 원문</span>
+          <h4>추천 요청 정보</h4>
+          <p>주제 추천에 사용된 과목과 관심 영역입니다.</p>
+        </div>
+
+        <div className={styles.requestGrid}>
+          <ReadableMetaCard label="Subject" value={recommend.subject} />
+          <ReadableMetaCard label="Interest Area" value={recommend.interest} />
+          <ReadableMetaCard label="Result Count" value={`${recommend.topics.length}개`} />
+        </div>
+      </section>
+
+      <section className={`${styles.historySection} ${styles.recommendResultSection}`}>
+        <div className={styles.historySectionHeader}>
+          <span>AI 응답 원문</span>
+          <h4>Recommended IA Topics</h4>
+          <p>추천된 각 주제의 제목과 설명을 결과 카드 형태로 정리했습니다.</p>
+        </div>
+
+        {recommend.topics.length > 0 ? (
+          <div className={styles.recommendTopicGrid}>
+            {recommend.topics.map((topic, index) => (
+              <article key={`${topic.title}-${index}`} className={styles.recommendTopicCard}>
+                <div className={styles.recommendTopicIndex}>
+                  Topic {String(index + 1).padStart(2, "0")}
+                </div>
+                <h5>{topic.title || `추천 주제 ${index + 1}`}</h5>
+                {topic.description ? <p>{topic.description}</p> : null}
+                {topic.extra ? <ReadableValue value={topic.extra} /> : null}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className={styles.requestPayloadCard}>
+            <span>Recommended Topics</span>
+            <p className={styles.readableText}>추천 주제 기록이 없습니다.</p>
+          </div>
+        )}
+      </section>
+
+      <details className={styles.detailBox}>
+        <summary>JSON 원본 보기</summary>
+        <div className={styles.detailBody}>
+          <div className={styles.rawGrid}>
+            <div>
+              <h5>입력 원문</h5>
+              <pre className={styles.codeBlock}>
+                {formatJsonText(detailData.requestPayloadJson)}
+              </pre>
+            </div>
+            <div>
+              <h5>AI 응답 원문</h5>
+              <pre className={styles.codeBlock}>
+                {formatJsonText(detailData.responsePayloadJson)}
+              </pre>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <AttachmentDetail detailData={detailData} />
+    </div>
+  );
+};
 
 const TopicGuideHistoryDetail = ({ detailData, detailView }) => {
   const guide = detailView.topicGuide;
@@ -685,15 +774,61 @@ const buildHistoryDetailView = (detailData) => {
   const isTopicGuide =
     detailData.toolType === "IA_COACHING" &&
     detailData.actionType === "TOPIC_GUIDE";
+  const isTopicRecommend =
+    detailData.toolType === "IA_COACHING" &&
+    detailData.actionType === "TOPIC_RECOMMEND";
 
   return {
     requestPayload,
     responsePayload,
     isTopicGuide,
+    isTopicRecommend,
+    topicRecommend: isTopicRecommend
+      ? normalizeTopicRecommendHistory(detailData, requestPayload, responsePayload)
+      : null,
     topicGuide: isTopicGuide
       ? normalizeTopicGuideHistory(detailData, requestPayload, responsePayload)
       : null,
   };
+};
+
+const normalizeTopicRecommendHistory = (detailData, requestPayload, responsePayload) => {
+  const rawTopics =
+    responsePayload?.ia_topics ??
+    responsePayload?.topics ??
+    responsePayload?.recommendedTopics ??
+    [];
+
+  return {
+    subject: firstNonEmpty(requestPayload?.subject, detailData.subject, "IB Subject"),
+    interest: firstNonEmpty(
+      requestPayload?.interest,
+      requestPayload?.interestTopic,
+      detailData.interestTopic,
+      "Not specified"
+    ),
+    topics: normalizeRecommendTopics(rawTopics),
+  };
+};
+
+const normalizeRecommendTopics = (rawTopics) => {
+  const topics = Array.isArray(rawTopics) ? rawTopics : [rawTopics].filter(Boolean);
+  return topics.map((topic) => {
+    if (topic && typeof topic === "object") {
+      const { title, question, description, ...extra } = topic;
+      return {
+        title: firstNonEmpty(title, question, "Untitled topic"),
+        description: stringifyText(description),
+        extra: Object.keys(extra).length > 0 ? extra : null,
+      };
+    }
+
+    return {
+      title: stringifyText(topic),
+      description: "",
+      extra: null,
+    };
+  });
 };
 
 const normalizeTopicGuideHistory = (detailData, requestPayload, responsePayload) => {
