@@ -1,5 +1,5 @@
 .container {
-  width: 110rem;
+  width: min(112rem, 100%);
   max-width: 100%;
   margin: 0 auto;
   padding: 4rem 2rem 5rem;
@@ -18,10 +18,10 @@
   align-items: center;
   justify-content: center;
   padding: 0.6rem 1.2rem;
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 999px;
-  background: #f7f2fb;
-  color: var(--primary01);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -32,14 +32,14 @@
   margin: 1.6rem 0 1rem;
   font-size: clamp(2.8rem, 3.8vw, 4rem);
   font-weight: 700;
-  color: var(--primary01);
+  color: var(--mi-brand-deep);
 }
 
 .description {
   margin: 0;
   font-size: 1.6rem;
   line-height: 1.75;
-  color: #4d4658;
+  color: var(--mi-body);
 }
 
 .infoSection,
@@ -47,10 +47,10 @@
 .recordSection,
 .feedbackSection,
 .audioSection {
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 2.4rem;
-  background: #fff;
-  box-shadow: 0 16px 34px rgba(57, 31, 82, 0.05);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
 }
 
 .infoSection,
@@ -73,7 +73,7 @@
   margin: 0 0 1.4rem;
   font-size: 1.8rem;
   font-weight: 700;
-  color: var(--primary02);
+  color: var(--mi-brand-deep);
 }
 
 .infoRow {
@@ -84,7 +84,7 @@
   margin-bottom: 1rem;
   font-size: 1.45rem;
   line-height: 1.6;
-  color: #413a4d;
+  color: var(--mi-body);
 }
 
 .infoRow:last-of-type {
@@ -92,7 +92,7 @@
 }
 
 .infoRow span {
-  color: #6d6579;
+  color: var(--mi-muted);
 }
 
 .infoRow strong {
@@ -120,9 +120,9 @@
 .viewScriptButton,
 .recordButton,
 .feedbackButton {
-  background: var(--primary01);
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
   color: #fff;
-  box-shadow: 0 12px 20px rgba(81, 52, 108, 0.15);
+  box-shadow: 0 1.2rem 2.4rem rgba(81, 52, 108, 0.18);
 }
 
 .viewScriptButton {
@@ -132,7 +132,7 @@
 .viewScriptButton:hover,
 .recordButton:hover,
 .feedbackButton:hover {
-  background: var(--primary03);
+  background: var(--mi-brand-mid);
   transform: translateY(-1px);
 }
 
@@ -147,13 +147,13 @@
 }
 
 .tutorButton {
-  background: #f9f5ff;
-  color: var(--primary01);
-  border: 1px solid rgba(81, 52, 108, 0.16);
+  background: var(--mi-surface-soft);
+  color: var(--mi-brand);
+  border: 1px solid var(--mi-border);
 }
 
 .tutorButton:hover {
-  background: #efe6fb;
+  background: var(--mi-surface);
   transform: translateY(-1px);
 }
 
@@ -183,7 +183,7 @@
   white-space: pre-wrap;
   font-size: 1.45rem;
   line-height: 1.75;
-  color: #3f3949;
+  color: var(--mi-body);
   font-family: "Noto Sans KR", sans-serif;
 }
 
@@ -194,13 +194,13 @@
   margin-top: 1rem;
   padding: 0.8rem 1.2rem;
   border-radius: 1rem;
-  background: var(--primary01);
+  background: var(--mi-brand);
   color: #fff;
   text-decoration: none;
 }
 
 .downloadLink:hover {
-  background: var(--primary03);
+  background: var(--mi-brand-mid);
 }
 
 .recordSection {
@@ -218,7 +218,7 @@
   font-size: clamp(4.2rem, 7vw, 6.2rem);
   font-weight: 700;
   line-height: 0.92;
-  color: var(--primary01);
+  color: var(--mi-brand);
   letter-spacing: -0.04em;
 }
 
@@ -231,7 +231,7 @@
   max-width: 42rem;
   font-size: 1.4rem;
   line-height: 1.6;
-  color: #655d72;
+  color: var(--mi-body);
 }
 
 .actionRow {
@@ -250,7 +250,7 @@
   margin: 0 0 1.4rem;
   font-size: 1.5rem;
   line-height: 1.8;
-  color: #3f3949;
+  color: var(--mi-body);
   white-space: pre-wrap;
 }
 

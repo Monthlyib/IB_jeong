@@ -16,13 +16,13 @@
   margin: 0;
   font-size: 2rem;
   font-weight: 700;
-  color: #2b1d45;
+  color: var(--mi-brand-deep);
 }
 
 .panelHeaderText p {
   margin: 0.6rem 0 0;
   font-size: 1.35rem;
-  color: #72668d;
+  color: var(--mi-body);
   line-height: 1.55;
 }
 
@@ -37,7 +37,7 @@
 .filterWrap label {
   font-size: 1.2rem;
   font-weight: 700;
-  color: #7f729b;
+  color: var(--mi-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -47,17 +47,17 @@
   min-width: 0;
   padding: 1rem 1.2rem;
   border-radius: 1.2rem;
-  border: 0.1rem solid rgba(95, 67, 134, 0.18);
-  background: #fff;
+  border: 0.1rem solid var(--mi-border);
+  background: var(--mi-canvas);
   font-size: 1.4rem;
-  color: #2f2449;
+  color: var(--mi-ink);
 }
 
 .feedback {
   padding: 1.4rem 1.6rem;
   border-radius: 1.6rem;
-  background: rgba(95, 67, 134, 0.08);
-  color: #564771;
+  background: var(--mi-surface);
+  color: var(--mi-body);
   font-size: 1.4rem;
   line-height: 1.6;
 }
@@ -68,11 +68,11 @@
   align-items: center;
   justify-content: center;
   border-radius: 1.8rem;
-  border: 0.1rem solid rgba(95, 67, 134, 0.12);
+  border: 0.1rem solid var(--mi-border);
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.98) 0%,
-    rgba(245, 241, 251, 0.95) 100%
+    var(--mi-canvas) 0%,
+    var(--mi-surface) 100%
   );
   box-shadow: inset 0 0 0 0.1rem rgba(255, 255, 255, 0.55);
 }
@@ -90,12 +90,12 @@
 
 .cardButton {
   width: 100%;
-  border: 0.1rem solid rgba(95, 67, 134, 0.14);
-  background: #fff;
+  border: 0.1rem solid var(--mi-border);
+  background: var(--mi-canvas);
   border-radius: 1.8rem;
   padding: 1.8rem;
   text-align: left;
-  box-shadow: 0 1.2rem 3.2rem rgba(73, 53, 109, 0.08);
+  box-shadow: var(--mi-shadow-soft);
   transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
   cursor: pointer;
 }
@@ -106,19 +106,19 @@
   justify-content: initial;
   height: auto;
   min-height: 0;
-  background: #fff;
-  color: #26193d;
+  background: var(--mi-canvas);
+  color: var(--mi-ink);
 }
 
 .cardButton:hover {
   border-color: rgba(95, 67, 134, 0.35);
   transform: translateY(-0.1rem);
-  box-shadow: 0 1.6rem 3.6rem rgba(73, 53, 109, 0.12);
+  box-shadow: var(--mi-shadow-card);
 }
 
 .panel .cardList .cardButton:hover {
-  background: #fff;
-  color: #26193d;
+  background: var(--mi-canvas);
+  color: var(--mi-ink);
 }
 
 .cardHead {
@@ -150,42 +150,42 @@
 }
 
 .toolBadge {
-  background: rgba(95, 67, 134, 0.1);
-  color: #5f4386;
+  background: var(--mi-surface);
+  color: var(--mi-brand);
 }
 
 .actionBadge {
-  background: rgba(116, 100, 150, 0.08);
-  color: #6b5a8f;
+  background: var(--mi-surface-soft);
+  color: var(--mi-body);
 }
 
 .statusSuccess {
   background: rgba(96, 161, 99, 0.12);
-  color: #3f7c42;
+  color: var(--mi-success);
 }
 
 .statusFailed {
   background: rgba(201, 88, 88, 0.12);
-  color: #b14646;
+  color: var(--mi-error);
 }
 
 .createdAt {
   font-size: 1.25rem;
-  color: #8b80a3;
+  color: var(--mi-muted);
 }
 
 .cardTitle {
   margin: 1.2rem 0 0.8rem;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #26193d;
+  color: var(--mi-ink);
 }
 
 .cardSummary {
   margin: 0;
   font-size: 1.45rem;
   line-height: 1.65;
-  color: #5d5275;
+  color: var(--mi-body);
 }
 
 .cardFooter {
@@ -194,7 +194,7 @@
   gap: 0.9rem 1.4rem;
   margin-top: 1.4rem;
   font-size: 1.3rem;
-  color: #7e7098;
+  color: var(--mi-muted);
 }
 
 .cardFooter span {
@@ -213,7 +213,7 @@
 
 .paginationInfo {
   font-size: 1.3rem;
-  color: #7a6b93;
+  color: var(--mi-muted);
 }
 
 .paginationButtons {

@@ -1,6 +1,7 @@
 /* header */
 header .fix {
-  border-bottom: 1px solid #d5d5d5;
+  border-bottom: 1px solid rgba(81, 52, 108, 0.12);
+  box-shadow: 0 1.2rem 3rem rgba(36, 24, 50, 0.045);
 }
 
 header .header_wrap {
@@ -68,10 +69,10 @@ header nav > ul > li .gnb2 {
   top: 100%;
   width: 180px;
   height: auto;
-  background: #fff;
-  border: 1px solid #d5d5d5;
-  border-radius: 1.2rem;
-  box-shadow: 0 1.6rem 3.6rem rgba(26, 17, 34, 0.14);
+  background: var(--mi-canvas, #fff);
+  border: 1px solid var(--mi-border, #e7deef);
+  border-radius: var(--mi-radius-md, 1.4rem);
+  box-shadow: var(--mi-shadow-elevated, 0 1.6rem 3.6rem rgba(26, 17, 34, 0.14));
   padding: 0.8rem 0;
   overflow: hidden;
   z-index: 10001;
@@ -88,7 +89,7 @@ header nav > ul > li .gnb2 li a {
   padding: 1.2rem 1.2rem;
   font-size: 1.6rem;
   font-weight: 400;
-  color: #333;
+  color: var(--mi-body, #333);
 }
 
 .submenuLabel {
@@ -98,7 +99,7 @@ header nav > ul > li .gnb2 li a {
   padding: 1.2rem 1.2rem;
   font-size: 1.6rem;
   font-weight: 400;
-  color: #333;
+  color: var(--mi-body, #333);
 }
 
 header nav > ul > li .gnb2 li a .icon {
@@ -108,7 +109,7 @@ header nav > ul > li .gnb2 li a .icon {
 }
 
 header nav > ul > li .gnb2 li:hover {
-  background: #f1f1f1;
+  background: var(--mi-surface, #f1f1f1);
 }
 
 header nav > ul > li .gnb2 > li:hover > a > .icon {
@@ -116,7 +117,7 @@ header nav > ul > li .gnb2 > li:hover > a > .icon {
 }
 
 header nav > ul > li .gnb2 > li:hover > a {
-  color: #000;
+  color: var(--mi-ink, #000);
   font-weight: 600;
 }
 
@@ -143,8 +144,8 @@ header nav > ul > li .gnb2 > li .gnb3 {
   top: calc(0% + -1px);
   width: 18rem;
   height: calc(100% + 0.2rem);
-  background: #fff;
-  border: 1px solid #d5d5d5;
+  background: var(--mi-canvas, #fff);
+  border: 1px solid var(--mi-border, #e7deef);
   padding: 0.8rem 0;
 }
 
@@ -186,13 +187,13 @@ header .util a:first-child:hover {
 header .util a:last-child {
   width: clamp(9.6rem, 8.2vw, 11.6rem);
   height: 40px;
-  border-radius: 5px;
+  border-radius: 1.2rem;
   text-align: center;
   margin-left: clamp(0.8rem, 1.35vw, 2.4rem);
-  background: var(--primary01);
+  background: linear-gradient(135deg, var(--mi-brand, var(--primary01)), var(--mi-brand-mid, var(--primary03)));
   color: #fff;
   line-height: 40px;
-  box-shadow: var(--shdow-df);
+  box-shadow: 0 1.2rem 2.4rem rgba(81, 52, 108, 0.18);
 }
 
 header .util a:last-child:hover {
@@ -231,7 +232,7 @@ header .util a:last-child:hover {
     height: 4.6rem;
     flex-shrink: 0;
     border-radius: 1.3rem;
-    background: #f7f3fc;
+    background: var(--mi-surface, #f7f3fc);
     cursor: pointer;
   }
 
@@ -287,9 +288,9 @@ header .util a:last-child:hover {
     top: 0;
     width: min(32rem, calc(100vw - 2.4rem));
     height: 100dvh;
-    background: #fff;
+    background: var(--mi-canvas, #fff);
     z-index: 10000;
-    box-shadow: 0 2rem 5rem rgba(22, 15, 34, 0.22);
+    box-shadow: var(--mi-shadow-elevated, 0 2rem 5rem rgba(22, 15, 34, 0.22));
     overflow: hidden;
   }
 
@@ -303,7 +304,9 @@ header .util a:last-child:hover {
     flex-direction: column;
     min-height: 0;
     width: 100%;
-    background: var(--primary01);
+    background:
+      radial-gradient(circle at 18% 8%, rgba(255, 255, 255, 0.16), transparent 18rem),
+      linear-gradient(180deg, var(--mi-brand, var(--primary01)), var(--mi-brand-deep, var(--primary02)));
   }
 
   .mo_gnb .mo_gnb_header .util_wrap {
@@ -401,7 +404,7 @@ header .util a:last-child:hover {
 
   .mo_gnb .mo_gnb_header .util_admin_row {
     padding: 1rem 1.6rem 0;
-    background: var(--primary01);
+    background: transparent;
   }
 
   .mo_gnb .mo_gnb_header .util_admin_row a {
@@ -431,7 +434,7 @@ header .util a:last-child:hover {
 
   .mo_gnb .mo_menu_wrap .mo_menu_left {
     width: 14.2rem;
-    background: #fafafa;
+    background: var(--mi-surface-soft, #fafafa);
     padding: 0.2rem 0;
     overflow-y: auto;
     min-height: 0;

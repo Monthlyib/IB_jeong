@@ -13,10 +13,10 @@
 .questionArea,
 .choices,
 .loadingCard {
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 2.4rem;
-  background: #fff;
-  box-shadow: 0 16px 34px rgba(57, 31, 82, 0.05);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
 }
 
 .headerCard {
@@ -32,10 +32,10 @@
   align-items: center;
   justify-content: center;
   padding: 0.6rem 1.2rem;
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 999px;
-  background: #f7f2fb;
-  color: var(--primary01);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -46,14 +46,14 @@
   margin: 1rem 0 0.4rem;
   font-size: clamp(2.8rem, 4vw, 3.8rem);
   font-weight: 700;
-  color: var(--primary01);
+  color: var(--mi-brand-deep);
 }
 
 .helperText {
   margin: 0;
   font-size: 1.5rem;
   line-height: 1.7;
-  color: #5e566a;
+  color: var(--mi-body);
 }
 
 .timerCard {
@@ -66,7 +66,7 @@
 
 .timerLabel,
 .progressLabel {
-  color: #736b80;
+  color: var(--mi-muted);
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -76,7 +76,7 @@
 .timer {
   font-size: 2.8rem;
   font-weight: 700;
-  color: var(--primary02);
+  color: var(--mi-brand-deep);
 }
 
 .progressRow {

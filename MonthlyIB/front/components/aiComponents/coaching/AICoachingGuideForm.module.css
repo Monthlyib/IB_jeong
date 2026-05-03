@@ -1,18 +1,18 @@
 .guideContainer {
-  --paper: #f6f2fb;
+  --paper: var(--mi-surface);
   --paper-shadow: rgba(57, 31, 82, 0.12);
-  --ink: #221b2f;
-  --muted: #6b6076;
-  --accent: var(--primary01);
-  --accent-strong: var(--primary02);
+  --ink: var(--mi-ink);
+  --muted: var(--mi-muted);
+  --accent: var(--mi-brand);
+  --accent-strong: var(--mi-brand-deep);
   --accent-soft: rgba(81, 52, 108, 0.12);
-  --line: rgba(81, 52, 108, 0.14);
-  --card: #ffffff;
+  --line: var(--mi-border);
+  --card: var(--mi-canvas);
   width: min(110rem, calc(100% - 4rem));
   max-width: 100%;
   margin: 1.2rem auto 4rem;
   color: var(--ink);
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: "Pretendard", "Noto Sans KR", Georgia, "Times New Roman", serif;
 }
 
 .guideHeader {
@@ -28,11 +28,11 @@
   justify-content: center;
   flex-shrink: 0;
   align-self: flex-start;
-  border: 1px solid rgba(81, 52, 108, 0.18);
+  border: 1px solid var(--mi-border);
   background: rgba(255, 255, 255, 0.94);
   color: var(--accent-strong);
   padding: 1rem 1.4rem;
-  border-radius: 999px;
+  border-radius: 1.3rem;
   cursor: pointer;
   font-size: 1.4rem;
   font-weight: 600;
@@ -48,12 +48,12 @@
 .headerCard {
   position: relative;
   padding: 3.2rem 3.2rem 3rem;
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 2.8rem;
   background:
     radial-gradient(circle at top right, rgba(107, 77, 135, 0.16), transparent 30%),
-    linear-gradient(180deg, #fffefe, #f6f0fb);
-  box-shadow: 0 24px 60px var(--paper-shadow);
+    linear-gradient(180deg, var(--mi-canvas), var(--mi-surface));
+  box-shadow: var(--mi-shadow-elevated);
 }
 
 .headerCard::after {
@@ -119,9 +119,9 @@
   padding: 1.5rem 1.6rem;
   border-radius: 1.8rem;
   border: 1px solid rgba(81, 52, 108, 0.12);
-  background: #ffffff;
+  background: var(--mi-canvas);
   backdrop-filter: blur(6px);
-  box-shadow: 0 10px 24px rgba(81, 52, 108, 0.05);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .metaLabel {
@@ -178,7 +178,7 @@
   background:
     linear-gradient(180deg, #fffefe, #f6f2fb),
     var(--paper);
-  box-shadow: 0 24px 54px rgba(57, 31, 82, 0.07);
+  box-shadow: var(--mi-shadow-card);
 }
 
 .heroSection,

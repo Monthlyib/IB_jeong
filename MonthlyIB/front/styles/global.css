@@ -11,6 +11,39 @@
   --primary02: #391f52;
   --primary03: #6b4d87;
   --primary04: #51ae80;
+  --mi-brand: var(--primary01);
+  --mi-brand-deep: #241832;
+  --mi-brand-mid: var(--primary03);
+  --mi-brand-green: var(--primary04);
+  --mi-ink: #22182f;
+  --mi-body: #4f465c;
+  --mi-muted: #786e86;
+  --mi-canvas: #ffffff;
+  --mi-paper: #fdfbff;
+  --mi-surface: #f6f1fb;
+  --mi-surface-soft: #fbf8ff;
+  --mi-surface-strong: #eee6f6;
+  --mi-border: #e7deef;
+  --mi-border-strong: #d5c7e2;
+  --mi-pastel-peach: #ffe9d8;
+  --mi-pastel-mint: #dcf4e6;
+  --mi-pastel-sky: #e0efff;
+  --mi-pastel-yellow: #fff6bf;
+  --mi-success: #258b5a;
+  --mi-warning: #b66a18;
+  --mi-error: #bd3d3d;
+  --mi-radius-sm: 1rem;
+  --mi-radius-md: 1.4rem;
+  --mi-radius-lg: 2rem;
+  --mi-radius-xl: 2.8rem;
+  --mi-shadow-soft: 0 1.2rem 3rem rgba(57, 31, 82, 0.06);
+  --mi-shadow-card: 0 2rem 4.8rem rgba(57, 31, 82, 0.09);
+  --mi-shadow-elevated:
+    0 3rem 5.4rem -2.8rem rgba(50, 50, 93, 0.28),
+    0 1.8rem 3.6rem -2rem rgba(36, 24, 52, 0.14);
+  --mi-focus-ring: 0 0 0 0.4rem rgba(81, 52, 108, 0.1);
+  --mi-container-content: 124rem;
+  --mi-container-wide: 148rem;
   /*******************
           Shadow
       *******************/
@@ -41,8 +74,8 @@ body {
   margin: 0;
   min-height: 100dvh;
   font-size: 10px;
-  color: #000;
-  line-height: 1.2rem;
+  color: var(--mi-ink);
+  line-height: 1.5;
   font-family:
     "Pretendard",
     "Roboto",
@@ -57,6 +90,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  background: var(--mi-paper);
 }
 
 body.mobile-nav-open {
@@ -134,6 +168,7 @@ template {
 a {
   background-color: transparent;
   text-decoration: none;
+  color: inherit;
 }
 
 a:active,
@@ -359,7 +394,7 @@ nav {
 }
 
 input::placeholder {
-  color: #fff;
+  color: #9a90a8;
 }
 
 input.readonly {
@@ -383,7 +418,8 @@ select {
 header {
   width: 100%;
   height: var(--appHeaderHeight);
-  background: #fff;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
   z-index: 9995;
   position: fixed;
 }
@@ -460,10 +496,13 @@ main {
   padding-top: var(--appHeaderHeight);
   min-height: calc(100dvh - 18rem);
   overflow-x: clip;
+  background:
+    radial-gradient(circle at 4% 8rem, rgba(81, 52, 108, 0.05), transparent 28rem),
+    var(--mi-paper);
 }
 
 section {
-  max-width: 110rem;
+  max-width: var(--mi-container-content);
   width: 100%;
   margin: 0 auto;
   height: auto;
@@ -488,7 +527,7 @@ footer {
 }
 
 .width_content {
-  max-width: 110rem;
+  max-width: var(--mi-container-content);
   width: 100%;
   margin: 0 auto;
   min-height: min(72rem, calc(100dvh - 18rem));
@@ -535,17 +574,20 @@ footer {
 
 .header_tit_wrap span {
   display: block;
-  color: #888;
+  color: var(--mi-muted);
   font-size: 1.6rem;
-  font-weight: 400;
+  font-weight: 700;
   text-align: center;
   padding-bottom: 0.4rem;
+  letter-spacing: 0.08em;
 }
 
 .header_tit_wrap h2 {
   font-size: 3.8rem;
-  font-weight: 700;
+  font-weight: 800;
   text-align: center;
+  color: var(--mi-ink);
+  letter-spacing: -0.04em;
 }
 
 .ft_search {
@@ -553,10 +595,10 @@ footer {
   width: 44.8rem;
   height: 6.4rem;
   padding: 0.5rem;
-  border-radius: 1rem;
-  border: 1px solid #d5d5d5;
-  background: #fff;
-  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: var(--mi-radius-md);
+  border: 1px solid var(--mi-border);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .ft_search input {
@@ -580,11 +622,11 @@ footer {
   right: 0.5rem;
   width: 12rem;
   height: 5.2rem;
-  background: var(--primary01);
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
   font-size: 1.6rem;
   color: #fff;
-  border-radius: 1rem;
-  box-shadow: 2px 2px 4px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 1.2rem;
+  box-shadow: 0 1rem 2rem rgba(81, 52, 108, 0.16);
 }
 
 .archive_tab {
@@ -593,7 +635,7 @@ footer {
   max-width: 110rem;
   width: 100%;
   margin: 0 auto;
-  border-bottom: 1px solid #d5d5d5;
+  border-bottom: 1px solid var(--mi-border);
   white-space: nowrap;
   overflow-x: auto;
 }
@@ -605,11 +647,11 @@ footer {
   padding: 1.2rem 0;
   font-size: 1.8rem;
   font-weight: 500;
-  color: #444;
+  color: var(--mi-body);
 }
 
 .archive_tab a.active {
-  color: var(--primary01);
+  color: var(--mi-brand);
   font-weight: 600;
 }
 
@@ -620,7 +662,7 @@ footer {
   left: 0;
   width: 100%;
   height: 0.2rem;
-  background: var(--primary01);
+  background: var(--mi-brand);
 }
 
 .board_wrap .board_item a {
@@ -637,8 +679,8 @@ footer {
   align-items: center;
   width: 9.6rem;
   height: 3.6rem;
-  border: 1px solid #d5d5d5;
-  border-radius: 0.5rem;
+  border: 1px solid var(--mi-border);
+  border-radius: 1rem;
 }
 
 .btn_write svg {
@@ -679,7 +721,7 @@ footer {
   border: 1px solid #d5d5d5;
   border-radius: 0.5rem;
   font-size: 1.6rem;
-  background-color: var(--primary01);
+  background: var(--mi-brand);
   color: white;
   text-align: center;
 }
@@ -706,14 +748,14 @@ a.disabled {
 .inputbox_cont h5 {
   font-size: 1.5rem;
   margin-bottom: 0.6rem;
-  color: #333;
-  font-weight: 400;
+  color: var(--mi-body);
+  font-weight: 700;
 }
 
 .inputbox_cont input {
   width: 100%;
-  border: 1px solid #d5d5d5;
-  border-radius: 0.5rem;
+  border: 1px solid var(--mi-border);
+  border-radius: 1.4rem;
   font-size: 1.8rem;
   font-weight: 500;
   padding: 2.4rem 1.4rem;
@@ -743,8 +785,8 @@ a.disabled {
   right: 0.8rem;
   min-width: 8.5rem;
   padding: 2.2rem 1.6rem;
-  background: var(--primary01);
-  border-radius: 0.5rem;
+  background: var(--mi-brand);
+  border-radius: 1.2rem;
   font-size: 1.8rem;
   font-weight: 600;
   color: #fff;
@@ -792,8 +834,8 @@ a.disabled {
   width: 100%;
   height: 7.2rem;
   color: #fff;
-  background: var(--primary01);
-  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+  border-radius: var(--mi-radius-md);
   font-size: 1.8rem;
   font-weight: 700;
   cursor: pointer;
@@ -803,24 +845,28 @@ a.disabled {
 
 /* 메인 헤더/배너 영역 */
 .aiToolsMainBanner {
-  background-color: #f5f0fa; /* 연한 보라색 배경 */
+  background:
+    radial-gradient(circle at 80% 10%, rgba(81, 52, 108, 0.12), transparent 22rem),
+    var(--mi-surface);
   padding: 4rem 2rem;
   text-align: center;
   margin-top: 3rem;  /* 헤더와 겹치지 않도록 추가된 여백 */
   margin-bottom: 3rem;
-  border-radius: 8px;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .aiToolsMainBanner h1 {
   font-size: 3rem;
   font-weight: 700;
-  color: var(--primary01); /* 포인트 컬러 */
+  color: var(--mi-brand-deep);
   margin-bottom: 2rem;
 }
 
 .aiToolsMainBanner p {
   font-size: 1.6rem;
-  color: #333;
+  color: var(--mi-body);
   margin-bottom: 2rem;
 }
 
@@ -828,9 +874,9 @@ a.disabled {
 .aiToolsMainBanner .startButton {
   display: inline-block;
   padding: 1rem 2rem;
-  background-color: var(--primary01);
+  background: var(--mi-brand);
   color: #fff;
-  border-radius: 4px;
+  border-radius: var(--mi-radius-md);
   font-size: 1.6rem;
   font-weight: 600;
   text-decoration: none;
@@ -838,7 +884,7 @@ a.disabled {
 }
 
 .aiToolsMainBanner .startButton:hover {
-  background-color: var(--primary03); /* hover 시 조금 더 진한 보라 */
+  background-color: var(--mi-brand-mid);
 }
 
 /* 카드들을 감싸는 컨테이너 */
@@ -868,11 +914,11 @@ a.disabled {
 /* 개별 카드 */
 .aiToolsCard {
   background-color: #fff;
-  border: 1px solid #d5d5d5;
-  border-radius: 8px;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
   padding: 2rem;
   text-align: center;
-  color: #333;
+  color: var(--mi-ink);
   text-decoration: none;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -880,7 +926,7 @@ a.disabled {
 .aiToolsCard:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  background-color: #fafafa;
+  background-color: var(--mi-surface-soft);
 }
 
 /* 카드 아이콘 (FontAwesome 등) */

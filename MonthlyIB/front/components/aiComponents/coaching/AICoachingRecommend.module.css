@@ -4,31 +4,31 @@
   max-width: 800px;
   margin: 10rem auto;
   padding: 2rem;
-  font-family: 'Arial', sans-serif;
+  font-family: "Pretendard", "Noto Sans KR", sans-serif;
 }
 
 .heading {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 2rem;
-  color: #1f2937;
+  color: var(--mi-brand-deep);
 }
 
 .topicCard {
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
+  background-color: var(--mi-canvas);
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-md);
   padding: 1.2rem 1.5rem;
   margin-bottom: 1rem;
   font-size: 1.2rem;
-  color: #111827;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+  color: var(--mi-ink);
+  box-shadow: var(--mi-shadow-soft);
   transition: transform 0.2s ease;
 }
 
 .topicCard:hover {
   transform: translateY(-2px);
-  background-color: #f3f4f6;
+  background-color: var(--mi-surface-soft);
 }
 
 .loading,

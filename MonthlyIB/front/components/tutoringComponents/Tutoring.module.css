@@ -1,6 +1,8 @@
 .sc_main_wrap {
   width: 100%;
-  background: #fafafa;
+  background:
+    radial-gradient(circle at 8% 12%, rgba(81, 52, 108, 0.06), transparent 26rem),
+    var(--mi-paper);
   padding: 3.2rem 2.4rem 7.2rem;
 }
 
@@ -9,12 +11,15 @@
   justify-content: space-between;
   align-items: flex-start;
   width: 100%;
-  max-width: 118rem;
+  max-width: 124rem;
   margin: 0 auto;
   padding: 3.2rem;
   gap: 3.6rem;
-  border-radius: 2.8rem;
-  background: #f3f3f5;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background:
+    linear-gradient(180deg, var(--mi-surface-soft), var(--mi-surface));
+  box-shadow: var(--mi-shadow-card);
   box-sizing: border-box;
 }
 
@@ -22,7 +27,7 @@
   margin-bottom: 1.2rem;
   font-size: 1.8rem;
   font-weight: 400;
-  color: #222;
+  color: var(--mi-brand-deep);
 }
 
 .sc_main_wrap .calendar_info {
@@ -43,7 +48,7 @@
 
 .sc_main_wrap .calendar_info .calendar_item span {
   font-size: 1.4rem;
-  color: #000;
+  color: var(--mi-body);
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label {
@@ -54,26 +59,26 @@
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.possible {
-  background: #fff;
+  background: var(--mi-canvas);
   border: 1px gray solid;
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.today {
-  background: yellow;
-  border: 1px black solid;
+  background: var(--mi-pastel-yellow);
+  border: 1px var(--mi-brand-deep) solid;
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.active {
-  background: blue;
+  background: var(--mi-brand);
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.time_selected {
-  background: white;
-  border: 2px var(--primary01) solid;
+  background: var(--mi-canvas);
+  border: 2px var(--mi-brand) solid;
 }
 
 .sc_main_wrap .calendar_info .calendar_item .label.none {
-  background: #888;
+  background: #8a8295;
 }
 
 .sc_main_wrap .sc_left_cont {
@@ -85,11 +90,11 @@
 .sc_main_wrap .sc_left_cont .calendar {
   width: 100%;
   height: 44rem;
-  background: #fff;
-  border: 1px solid #eeeeee;
+  background: var(--mi-canvas);
+  border: 1px solid var(--mi-border);
   line-height: 1.125em;
-  border-radius: 10px;
-  box-shadow: 0px 0px 20px #e0e0e0;
+  border-radius: var(--mi-radius-lg);
+  box-shadow: var(--mi-shadow-card);
   font-size: 2rem;
   padding: 0 2rem;
 }
@@ -115,7 +120,7 @@
 
 .sc_main_wrap .sc_right_cont .sc_time_wrap {
   width: 100%;
-  border-bottom: 1px solid #d5d5d5;
+  border-bottom: 1px solid var(--mi-border);
   margin-bottom: 3.2rem;
   padding-bottom: 4rem;
 }
@@ -130,30 +135,33 @@
   width: 100%;
   height: 5.8rem;
   margin: 0;
-  background: #fff;
+  background: var(--mi-canvas);
+  border: 1px solid transparent;
+  border-radius: 1.4rem;
+  box-shadow: inset 0 0 0 1px rgba(81, 52, 108, 0.04);
 }
 
 .sc_main_wrap .sc_right_cont .sc_time_select ul li.active {
-  border: 2px solid var(--primary01);
+  border: 2px solid var(--mi-brand);
 }
 .sc_main_wrap .sc_right_cont .sc_time_select ul li:hover button.active,
 .sc_main_wrap .sc_right_cont .sc_time_select ul li:hover {
-  background: var(--primary01);
+  background: var(--mi-brand);
   color: white;
 }
 
 .sc_main_wrap .sc_right_cont .sc_time_select ul li button.active {
-  color: var(--primary01);
+  color: var(--mi-brand);
   font-weight: 600;
 }
 
 .sc_main_wrap .sc_right_cont .sc_time_select ul li.none {
-  background: #f1f1f1;
+  background: #ebe8ef;
   pointer-events: none;
 }
 
 .sc_main_wrap .sc_right_cont .sc_time_select ul li button.none {
-  color: #888;
+  color: var(--mi-muted);
   pointer-events: none;
 }
 
@@ -205,14 +213,14 @@
   height: 21rem;
   padding: 2rem 1.6rem;
   font-size: 1.6rem;
-  color: #000;
+  color: var(--mi-ink);
   line-height: 1.4;
   border: none;
   resize: none;
 }
 
 .sc_main_wrap .sc_right_cont .sc_description textarea::placeholder {
-  color: #888;
+  color: var(--mi-muted);
 }
 
 .quotaWarning {
@@ -253,7 +261,7 @@
 }
 
 .sc_main_wrap .sc_over span b.count {
-  color: var(--primary01);
+  color: var(--mi-brand);
   font-weight: 600;
 }
 
@@ -271,8 +279,8 @@
   width: 100%;
   height: 7.2rem;
   color: #fff;
-  background: gray;
-  border-radius: 1rem;
+  background: #8a8295;
+  border-radius: var(--mi-radius-md);
   font-size: 1.8rem;
   font-weight: 700;
 }
@@ -284,8 +292,8 @@
   width: 100%;
   height: 7.2rem;
   color: #fff;
-  background: var(--primary01);
-  border-radius: 1rem;
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+  border-radius: var(--mi-radius-md);
   font-size: 1.8rem;
   font-weight: 700;
   cursor: pointer;
@@ -301,19 +309,19 @@
   min-height: 5.2rem;
   padding: 1rem 1.6rem;
   border-radius: 1.6rem;
-  border: 1px solid rgba(98, 62, 133, 0.18);
-  background: #fff;
-  box-shadow: 0 1.2rem 3rem rgba(52, 37, 82, 0.08);
+  border: 1px solid var(--mi-border);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .emailNotice strong {
-  color: var(--primary01);
+  color: var(--mi-brand);
   font-size: 1.35rem;
   font-weight: 800;
 }
 
 .emailNotice span {
-  color: #6f657d;
+  color: var(--mi-body);
   font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.45;
@@ -337,15 +345,15 @@
   gap: 1rem;
   padding: 1.2rem 1.6rem;
   border-radius: 1.6rem;
-  background: #fff;
-  border: 1px solid rgba(98, 62, 133, 0.12);
-  box-shadow: 0 1rem 2.4rem rgba(52, 37, 82, 0.06);
+  background: var(--mi-canvas);
+  border: 1px solid var(--mi-border);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .mobileStatusBadge span {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #7a7090;
+  color: var(--mi-muted);
   letter-spacing: 0.06em;
   text-transform: uppercase;
 }
@@ -353,7 +361,7 @@
 .mobileStatusBadge strong {
   font-size: 1.6rem;
   font-weight: 700;
-  color: var(--primary01);
+  color: var(--mi-brand);
 }
 
 .templateModalBackdrop {
@@ -377,10 +385,10 @@
   width: min(88rem, calc(100vw - 4rem));
   max-height: calc(100vh - var(--appHeaderHeight, 7.2rem) - 4rem);
   overflow-y: auto;
-  border: 1px solid rgba(98, 62, 133, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 2.8rem;
-  background: linear-gradient(180deg, #fcfbfe 0%, #ffffff 100%);
-  box-shadow: 0 3rem 8rem rgba(21, 14, 34, 0.22);
+  background: linear-gradient(180deg, var(--mi-surface-soft) 0%, var(--mi-canvas) 100%);
+  box-shadow: var(--mi-shadow-elevated);
   padding: 3.2rem;
 }
 
@@ -395,14 +403,14 @@
   margin: 0.8rem 0 0.8rem;
   font-size: 3rem;
   font-weight: 700;
-  color: #231836;
+  color: var(--mi-brand-deep);
 }
 
 .templateHeader p {
   margin: 0;
   font-size: 1.6rem;
   line-height: 1.6;
-  color: #655b77;
+  color: var(--mi-body);
 }
 
 .templateEyebrow {
@@ -410,8 +418,8 @@
   align-items: center;
   padding: 0.8rem 1.2rem;
   border-radius: 999px;
-  background: #f3eefb;
-  color: var(--primary01);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -425,8 +433,8 @@
   width: 4.8rem;
   height: 4.8rem;
   border-radius: 1.4rem;
-  background: #f5f1fb;
-  color: var(--primary01);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 2.2rem;
   cursor: pointer;
   flex-shrink: 0;
@@ -442,8 +450,8 @@
 .templateGuideCard {
   padding: 2rem;
   border-radius: 2rem;
-  border: 1px solid rgba(98, 62, 133, 0.1);
-  background: #faf7fe;
+  border: 1px solid var(--mi-border);
+  background: var(--mi-surface-soft);
 }
 
 .templateGuideTitle {

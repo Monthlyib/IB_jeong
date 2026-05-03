@@ -9,10 +9,10 @@
 .detailSection,
 .questionItem,
 .loadingCard {
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 2.4rem;
-  background: #fff;
-  box-shadow: 0 16px 34px rgba(57, 31, 82, 0.05);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
 }
 
 .summaryCard,
@@ -26,10 +26,10 @@
   align-items: center;
   justify-content: center;
   padding: 0.6rem 1.2rem;
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 999px;
-  background: #f7f2fb;
-  color: var(--primary01);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -40,14 +40,14 @@
   margin: 1.2rem 0 0.8rem;
   font-size: clamp(2.8rem, 4vw, 3.8rem);
   font-weight: 700;
-  color: var(--primary01);
+  color: var(--mi-brand-deep);
 }
 
 .summaryText {
   margin: 0;
   font-size: 1.5rem;
   line-height: 1.7;
-  color: #61596e;
+  color: var(--mi-body);
 }
 
 .statGrid {
@@ -59,9 +59,9 @@
 
 .statCard {
   padding: 1.4rem 1.5rem;
-  border: 1px solid rgba(81, 52, 108, 0.1);
+  border: 1px solid var(--mi-border);
   border-radius: 1.8rem;
-  background: #fbfaff;
+  background: var(--mi-surface-soft);
 }
 
 .statLabel {
@@ -71,13 +71,13 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #7a7287;
+  color: var(--mi-muted);
 }
 
 .statValue {
   font-size: 1.9rem;
   font-weight: 700;
-  color: #2a2234;
+  color: var(--mi-ink);
 }
 
 .detailSection {
@@ -87,7 +87,7 @@
 .subheading {
   margin: 0 0 1.4rem;
   font-size: 2rem;
-  color: var(--primary02);
+  color: var(--mi-brand-deep);
 }
 
 .questionList {

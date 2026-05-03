@@ -4,27 +4,40 @@
     justify-content: space-between;
     align-items: center;
     z-index: 0;
+    gap: 4rem;
+    padding: 3.6rem;
+    border: 1px solid var(--mi-border);
+    border-radius: var(--mi-radius-xl);
+    background:
+        radial-gradient(circle at 82% 16%, rgba(81, 52, 108, 0.1), transparent 24rem),
+        linear-gradient(135deg, var(--mi-canvas) 0%, var(--mi-surface-soft) 54%, var(--mi-surface) 100%);
+    box-shadow: var(--mi-shadow-card);
+    overflow: hidden;
 }
 
 .main_wrap .left_cont span {
     display: block;
     font-size: 2rem;
-    font-weight: 500;
-    color: #888;
+    font-weight: 800;
+    color: var(--mi-brand);
     margin-bottom: .5rem;
+    letter-spacing: 0.14em;
 }
 
 .main_wrap .left_cont h2 {
     font-size: 4.8rem;
-    font-weight: 700;
-    margin-bottom: 5.2rem;
+    font-weight: 900;
+    margin-bottom: 2.8rem;
+    color: var(--mi-brand-deep);
+    letter-spacing: -0.06em;
+    line-height: 1;
 }
 
 .main_wrap .left_cont p {
     font-size: 1.8rem;
     font-weight: 400;
-    color: #666;
-    line-height: 1.6;
+    color: var(--mi-body);
+    line-height: 1.75;
     margin-bottom: 2.8rem;
 }
 
@@ -55,12 +68,14 @@
     align-items: center;
     width: 4.4rem;
     height: 4.4rem;
-    border: 1px solid #d5d5d5;
+    border: 1px solid var(--mi-border);
     border-radius: 4.4rem;
+    background: rgba(255, 255, 255, 0.84);
+    box-shadow: 0 0.8rem 1.8rem rgba(57, 31, 82, 0.06);
 }
 
 .controller button:hover {
-    background: #fafafa;
+    background: var(--mi-surface);
 }
 
 .controller button svg {
@@ -114,6 +129,9 @@
     padding: 1.6rem;
     height: 100%;
     color: #fff;
+    background:
+        radial-gradient(circle at 78% 22%, rgba(255, 255, 255, 0.18), transparent 9rem),
+        linear-gradient(160deg, var(--mi-brand-mid), var(--mi-brand-deep));
 }
 
 .main_project_swiper .pr_wrap .pr_top {
@@ -142,7 +160,7 @@
     height: 5.5rem;
     left: 0;
     bottom: 0;
-    background: var(--primary02);
+    background: rgba(36, 24, 50, 0.88);
     z-index: -1;
     transition: .5s all;
 }
@@ -165,11 +183,14 @@
 .previewSlide {
     width: 26rem;
     height: 286px;
-    background: #51346C;
+    background:
+        radial-gradient(circle at 78% 22%, rgba(255, 255, 255, 0.18), transparent 9rem),
+        linear-gradient(160deg, var(--mi-brand-mid), var(--mi-brand-deep));
     border-radius: 1rem;
     overflow: hidden;
     flex: 0 0 26rem;
     z-index: 0;
+    box-shadow: var(--mi-shadow-soft);
 }
 
 @media screen and (max-width: 1024px) {
@@ -177,6 +198,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-start;
+        padding: 2.4rem;
     }
 
     .main_wrap .left_cont {
@@ -234,6 +256,8 @@
 @media screen and (max-width: 480px) {
     .main_wrap {
         gap: 1.4rem;
+        padding: 1.8rem;
+        border-radius: 2.2rem;
     }
 
     .main_wrap .left_cont {

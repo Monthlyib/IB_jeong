@@ -3,7 +3,7 @@
   min-height: calc(100dvh - 14rem);
   margin: 0 auto;
   padding: calc(var(--appHeaderHeight, 8rem) + 4.8rem) 2.4rem 8rem;
-  color: #241a31;
+  color: var(--mi-ink);
   overflow-x: hidden;
 }
 
@@ -22,12 +22,12 @@
   min-height: auto;
   margin: 0;
   padding: 3.8rem;
-  border: 1px solid rgba(81, 52, 108, 0.1);
+  border: 1px solid var(--mi-border);
   border-radius: 3rem;
   background:
     radial-gradient(circle at 86% 20%, rgba(210, 194, 230, 0.68), transparent 26rem),
-    linear-gradient(135deg, #fff 0%, #fbf8ff 52%, #efe6f7 100%);
-  box-shadow: 0 2.2rem 5rem rgba(41, 25, 58, 0.08);
+    linear-gradient(135deg, var(--mi-canvas) 0%, var(--mi-surface-soft) 52%, var(--mi-surface) 100%);
+  box-shadow: var(--mi-shadow-elevated);
 }
 
 .heroCopy {
@@ -39,7 +39,7 @@
 .stateCard span {
   display: inline-flex;
   width: fit-content;
-  color: #725b8a;
+  color: var(--mi-brand);
   font-size: 1.15rem;
   font-weight: 900;
   letter-spacing: 0.16em;
@@ -49,7 +49,7 @@
 .heroCopy h1 {
   max-width: 82rem;
   margin: 1rem 0 1.4rem;
-  color: #241a31;
+  color: var(--mi-brand-deep);
   font-size: clamp(4rem, 5.8vw, 7rem);
   font-weight: 900;
   line-height: 0.98;
@@ -60,7 +60,7 @@
 .heroCopy p {
   max-width: 68rem;
   margin: 0;
-  color: #665a72;
+  color: var(--mi-body);
   font-size: 1.65rem;
   line-height: 1.72;
   word-break: keep-all;
@@ -91,22 +91,22 @@
 }
 
 .actionButton {
-  background: #241a31;
+  background: var(--mi-brand-deep);
   color: #fff;
   box-shadow: 0 1rem 2.4rem rgba(36, 26, 49, 0.16);
 }
 
 .actionButtonSecondary {
-  border: 1px solid rgba(81, 52, 108, 0.16);
+  border: 1px solid var(--mi-border);
   color: var(--primary01);
   background: rgba(255, 255, 255, 0.85);
 }
 
 .card {
-  border: 1px solid rgba(81, 52, 108, 0.1);
+  border: 1px solid var(--mi-border);
   border-radius: 3rem;
-  background: #fff;
-  box-shadow: 0 2rem 5rem rgba(41, 25, 58, 0.07);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
   overflow: hidden;
 }
 
@@ -126,15 +126,15 @@
 .legacyNotice {
   margin-bottom: 2.8rem;
   padding: 2rem 2.2rem;
-  border: 1px solid rgba(81, 52, 108, 0.14);
+  border: 1px solid var(--mi-border);
   border-radius: 2rem;
   background:
-    linear-gradient(135deg, #fbf8ff 0%, #fff 100%);
+    linear-gradient(135deg, var(--mi-surface-soft) 0%, var(--mi-canvas) 100%);
 }
 
 .legacyNotice h2 {
   margin: 0.8rem 0 0.8rem;
-  color: #241a31;
+  color: var(--mi-brand-deep);
   font-size: 2.2rem;
   font-weight: 900;
   letter-spacing: -0.04em;
@@ -142,13 +142,13 @@
 
 .legacyNotice p {
   margin: 0;
-  color: #655d72;
+  color: var(--mi-body);
   font-size: 1.5rem;
   line-height: 1.72;
 }
 
 .body {
-  color: #2e2740;
+  color: var(--mi-ink);
   font-size: 1.78rem;
   line-height: 1.9;
   word-break: break-word;
@@ -160,7 +160,7 @@
   height: auto;
   margin: 2.4rem auto;
   border-radius: 1.8rem;
-  box-shadow: 0 1.4rem 3rem rgba(41, 25, 58, 0.08);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .body p,
@@ -173,7 +173,7 @@
 .body h2,
 .body h3 {
   margin: 2.8rem 0 1.3rem;
-  color: #241a31;
+  color: var(--mi-brand-deep);
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1.15;
@@ -198,10 +198,10 @@
 
 .body blockquote {
   padding: 1.6rem 2rem;
-  border-left: 0.5rem solid #cbbbe0;
+  border-left: 0.5rem solid var(--mi-border-strong);
   border-radius: 0 1.4rem 1.4rem 0;
-  background: #faf7ff;
-  color: #483757;
+  background: var(--mi-surface-soft);
+  color: var(--mi-body);
 }
 
 .stateCard {
@@ -211,15 +211,15 @@
   justify-content: center;
   min-height: 34rem;
   padding: 4rem;
-  border: 1px solid rgba(81, 52, 108, 0.1);
+  border: 1px solid var(--mi-border);
   border-radius: 3rem;
-  background: #fff;
-  box-shadow: 0 2rem 5rem rgba(41, 25, 58, 0.07);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
 }
 
 .stateCard h1 {
   margin: 1rem 0 2rem;
-  color: #241a31;
+  color: var(--mi-brand-deep);
   font-size: 3.8rem;
   font-weight: 900;
   letter-spacing: -0.06em;

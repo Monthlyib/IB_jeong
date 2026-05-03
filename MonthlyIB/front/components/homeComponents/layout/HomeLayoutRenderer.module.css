@@ -1,6 +1,6 @@
 .homeLayout {
   width: min(120rem, calc(100% - 4rem));
-  margin: 2rem auto 6rem;
+  margin: 2.8rem auto 6rem;
   display: flex;
   flex-direction: column;
   gap: 2.8rem;
@@ -135,9 +135,9 @@
   width: fit-content;
   padding: 0.7rem 1.2rem;
   border-radius: 999px;
-  border: 1px solid rgba(81, 52, 108, 0.14);
-  background: rgba(81, 52, 108, 0.06);
-  color: var(--primary01);
+  border: 1px solid var(--mi-border);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.15rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -146,7 +146,7 @@
 
 .previewSection h3 {
   margin: 0;
-  color: #241b34;
+  color: var(--mi-brand-deep);
   font-size: 2.2rem;
   font-weight: 700;
   line-height: 1.2;
@@ -155,7 +155,7 @@
 
 .previewSection p {
   margin: 0;
-  color: #685d7a;
+  color: var(--mi-body);
   font-size: 1.45rem;
   line-height: 1.7;
   word-break: keep-all;
@@ -200,11 +200,15 @@
 }
 
 .previewHeroCard {
-  background: linear-gradient(180deg, #5d3e7d 0%, #4d3468 100%);
+  background:
+    radial-gradient(circle at 80% 18%, rgba(255, 255, 255, 0.18), transparent 9rem),
+    linear-gradient(180deg, var(--mi-brand-mid) 0%, var(--mi-brand-deep) 100%);
 }
 
 .previewHeroCardAlt {
-  background: linear-gradient(180deg, #7f68a6 0%, #6d5990 100%);
+  background:
+    radial-gradient(circle at 18% 80%, rgba(255, 255, 255, 0.16), transparent 9rem),
+    linear-gradient(180deg, #8064a3 0%, var(--mi-brand-mid) 100%);
 }
 
 .previewSearchBox {
@@ -212,11 +216,11 @@
   align-items: center;
   min-height: 6rem;
   padding: 0 2rem;
-  border: 1px solid rgba(81, 52, 108, 0.16);
+  border: 1px solid var(--mi-border);
   border-radius: 999px;
   color: #817590;
   font-size: 1.45rem;
-  background: #fbf9ff;
+  background: var(--mi-surface-soft);
 }
 
 .previewGuideGrid,

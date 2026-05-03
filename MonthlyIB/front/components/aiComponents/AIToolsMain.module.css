@@ -1,5 +1,5 @@
 .container {
-  width: 126rem;
+  width: min(132rem, 100%);
   max-width: 100%;
   margin: 0 auto;
   padding: calc(var(--appHeaderHeight, 8rem) + 4rem) 2rem 5rem;
@@ -21,14 +21,17 @@
 .heroPanel,
 .highlightCard,
 .toolCard {
-  border: 1px solid rgba(81, 52, 108, 0.12);
-  border-radius: 2.6rem;
-  background: #fff;
-  box-shadow: 0 18px 36px rgba(57, 31, 82, 0.05);
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
 }
 
 .heroCopy {
   padding: 3rem;
+  background:
+    radial-gradient(circle at 88% 16%, rgba(81, 52, 108, 0.08), transparent 22rem),
+    var(--mi-canvas);
 }
 
 .eyebrow,
@@ -49,9 +52,9 @@
 .eyebrow,
 .sectionEyebrow,
 .heroPanelBadge {
-  border: 1px solid rgba(81, 52, 108, 0.12);
-  background: #f7f2fb;
-  color: var(--primary01);
+  border: 1px solid var(--mi-border);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
 }
 
 .heroTitle {
@@ -59,7 +62,7 @@
   font-size: clamp(3.2rem, 4.4vw, 5.2rem);
   line-height: 1.1;
   letter-spacing: -0.04em;
-  color: #241d30;
+  color: var(--mi-brand-deep);
   word-break: keep-all;
   overflow-wrap: break-word;
 }
@@ -69,7 +72,7 @@
   max-width: 58rem;
   font-size: 1.75rem;
   line-height: 1.8;
-  color: #554d61;
+  color: var(--mi-body);
   word-break: keep-all;
   overflow-wrap: break-word;
 }
@@ -95,9 +98,9 @@
 }
 
 .primaryButton {
-  background: var(--primary01);
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
   color: #fff;
-  box-shadow: 0 14px 24px rgba(81, 52, 108, 0.18);
+  box-shadow: 0 1.4rem 2.8rem rgba(81, 52, 108, 0.2);
 }
 
 .primaryButton:hover {
@@ -106,13 +109,13 @@
 }
 
 .secondaryButton {
-  border: 1px solid rgba(81, 52, 108, 0.14);
-  background: #fff;
-  color: var(--primary01);
+  border: 1px solid var(--mi-border);
+  background: var(--mi-canvas);
+  color: var(--mi-brand);
 }
 
 .secondaryButton:hover {
-  background: #f7f2fb;
+  background: var(--mi-surface);
   transform: translateY(-1px);
 }
 
@@ -131,7 +134,7 @@
 .heroPanelTitle {
   font-size: 2.2rem;
   line-height: 1.35;
-  color: #2d2539;
+  color: var(--mi-brand-deep);
   text-align: center;
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -149,7 +152,7 @@
   gap: 1rem;
   padding: 1.2rem 1.3rem;
   border-radius: 1.8rem;
-  background: #faf8fc;
+  background: var(--mi-surface-soft);
 }
 
 .flowIcon {
@@ -159,8 +162,8 @@
   width: 4.4rem;
   height: 4.4rem;
   border-radius: 1.4rem;
-  background: #efe7f8;
-  color: var(--primary01);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.8rem;
 }
 
@@ -168,14 +171,14 @@
   display: block;
   margin-bottom: 0.4rem;
   font-size: 1.55rem;
-  color: #2f273b;
+  color: var(--mi-ink);
 }
 
 .flowText {
   margin: 0;
   font-size: 1.4rem;
   line-height: 1.65;
-  color: #655d72;
+  color: var(--mi-body);
   word-break: keep-all;
   overflow-wrap: break-word;
 }
@@ -192,7 +195,7 @@
   font-size: 1.45rem;
   font-weight: 600;
   line-height: 1.6;
-  color: #473f54;
+  color: var(--mi-body);
   text-align: center;
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -212,7 +215,7 @@
 .sectionTitle {
   margin: 0;
   font-size: clamp(2.6rem, 3.4vw, 3.6rem);
-  color: #241d30;
+  color: var(--mi-brand-deep);
   word-break: keep-all;
   overflow-wrap: break-word;
 }
@@ -246,13 +249,13 @@
 
 .cardBadge {
   background: #efe7f8;
-  color: var(--primary01);
+  color: var(--mi-brand);
 }
 
 .cardMeta {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #7b7388;
+  color: var(--mi-muted);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -265,8 +268,8 @@
   height: 5.4rem;
   margin-top: 1.6rem;
   border-radius: 1.6rem;
-  background: #f7f2fb;
-  color: var(--primary01);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 2rem;
 }
 
@@ -274,7 +277,7 @@
   margin: 1.4rem 0 0.8rem;
   font-size: 2.1rem;
   line-height: 1.3;
-  color: #271f33;
+  color: var(--mi-brand-deep);
   word-break: keep-all;
   overflow-wrap: break-word;
 }
@@ -284,7 +287,7 @@
   min-height: 7.6rem;
   font-size: 1.45rem;
   line-height: 1.75;
-  color: #625a6f;
+  color: var(--mi-body);
   word-break: keep-all;
   overflow-wrap: break-word;
 }
@@ -297,7 +300,7 @@
   padding-top: 1.8rem;
   font-size: 1.35rem;
   font-weight: 700;
-  color: var(--primary01);
+  color: var(--mi-brand);
 }
 
 @media (max-width: 980px) {

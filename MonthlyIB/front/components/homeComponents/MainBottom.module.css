@@ -19,12 +19,14 @@
   align-items: center;
   width: 4.4rem;
   height: 4.4rem;
-  border: 1px solid #d5d5d5;
+  border: 1px solid var(--mi-border);
   border-radius: 4.4rem;
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .controller button:hover {
-  background: #fafafa;
+  background: var(--mi-surface);
 }
 
 .controller button svg {
@@ -52,6 +54,8 @@
   font-size: 3.2rem;
   font-weight: 700;
   margin-bottom: 1.6rem;
+  color: var(--mi-brand-deep);
+  letter-spacing: -0.035em;
 }
 
 .profile_title_link {
@@ -93,11 +97,11 @@
 .cm_tab button {
   font-size: 1.4em;
   font-weight: 600;
-  color: #666;
-  background: #f1f1f1;
+  color: var(--mi-muted);
+  background: var(--mi-surface);
   margin-right: 0.8rem;
   cursor: pointer;
-  border-radius: 1rem;
+  border-radius: 999px;
   padding: 1.2rem 2rem;
   line-height: 1.2;
   word-break: keep-all;
@@ -110,7 +114,7 @@
 
 .cm_tab a.active,
 .cm_tab button.active {
-  background: var(--primary01);
+  background: var(--mi-brand);
   font-weight: 700;
   color: #fff;
 }
@@ -130,13 +134,15 @@
 
 .lesson_item {
   width: 54rem;
-  border: 1px solid #d5d5d5;
-  border-radius: 1rem;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
   margin-right: 2rem;
 }
 
 .lesson_item:hover {
-  background: #fafafa;
+  background: var(--mi-surface-soft);
 }
 
 .lesson_item a {
@@ -176,10 +182,10 @@
   display: flex;
   align-items: center;
   width: 10rem;
-  background: var(--primary01);
+  background: var(--mi-brand);
   padding: 1rem 1.4rem;
   color: #fff;
-  border-radius: 0.5rem;
+  border-radius: 1.1rem;
   font-size: 1.4rem;
   box-shadow: 2px 2px 2px 0px rgba(81, 52, 108, 0.3);
 }
@@ -214,8 +220,10 @@
 .archive_board_cont .board_item {
   /* width: 26.8rem; */
   margin-right: 1.2rem;
-  border: 1px solid #d5d5d5;
-  border-radius: 1rem;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .archive_board_cont .board_item a {
@@ -224,7 +232,7 @@
 }
 
 .archive_board_cont .board_item:hover {
-  background: #fafafa;
+  background: var(--mi-surface-soft);
 }
 
 .archive_board_cont .board_item h4 {

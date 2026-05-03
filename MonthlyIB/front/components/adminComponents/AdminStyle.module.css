@@ -1,5 +1,5 @@
 .adminPage {
-  width: min(166rem, calc(100% - 3.2rem));
+  width: min(172rem, calc(100% - 3.2rem));
   margin: calc(var(--appHeaderHeight, 7.2rem) + 1.4rem) auto 5rem;
   padding-top: 0;
   min-height: auto;
@@ -19,12 +19,12 @@
   grid-template-columns: minmax(0, 1.5fr) minmax(28rem, 0.9fr);
   gap: 1.6rem;
   padding: 2.2rem 2.4rem;
-  border: 1px solid rgba(81, 52, 108, 0.14);
+  border: 1px solid var(--mi-border);
   border-radius: 2.4rem;
   background:
-    radial-gradient(circle at top left, rgba(81, 52, 108, 0.08), transparent 35%),
-    linear-gradient(180deg, #fbf9ff 0%, #ffffff 100%);
-  box-shadow: 0 24px 56px rgba(40, 28, 56, 0.08);
+    radial-gradient(circle at top left, rgba(81, 52, 108, 0.1), transparent 35%),
+    linear-gradient(180deg, var(--mi-surface-soft) 0%, var(--mi-canvas) 100%);
+  box-shadow: var(--mi-shadow-elevated);
 }
 
 .adminHeroCopy {
@@ -38,9 +38,9 @@
   justify-content: center;
   padding: 0.7rem 1.2rem;
   border-radius: 999px;
-  border: 1px solid rgba(81, 52, 108, 0.16);
-  background: rgba(81, 52, 108, 0.06);
-  color: var(--primary01);
+  border: 1px solid var(--mi-border);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.16em;
@@ -49,7 +49,7 @@
 
 .adminHeroCopy h1 {
   margin: 1.2rem 0 0.7rem;
-  color: #221933;
+  color: var(--mi-brand-deep);
   font-size: 3.4rem;
   font-weight: 700;
   line-height: 1.14;
@@ -58,7 +58,7 @@
 
 .adminHeroCopy p {
   max-width: 76rem;
-  color: #685d7a;
+  color: var(--mi-body);
   font-size: 1.45rem;
   line-height: 1.62;
   word-break: keep-all;
@@ -76,7 +76,7 @@
   padding: 0 1.6rem;
   border-radius: 999px;
   color: #fff;
-  background: var(--primary01);
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
   font-size: 1.35rem;
   font-weight: 700;
   box-shadow: 0 14px 30px rgba(81, 52, 108, 0.2);
@@ -94,13 +94,13 @@
   justify-content: space-between;
   min-width: 0;
   padding: 1.4rem;
-  border: 1px solid rgba(81, 52, 108, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 1.6rem;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.9);
 }
 
 .adminMetaCard span {
-  color: #7c728f;
+  color: var(--mi-muted);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -109,7 +109,7 @@
 
 .adminMetaCard strong {
   margin-top: 0.7rem;
-  color: #251c35;
+  color: var(--mi-brand-deep);
   font-size: 2.2rem;
   font-weight: 700;
   line-height: 1.25;
@@ -129,7 +129,7 @@
 
 .sectionHeader h2 {
   margin-top: 0.7rem;
-  color: #241b34;
+  color: var(--mi-brand-deep);
   font-size: 2.4rem;
   font-weight: 700;
   line-height: 1.2;
@@ -161,10 +161,10 @@
 }
 
 .dashboard_top {
-  border: 1px solid #e8def2;
-  border-radius: 2rem;
-  background: #fff;
-  box-shadow: 0 14px 36px rgba(35, 24, 51, 0.06);
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
 }
 
 .dashboard_card_top {
@@ -186,12 +186,12 @@
   height: 5.6rem;
   flex-shrink: 0;
   border-radius: 1.6rem;
-  background: rgba(81, 52, 108, 0.08);
+  background: var(--mi-surface);
 }
 
 .left svg {
   font-size: 2rem;
-  color: var(--primary01);
+  color: var(--mi-brand);
 }
 
 .right {
@@ -201,7 +201,7 @@
 }
 
 .right .title {
-  color: #837997;
+  color: var(--mi-muted);
   font-size: 1.35rem;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -211,7 +211,7 @@
 .right .number {
   display: block;
   margin-top: 1rem;
-  color: #261d36;
+  color: var(--mi-brand-deep);
   font-size: 3.2rem;
   font-weight: 700;
   line-height: 1;
@@ -223,10 +223,10 @@
   min-width: 0;
   min-height: 40rem;
   padding: 1.8rem;
-  border: 1px solid #e9e1f2;
-  border-radius: 2.1rem;
-  background: #fff;
-  box-shadow: 0 16px 42px rgba(34, 23, 50, 0.05);
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
   overflow: hidden;
 }
 
@@ -251,7 +251,7 @@
 }
 
 .financeSectionHeader h3 {
-  color: #241b34;
+  color: var(--mi-brand-deep);
   font-size: 2.6rem;
   font-weight: 700;
 }
@@ -259,7 +259,7 @@
 .financeSectionHeader p {
   margin-top: 0.8rem;
   max-width: 72rem;
-  color: #716681;
+  color: var(--mi-body);
   font-size: 1.45rem;
   line-height: 1.7;
 }
@@ -284,31 +284,31 @@
 }
 
 .financeStatusLive {
-  background: rgba(77, 163, 122, 0.12);
-  color: #338057;
+  background: rgba(81, 174, 128, 0.14);
+  color: var(--mi-success);
 }
 
 .financeStatusWarning {
   background: rgba(234, 179, 8, 0.12);
-  color: #a66411;
+  color: var(--mi-warning);
 }
 
 .financeStatusMuted {
-  background: rgba(81, 52, 108, 0.08);
-  color: #6b5c81;
+  background: var(--mi-surface);
+  color: var(--mi-body);
 }
 
 .financeStatusFailed {
   background: rgba(220, 38, 38, 0.1);
-  color: #be3a3a;
+  color: var(--mi-error);
 }
 
 .financeWarningBanner {
   padding: 1.4rem 1.6rem;
-  border: 1px solid rgba(211, 93, 93, 0.24);
+  border: 1px solid rgba(189, 61, 61, 0.24);
   border-radius: 1.6rem;
   background: #fff6f6;
-  color: #b24d4d;
+  color: var(--mi-error);
   font-size: 1.4rem;
   line-height: 1.6;
 }
@@ -321,14 +321,14 @@
 
 .financeSummaryCard {
   padding: 1.7rem;
-  border: 1px solid #ebe2f5;
-  border-radius: 1.8rem;
-  background: #fbf9ff;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-surface-soft);
 }
 
 .financeSummaryCard span {
   display: block;
-  color: #827895;
+  color: var(--mi-muted);
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -338,14 +338,14 @@
 .financeSummaryCard strong {
   display: block;
   margin-top: 1.1rem;
-  color: #241b34;
+  color: var(--mi-brand-deep);
   font-size: 2.4rem;
   font-weight: 700;
   line-height: 1.2;
 }
 
 .financeSummaryMuted {
-  background: #f8f6fb;
+  background: var(--mi-surface);
 }
 
 .financeSummaryMuted strong {
@@ -354,9 +354,9 @@
 
 .financeChartShell {
   padding: 2rem;
-  border: 1px solid #ede5f7;
-  border-radius: 2.2rem;
-  background: #fff;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
 }
 
 .financeChartHeader {
@@ -368,19 +368,19 @@
 }
 
 .financeChartHeader h4 {
-  color: #251c35;
+  color: var(--mi-brand-deep);
   font-size: 1.9rem;
   font-weight: 700;
 }
 
 .financeChartHeader p {
   margin-top: 0.6rem;
-  color: #7d738f;
+  color: var(--mi-muted);
   font-size: 1.3rem;
 }
 
 .financeChartMeta {
-  color: #5c4a75;
+  color: var(--mi-brand);
   font-size: 1.35rem;
   font-weight: 700;
 }
@@ -391,7 +391,7 @@
 }
 
 .financeFootnote {
-  color: #827894;
+  color: var(--mi-muted);
   font-size: 1.35rem;
   line-height: 1.6;
 }
@@ -400,7 +400,7 @@
   display: grid;
   place-items: center;
   min-height: 28rem;
-  color: #7b718e;
+  color: var(--mi-muted);
   font-size: 1.5rem;
   text-align: center;
 }
@@ -433,7 +433,7 @@
   flex-direction: column;
   border-radius: 2.8rem;
   background: #fff;
-  box-shadow: 0 28px 60px rgba(29, 19, 42, 0.24);
+  box-shadow: var(--mi-shadow-elevated);
   overflow: hidden;
 }
 
@@ -1604,12 +1604,12 @@
   display: inline-flex;
   align-items: baseline;
   gap: 0.6rem;
-  color: #6f6483;
+  color: var(--mi-muted);
   font-size: 1.3rem;
 }
 
 .tableMeta strong {
-  color: #241b34;
+  color: var(--mi-brand-deep);
   font-size: 1.7rem;
   font-weight: 700;
 }
@@ -1618,7 +1618,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.6rem;
-  color: #6f6483;
+  color: var(--mi-muted);
   font-size: 1.22rem;
   font-weight: 600;
 }
@@ -1627,10 +1627,10 @@
   min-width: 11.4rem;
   height: 3.6rem;
   padding: 0 1.1rem;
-  border: 1px solid #ddd2ec;
+  border: 1px solid var(--mi-border);
   border-radius: 1.2rem;
-  background: #fff;
-  color: #241b34;
+  background: var(--mi-canvas);
+  color: var(--mi-ink);
   font-size: 1.28rem;
 }
 
@@ -1655,7 +1655,7 @@
   padding: 0;
   border: 0;
   background: transparent;
-  color: #8a809d;
+  color: var(--mi-muted);
   font-size: 1.18rem;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -1670,7 +1670,7 @@
 }
 
 .tableHeaderButton:hover {
-  color: var(--primary01);
+  color: var(--mi-brand);
 }
 
 .tableHeaderStatic:last-child,
@@ -1716,7 +1716,7 @@
 
 .tableRowWrap,
 .scheduleRowWrap {
-  border-bottom: 1px solid #eee7f7;
+  border-bottom: 1px solid var(--mi-border);
 }
 
 .tableRowWrap:last-child,
@@ -1726,7 +1726,7 @@
 
 .scheduleCell {
   min-width: 0;
-  color: var(--primary01);
+  color: var(--mi-brand);
   font-size: 1.35rem;
   overflow-wrap: break-word;
   word-break: keep-all;
@@ -1776,13 +1776,13 @@
 }
 
 .calendarSyncBadgeSynced {
-  background: #eff8ef;
-  color: #2f6a3d;
+  background: rgba(81, 174, 128, 0.14);
+  color: var(--mi-success);
 }
 
 .calendarSyncBadgePending {
-  background: #fff5e8;
-  color: #9b6128;
+  background: rgba(255, 246, 191, 0.62);
+  color: var(--mi-warning);
 }
 
 .calendarSyncBadgeFailed {
