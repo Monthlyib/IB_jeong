@@ -4,6 +4,95 @@
   min-height: auto;
 }
 
+/* Monthly IB design refresh */
+.mypagePage {
+  max-width: 132rem;
+}
+
+.mypage_flex .flex_left .my_profile_wrap {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background:
+    radial-gradient(circle at 84% 12%, rgba(81, 52, 108, 0.08), transparent 14rem),
+    var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.mypage_flex .flex_left .my_profile_wrap figure {
+  border: 0.4rem solid var(--mi-surface);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.mypage_flex .flex_left .my_profile_wrap .my_profile_user p,
+.mypage_flex .flex_right h2,
+.schedule_wrap .schedule_list .schedule_year {
+  color: var(--mi-brand-deep);
+}
+
+.mypage_flex .flex_left .my_profile_wrap .my_profile_user > span,
+.mypage_flex .plan_wrap .plan_active_card span,
+.mypage_flex .plan_wrap .plan_option,
+.board_wrap .board_item a .board_txt {
+  color: var(--mi-muted);
+}
+
+.mypage_flex .flex_left .my_profile_wrap .my_validate_btn,
+.mypage_flex .plan_wrap a.plan_btn {
+  border-color: var(--mi-border);
+  border-radius: 1.4rem;
+  background: var(--mi-surface-soft);
+  color: var(--mi-brand);
+}
+
+.mypage_flex .plan_wrap a.plan_btn {
+  border-width: 1px;
+}
+
+.mypage_flex .my_search_inner input {
+  border: 1px solid var(--mi-border);
+  border-radius: 1.5rem;
+  background: var(--mi-surface-soft);
+  color: var(--mi-ink);
+}
+
+.mypage_flex .my_search_inner input:focus {
+  border-color: var(--mi-brand);
+  box-shadow: var(--mi-focus-ring);
+}
+
+.board_wrap .board_item a,
+.schedule_wrap .schedule_top {
+  border-bottom: 1px solid var(--mi-border);
+}
+
+.board_wrap .board_item:hover {
+  background: var(--mi-surface-soft);
+}
+
+.board_wrap .board_item a .board_cont p {
+  color: var(--mi-brand-deep);
+}
+
+.board_wrap .board_item a .board_cont span {
+  color: var(--mi-body);
+}
+
+.schedule_wrap .schedule_top .schedule_left span,
+.schedule_wrap .schedule_top .schedule_right span {
+  color: var(--mi-body);
+}
+
+.schedule_wrap .schedule_top b {
+  color: var(--mi-brand);
+}
+
+.schedule_wrap .schedule_list .schedule_item {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
+}
+
 .mypagePage > section {
   max-width: none;
   width: 100%;

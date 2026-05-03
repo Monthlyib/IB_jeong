@@ -3,6 +3,67 @@
   flex-direction: column;
 }
 
+/* Monthly IB design refresh */
+.courseHero {
+  border: 1px solid var(--mi-border);
+  background:
+    radial-gradient(circle at top left, rgba(81, 52, 108, 0.09), transparent 34%),
+    linear-gradient(180deg, var(--mi-surface-soft) 0%, var(--mi-canvas) 100%);
+  box-shadow: var(--mi-shadow-elevated);
+}
+
+.courseEyebrow {
+  border: 1px solid var(--mi-border);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
+}
+
+.courseHeroCopy h3,
+.course_item .course_txt p {
+  color: var(--mi-brand-deep);
+}
+
+.ft_select_write,
+.ft_select,
+.ft_search,
+.btn_write,
+.courseStatCard,
+.course_item {
+  border-color: var(--mi-border);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.ft_select select:hover,
+.ft_select_write select:hover,
+.course_item > a:hover {
+  background-color: var(--mi-surface-soft);
+}
+
+.ft_search input {
+  color: var(--mi-ink);
+}
+
+.ft_search button {
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+}
+
+.btn_write,
+.courseCta {
+  color: var(--mi-brand);
+  background: var(--mi-surface-soft);
+  border-color: var(--mi-border);
+}
+
+.courseStatCard span,
+.course_item .course_txt span {
+  color: var(--mi-muted);
+}
+
+.courseStatCard strong {
+  color: var(--mi-brand-deep);
+}
+
 .courseHero {
   margin: 3rem 0 2rem;
   padding: 2.6rem 2.8rem;

@@ -8,6 +8,64 @@
   border-bottom: 1px solid #d5d5d5;
 }
 
+/* Monthly IB design refresh */
+.board_item a,
+.read_cont .read_center .read_header {
+  border-bottom: 1px solid var(--mi-border);
+}
+
+.board_item:hover {
+  background: var(--mi-surface-soft);
+}
+
+.board_item a .board_cont p,
+.read_cont .read_center .read_header h3 {
+  color: var(--mi-brand-deep);
+}
+
+.board_item a .board_cont span,
+.read_cont .read_center .read_content .title p {
+  color: var(--mi-body);
+}
+
+.board_item a .board_txt,
+.read_cont .read_center .read_header .read_info_label {
+  color: var(--mi-muted);
+}
+
+.course_no,
+.review_no {
+  border: 1px dashed var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-surface-soft);
+}
+
+.read_center {
+  padding: 3rem;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.read_cont .read_center .read_btn_area a {
+  border-color: var(--mi-border);
+  border-radius: 1.2rem;
+  background: var(--mi-brand);
+}
+
+a.read_btn.list,
+button.read_btn.list {
+  border-color: var(--mi-border);
+  color: var(--mi-brand);
+  background: var(--mi-canvas);
+}
+
+a.read_btn.list:hover,
+button.read_btn.list:hover {
+  background: var(--mi-surface);
+}
+
 .course_no {
   border-top: 1px solid #000;
   border-bottom: 1px solid #d5d5d5;

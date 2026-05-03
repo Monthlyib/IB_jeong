@@ -20,13 +20,13 @@ header .util a:first-child:hover {
 header .util a:last-child {
   width: clamp(9.6rem, 8.2vw, 11.6rem);
   height: 40px;
-  border-radius: 5px;
+  border-radius: 1.2rem;
   text-align: center;
   margin-left: 0;
-  background: var(--primary01);
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
   color: #fff;
   line-height: 40px;
-  box-shadow: var(--shdow-df);
+  box-shadow: 0 1.2rem 2.4rem rgba(81, 52, 108, 0.18);
 }
 
 header .util a:last-child:hover {
@@ -101,9 +101,10 @@ header .my_util .util_box {
   top: calc(100% + 0.6rem);
   width: 15.2rem;
   height: auto;
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.25);
+  background: var(--mi-canvas);
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-md);
+  box-shadow: var(--mi-shadow-elevated);
   overflow: hidden;
   z-index: 10002;
 }
@@ -126,15 +127,15 @@ header .my_util .util_box ul li a {
   padding: 1.4rem 0;
   font-size: 1.6rem;
   font-weight: 500;
-  color: #242424;
+  color: var(--mi-ink);
 }
 
 header .my_util .util_box ul li:hover a {
-  background: #f1f1f1;
+  background: var(--mi-surface);
 }
 
 header .my_util .util_box ul li:last-child a {
-  color: var(--primary01);
+  color: var(--mi-brand);
   padding: 1.4rem 0;
   font-size: 1.6rem;
   font-weight: 500;

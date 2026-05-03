@@ -103,3 +103,91 @@
   cursor: pointer;
   font-size: 1.4rem;
 }
+
+/* Monthly IB design refresh */
+.container {
+  max-width: 104rem;
+  padding: calc(var(--appHeaderHeight, 8rem) + 3rem) 2rem 6rem;
+}
+
+.title {
+  color: var(--mi-brand-deep);
+  font-size: clamp(2.8rem, 4vw, 4.4rem);
+  letter-spacing: -0.04em;
+}
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.label {
+  color: var(--mi-heading);
+  font-weight: 800;
+}
+
+.input,
+.editor,
+.fileInput {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-md);
+  background: var(--mi-canvas);
+  color: var(--mi-ink);
+}
+
+.input:focus {
+  border-color: rgba(81, 52, 108, 0.42);
+  box-shadow: 0 0 0 0.4rem rgba(81, 52, 108, 0.08);
+  outline: none;
+}
+
+.editor {
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.cancelBtn,
+.submitBtn,
+.deleteButton {
+  border-radius: var(--mi-radius-md);
+  font-weight: 800;
+}
+
+.cancelBtn {
+  background: var(--mi-canvas);
+  color: var(--mi-brand);
+  border: 1px solid var(--mi-border);
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-deep));
+  color: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.deleteButton {
+  background: rgba(203, 58, 58, 0.1);
+  color: var(--mi-danger);
+  border: 1px solid rgba(203, 58, 58, 0.2);
+}
+
+.imagePreview {
+  border-radius: var(--mi-radius-lg);
+  box-shadow: var(--mi-shadow-card);
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: calc(var(--appHeaderHeight, 6.4rem) + 2rem) 1.6rem 4rem;
+  }
+
+  .fileInputWrapper,
+  .buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cancelBtn,
+  .submitBtn,
+  .deleteButton {
+    width: 100%;
+  }
+}

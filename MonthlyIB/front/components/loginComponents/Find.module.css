@@ -2,6 +2,62 @@
   padding: 5.6rem 0 3.8rem;
 }
 
+/* Monthly IB design refresh */
+.header_tit_wrap {
+  padding: 0 0 2.4rem;
+}
+
+.cm_tab {
+  padding: 0.6rem;
+  border: 1px solid var(--mi-border);
+  border-radius: 1.6rem;
+  background: var(--mi-surface);
+}
+
+.cm_tab button,
+.cm_tab a {
+  color: var(--mi-muted);
+  background: transparent;
+  border-radius: 1.2rem;
+}
+
+.cm_tab button.active,
+.cm_tab a.active {
+  border: 1px solid var(--mi-border-strong);
+  background: var(--mi-canvas);
+  color: var(--mi-brand);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.inputbox_cont input {
+  border: 1px solid var(--mi-border);
+  border-radius: 1.5rem;
+  background: var(--mi-surface-soft);
+  color: var(--mi-ink);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.inputbox_cont input:focus {
+  border-color: var(--mi-brand);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-focus-ring);
+}
+
+.inputbox_cont button,
+.center_btn_wrap button {
+  border-radius: 1.4rem;
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+}
+
+.inputbox_cont .frm_msg_cont,
+.bottom_option > p {
+  color: var(--mi-body);
+}
+
+.bottom_option a {
+  color: var(--mi-brand);
+}
+
 .cm_tab {
   display: flex;
   align-items: stretch;

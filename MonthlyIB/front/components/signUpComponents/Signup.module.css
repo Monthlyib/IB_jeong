@@ -5,6 +5,80 @@
   padding: 8rem 0 8.8rem;
 }
 
+/* Monthly IB design refresh */
+.width_content.member {
+  width: min(58rem, calc(100% - 3.2rem));
+  min-height: auto;
+  margin: 0 auto;
+  padding: calc(var(--appHeaderHeight, 8rem) + 3.2rem) 0 7.2rem;
+}
+
+.member {
+  padding: 3.2rem;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background:
+    radial-gradient(circle at 88% 10%, rgba(81, 52, 108, 0.1), transparent 18rem),
+    var(--mi-canvas);
+  box-shadow: var(--mi-shadow-elevated);
+}
+
+.member .header_tit_wrap {
+  padding: 0 0 2.8rem;
+}
+
+.header_tit_wrap span {
+  color: var(--mi-muted);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.header_tit_wrap h2 {
+  color: var(--mi-brand-deep);
+  font-weight: 900;
+  letter-spacing: -0.055em;
+}
+
+.select_cont select,
+.select_cont input,
+.inputbox_cont input {
+  border: 1px solid var(--mi-border);
+  border-radius: 1.5rem;
+  background-color: var(--mi-surface-soft);
+  color: var(--mi-ink);
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.select_cont select:focus,
+.select_cont input:focus,
+.inputbox_cont input:focus {
+  border-color: var(--mi-brand);
+  background-color: var(--mi-canvas);
+  box-shadow: var(--mi-focus-ring);
+}
+
+.inputbox_cont button,
+.center_btn_wrap button {
+  border-radius: 1.4rem;
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+}
+
+.center_btn_wrap button:disabled {
+  background: #8a8295;
+}
+
+.frm_agree_cont .frm_agree_all {
+  border-bottom: 1px solid var(--mi-border);
+}
+
+.frm_agree_cont ul li .frm_agree_flex label {
+  color: var(--mi-body);
+}
+
+.frm_agree_cont ul li a {
+  color: var(--mi-brand);
+}
+
 .header_tit_wrap {
   display: flex;
   flex-direction: column;

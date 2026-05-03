@@ -13,10 +13,10 @@
   align-items: center;
   gap: 1.6rem;
   padding: 4rem 3.2rem;
-  border: 1px solid rgba(86, 58, 122, 0.12);
+  border: 1px solid var(--mi-border);
   border-radius: 2.8rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, #f8f6fb 100%);
-  box-shadow: 0 2.4rem 6rem rgba(84, 59, 122, 0.12);
+  background: linear-gradient(180deg, var(--mi-canvas) 0%, var(--mi-surface) 100%);
+  box-shadow: var(--mi-shadow-elevated);
   text-align: center;
 }
 
@@ -26,9 +26,9 @@
   justify-content: center;
   padding: 0.8rem 1.4rem;
   border-radius: 999px;
-  border: 1px solid rgba(86, 58, 122, 0.12);
-  background: rgba(113, 86, 149, 0.08);
-  color: #5b417d;
+  border: 1px solid var(--mi-border);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
   font-size: 1.3rem;
   font-weight: 700;
   letter-spacing: 0.18em;
@@ -36,7 +36,7 @@
 }
 
 .title {
-  color: #2b2138;
+  color: var(--mi-brand-deep);
   font-size: 3.2rem;
   font-weight: 700;
   line-height: 1.2;
@@ -44,13 +44,13 @@
 
 .message {
   max-width: 40rem;
-  color: #675b78;
+  color: var(--mi-body);
   font-size: 1.7rem;
   line-height: 1.7;
 }
 
 .error {
-  color: #b33852;
+  color: var(--mi-error);
 }
 
 .actions {
@@ -76,15 +76,15 @@
 }
 
 .button {
-  background: var(--primary01);
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
   color: #fff;
   box-shadow: 0 1.4rem 3rem rgba(86, 58, 122, 0.18);
 }
 
 .secondaryButton {
-  background: #fff;
-  color: #4f3b6c;
-  border: 1px solid rgba(86, 58, 122, 0.16);
+  background: var(--mi-canvas);
+  color: var(--mi-brand);
+  border: 1px solid var(--mi-border);
 }
 
 .button:hover,

@@ -32,10 +32,12 @@
   --mi-success: #258b5a;
   --mi-warning: #b66a18;
   --mi-error: #bd3d3d;
+  --mi-danger: var(--mi-error);
   --mi-radius-sm: 1rem;
   --mi-radius-md: 1.4rem;
   --mi-radius-lg: 2rem;
   --mi-radius-xl: 2.8rem;
+  --mi-radius-2xl: 3.6rem;
   --mi-shadow-soft: 0 1.2rem 3rem rgba(57, 31, 82, 0.06);
   --mi-shadow-card: 0 2rem 4.8rem rgba(57, 31, 82, 0.09);
   --mi-shadow-elevated:

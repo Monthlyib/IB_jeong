@@ -8,6 +8,105 @@
   border-bottom: 1px solid #d5d5d5;
 }
 
+/* Monthly IB design refresh */
+.board_item a {
+  border-bottom: 1px solid var(--mi-border);
+}
+
+.board_item:hover {
+  background: var(--mi-surface-soft);
+}
+
+.board_item a .board_cont p,
+.boardHeroCopy h2,
+.boardPanelHeader h3,
+.boardStatCard strong {
+  color: var(--mi-brand-deep);
+}
+
+.board_item a .board_cont span,
+.boardHeroCopy p,
+.boardPanelHeader p,
+.newsDetailSectionTop p,
+.newsDetailGuideList li {
+  color: var(--mi-body);
+}
+
+.board_item a .board_txt {
+  color: var(--mi-muted);
+}
+
+.boardTabs,
+.boardHero,
+.boardSearchField,
+.boardStatCard,
+.boardPanel,
+.newsDetailArticle,
+.newsDetailAsideCard,
+.newsDetailContent,
+.newsDetailAttachments {
+  border-color: var(--mi-border);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.boardTabs,
+.boardPanel,
+.newsDetailArticle,
+.newsDetailAsideCard,
+.newsDetailContent,
+.newsDetailAttachments {
+  background: var(--mi-canvas);
+}
+
+.boardTabLink {
+  color: var(--mi-body);
+}
+
+.boardTabLink:hover {
+  background: var(--mi-surface);
+  color: var(--mi-brand-deep);
+}
+
+.boardTabActive,
+.boardSearchField button,
+.boardWriteButton,
+.boardModalCard button {
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+}
+
+.boardHero {
+  background:
+    radial-gradient(circle at top left, rgba(81, 52, 108, 0.08), transparent 32%),
+    linear-gradient(180deg, var(--mi-surface-soft) 0%, var(--mi-canvas) 100%);
+}
+
+.boardEyebrow,
+.boardPanelEyebrow,
+.newsDetailEyebrow,
+.newsDetailMiniLabel,
+.boardModalEyebrow {
+  border-color: var(--mi-border);
+  background: var(--mi-surface);
+  color: var(--mi-brand);
+}
+
+.boardSearchField input {
+  background: var(--mi-surface-soft);
+  color: var(--mi-ink);
+}
+
+.boardSearchField input:focus {
+  outline: none;
+  box-shadow: var(--mi-focus-ring);
+}
+
+.boardBackLink,
+.newsNavButton {
+  border-color: var(--mi-border);
+  background: var(--mi-canvas);
+  color: var(--mi-brand);
+}
+
 .course_no {
   border-top: 1px solid #000;
   border-bottom: 1px solid #d5d5d5;

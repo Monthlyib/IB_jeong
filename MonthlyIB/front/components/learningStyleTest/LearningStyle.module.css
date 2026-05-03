@@ -183,3 +183,68 @@
   font-weight: 600;
   user-select: "none";
 }
+
+/* Monthly IB design refresh */
+.learning_style_header {
+  color: var(--mi-brand-deep);
+  letter-spacing: -0.035em;
+}
+
+.learning_style_header::after {
+  border-bottom-color: var(--mi-border);
+}
+
+.learning_style_content {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.learning_style_content_options .third_circle,
+.learning_style_content_options .third_circle_active {
+  border-color: var(--mi-border-strong);
+}
+
+.learning_style_content_options .first_circle,
+.learning_style_content_options .first_circle_active,
+.learning_style_content_options .second_circle_active,
+.learning_style_content_options .second_circle {
+  border-color: var(--mi-brand-green);
+}
+
+.learning_style_content_options .fourth_circle_active,
+.learning_style_content_options .fifth_circle_active,
+.learning_style_content_options .fourth_circle,
+.learning_style_content_options .fifth_circle {
+  border-color: var(--mi-brand);
+}
+
+.learning_style_content_options .fifth_circle:hover,
+.learning_style_content_options .fourth_circle:hover,
+.learning_style_content_options .fifth_circle_active,
+.learning_style_content_options .fourth_circle_active {
+  background-color: var(--mi-brand);
+}
+
+.learning_style_result_title,
+.learning_style_result_type,
+.learning_style_result_content {
+  border-color: var(--mi-brand);
+}
+
+.learning_style_result_type {
+  color: var(--mi-brand-deep);
+  background: var(--mi-surface-soft);
+}
+
+.learning_style_result_content {
+  color: var(--mi-body);
+  background: var(--mi-canvas);
+}
+
+.learning_style_back_btn {
+  border-radius: 1.4rem;
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+  box-shadow: 0 1.4rem 2.8rem rgba(81, 52, 108, 0.2);
+}

@@ -31,15 +31,15 @@ header .util a:last-child,
 header .util button:last-child {
     width: clamp(9.6rem, 8.2vw, 11.6rem);
     height: 40px;
-    border-radius: 5px;
+    border-radius: 1.2rem;
     text-align: center;
     margin-left: clamp(0.8rem, 1.35vw, 2.4rem);
-    background: var(--primary01);
+    background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
     color: #fff;
     line-height: 40px;
-    box-shadow: var(--shdow-df);
+    box-shadow: 0 1.2rem 2.4rem rgba(81, 52, 108, 0.18);
 }
 
 header .util a:last-child:hover {
-    background: var(--primary03);
+    background: var(--mi-brand-mid);
 }

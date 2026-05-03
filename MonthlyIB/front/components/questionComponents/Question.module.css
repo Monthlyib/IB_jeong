@@ -5,6 +5,87 @@
   width: 81vw;
 }
 
+/* Monthly IB design refresh */
+.course_no,
+.review_no {
+  border: 1px dashed var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-surface-soft);
+}
+
+.question_wrap .question_item {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.question_wrap .question_item:hover {
+  transform: translateY(-0.2rem);
+  background: var(--mi-surface-soft);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.question_wrap .question_item a .q_flex_top p,
+.dt_question_wrap .dt_question .dt_question_title h2 {
+  color: var(--mi-brand-deep);
+  letter-spacing: -0.03em;
+}
+
+.question_wrap .question_item a .q_flex_top .q_author,
+.dt_question_wrap .dt_question .dt_question_top .dt_question_info .author {
+  color: var(--mi-muted);
+}
+
+.question_wrap .question_item a .q_flex_bottom .q_class,
+.question_header .question_count span,
+.dt_question_wrap .dt_question .dt_question_top .dt_question_info .class,
+.dt_question_wrap .dt_question .dt_question_top .dt_question_info .date {
+  color: var(--mi-body);
+}
+
+.question_header .question_count b,
+.dt_question_wrap .dt_question .dt_question_title > span,
+.dt_question_wrap .dt_answer_exist .dt_answer_content > span,
+.dt_question_wrap .dt_answer .dt_answer_content > span {
+  color: var(--mi-brand);
+}
+
+.q_flex_bottom .q_ceiling.reserve,
+.dt_question_wrap .q_ceiling.reserve {
+  background: var(--mi-pastel-sky);
+  color: #2465a7;
+}
+
+.q_flex_bottom .q_ceiling.wait,
+.dt_question_wrap .q_ceiling.wait {
+  background: var(--mi-pastel-peach);
+  color: var(--mi-warning);
+}
+
+.dt_question_wrap {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.dt_question_wrap .q_ceiling.answer {
+  background: var(--mi-brand);
+}
+
+.dt_question_title_menu button {
+  border-color: var(--mi-brand);
+  border-radius: 0.9rem;
+  color: var(--mi-brand);
+}
+
+.dt_question_wrap .dt_answer_exist,
+.dt_question_wrap .dt_answer {
+  background: var(--mi-surface-soft);
+}
+
 .course_no p {
   font-size: 1.4rem;
   font-weight: 400;

@@ -136,3 +136,95 @@
   border-radius: 8px;
   margin-top: 1rem;
 }
+
+/* Monthly IB design refresh */
+.container {
+  max-width: 104rem;
+  padding: calc(var(--appHeaderHeight, 8rem) + 3rem) 2rem 6rem;
+  font-family: inherit;
+}
+
+.title {
+  color: var(--mi-brand-deep);
+  font-size: clamp(2.8rem, 4vw, 4.4rem);
+  letter-spacing: -0.04em;
+}
+
+.filterRow {
+  gap: 1.6rem;
+  margin: 3.2rem 0 2rem;
+  background: var(--mi-canvas);
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.filterRow label {
+  color: var(--mi-heading);
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.filterRow select {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-md);
+  background: var(--mi-surface-soft);
+  color: var(--mi-ink);
+}
+
+.item {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 247, 255, 0.7)),
+    var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.question {
+  color: var(--mi-ink);
+}
+
+.choices li {
+  color: var(--mi-body);
+}
+
+.answer {
+  color: var(--mi-success);
+}
+
+.editButton,
+.deleteButton {
+  border-radius: var(--mi-radius-sm);
+  font-weight: 800;
+}
+
+.editButton {
+  background: rgba(57, 135, 89, 0.12);
+  color: var(--mi-success);
+  border-color: rgba(57, 135, 89, 0.26);
+}
+
+.deleteButton {
+  background: rgba(203, 58, 58, 0.1);
+  color: var(--mi-danger);
+  border-color: rgba(203, 58, 58, 0.2);
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: calc(var(--appHeaderHeight, 6.4rem) + 2rem) 1.6rem 4rem;
+  }
+
+  .filterRow {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    position: static;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-top: 1.6rem;
+  }
+}

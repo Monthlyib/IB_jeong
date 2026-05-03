@@ -5,6 +5,59 @@
   padding-bottom: 8rem;
 }
 
+/* Monthly IB design refresh */
+.course_thumbnail,
+.courseHeroCard,
+.course_info_top,
+.course_sectionCard,
+.course_nav {
+  border-color: var(--mi-border);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.course_thumbnail {
+  background: var(--mi-surface);
+}
+
+.courseHeroCard {
+  background:
+    radial-gradient(circle at top right, rgba(123, 92, 170, 0.12), transparent 42%),
+    linear-gradient(180deg, var(--mi-canvas) 0%, var(--mi-surface-soft) 100%);
+}
+
+.courseHeroLabel,
+.course_info_path {
+  background: var(--mi-surface);
+  color: var(--mi-brand);
+}
+
+.courseHeroTitle,
+.course_tit_header h3 {
+  color: var(--mi-brand-deep);
+}
+
+.courseHeroSummary,
+.course_contentInner {
+  color: var(--mi-body);
+}
+
+.courseMetaChip,
+.course_nav ul li.active button,
+.course_nav ul li button:hover {
+  background: var(--mi-surface);
+  color: var(--mi-brand);
+  border-color: var(--mi-border);
+}
+
+.review_no {
+  border-color: var(--mi-border);
+  background: var(--mi-surface-soft);
+}
+
+.review_no p {
+  color: var(--mi-muted);
+}
+
 .mo_course_info {
   display: none;
 }

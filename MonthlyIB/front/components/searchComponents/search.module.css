@@ -6,6 +6,37 @@
     padding: 7.2rem 0;
 }
 
+/* Monthly IB design refresh */
+.header_tit_wrap h2,
+.category_wrap h3 {
+  color: var(--mi-brand-deep);
+  letter-spacing: -0.04em;
+}
+
+.header_tit_wrap span,
+.no_search span {
+  color: var(--mi-muted);
+}
+
+.header_tit_wrap span b,
+.category_wrap b.point_search {
+  color: var(--mi-brand);
+}
+
+.category_wrap {
+  padding: 2.4rem;
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.no_search {
+  border: 1px dashed var(--mi-border);
+  border-radius: var(--mi-radius-lg);
+  background: var(--mi-surface-soft);
+}
+
 .header_tit_wrap {
     display: flex;
     flex-direction: column;

@@ -76,3 +76,76 @@
 .submitBtn:hover {
   background-color: var(--primary03);
 }
+
+/* Monthly IB design refresh */
+.container {
+  max-width: 96rem;
+  margin: 0 auto;
+  padding: calc(var(--appHeaderHeight, 8rem) + 3rem) 2rem 6rem;
+  font-family: inherit;
+}
+
+.title {
+  color: var(--mi-brand-deep);
+  font-size: clamp(2.8rem, 4vw, 4.4rem);
+  letter-spacing: -0.04em;
+  margin-bottom: 2.8rem;
+}
+
+.formGroup {
+  margin-bottom: 2rem;
+}
+
+.label {
+  color: var(--mi-heading);
+  font-weight: 800;
+}
+
+.textarea,
+.input,
+.fileInput {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-md);
+  background: var(--mi-canvas);
+  color: var(--mi-ink);
+}
+
+.textarea:focus,
+.input:focus {
+  border-color: rgba(81, 52, 108, 0.42);
+  box-shadow: 0 0 0 0.4rem rgba(81, 52, 108, 0.08);
+  outline: none;
+}
+
+.cancelBtn,
+.submitBtn {
+  border-radius: var(--mi-radius-md);
+  font-weight: 800;
+}
+
+.cancelBtn {
+  background: var(--mi-canvas);
+  color: var(--mi-brand);
+  border: 1px solid var(--mi-border);
+}
+
+.submitBtn {
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-deep));
+  color: var(--mi-canvas);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+@media (max-width: 640px) {
+  .container {
+    padding: calc(var(--appHeaderHeight, 6.4rem) + 2rem) 1.6rem 4rem;
+  }
+
+  .buttons {
+    flex-direction: column-reverse;
+  }
+
+  .cancelBtn,
+  .submitBtn {
+    width: 100%;
+  }
+}

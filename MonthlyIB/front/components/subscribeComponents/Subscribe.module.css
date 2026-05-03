@@ -6,6 +6,67 @@
   padding: 7.2rem 0;
 }
 
+/* Monthly IB design refresh */
+.plan_tabs {
+  padding: 0.6rem;
+  border: 1px solid var(--mi-border);
+  border-radius: 999px;
+  background: var(--mi-surface);
+}
+
+.plan_tabs button {
+  background: transparent;
+  color: var(--mi-muted);
+}
+
+.plan_tabs button.active {
+  border: 1px solid var(--mi-border-strong);
+  background: var(--mi-canvas);
+  color: var(--mi-brand);
+  box-shadow: var(--mi-shadow-soft);
+}
+
+.plan_box_wrap {
+  gap: 1.6rem;
+}
+
+.plan_box_wrap .plan_box {
+  border: 1px solid var(--mi-border);
+  border-radius: var(--mi-radius-xl);
+  background:
+    radial-gradient(circle at 82% 12%, rgba(81, 52, 108, 0.08), transparent 18rem),
+    var(--mi-canvas);
+  box-shadow: var(--mi-shadow-card);
+}
+
+.plan_box_wrap .plan_box:nth-child(2n) {
+  background:
+    radial-gradient(circle at 82% 12%, rgba(255, 246, 191, 0.48), transparent 18rem),
+    linear-gradient(180deg, var(--mi-canvas), var(--mi-surface-soft));
+  border-color: var(--mi-border-strong);
+}
+
+.plan_box_wrap .plan_box .plan_top h3 {
+  color: var(--mi-brand-deep);
+  letter-spacing: -0.04em;
+}
+
+.plan_box_wrap .plan_box .plan_top span,
+.plan_box_wrap .plan_box .plan_info ul li span {
+  color: var(--mi-body);
+}
+
+.plan_box_wrap .plan_box .plan_top .plan_price_wrap .plan_price_cont,
+.plan_box_wrap .plan_box .plan_top .plan_price_wrap .plan_price_cont .plan_price {
+  color: var(--mi-brand);
+}
+
+.plan_box_wrap .plan_box .plan_btn a {
+  background: linear-gradient(135deg, var(--mi-brand), var(--mi-brand-mid));
+  color: #fff;
+  box-shadow: 0 1.4rem 2.8rem rgba(81, 52, 108, 0.2);
+}
+
 .plan_tabs {
   display: flex;
   align-items: center;
