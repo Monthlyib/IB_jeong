@@ -320,7 +320,7 @@ const AIIoRecording = () => {
                 // DOCX는 미리보기가 지원되지 않으므로 다운로드 안내
                 setPreview(
                     <div className={styles.previewContainer}>
-                        <p>DOCX 파일은 미리보기가 지원되지 않습니다. 업로드된 파일은 음성 분석 기준 대본으로 사용됩니다.</p>
+                        <p>DOCX 파일은 미리보기가 지원되지 않습니다. 업로드된 파일은 AI 피드백 기준 대본으로 사용됩니다.</p>
                         <a href={blobUrl} download={scriptFile.name} className={styles.downloadLink}>
                             다운로드
                         </a>
@@ -465,7 +465,7 @@ const AIIoRecording = () => {
                         onClick={handleGetFeedback}
                         disabled={!audioBlob || isRecording || loading}
                     >
-                        {loading ? "음성 분석 중..." : "피드백 받기"}
+                        {loading ? "피드백 생성 중..." : "피드백 받기"}
                     </button>
                 </div>
             </section>
@@ -481,9 +481,9 @@ const AIIoRecording = () => {
             {/* 4) 피드백 섹션 */}
             {loading ? (
                 <section className={styles.feedbackSection}>
-                    <h2 className={styles.feedbackTitle}>음성 분석 중</h2>
+                    <h2 className={styles.feedbackTitle}>AI 피드백 생성 중</h2>
                     <p className={styles.feedbackContent}>
-                        발음, 유창성, 억양/프로소디를 분석하고 있습니다. 녹음 길이에 따라 시간이 걸릴 수 있습니다.
+                        녹음을 텍스트로 변환하고 대본과 비교해 피드백을 생성하고 있습니다. 녹음 길이에 따라 시간이 걸릴 수 있습니다.
                     </p>
                 </section>
             ) : feedbackError ? (
@@ -494,15 +494,12 @@ const AIIoRecording = () => {
             ) : (
                 feedbackData && (
                     <section className={styles.feedbackSection}>
-                        <h2 className={styles.feedbackTitle}>음성 분석 피드백</h2>
+                        <h2 className={styles.feedbackTitle}>AI IO 피드백</h2>
                         <div className={styles.metricGrid}>
                             {[
-                                ["종합 발음", feedbackData.speechMetrics?.pronunciationScore],
-                                ["정확도", feedbackData.speechMetrics?.accuracyScore],
-                                ["유창성", feedbackData.speechMetrics?.fluencyScore],
-                                ["대본 충실도", feedbackData.speechMetrics?.completenessScore],
-                                ["억양/프로소디", feedbackData.speechMetrics?.prosodyScore],
-                                ["분당 단어", feedbackData.speechMetrics?.speakingRateWpm],
+                                ["대본 일치율", feedbackData.deliveryMetrics?.scriptMatchPercent],
+                                ["분당 단어", feedbackData.deliveryMetrics?.speakingRateWpm],
+                                ["녹음 길이", feedbackData.deliveryMetrics?.durationSeconds],
                             ].map(([label, value]) => (
                                 <div className={styles.metricCard} key={label}>
                                     <span>{label}</span>
