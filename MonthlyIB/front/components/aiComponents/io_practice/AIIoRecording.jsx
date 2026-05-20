@@ -1,12 +1,106 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useIOStore } from "@/store/AIIostore";
 import styles from "./AIIoRecording.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import { useUserInfo } from "@/store/user";
 
+const TARGET_SAMPLE_RATE = 16000;
+
+const mergeAudioBuffers = (buffers, length) => {
+    const result = new Float32Array(length);
+    let offset = 0;
+    buffers.forEach((buffer) => {
+        result.set(buffer, offset);
+        offset += buffer.length;
+    });
+    return result;
+};
+
+const downsampleBuffer = (buffer, sourceSampleRate, targetSampleRate) => {
+    if (targetSampleRate === sourceSampleRate) return buffer;
+    const sampleRateRatio = sourceSampleRate / targetSampleRate;
+    const newLength = Math.round(buffer.length / sampleRateRatio);
+    const result = new Float32Array(newLength);
+    let offsetResult = 0;
+    let offsetBuffer = 0;
+
+    while (offsetResult < result.length) {
+        const nextOffsetBuffer = Math.round((offsetResult + 1) * sampleRateRatio);
+        let accumulator = 0;
+        let count = 0;
+        for (let i = offsetBuffer; i < nextOffsetBuffer && i < buffer.length; i += 1) {
+            accumulator += buffer[i];
+            count += 1;
+        }
+        result[offsetResult] = accumulator / Math.max(count, 1);
+        offsetResult += 1;
+        offsetBuffer = nextOffsetBuffer;
+    }
+
+    return result;
+};
+
+const writeAscii = (view, offset, value) => {
+    for (let i = 0; i < value.length; i += 1) {
+        view.setUint8(offset + i, value.charCodeAt(i));
+    }
+};
+
+const encodeWav = (samples, sampleRate) => {
+    const bytesPerSample = 2;
+    const buffer = new ArrayBuffer(44 + samples.length * bytesPerSample);
+    const view = new DataView(buffer);
+
+    writeAscii(view, 0, "RIFF");
+    view.setUint32(4, 36 + samples.length * bytesPerSample, true);
+    writeAscii(view, 8, "WAVE");
+    writeAscii(view, 12, "fmt ");
+    view.setUint32(16, 16, true);
+    view.setUint16(20, 1, true);
+    view.setUint16(22, 1, true);
+    view.setUint32(24, sampleRate, true);
+    view.setUint32(28, sampleRate * bytesPerSample, true);
+    view.setUint16(32, bytesPerSample, true);
+    view.setUint16(34, 16, true);
+    writeAscii(view, 36, "data");
+    view.setUint32(40, samples.length * bytesPerSample, true);
+
+    let offset = 44;
+    for (let i = 0; i < samples.length; i += 1, offset += 2) {
+        const sample = Math.max(-1, Math.min(1, samples[i]));
+        view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+    }
+
+    return new Blob([view], { type: "audio/wav" });
+};
+
+const parseFeedbackSections = (content) => {
+    if (!content) return [];
+    const sections = [];
+    const lines = content.split(/\r?\n/);
+    let current = { title: "피드백", body: [] };
+
+    lines.forEach((line) => {
+        const heading = line.match(/^#{1,3}\s+(.+)$/);
+        if (heading) {
+            if (current.body.join("\n").trim()) {
+                sections.push({ ...current, body: current.body.join("\n").trim() });
+            }
+            current = { title: heading[1].trim(), body: [] };
+            return;
+        }
+        current.body.push(line);
+    });
+
+    if (current.body.join("\n").trim()) {
+        sections.push({ ...current, body: current.body.join("\n").trim() });
+    }
+
+    return sections.length ? sections : [{ title: "피드백", body: content }];
+};
 
 const AIIoRecording = () => {
     const RECOMMENDED_DURATION_SECONDS = 600;
@@ -14,7 +108,8 @@ const AIIoRecording = () => {
 
     const [isRecording, setIsRecording] = useState(false);
     const [recordingSeconds, setRecordingSeconds] = useState(0);
-    const [feedback, setFeedback] = useState("");
+    const [feedbackData, setFeedbackData] = useState(null);
+    const [feedbackError, setFeedbackError] = useState("");
     const [preview, setPreview] = useState(null); // 대본 미리보기 콘텐츠
     const { userInfo } = useUserInfo();
     const [loading, setLoading] = useState(false);
@@ -24,10 +119,19 @@ const AIIoRecording = () => {
     const [isFinished, setIsFinished] = useState(false);
 
     const audioRef = useRef(null); // 녹음 파일 재생을 위한 ref
-    const mediaRecorderRef = useRef(null);
+    const audioContextRef = useRef(null);
+    const sourceRef = useRef(null);
+    const processorRef = useRef(null);
+    const silentGainRef = useRef(null);
     const streamRef = useRef(null);
-    const audioChunksRef = useRef([]);
+    const recordedBuffersRef = useRef([]);
+    const recordingLengthRef = useRef(0);
+    const sourceSampleRateRef = useRef(48000);
     const audioUrlRef = useRef(null);
+    const feedbackSections = useMemo(
+        () => parseFeedbackSections(feedbackData?.feedbackContent),
+        [feedbackData?.feedbackContent]
+    );
 
     const revokeAudioPreviewUrl = () => {
         if (audioUrlRef.current) {
@@ -52,17 +156,47 @@ const AIIoRecording = () => {
         audioRef.current.load();
     };
 
-    const finalizeRecording = () => {
-        if (audioChunksRef.current.length === 0) {
+    const disconnectRecordingNodes = async () => {
+        if (processorRef.current) {
+            processorRef.current.disconnect();
+            processorRef.current.onaudioprocess = null;
+            processorRef.current = null;
+        }
+        if (sourceRef.current) {
+            sourceRef.current.disconnect();
+            sourceRef.current = null;
+        }
+        if (silentGainRef.current) {
+            silentGainRef.current.disconnect();
+            silentGainRef.current = null;
+        }
+        if (audioContextRef.current) {
+            await audioContextRef.current.close();
+            audioContextRef.current = null;
+        }
+    };
+
+    const finalizeRecording = async () => {
+        await disconnectRecordingNodes();
+        stopMicrophoneTracks();
+
+        if (recordingLengthRef.current === 0) {
             setAudioBlob(null);
             setIsFinished(false);
+            setIsRecording(false);
             return;
         }
 
-        const mimeType = audioChunksRef.current[0]?.type || "audio/webm";
-        const blob = new Blob(audioChunksRef.current, { type: mimeType });
+        const mergedBuffer = mergeAudioBuffers(recordedBuffersRef.current, recordingLengthRef.current);
+        const downsampledBuffer = downsampleBuffer(
+            mergedBuffer,
+            sourceSampleRateRef.current,
+            TARGET_SAMPLE_RATE
+        );
+        const blob = encodeWav(downsampledBuffer, TARGET_SAMPLE_RATE);
         setAudioBlob(blob);
         setIsFinished(true);
+        setIsRecording(false);
         syncAudioPreview(blob);
     };
 
@@ -71,10 +205,12 @@ const AIIoRecording = () => {
         try {
             revokeAudioPreviewUrl();
             setAudioBlob(null);
-            setFeedback("");
+            setFeedbackData(null);
+            setFeedbackError("");
             setIsFinished(false);
             setRecordingSeconds(0);
-            audioChunksRef.current = [];
+            recordedBuffersRef.current = [];
+            recordingLengthRef.current = 0;
 
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: {
@@ -84,39 +220,31 @@ const AIIoRecording = () => {
                 },
             });
 
-            const recorderOptions = {};
-            if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
-                recorderOptions.mimeType = "audio/webm;codecs=opus";
-            } else if (typeof MediaRecorder !== "undefined" && MediaRecorder.isTypeSupported("audio/webm")) {
-                recorderOptions.mimeType = "audio/webm";
-            }
+            const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+            const audioContext = new AudioContextClass();
+            await audioContext.resume();
+            const source = audioContext.createMediaStreamSource(stream);
+            const processor = audioContext.createScriptProcessor(4096, 1, 1);
+            const silentGain = audioContext.createGain();
+            silentGain.gain.value = 0;
 
-            const recorder = new MediaRecorder(stream, recorderOptions);
+            processor.onaudioprocess = (event) => {
+                if (!isRecording && !audioContextRef.current) return;
+                const input = event.inputBuffer.getChannelData(0);
+                recordedBuffersRef.current.push(new Float32Array(input));
+                recordingLengthRef.current += input.length;
+            };
+
+            source.connect(processor);
+            processor.connect(silentGain);
+            silentGain.connect(audioContext.destination);
+
             streamRef.current = stream;
-            mediaRecorderRef.current = recorder;
-
-            recorder.ondataavailable = (e) => {
-                if (e.data && e.data.size > 0) {
-                    audioChunksRef.current.push(e.data);
-                }
-            };
-
-            recorder.onstop = () => {
-                finalizeRecording();
-                stopMicrophoneTracks();
-                mediaRecorderRef.current = null;
-                setIsRecording(false);
-            };
-
-            recorder.onerror = (event) => {
-                console.error("녹음 오류:", event.error);
-                alert("녹음 중 오류가 발생했습니다. 다시 시도해 주세요.");
-                stopMicrophoneTracks();
-                mediaRecorderRef.current = null;
-                setIsRecording(false);
-            };
-
-            recorder.start(1000);
+            audioContextRef.current = audioContext;
+            sourceRef.current = source;
+            processorRef.current = processor;
+            silentGainRef.current = silentGain;
+            sourceSampleRateRef.current = audioContext.sampleRate;
             setIsRecording(true);
         } catch (err) {
             alert("마이크 접근 권한이 필요합니다.");
@@ -125,29 +253,30 @@ const AIIoRecording = () => {
     };
 
     // 녹음 중단: MediaRecorder 종료
-    const handleStopRecording = () => {
-        const recorder = mediaRecorderRef.current;
-        if (recorder && recorder.state !== "inactive") {
-            recorder.stop();
-            return;
-        }
-
-        stopMicrophoneTracks();
-        setIsRecording(false);
+    const handleStopRecording = async () => {
+        await finalizeRecording();
     };
 
     // 피드백 받기
-    // 피드백 받기
     const handleGetFeedback = async () => {
         try {
+            setFeedbackError("");
+            setFeedbackData(null);
             setLoading(true);
-            const feedbackResult = await sendFeedbackRequest(iocTopic, workTitle, author, scriptFile, audioBlob, userInfo);
-            // 반환된 JSON 구조에서 feedbackContent만 추출하여 상태에 저장
-            setFeedback(feedbackResult.data.feedbackContent);
+            const feedbackResult = await sendFeedbackRequest(
+                iocTopic,
+                workTitle,
+                author,
+                scriptFile,
+                audioBlob,
+                recordingSeconds,
+                userInfo
+            );
+            setFeedbackData(feedbackResult.data);
             setLoading(false);
         } catch (error) {
             console.error("Feedback request error:", error);
-            setFeedback(
+            setFeedbackError(
                 error?.response?.data?.message ||
                 error?.message ||
                 "피드백 요청 중 오류가 발생했습니다."
@@ -187,11 +316,11 @@ const AIIoRecording = () => {
                     );
                 };
                 reader.readAsText(scriptFile, "UTF-8");
-            } else if (fileName.endsWith('.doc') || fileName.endsWith('.docx')) {
-                // DOC/DOCX는 미리보기가 지원되지 않으므로 다운로드 안내
+            } else if (fileName.endsWith('.docx')) {
+                // DOCX는 미리보기가 지원되지 않으므로 다운로드 안내
                 setPreview(
                     <div className={styles.previewContainer}>
-                        <p>DOC/DOCX 파일은 미리보기가 지원되지 않습니다.</p>
+                        <p>DOCX 파일은 미리보기가 지원되지 않습니다. 업로드된 파일은 음성 분석 기준 대본으로 사용됩니다.</p>
                         <a href={blobUrl} download={scriptFile.name} className={styles.downloadLink}>
                             다운로드
                         </a>
@@ -216,10 +345,7 @@ const AIIoRecording = () => {
 
     useEffect(() => {
         return () => {
-            const recorder = mediaRecorderRef.current;
-            if (recorder && recorder.state !== "inactive") {
-                recorder.stop();
-            }
+            disconnectRecordingNodes();
             stopMicrophoneTracks();
             revokeAudioPreviewUrl();
         };
@@ -320,6 +446,8 @@ const AIIoRecording = () => {
                                 // Clear previous recording and reset timer
                                 revokeAudioPreviewUrl();
                                 setAudioBlob(null);
+                                setFeedbackData(null);
+                                setFeedbackError("");
                                 setRecordingSeconds(0);
                                 if (audioRef.current) {
                                     audioRef.current.src = "";
@@ -337,7 +465,7 @@ const AIIoRecording = () => {
                         onClick={handleGetFeedback}
                         disabled={!audioBlob || isRecording || loading}
                     >
-                        피드백 받기
+                        {loading ? "음성 분석 중..." : "피드백 받기"}
                     </button>
                 </div>
             </section>
@@ -353,14 +481,49 @@ const AIIoRecording = () => {
             {/* 4) 피드백 섹션 */}
             {loading ? (
                 <section className={styles.feedbackSection}>
-                    <h2 className={styles.feedbackTitle}>피드백 요약</h2>
-                    <p className={styles.feedbackContent}>로딩 중...</p>
+                    <h2 className={styles.feedbackTitle}>음성 분석 중</h2>
+                    <p className={styles.feedbackContent}>
+                        발음, 유창성, 억양/프로소디를 분석하고 있습니다. 녹음 길이에 따라 시간이 걸릴 수 있습니다.
+                    </p>
+                </section>
+            ) : feedbackError ? (
+                <section className={styles.feedbackSection}>
+                    <h2 className={styles.feedbackTitle}>피드백 요청 실패</h2>
+                    <p className={styles.feedbackContent}>{feedbackError}</p>
                 </section>
             ) : (
-                feedback && (
+                feedbackData && (
                     <section className={styles.feedbackSection}>
-                        <h2 className={styles.feedbackTitle}>피드백 요약</h2>
-                        <p className={styles.feedbackContent}>{feedback}</p>
+                        <h2 className={styles.feedbackTitle}>음성 분석 피드백</h2>
+                        <div className={styles.metricGrid}>
+                            {[
+                                ["종합 발음", feedbackData.speechMetrics?.pronunciationScore],
+                                ["정확도", feedbackData.speechMetrics?.accuracyScore],
+                                ["유창성", feedbackData.speechMetrics?.fluencyScore],
+                                ["대본 충실도", feedbackData.speechMetrics?.completenessScore],
+                                ["억양/프로소디", feedbackData.speechMetrics?.prosodyScore],
+                                ["분당 단어", feedbackData.speechMetrics?.speakingRateWpm],
+                            ].map(([label, value]) => (
+                                <div className={styles.metricCard} key={label}>
+                                    <span>{label}</span>
+                                    <strong>{value ?? "-"}</strong>
+                                </div>
+                            ))}
+                        </div>
+                        {feedbackData.transcript && (
+                            <div className={styles.transcriptBox}>
+                                <h3>인식된 발화</h3>
+                                <p>{feedbackData.transcript}</p>
+                            </div>
+                        )}
+                        <div className={styles.feedbackSections}>
+                            {feedbackSections.map((section) => (
+                                <article className={styles.feedbackBlock} key={section.title}>
+                                    <h3>{section.title}</h3>
+                                    <p>{section.body}</p>
+                                </article>
+                            ))}
+                        </div>
                         <button className={styles.tutorButton} onClick={() => alert("튜터에게 전송")}>
                             튜터에게 보내고 레슨 잡기
                         </button>

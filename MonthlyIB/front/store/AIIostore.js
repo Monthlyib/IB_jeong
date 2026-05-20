@@ -16,7 +16,7 @@ export const useIOStore = create((set, get) => ({
   setAudioBlob: (audioBlob) => set({ audioBlob }),
 
   // ChatGPT API와 통신하여 피드백을 받아오는 메소드
-  sendFeedbackRequest: async (iocTopic, workTitle, author, scriptFile, audioBlob, session) => {
+  sendFeedbackRequest: async (iocTopic, workTitle, author, scriptFile, audioBlob, durationSeconds, session) => {
     // 필수 항목 체크
 
     if (!iocTopic || !workTitle || !author || !scriptFile || !audioBlob) {
@@ -30,7 +30,8 @@ export const useIOStore = create((set, get) => ({
       formData.append("workTitle", workTitle);
       formData.append("author", author);
       formData.append("scriptFile", scriptFile);
-      formData.append("audioFile", audioBlob);
+      formData.append("audioFile", audioBlob, "io-recording.wav");
+      formData.append("durationSeconds", String(durationSeconds || 0));
 
       // AIAPI.js에 정의한 sendFeedbackRequestAPI 메소드를 호출하여 데이터를 전송 (session 포함)
       const data = await sendFeedbackRequest(formData, session);

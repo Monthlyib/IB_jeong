@@ -254,6 +254,71 @@
   white-space: pre-wrap;
 }
 
+.metricGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+}
+
+.metricCard {
+  padding: 1.3rem;
+  border: 1px solid var(--mi-border);
+  border-radius: 1.6rem;
+  background: var(--mi-surface);
+}
+
+.metricCard span {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--mi-muted);
+}
+
+.metricCard strong {
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--mi-brand-deep);
+}
+
+.transcriptBox {
+  margin-bottom: 1.8rem;
+  padding: 1.4rem;
+  border-radius: 1.6rem;
+  background: #fbf9fd;
+  border: 1px solid rgba(81, 52, 108, 0.1);
+}
+
+.transcriptBox h3,
+.feedbackBlock h3 {
+  margin: 0 0 0.8rem;
+  font-size: 1.55rem;
+  color: var(--mi-brand-deep);
+}
+
+.transcriptBox p,
+.feedbackBlock p {
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.75;
+  color: var(--mi-body);
+  white-space: pre-wrap;
+}
+
+.feedbackSections {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+
+.feedbackBlock {
+  padding: 1.4rem;
+  border: 1px solid var(--mi-border);
+  border-radius: 1.6rem;
+  background: var(--mi-canvas);
+}
+
 .audioSection {
   text-align: center;
 }
@@ -298,6 +363,10 @@
   .tutorButton {
     width: 100%;
   }
+
+  .metricGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 480px) {
@@ -336,8 +405,18 @@
 
   .infoRow,
   .previewText,
-  .feedbackContent {
+  .feedbackContent,
+  .transcriptBox p,
+  .feedbackBlock p {
     font-size: 1.35rem;
+  }
+
+  .metricGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .metricCard {
+    padding: 1.2rem;
   }
 
   .embedPdf {
