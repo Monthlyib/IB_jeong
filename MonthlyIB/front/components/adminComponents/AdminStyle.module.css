@@ -243,6 +243,14 @@
   gap: 2rem;
 }
 
+.accessAnalyticsCard {
+  gap: 2rem;
+}
+
+.accessAnalyticsCard .financeSummaryGrid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .financeSectionHeader {
   display: flex;
   justify-content: space-between;
@@ -394,6 +402,64 @@
   color: var(--mi-muted);
   font-size: 1.35rem;
   line-height: 1.6;
+}
+
+.accessChartGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+
+.accessUserTable {
+  display: grid;
+  min-width: 86rem;
+  border: 1px solid #eee6f6;
+  border-radius: 1.8rem;
+  overflow: hidden;
+}
+
+.accessUserTableHead,
+.accessUserRow {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1.1fr) minmax(22rem, 1.4fr) minmax(13rem, 0.8fr) minmax(13rem, 0.8fr) minmax(7rem, 0.4fr);
+  align-items: center;
+  gap: 1rem;
+}
+
+.accessUserTableHead {
+  padding: 1.2rem 1.4rem;
+  background: #f7f2fc;
+  color: #726586;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+
+.accessUserRow {
+  padding: 1.2rem 1.4rem;
+  border-top: 1px solid #eee6f6;
+  color: #473a5d;
+  font-size: 1.32rem;
+}
+
+.accessUserRow span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.accessUserRow strong {
+  display: block;
+  color: #251c35;
+  font-size: 1.4rem;
+  font-weight: 800;
+}
+
+.accessUserRow em {
+  display: block;
+  margin-top: 0.3rem;
+  color: #8c819e;
+  font-size: 1.2rem;
+  font-style: normal;
 }
 
 .financeSkeleton {
@@ -2648,6 +2714,10 @@
     grid-template-columns: 1fr;
   }
 
+  .accessChartGrid {
+    grid-template-columns: 1fr;
+  }
+
   .calculatorConfigBody {
     grid-template-columns: 1fr;
   }
@@ -2683,6 +2753,10 @@
   .adminHeroMeta,
   .dashboard_top_wrap {
     grid-template-columns: 1fr;
+  }
+
+  .accessAnalyticsCard .financeSummaryGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .tableToolbar {

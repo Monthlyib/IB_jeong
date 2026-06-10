@@ -18,6 +18,7 @@ import AdminCalculatorRecommendations from "./AdminCalculatorRecommendations";
 import AdminHeaderNavigation from "./AdminHeaderNavigation";
 import AdminMailJobs from "./AdminMailJobs";
 import AdminFinance from "./AdminFinance";
+import AdminAccessAnalytics from "./AdminAccessAnalytics";
 import { useSubscribeStore } from "@/store/subscribe";
 import { useTutoringStore } from "@/store/tutoring";
 import { getCookie } from "@/apis/cookies";
@@ -88,6 +89,19 @@ const AdminMain = () => {
               {questionMetrics.waiting}/{questionMetrics.total}
             </strong>
           </div>
+        </div>
+      </section>
+
+      <section className={styles.adminSection}>
+        <div className={styles.sectionHeader}>
+          <div>
+            <span className={styles.sectionEyebrow}>Access</span>
+            <h2>접속 사용자 분석</h2>
+          </div>
+        </div>
+
+        <div className={styles.dashboard_single_wrap}>
+          <AdminAccessAnalytics />
         </div>
       </section>
 
