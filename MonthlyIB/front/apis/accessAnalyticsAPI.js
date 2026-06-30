@@ -9,9 +9,9 @@ const authConfig = (session) => ({
   },
 });
 
-export const getAdminAccessAnalyticsOverview = async (session, days = 30, weeks = 12) => {
+export const getAdminAccessAnalyticsOverview = async (session, days = 30, weeks = 12, months = 12) => {
   const res = await tokenRequireApi.get(
-    `${ACCESS_ANALYTICS_API_URL}/overview?days=${days}&weeks=${weeks}`,
+    `${ACCESS_ANALYTICS_API_URL}/overview?days=${days}&weeks=${weeks}&months=${months}`,
     authConfig(session)
   );
   return res.data?.data;

@@ -26,7 +26,13 @@ const formatDateTime = (value) => {
   return String(value).replace("T", " ").slice(0, 16);
 };
 
+const formatDate = (value) => {
+  if (!value) return "-";
+  return String(value).slice(0, 10);
+};
+
 const AdminAccessAnalytics = () => {
+  const [activeTab, setActiveTab] = useState("DAY");
   const [overview, setOverview] = useState(null);
   const [overviewLoading, setOverviewLoading] = useState(true);
   const [overviewError, setOverviewError] = useState("");
@@ -53,7 +59,7 @@ const AdminAccessAnalytics = () => {
       try {
         setOverviewLoading(true);
         setOverviewError("");
-        const response = await getAdminAccessAnalyticsOverview(session, 30, 12);
+        const response = await getAdminAccessAnalyticsOverview(session, 30, 12, 12);
         setOverview(response);
       } catch (error) {
         console.error("Failed to fetch access analytics overview", error);
@@ -95,6 +101,34 @@ const AdminAccessAnalytics = () => {
   };
 
   const renderTooltipValue = (value) => [`${formatNumber(value)}명`, "접속 사용자"];
+
+  const activeChart = useMemo(() => {
+    if (activeTab === "WEEK") {
+      return {
+        periodType: "WEEK",
+        title: "최근 12주 주별 접속자",
+        description: "ISO week, 월요일 시작 기준입니다.",
+        data: overview?.weeklyBuckets || [],
+        fill: "#b69ee3",
+      };
+    }
+    if (activeTab === "MONTH") {
+      return {
+        periodType: "MONTH",
+        title: "최근 12개월 월별 접속자",
+        description: "월 단위 고유 사용자 수입니다.",
+        data: overview?.monthlyBuckets || [],
+        fill: "#6f9dd9",
+      };
+    }
+    return {
+      periodType: "DAY",
+      title: "최근 30일 일별 접속자",
+      description: "일별 고유 사용자 수입니다.",
+      data: overview?.dailyBuckets || [],
+      fill: "#7f62a9",
+    };
+  }, [activeTab, overview]);
 
   if (overviewLoading) {
     return (
@@ -159,17 +193,34 @@ const AdminAccessAnalytics = () => {
           </div>
         </div>
 
+        <div className={styles.accessTabs}>
+          {[
+            ["DAY", "일별"],
+            ["WEEK", "주별"],
+            ["MONTH", "월별"],
+          ].map(([tab, label]) => (
+            <button
+              type="button"
+              key={tab}
+              className={activeTab === tab ? styles.accessTabActive : ""}
+              onClick={() => setActiveTab(tab)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
         <div className={styles.accessChartGrid}>
           <div className={styles.financeChartShell}>
             <div className={styles.financeChartHeader}>
               <div>
-                <h4>최근 30일 일별 접속자</h4>
-                <p>일별 고유 사용자 수입니다.</p>
+                <h4>{activeChart.title}</h4>
+                <p>{activeChart.description}</p>
               </div>
             </div>
             <div className={styles.financeChart}>
               <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart data={overview?.dailyBuckets || []}>
+                <ComposedChart data={activeChart.data}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#eee7f5" />
                   <XAxis dataKey="label" tick={{ fill: "#75698a", fontSize: 11 }} />
                   <YAxis tick={{ fill: "#75698a", fontSize: 11 }} allowDecimals={false} />
@@ -177,37 +228,10 @@ const AdminAccessAnalytics = () => {
                   <Bar
                     dataKey="uniqueUserCount"
                     name="접속 사용자"
-                    fill="#7f62a9"
+                    fill={activeChart.fill}
                     radius={[8, 8, 0, 0]}
                     cursor="pointer"
-                    onClick={(entry) => openDetailModal("DAY", entry?.period)}
-                  />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-
-          <div className={styles.financeChartShell}>
-            <div className={styles.financeChartHeader}>
-              <div>
-                <h4>최근 12주 주별 접속자</h4>
-                <p>ISO week, 월요일 시작 기준입니다.</p>
-              </div>
-            </div>
-            <div className={styles.financeChart}>
-              <ResponsiveContainer width="100%" height={300}>
-                <ComposedChart data={overview?.weeklyBuckets || []}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#eee7f5" />
-                  <XAxis dataKey="label" tick={{ fill: "#75698a", fontSize: 11 }} />
-                  <YAxis tick={{ fill: "#75698a", fontSize: 11 }} allowDecimals={false} />
-                  <Tooltip formatter={renderTooltipValue} />
-                  <Bar
-                    dataKey="uniqueUserCount"
-                    name="접속 사용자"
-                    fill="#b69ee3"
-                    radius={[8, 8, 0, 0]}
-                    cursor="pointer"
-                    onClick={(entry) => openDetailModal("WEEK", entry?.period)}
+                    onClick={(entry) => openDetailModal(activeChart.periodType, entry?.period)}
                   />
                 </ComposedChart>
               </ResponsiveContainer>
@@ -273,9 +297,9 @@ const AdminAccessAnalytics = () => {
                       <div className={styles.accessUserTableHead}>
                         <span>USER</span>
                         <span>EMAIL</span>
+                        <span>ACCESS DATE</span>
                         <span>FIRST</span>
-                        <span>LAST</span>
-                        <span>COUNT</span>
+                        <span>DAYS</span>
                       </div>
                       {(detail?.users || []).length > 0 ? (
                         detail.users.map((user) => (
@@ -285,9 +309,9 @@ const AdminAccessAnalytics = () => {
                               <em>{user.nickName}</em>
                             </span>
                             <span>{user.email}</span>
+                            <span>{formatDate(user.firstAccessAt)}</span>
                             <span>{formatDateTime(user.firstAccessAt)}</span>
-                            <span>{formatDateTime(user.lastAccessAt)}</span>
-                            <span>{formatNumber(user.accessCount)}</span>
+                            <span>{formatNumber(user.accessDateCount || 1)}</span>
                           </div>
                         ))
                       ) : (

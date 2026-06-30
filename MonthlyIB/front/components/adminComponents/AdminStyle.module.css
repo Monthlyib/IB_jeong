@@ -251,6 +251,37 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.accessTabs {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.5rem;
+  border: 1px solid var(--mi-border);
+  border-radius: 1.6rem;
+  background: var(--mi-surface-soft);
+  gap: 0.4rem;
+}
+
+.accessTabs button {
+  min-width: 8.4rem;
+  min-height: 4rem;
+  padding: 0 1.4rem;
+  border: none;
+  border-radius: 1.2rem;
+  background: transparent;
+  color: var(--mi-body);
+  font-size: 1.4rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.accessTabs button:hover,
+.accessTabs .accessTabActive {
+  background: #fff;
+  color: var(--mi-brand-deep);
+  box-shadow: 0 0.8rem 2rem rgba(47, 33, 67, 0.08);
+}
+
 .financeSectionHeader {
   display: flex;
   justify-content: space-between;
@@ -406,7 +437,7 @@
 
 .accessChartGrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr);
   gap: 1.4rem;
 }
 
